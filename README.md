@@ -8,7 +8,7 @@ Free open source viewer/explorer for computer graphics related data, intended to
 If you are contributing to this project, please keep the following notes in mind:
 * Add your name and email to the AUTHORS file.
 * Follow coding conventions according to google's [C++ Style Guide](http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml).
-* Commits should provide a meaningful  message, which uses the imperative, present tense: "change", not "changed" nor "changes".
+* Commits should provide a meaningful  message, which uses the imperative, present tense: "change", not "changed" nor "changes", AND start with a capital letter.
 
 ## Build Instructions
 
