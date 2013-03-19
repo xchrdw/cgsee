@@ -23,5 +23,5 @@ The following dev-libraries and programs need to be provided for correct CMake c
 
 ### Configure and CMake
 
-* For windows plattforms, consider to use the provide batch files, and edit *_configure.bat*.
+* For windows plattforms, consider to use the provide batch files, and edit *_configure.bat* (with "git update-index --assume-unchanged _*.bat" your personal configuration can be ignored)
 * For linux, TODO
