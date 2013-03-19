@@ -1,4 +1,4 @@
-# cgsee
+# CGSee
 
 Free open source viewer/explorer for computer graphics related data, intended to become a *Deep Exploration* (product development discontinued) replacement.
 
