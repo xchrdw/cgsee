@@ -1,0 +1,14 @@
+CMakeLists.txt.user
+
+build/
+
+*.sublime-project
+*.sublime-workspace
+*.aux
+*.log
+*.out
+*.pdb
+*.tps
+*.toc
+*.vcproj.*.user
+*.vcxproj.user
