@@ -9,7 +9,7 @@ set(SOURCES
 
 # group source files
 
-source_group_by_path(${SOURCE_PATH} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$" 
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$" 
     ${CGSEE_SOURCE_GROUP} ${SOURCES})
 
 # setup target
@@ -24,7 +24,6 @@ qt5_use_modules(${target} OpenGL)
 
 target_link_libraries(${target}
     ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARY}
     core)
 
 set_target_properties(${target}

@@ -1,10 +1,9 @@
 
-#include <GL/glew.h>
-
 #include "canvas.h"
 
 #include <cassert>
 
+#include <QtOpenGL>
 #include <QApplication>
 #include <QBasicTimer>
 
@@ -41,11 +40,6 @@ void Canvas::initializeGL()
 
     qDebug("Vendor: %s", qPrintable(GPUQuery::vendor()));
     qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));
-    qDebug("GLEW Version: %s\n", qPrintable(GPUQuery::glewVersion()));
-
-    const GLenum error = glewInit();
-    if(GLEW_OK != error)
-        qCritical("Glew failed to initialized: %s\n", GPUQuery::glewError(error));
 
     if(!m_format.verify(context()->format()))
         qFatal("There might be problems during scene initialization and rendering.\n");

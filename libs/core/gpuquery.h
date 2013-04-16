@@ -3,6 +3,7 @@
 
 #include "declspec.h"
 
+#include <QtOpenGL>
 #include <QString>
 
 
@@ -12,12 +13,8 @@ public:
     static const GLint queryi(const GLenum penum);
     static const QString querys(const GLenum penum);
 
-    static const QString glew(const GLenum penum);
-    static const QString glewError(const GLenum penum);
-
     static const QString vendor();
     static const QString renderer();
-    static const QString glewVersion();
 
     // Checks for an opengl error and prints to console if one occurred
     static const bool error();

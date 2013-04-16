@@ -1,12 +1,4 @@
 
-#include <GL/glew.h>
-
-#ifdef WIN32
-#include <GL/wglew.h>
-#else
-#include <GL/glxew.h>
-#endif
-
 #include "gpuquery.h"
 
 
@@ -46,7 +38,7 @@ const GLint GPUQuery::evictedMemory()
 
 const GLint GPUQuery::memoryInfo(const GLenum penum)
 {
-    if(!glewIsSupported("GL_NVX_gpu_memory_info"))
+    if(!extensionSupported("GL_NVX_gpu_memory_info"))
         return -1;
 
     GLint memory(0); // in kb
@@ -75,20 +67,6 @@ const QString GPUQuery::querys(const GLenum penum)
     return result;
 }
 
-const QString GPUQuery::glew(const GLenum penum)
-{
-    const QString result = reinterpret_cast<const char*>(glewGetString(penum));
-    error();
-
-    return result;
-}
-
-const QString GPUQuery::glewError(const GLenum penum)
-{
-    const QString result = reinterpret_cast<const char*>(glewGetErrorString(penum));
-    return result;
-}
-
 const QString GPUQuery::vendor()
 {
     return querys(GL_VENDOR);
@@ -99,32 +77,30 @@ const QString GPUQuery::renderer()
     return querys(GL_RENDERER);
 }
 
-const QString GPUQuery::glewVersion()
-{
-    return glew(GLEW_VERSION);
-}
-
 const bool GPUQuery::error()
 {
     const GLenum error(glGetError());
     const bool errorOccured(GL_NO_ERROR != error);
 
     if(errorOccured) 
-        qCritical("OpenGL: %s", gluErrorString(error));
+//        qCritical("OpenGL: %s", glRenderString gluErrorString(error));
+        qCritical("OpenGL: TODO - NOT YET IMPLEMENTED");
 
     return errorOccured;
 }
 
 const bool GPUQuery::extensionSupported(const char *extension)
 {
-    bool supported = glewIsSupported(extension);
+//    bool supported = glewIsSupported(extension);
 
-    if(!supported)
-#ifdef WIN32
-        return wglewIsSupported(extension);
-#else
-        return glxewIsSupported(extension);
-#endif
+//    if(!supported)
+//#ifdef WIN32
+//        return wglewIsSupported(extension);
+//#else
+//        return glxewIsSupported(extension);
+//#endif
 
-    return supported;
+    // TODO
+
+    return true;
 }

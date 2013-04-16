@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <math.h>
+#include <cmath>
 
 
 #define _PI 3.1415926535897932384626433832795L

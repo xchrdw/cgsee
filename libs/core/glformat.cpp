@@ -1,15 +1,9 @@
 
-#include <GL/glew.h>
-#ifdef WIN32
-#include <GL/wglew.h>
-#else
-#include <GL/glxew.h>
-#endif
-
 #include "glformat.h"
 
 #include <cassert>
 
+#include <QtOpenGL>
 #include <QGLFormat>
 
 #include "gpuquery.h"
@@ -449,7 +443,7 @@ const bool GLFormat::verifySwapInterval(
         return true;
 
     bool result(false);
-
+/*
 #ifdef WIN32
     if(GPUQuery::extensionSupported("WGL_EXT_swap_control"))
         result = wglSwapIntervalEXT(requestedInterval);
@@ -464,7 +458,9 @@ const bool GLFormat::verifySwapInterval(
         qWarning("Swap interval could not be set due to missing extensions GLX_EXT_swap_control.");
 #endif
         return false;
-    }
+    }*/
+
+    // TODO: swap interval?
 
     if(!result)
     {

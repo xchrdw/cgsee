@@ -74,7 +74,6 @@ install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION .)
 # THIRD PARTIES
 
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
@@ -97,8 +96,6 @@ find_package(Qt5Widgets REQUIRED) # this is important in order to get uic workin
 include_directories(
     ${CMAKE_BINARY_DIR} # for Meta.h
     ${OPENGL_INCLUDE_DIR}
-    ${GLEW_INCLUDE_PATH}
-    # ${QT_INCLUDES} # empty for Qt5 (includes are managed by qt5_use_modules)
     ${CMAKE_SOURCE_DIR}/libs)
 
 set(CGSEE_LIB_FOLDER "CGSee Libs")
