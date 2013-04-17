@@ -9,7 +9,7 @@ set(SOURCES
     main.cpp
 )
 
-source_group_by_path(${SOURCE_PATH} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$" 
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$" 
     ${CGSEE_SOURCE_GROUP} ${SOURCES})
 
 include_directories(
