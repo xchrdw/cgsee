@@ -43,7 +43,7 @@ void Canvas::initializeGL()
     qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));
 
     if(!m_format.verify(context()->format()))
-        qFatal("There might be problems during scene initialization and rendering.\n");
+        qCritical("There might be problems during scene initialization and rendering.\n");
 
     qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
     qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
