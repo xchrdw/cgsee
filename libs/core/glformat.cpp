@@ -8,6 +8,12 @@
 
 #include "gpuquery.h"
 
+#ifdef WIN32
+
+#else
+
+#endif
+
 
 const GLFormat::t_minorsByMajor GLFormat::m_validGLVersions 
     = GLFormat::validGLVersions();
@@ -432,6 +438,7 @@ const bool GLFormat::verifyExtensions(const GLFormat & requested)
     return false;
 }
 
+
 const bool GLFormat::verifySwapInterval(
     const GLFormat & requested
 ,   const GLFormat & current)
@@ -443,10 +450,18 @@ const bool GLFormat::verifySwapInterval(
         return true;
 
     bool result(false);
-/*
+
 #ifdef WIN32
     if(GPUQuery::extensionSupported("WGL_EXT_swap_control"))
-        result = wglSwapIntervalEXT(requestedInterval);
+    {
+        typedef bool (WINAPI *PFNWGLSWAPINTERVALEXTPROC) (int interval);
+        static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
+
+        if(!wglSwapIntervalEXT)
+            wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
+        if(wglSwapIntervalEXT)
+            result = wglSwapIntervalEXT(requestedInterval);
+    }
     else
     {
         qWarning("Swap interval could not be set due to missing extensions WGL_EXT_swap_control.");
@@ -457,10 +472,8 @@ const bool GLFormat::verifySwapInterval(
     {
         qWarning("Swap interval could not be set due to missing extensions GLX_EXT_swap_control.");
 #endif
-        return false;
-    }*/
-
-    // TODO: swap interval?
+        return result;
+    }
 
     if(!result)
     {

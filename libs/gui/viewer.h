@@ -3,23 +3,15 @@
 
 #include <core/declspec.h>
 
-#include <memory>
-
-#ifdef WIN32
-#include <windows.h>
-#else
-
-#endif
-
+#include <QtOpenGL>
 #include <QMainWindow>
 
-#include <gl/gl.h>
+#include <memory>
 
 
 class GLFormat;
 
 class Ui_Viewer;
-
 class Canvas;
 
 

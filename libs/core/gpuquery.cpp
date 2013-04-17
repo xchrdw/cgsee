@@ -1,6 +1,8 @@
 
 #include "gpuquery.h"
 
+#include <GL/GLU.h>
+
 
 // http://developer.download.nvidia.com/opengl/specs/GL_NVX_gpu_memory_info.txt
 
@@ -83,24 +85,12 @@ const bool GPUQuery::error()
     const bool errorOccured(GL_NO_ERROR != error);
 
     if(errorOccured) 
-//        qCritical("OpenGL: %s", glRenderString gluErrorString(error));
-        qCritical("OpenGL: TODO - NOT YET IMPLEMENTED");
+        qCritical("OpenGL: %s", gluErrorString(error));
 
     return errorOccured;
 }
 
 const bool GPUQuery::extensionSupported(const char *extension)
 {
-//    bool supported = glewIsSupported(extension);
-
-//    if(!supported)
-//#ifdef WIN32
-//        return wglewIsSupported(extension);
-//#else
-//        return glxewIsSupported(extension);
-//#endif
-
-    // TODO
-
-    return true;
+    return QOpenGLContext::currentContext()->hasExtension(extension);
 }

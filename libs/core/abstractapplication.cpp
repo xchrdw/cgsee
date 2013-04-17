@@ -52,7 +52,7 @@ const GLFormat AbstractApplication::format() const
 {
     GLFormat format;
 
-    format.setVersion(3, 2);
+    format.setVersion(4, 3);
     // Version 3.2 + yields CoreProfile context by default.
     format.setProfile(GLFormat::CompatibilityProfile);
 

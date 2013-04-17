@@ -3,8 +3,8 @@
 
 #include "declspec.h"
 
-#include <QtOpenGL>
 #include <QString>
+#include <QtOpenGL>
 
 
 class CGSEE_API GPUQuery

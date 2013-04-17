@@ -20,7 +20,8 @@ Canvas::Canvas(
 ,   m_timer(nullptr)
 {
     m_timer = new QBasicTimer();
-    m_timer->start(1000/60, this);
+
+    m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
 
@@ -78,6 +79,8 @@ void Canvas::resizeGL(
 
 void Canvas::paintEvent(QPaintEvent * event)
 {
+    // TODO: Replace Dummy IMPL
+
     makeCurrent();
 
     glMatrixMode(GL_MODELVIEW);
