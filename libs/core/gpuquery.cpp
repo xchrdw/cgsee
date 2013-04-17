@@ -1,7 +1,7 @@
 
 #include "gpuquery.h"
 
-#include <GL/GLU.h>
+#include <GL/glu.h>
 
 
 // http://developer.download.nvidia.com/opengl/specs/GL_NVX_gpu_memory_info.txt

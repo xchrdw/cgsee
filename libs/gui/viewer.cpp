@@ -22,17 +22,22 @@ Viewer::Viewer(
     m_ui->setupUi(this);
 };
 
+#ifdef WIN32
 const HGLRC Viewer::currentContextHandle()
 {
-#ifdef WIN32
-    return wglGetCurrentContext();
+    return  wglGetCurrentContext();
 #else
-    qFatal("Get current context implementation missing (glx).");
-    return NULL;
+const GLXContext Viewer::currentContextHandle()
+{
+    return glXGetCurrentContext();
 #endif
 }
 
+#ifdef WIN32
 const HGLRC Viewer::createQtContext(const GLFormat & format)
+#else
+const GLXContext Viewer::createQtContext(const GLFormat & format)
+#endif
 {
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
@@ -46,8 +51,12 @@ const HGLRC Viewer::createQtContext(const GLFormat & format)
 
     if(QGLContext::currentContext() != qContext)
         qFatal("Making QtGL-Context current failed.");
-    
+
+#ifdef WIN32
     const HGLRC qtContextHandle = currentContextHandle();
+#else
+    const GLXContext qtContextHandle = currentContextHandle();
+#endif
 
     if(NULL == qtContextHandle)
         qFatal("Acquiring QtGL-Context handle failed.");

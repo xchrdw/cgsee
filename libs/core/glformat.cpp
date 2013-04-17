@@ -8,10 +8,8 @@
 
 #include "gpuquery.h"
 
-#ifdef WIN32
-
-#else
-
+#ifndef WIN32
+#include <GL/glx.h>
 #endif
 
 
@@ -383,7 +381,7 @@ const bool GLFormat::verifyVersionAndProfile(
         const QString info(QString("%1 requested, %2 created.\n")
             .arg(m_validProfileIdentifier[requested.profile()])
             .arg(m_validProfileIdentifier[current.profile()]));
-        qWarning(qPrintable(info));
+        qWarning("%s", qPrintable(info));
     }
 
     if(requested.majorVersion() != current.majorVersion() 
@@ -393,7 +391,7 @@ const bool GLFormat::verifyVersionAndProfile(
         const QString info(QString("%1.%2 requested, %3.%4 created.\n")
             .arg(requested.majorVersion()).arg(requested.minorVersion())
             .arg(current.majorVersion()).arg(current.minorVersion()));
-        qWarning(qPrintable(info));
+        qWarning("%s", qPrintable(info));
 
         if(requested.profile() == CoreProfile)
             return false;
@@ -402,7 +400,7 @@ const bool GLFormat::verifyVersionAndProfile(
     {
         const QString info(QString("Context Version: %1.%2\n")
             .arg(current.majorVersion()).arg(current.minorVersion()));
-        qDebug(qPrintable(info));
+        qDebug("%s", qPrintable(info));
     }
 
     return sameProfiles;
@@ -431,7 +429,7 @@ const bool GLFormat::verifyExtensions(const GLFormat & requested)
         qWarning("The following requested OpenGL extension is not supported:");
 
     foreach(const QString & extension, unsupported)
-        qWarning(qPrintable(extension));
+        qWarning("%s", qPrintable(extension));
     
     qWarning("");
 
@@ -454,11 +452,11 @@ const bool GLFormat::verifySwapInterval(
 #ifdef WIN32
     if(GPUQuery::extensionSupported("WGL_EXT_swap_control"))
     {
-        typedef bool (WINAPI *PFNWGLSWAPINTERVALEXTPROC) (int interval);
-        static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
+        typedef bool (WINAPI * SWAPINTERVALEXTPROC) (int);
+        static SWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
 
         if(!wglSwapIntervalEXT)
-            wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
+            wglSwapIntervalEXT = reinterpret_cast<SWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
         if(wglSwapIntervalEXT)
             result = wglSwapIntervalEXT(requestedInterval);
     }
@@ -466,11 +464,22 @@ const bool GLFormat::verifySwapInterval(
     {
         qWarning("Swap interval could not be set due to missing extensions WGL_EXT_swap_control.");
 #else
-    if(GPUQuery::extensionSupported("GLX_EXT_swap_control"))
-        result = glXSwapIntervalEXT(requestedInterval);
+    if(GPUQuery::extensionSupported("GLX_SGI_swap_control"))
+    {
+        typedef int (APIENTRY * SWAPINTERVALEXTPROC) (int);
+        static SWAPINTERVALEXTPROC glXSwapIntervalSGI = nullptr;
+
+        if(!glXSwapIntervalSGI)
+        {
+            const GLubyte * sgi = reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI");
+            glXSwapIntervalSGI = reinterpret_cast<SWAPINTERVALEXTPROC>(glXGetProcAddress(sgi));
+        }
+        if(glXSwapIntervalSGI)
+            result = glXSwapIntervalSGI(requestedInterval);
+    } 
     else
     {
-        qWarning("Swap interval could not be set due to missing extensions GLX_EXT_swap_control.");
+        qWarning("Swap interval could not be set due to missing extensions GLX_SGI_swap_control.");
 #endif
         return result;
     }
@@ -553,7 +562,7 @@ const bool GLFormat::verifyPixelFormat(
 
     qWarning("Initialized Pixelformat did not match the Requested One:");
     foreach(const QString & issue, issues)
-        qWarning(qPrintable(issue));
+        qWarning("%s", qPrintable(issue));
     qWarning("");
 
     return false;
