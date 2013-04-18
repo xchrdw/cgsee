@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Group.h"
+#include "group.h"
 
 #include <glm/glm.hpp>
 

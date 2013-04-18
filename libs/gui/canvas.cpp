@@ -46,7 +46,7 @@ void Canvas::initializeGL()
 
     const GLenum error = glewInit();
     if(GLEW_OK != error)
-        qCritical("Glew failed to initialized: %s\n", GPUQuery::glewError(error));
+        qCritical("Glew failed to initialized: %s\n", qPrintable(GPUQuery::glewError(error)));
 
     if(!m_format.verify(context()->format()))
         qCritical("There might be problems during scene initialization and rendering.\n");

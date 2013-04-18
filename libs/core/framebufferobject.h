@@ -30,7 +30,7 @@ public:
 
     void releaseTexture2D() const;
 
-    void FrameBufferObject::resize(
+    void resize(
         const unsigned int width
     ,   const unsigned int height);
 

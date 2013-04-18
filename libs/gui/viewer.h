@@ -1,17 +1,17 @@
 
 #pragma once
 
-#include <core/declspec.h>
-
 #include <QMainWindow>
 
-#include <memory>
+#include <core/declspec.h>
 
-#ifndef WIN32
-#include <GL/glx.h>  // for GLXContext
-#else
+#ifdef WIN32
 #include <windows.h>
+#else
+#include <GL/glx.h>  // for GLXContext
 #endif
+
+#include <memory>
 
 
 class GLFormat;

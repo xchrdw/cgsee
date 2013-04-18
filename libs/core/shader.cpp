@@ -18,7 +18,9 @@ const Shader::t_typeStrings Shader::initializeTypeStrings()
 
     typeStrings[GL_TESS_EVALUATION_SHADER] = "GL_TESS_EVALUATION_SHADER";
     typeStrings[GL_TESS_CONTROL_SHADER]    = "GL_TESS_CONTROL_SHADER";
+#ifdef GL_COMPUTE_SHADER
     typeStrings[GL_COMPUTE_SHADER]         = "GL_COMPUTE_SHADER";
+#endif
     typeStrings[GL_FRAGMENT_SHADER]        = "GL_FRAGMENT_SHADER";
     typeStrings[GL_GEOMETRY_SHADER]        = "GL_GEOMETRY_SHADER";
     typeStrings[GL_VERTEX_SHADER]          = "GL_VERTEX_SHADER";
@@ -91,7 +93,7 @@ const bool Shader::setSource(
             qCritical("Compiling shader of type %i failed.", type());
 
 		if(!m_log.isEmpty())
-            qCritical(qPrintable(m_log));
+            qCritical("%s", qPrintable(m_log));
     }
 
     if(update)

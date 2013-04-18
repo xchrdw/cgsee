@@ -1,13 +1,12 @@
 
-#include "viewer.h"
-
 #include <QOpenGLContext>
 
+#include "ui_viewer.h"
+
+#include "viewer.h"
+#include "canvas.h"
 
 #include <core/glformat.h>
-
-#include "canvas.h"
-#include "ui_viewer.h"
 
 
 Viewer::Viewer(

@@ -54,5 +54,5 @@ protected:
 #ifdef _DEBUG
     #define glError() GPUQuery::error(__FILE__, __LINE__)
 #else
-    #define glError() 
+    #define glError() false
 #endif

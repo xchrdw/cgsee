@@ -17,7 +17,7 @@ include_directories(
 
 add_executable(${target} ${SOURCES})
 
-qt5_use_modules(${target} OpenGL Gui)
+qt5_use_modules(${target} Core OpenGL Gui Widgets)
 
 target_link_libraries(${target} 
     core cli gui)

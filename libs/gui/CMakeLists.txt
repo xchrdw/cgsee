@@ -32,7 +32,7 @@ include_directories(
 
 add_library(${target} SHARED ${HEADERS} ${SOURCES} ${UIHS})
 
-qt5_use_modules(${target} OpenGL Gui Widgets)
+qt5_use_modules(${target} Core OpenGL Gui Widgets)
 
 target_link_libraries(${target}
     ${OPENGL_LIBRARIES}

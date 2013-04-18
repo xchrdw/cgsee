@@ -1,17 +1,18 @@
 
-#include "objio.h"
-
-#include "group.h"
-#include "polygonaldrawable.h"
-#include "polygonalgeometry.h"
-
 #include <glm/glm.hpp>
 
 #include <cstring>
 #include <iostream>
 #include <fstream>
 #include <map>
-#include <hash_map>
+#include <unordered_map>
+
+#include "objio.h"
+
+#include "group.h"
+#include "polygonaldrawable.h"
+#include "polygonalgeometry.h"
+
 
 using namespace std;
 
@@ -50,7 +51,7 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
     ifstream stream(path, ios::in);
     if(!stream)
     {
-        qCritical("Read from \"%s\" failed.", path);
+        qCritical("Read from \"%s\" failed.", path.c_str());
         return NULL;
     }
 
