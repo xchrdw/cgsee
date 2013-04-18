@@ -24,9 +24,8 @@ class CGSEE_API Viewer : public QMainWindow
 {
 public:
     Viewer(
-        QWidget * parent = nullptr,
-        Qt::WindowFlags flags = NULL);
-
+        QWidget * parent = nullptr
+    ,   Qt::WindowFlags flags = nullptr);
     virtual ~Viewer();
 
     void initialize(const GLFormat & format);

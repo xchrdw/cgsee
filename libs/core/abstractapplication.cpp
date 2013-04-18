@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QStringList>
+#include <QSettings>
 
 #include "abstractapplication.h"
 

@@ -1,5 +1,6 @@
 
 #include <QOpenGLContext>
+#include <QSettings>
 
 #include "ui_viewer.h"
 
@@ -7,6 +8,13 @@
 #include "canvas.h"
 
 #include <core/glformat.h>
+
+
+namespace 
+{
+    const QString SETTINGS_GEOMETRY ("Geometry");
+    const QString SETTINGS_STATE    ("State");
+}
 
 
 Viewer::Viewer(
@@ -19,6 +27,12 @@ Viewer::Viewer(
 ,   m_qtCanvas(nullptr)
 {
     m_ui->setupUi(this);
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings s;
+
+    restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
+    restoreState(s.value(SETTINGS_STATE).toByteArray());
 };
 
 #ifdef WIN32
@@ -77,5 +91,9 @@ void Viewer::initialize(const GLFormat & format)
 
 Viewer::~Viewer()
 {
+    QSettings s;
+    s.setValue(SETTINGS_GEOMETRY, saveGeometry());
+    s.setValue(SETTINGS_STATE, saveState());
+
     delete m_qtCanvas;
 }
