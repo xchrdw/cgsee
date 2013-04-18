@@ -1,13 +1,15 @@
 
 #include <GL/glew.h>
 
-#include "shader.h"
-#include "gpuquery.h"
-#include "program.h"
-
 #include <map>
 #include <cassert>
 #include <iostream>
+
+#include "shader.h"
+
+#include "gpuquery.h"
+#include "program.h"
+
 
 
 const Shader::t_typeStrings Shader::typeStrings = initializeTypeStrings();

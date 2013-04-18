@@ -1,11 +1,11 @@
 
 #pragma once
 
-#include <core/declspec.h>
-
 #include <QStringList>
 #include <QMap>
 #include <QVector>
+
+#include <core/declspec.h>
 
 
 class QGLFormat;

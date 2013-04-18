@@ -1,12 +1,11 @@
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "camera.h"
 
 #include "program.h"
 #include "gpuquery.h"
 #include "framebufferobject.h"
-
-#include <glm/gtc/matrix_transform.hpp>
-
 
 static const QString VIEWPORT_UNIFORM   ("viewport");
 static const QString VIEW_UNIFORM       ("view");

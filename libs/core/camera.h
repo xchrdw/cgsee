@@ -1,8 +1,9 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "group.h"
 
-#include <glm/glm.hpp>
 
 class Program;
 class FrameBufferObject;

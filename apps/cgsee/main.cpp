@@ -1,5 +1,5 @@
 
-//#include <core/glformat.h>
+#include <core/glformat.h>
 
 #include "cgsee.h"
 
@@ -17,16 +17,16 @@ int main(int argc, char* argv[])
     // Create Viewer
 
     Viewer * viewer = new Viewer();
-//    viewer->setWindowTitle(app->title());
-  //  viewer->initialize(app->format());
+    viewer->setWindowTitle(app->title());
+    viewer->initialize(app->format());
 
     // Create Scene and Controller
 
 
     // Start
 
-//    viewer->show();
-  //  result = app->exec();
+    viewer->show();
+    result = app->exec();
 
     // Clean Up
 

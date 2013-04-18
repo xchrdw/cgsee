@@ -2,10 +2,10 @@
 
 #include <GL/glew.h>
 
+#include <QString>
+
 #include "node.h"
 #include "common.h"
-
-#include <QString>
 
 
 class PolygonalGeometry : public Node

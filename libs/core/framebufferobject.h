@@ -2,9 +2,10 @@
 
 #include <GL/glew.h>
 
+#include <glm/glm.hpp>
+
 #include "common.h"
 
-#include <glm/glm.hpp>
 
 class Program;
 

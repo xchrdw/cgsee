@@ -1,11 +1,13 @@
 
-#include "gpuquery.h"
+#include <GL/glew.h>
 
 #ifdef WIN32
 #include <GL/wglew.h>
 #else
 #include <GL/glxew.h>
 #endif
+
+#include "gpuquery.h"
 
 
 // http://developer.download.nvidia.com/opengl/specs/GL_NVX_gpu_memory_info.txt

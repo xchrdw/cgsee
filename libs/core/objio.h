@@ -1,10 +1,12 @@
 #pragma once
 
-#include "common.h"
-
-#include <QString>
 #include <cstring>
 #include <sstream>
+
+#include <QString>
+
+#include "common.h"
+
 
 class Group;
 class PolygonalDrawable;

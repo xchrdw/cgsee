@@ -1,10 +1,6 @@
 
 #pragma once
 
-#include <QMainWindow>
-
-#include <core/declspec.h>
-
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -12,6 +8,10 @@
 #endif
 
 #include <memory>
+
+#include <QMainWindow>
+
+#include <core/declspec.h>
 
 
 class GLFormat;
@@ -42,8 +42,6 @@ protected:
     const GLXContext createQtContext(const GLFormat & format);
     static const GLXContext currentContextHandle();
 #endif
-
-
 
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;

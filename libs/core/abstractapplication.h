@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "declspec.h"
-
 #include <QApplication>
+
+#include "declspec.h"
 
 
 class GLFormat;

@@ -1,12 +1,12 @@
 
 #include <GL/glew.h>
 
-#include "canvas.h"
-
 #include <cassert>
 
 #include <QApplication>
 #include <QBasicTimer>
+
+#include "canvas.h"
 
 #include <core/gpuquery.h>
 #include <core/glformat.h>

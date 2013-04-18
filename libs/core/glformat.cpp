@@ -1,17 +1,18 @@
 
 #include <GL/glew.h>
 
-#include "glformat.h"
+#ifndef WIN32
+#include <GL/glx.h>
+#endif
 
 #include <cassert>
 
 #include <QGLFormat>
 
-#include "gpuquery.h"
 
-#ifndef WIN32
-#include <GL/glx.h>
-#endif
+#include "glformat.h"
+
+#include "gpuquery.h"
 
 
 const GLFormat::t_minorsByMajor GLFormat::m_validGLVersions 

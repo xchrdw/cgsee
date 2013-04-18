@@ -1,11 +1,10 @@
 
-#include "fileassociatedshader.h"
-
 #include <cassert>
 
 #include <QFile>
 #include <QFileInfo>
 
+#include "fileassociatedshader.h"
 
 using namespace std;
 

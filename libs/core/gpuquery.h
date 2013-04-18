@@ -3,9 +3,9 @@
 
 #include <GL/glew.h>
 
-#include "declspec.h"
-
 #include <QString>
+
+#include "declspec.h"
 
 
 class CGSEE_API GPUQuery

@@ -4,8 +4,6 @@
 #include "gpuquery.h"
 #include "program.h"
 
-#include <iostream>
-
 
 // http://www.swiftless.com/tutorials/opengl/framebuffer.html
 

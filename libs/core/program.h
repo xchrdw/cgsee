@@ -3,10 +3,10 @@
 
 #include <GL/glew.h>
 
+#include <glm/glm.hpp>
+
 #include <QSet>
 #include <QString>
-
-#include <glm/glm.hpp>
 
 
 class Shader;

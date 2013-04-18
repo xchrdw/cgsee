@@ -1,11 +1,13 @@
 
 #pragma once
 
-#include "shader.h"
-
 #include <QSet>
 #include <QMap>
 
+#include "shader.h"
+
+
+// TODO: QFileSystemWatcher could be added for automated update.
 
 class FileAssociatedShader : public Shader
 {

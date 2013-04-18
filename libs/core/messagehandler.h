@@ -1,11 +1,11 @@
 
 #pragma once
 
-#include "declspec.h"
-
 #include <QObject>
 #include <QMap>
 #include <QFile>
+
+#include "declspec.h"
 
 
 class QTextStream;

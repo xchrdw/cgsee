@@ -2,12 +2,12 @@
 
 #include <GL/glew.h>
 
-#include "node.h"
+#include <glm/glm.hpp>
 
 #include <QMap>
 #include <QVector>
 
-#include <glm/glm.hpp>
+#include "node.h"
 
 
 class PolygonalGeometry;

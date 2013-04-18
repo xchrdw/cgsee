@@ -1,10 +1,10 @@
 #pragma once
 
-#include "aabb.h"
-
 #include <QString>
 #include <QSet>
 #include <QList>
+
+#include "aabb.h"
 
 class Program;
 class Group;

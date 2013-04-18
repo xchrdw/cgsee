@@ -1,8 +1,6 @@
 ﻿
 #include "aabb.h"
 
-#include <cfloat>
-
 
 AxisAlignedBoundingBox::AxisAlignedBoundingBox()
 :   m_invalidated(true)

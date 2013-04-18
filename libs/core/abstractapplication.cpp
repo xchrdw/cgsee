@@ -1,14 +1,12 @@
 
-#include "abstractapplication.h"
-
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <qapplication.h>
 
 #include <QApplication>
 #include <QFileInfo>
 #include <QStringList>
+
+#include "abstractapplication.h"
 
 #include "meta.h"
 #include "glformat.h"

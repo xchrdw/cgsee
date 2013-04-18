@@ -1,9 +1,9 @@
 #pragma once
 
+#include <QVector>
+
 #include "common.h"
 #include "gpuquery.h"
-
-#include <QVector>
 
 
 class BufferObject
