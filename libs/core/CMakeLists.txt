@@ -8,18 +8,43 @@ set(SOURCES
 
     declspec.h
 
+    aabb.h
+    aabb.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstracttimer.h
+    bufferobject.h
+    bufferobject.cpp
+    camera.h
+    camera.cpp
     chronotimer.h
     chronotimer.cpp
+    common.h
+    fileassociatedshader.h
+    fileassociatedshader.cpp
+    framebufferobject.h
+    framebufferobject.cpp
     glformat.h
     glformat.cpp
     gpuquery.h
     gpuquery.cpp
+    group.h
+    group.cpp
     messagehandler.h
     messagehandler.cpp
     mathmacros.h
+    node.h
+    node.cpp
+    objio.h
+    objio.cpp
+    polygonaldrawable.h
+    polygonaldrawable.cpp
+    polygonalgeometry.h
+    polygonalgeometry.cpp
+    program.h
+    program.cpp
+    shader.h
+    shader.cpp
     timer.h
     timer.cpp
 )
@@ -34,10 +59,11 @@ include_directories(
 
 add_library(${target} SHARED ${HEADERS} ${SOURCES})
 
-qt5_use_modules(${target} OpenGL)
+qt5_use_modules(${target} Widgets OpenGL)
 
 target_link_libraries(${target}
     ${OPENGL_LIBRARIES}
+    ${GLEW_LIBRARY}
 )
 
 

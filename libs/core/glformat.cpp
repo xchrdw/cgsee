@@ -1,9 +1,10 @@
 
+#include <GL/glew.h>
+
 #include "glformat.h"
 
 #include <cassert>
 
-#include <QtOpenGL>
 #include <QGLFormat>
 
 #include "gpuquery.h"
@@ -486,7 +487,7 @@ const bool GLFormat::verifySwapInterval(
 
     if(!result)
     {
-        GPUQuery::error();
+        glError();
         qWarning("Setting swap interval to %i failed.", requestedInterval);
     }
 

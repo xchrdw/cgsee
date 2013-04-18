@@ -12,7 +12,8 @@
     #define __API_EXPORT_DECLARATION
     #define __API_IMPORT_DECLARATION
 #else
-    #error Missing API import/export declaration
+    #define __API_EXPORT_DECLARATION
+    #define __API_IMPORT_DECLARATION
 #endif
 
 #ifdef CGSEE_EXPORTS

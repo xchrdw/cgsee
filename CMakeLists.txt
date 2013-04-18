@@ -41,10 +41,10 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # root the bin and lib dirs to the project dir
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/install)
@@ -74,6 +74,8 @@ install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION .)
 # THIRD PARTIES
 
 find_package(OpenGL REQUIRED)
+find_package(GLM REQUIRED)
+find_package(GLEW REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
@@ -96,6 +98,8 @@ find_package(Qt5Widgets REQUIRED) # this is important in order to get uic workin
 include_directories(
     ${CMAKE_BINARY_DIR} # for Meta.h
     ${OPENGL_INCLUDE_DIR}
+    ${GLM_INCLUDE_PATH}
+    ${GLEW_INCLUDE_PATH}
     ${CMAKE_SOURCE_DIR}/libs)
 
 set(CGSEE_LIB_FOLDER "CGSee Libs")
@@ -119,7 +123,7 @@ elseif(LINUX AND CMAKE_COMPILER_IS_GNUCXX)
     include(${CMAKE_SOURCE_DIR}/cmake/PlatformLinuxGCC.cmake)
 else()
     # TODO configure for apple        
-    message(FATAL_ERROR "Unsupported System-Compiler combination.")
+    message(WARNING "No Platform configuration for APPLE yet: TODO")
 endif()
 
 

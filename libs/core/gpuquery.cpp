@@ -1,7 +1,11 @@
 
 #include "gpuquery.h"
 
-#include <GL/glu.h>
+#ifdef WIN32
+#include <GL/wglew.h>
+#else
+#include <GL/glxew.h>
+#endif
 
 
 // http://developer.download.nvidia.com/opengl/specs/GL_NVX_gpu_memory_info.txt
@@ -46,7 +50,7 @@ const GLint GPUQuery::memoryInfo(const GLenum penum)
     GLint memory(0); // in kb
     glGetIntegerv(penum, &memory);
 
-    error();
+    glError();
 
     return memory;
 }
@@ -56,7 +60,7 @@ const GLint GPUQuery::queryi(const GLenum penum)
     GLint result;
     glGetIntegerv(penum, &result);
 
-    error();
+    glError();
 
     return result;
 }
@@ -64,7 +68,15 @@ const GLint GPUQuery::queryi(const GLenum penum)
 const QString GPUQuery::querys(const GLenum penum)
 {
     const QString result = reinterpret_cast<const char*>(glGetString(penum));
-    error();
+    glError();
+
+    return result;
+}
+
+const QString GPUQuery::glew(const GLenum penum)
+{
+    const QString result(reinterpret_cast<const char*>(glewGetString(penum)));
+    glError();
 
     return result;
 }
@@ -79,18 +91,89 @@ const QString GPUQuery::renderer()
     return querys(GL_RENDERER);
 }
 
-const bool GPUQuery::error()
+const QString GPUQuery::glewVersion()
+{
+    return glew(GLEW_VERSION);
+}
+
+const QString GPUQuery::glewError(const GLenum penum)
+{
+    const QString result = reinterpret_cast<const char*>(glewGetErrorString(penum));
+    return result;
+}
+
+const bool GPUQuery::error(
+    const char * file
+,   const int line)
 {
     const GLenum error(glGetError());
     const bool errorOccured(GL_NO_ERROR != error);
 
     if(errorOccured) 
-        qCritical("OpenGL: %s", gluErrorString(error));
+        qCritical("OpenGL: %s [0x%x %s : %i]\n", glewGetErrorString(error), error, file, line);
 
     return errorOccured;
 }
 
+const bool GPUQuery::isShader(const GLuint shader)
+{
+	const bool is(glIsShader(shader) == GL_TRUE);
+	if(!is)
+		glGetError();
+
+	return is;
+}
+
+const bool GPUQuery::isProgram(const GLuint program)
+{
+	const bool is(glIsProgram(program) == GL_TRUE);
+	if(!is)
+		glGetError();
+	return is;
+}
+
+const bool GPUQuery::isBuffer(const GLuint buffer)
+{
+    const bool is(glIsBuffer(buffer) == GL_TRUE);
+	if(!is)
+		glGetError();
+	return is;
+}
+
+const bool GPUQuery::isFrameBuffer(const GLuint framebuffer)
+{
+    const bool is(glIsFramebuffer(framebuffer) == GL_TRUE);
+	if(!is)
+		glGetError();
+	return is;
+}
+
+const bool GPUQuery::isTexture(const GLuint texture)
+{
+    const bool is(glIsTexture(texture) == GL_TRUE);
+	if(!is)
+		glGetError();
+	return is;
+}
+
+const bool GPUQuery::isRenderBuffer(const GLuint renderbuffer)
+{
+    const bool is(glIsTexture(renderbuffer) == GL_TRUE);
+	if(!is)
+		glGetError();
+	return is;
+}
+
 const bool GPUQuery::extensionSupported(const char *extension)
 {
-    return QOpenGLContext::currentContext()->hasExtension(extension);
+    bool supported = glewIsSupported(extension) ? true : false;
+
+    if(!supported)
+#ifdef WIN32
+        return wglewIsSupported(extension) ? true : false;
+#else
+        return glxewIsSupported(extension) ? true : false;
+#endif
+
+    return supported;
 }
