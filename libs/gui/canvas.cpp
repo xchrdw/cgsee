@@ -7,6 +7,7 @@
 #include <QBasicTimer>
 
 #include "canvas.h"
+#include "abstractpainter.h"
 
 #include <core/gpuquery.h>
 #include <core/glformat.h>
@@ -19,6 +20,7 @@ Canvas::Canvas(
 :   QGLWidget(format.asQGLFormat(), parent)
 ,   m_format(format)
 ,   m_timer(nullptr)
+,   m_painter(nullptr)
 {
     m_timer = new QBasicTimer();
 
@@ -61,9 +63,11 @@ void Canvas::updateViewport() const
 {
     glViewport(0, 0, width(), height());
 
+    // This is required e.g. for overlay painting
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
- 
+
 #ifdef QT_OPENGL_ES
     glOrthof(0.f, 1.f, 0.f, 1.f, 0.f, 1.f);
  #else
@@ -78,43 +82,41 @@ void Canvas::resizeGL(
 ,   int height)
 {
     updateViewport();
+    
+    if(m_painter)
+        m_painter->resize(width, height);
 }
 
 
 // http://doc.qt.digia.com/qt/opengl-overpainting-glwidget-cpp.html
+// http://harmattan-dev.nokia.com/docs/library/html/qt4/opengl-overpainting.html
 
-void Canvas::paintEvent(QPaintEvent * event)
+void Canvas::paintEvent(QPaintEvent *)
 {
-    // TODO: Replace Dummy IMPL
-
-    makeCurrent();
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-
-    updateViewport();
 
     paint();
 
-    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+    glPopAttrib();
 
-    // ----
-
-    glPushMatrix();
+    // The fixed function OGL is used to support old school OpenGL calls for overlay painting.
+    // NOTE: it is not tested, what happens on contexts in newer core profiles.
 
     QPainter painter(this);
     paintOverlay(painter);
-
     painter.end();
-
-    glPopMatrix();
 }
 
 void Canvas::paint()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
+    if(m_painter)
+        m_painter->paint();
+    else 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Canvas::paintOverlay(QPainter & painter)
@@ -130,4 +132,18 @@ void Canvas::timerEvent(QTimerEvent *event)
         return;
 
     update();
+}
+
+void Canvas::setPainter(AbstractPainter * painter)
+{
+    if(m_painter == painter)
+        return;
+
+    m_painter = painter;
+    update();
+}
+
+AbstractPainter * Canvas::painter()
+{
+    return m_painter;
 }

@@ -7,6 +7,8 @@
 #include <QMap>
 #include <QVector>
 
+#include "declspec.h"
+
 #include "node.h"
 
 
@@ -15,7 +17,7 @@ class BufferObject;
 class Program;
 
 
-class PolygonalDrawable : public Node
+class CGSEE_API PolygonalDrawable : public Node
 {
 public:
     PolygonalDrawable(const QString & name = "unnamed");

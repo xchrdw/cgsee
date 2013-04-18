@@ -18,6 +18,7 @@ class GLFormat;
 
 class Ui_Viewer;
 class Canvas;
+class AbstractPainter;
 
 
 class CGSEE_API Viewer : public QMainWindow
@@ -29,6 +30,9 @@ public:
     virtual ~Viewer();
 
     void initialize(const GLFormat & format);
+
+    void setPainter(AbstractPainter * painter);
+    AbstractPainter * painter();
 
 protected:
 

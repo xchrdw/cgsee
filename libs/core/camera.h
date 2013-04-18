@@ -2,13 +2,14 @@
 
 #include <glm/glm.hpp>
 
+#include "declspec.h"
 #include "group.h"
 
 
 class Program;
 class FrameBufferObject;
 
-class Camera : public Group
+class CGSEE_API Camera : public Group
 {
 public:
     Camera(const QString & name = "unnamed");

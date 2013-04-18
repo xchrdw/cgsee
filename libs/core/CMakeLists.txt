@@ -43,6 +43,8 @@ set(SOURCES
     polygonalgeometry.cpp
     program.h
     program.cpp
+    screenquad.h
+    screenquad.cpp
     shader.h
     shader.cpp
     timer.h

@@ -5,13 +5,15 @@
 
 #include <QString>
 
+#include "declspec.h"
+
 #include "common.h"
 
 
 class Group;
 class PolygonalDrawable;
 
-class ObjIO
+class CGSEE_API ObjIO
 {
 public:
     static Group * groupFromObjFile(const QString & filePath);

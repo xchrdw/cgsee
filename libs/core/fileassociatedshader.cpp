@@ -42,7 +42,7 @@ const bool FileAssociatedShader::setSourceFromFile(const bool update)
     if(!file.open(QIODevice::ReadOnly))
 	{
         qCritical("Read from \"%s\" failed.",  qPrintable(m_filePath));
-        return NULL;
+        return nullptr;
     }
 
     QByteArray data = file.readAll();

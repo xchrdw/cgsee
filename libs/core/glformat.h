@@ -5,7 +5,7 @@
 #include <QMap>
 #include <QVector>
 
-#include <core/declspec.h>
+#include "declspec.h"
 
 
 class QGLFormat;

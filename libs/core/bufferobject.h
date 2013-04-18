@@ -2,11 +2,12 @@
 
 #include <QVector>
 
+#include "declspec.h"
 #include "common.h"
 #include "gpuquery.h"
 
 
-class BufferObject
+class CGSEE_API BufferObject
 {
 public:
     BufferObject(

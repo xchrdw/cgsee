@@ -28,7 +28,8 @@ public:
 
     // Extension Info
     
-    static const bool extensionSupported(const char *extension);
+    static const bool extensionSupported(const char * extension);
+    static const bool extensionSupported(const QString & extension);
 
 	static const bool isShader(const GLuint shader);
 	static const bool isProgram(const GLuint program);

@@ -9,6 +9,8 @@
 class QBasicTimer;
 class QTimerEvent;
 
+class AbstractPainter;
+
 
 class CGSEE_API Canvas : public QGLWidget
 {
@@ -17,6 +19,9 @@ public:
         const GLFormat & format,
         QWidget * parent = nullptr);
     virtual ~Canvas();
+
+    void setPainter(AbstractPainter * painter);
+    AbstractPainter * painter();
 
 protected:
     
@@ -43,8 +48,8 @@ protected:
     void updateViewport() const;
 
 protected:
+    AbstractPainter * m_painter;
 
-protected:
     QBasicTimer * m_timer;
     const GLFormat m_format;
 };

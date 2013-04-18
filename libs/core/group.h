@@ -1,11 +1,13 @@
 #pragma once
 
+#include "declspec.h"
+
 #include "node.h"
 
 class PolygonalDrawable;
 class Program;
 
-class Group : public Node
+class CGSEE_API Group : public Node
 {
 public:
     Group(const QString & name = "unnamed");

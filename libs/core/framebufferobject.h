@@ -4,12 +4,13 @@
 
 #include <glm/glm.hpp>
 
+#include "declspec.h"
 #include "common.h"
 
 
 class Program;
 
-class FrameBufferObject
+class CGSEE_API FrameBufferObject
 {
 public:
     FrameBufferObject(

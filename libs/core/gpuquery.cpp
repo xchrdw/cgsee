@@ -164,7 +164,7 @@ const bool GPUQuery::isRenderBuffer(const GLuint renderbuffer)
 	return is;
 }
 
-const bool GPUQuery::extensionSupported(const char *extension)
+const bool GPUQuery::extensionSupported(const char * extension)
 {
     bool supported = glewIsSupported(extension) ? true : false;
 
@@ -176,4 +176,10 @@ const bool GPUQuery::extensionSupported(const char *extension)
 #endif
 
     return supported;
+}
+
+const bool GPUQuery::extensionSupported(const QString & extension)
+{
+    QByteArray b(extension.toLocal8Bit());
+    return extensionSupported(b.constData());
 }

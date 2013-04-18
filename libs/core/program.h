@@ -8,10 +8,12 @@
 #include <QSet>
 #include <QString>
 
+#include "declspec.h"
+
 
 class Shader;
 
-class Program
+class CGSEE_API Program
 {
 public:
 	typedef QSet<Shader *> t_shaders;

@@ -7,6 +7,8 @@
 #include <map>
 #include <unordered_map>
 
+#include <QFile>
+
 #include "objio.h"
 
 #include "group.h"
@@ -42,9 +44,13 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
     // http://en.wikipedia.org/wiki/Wavefront_.obj_file
     // http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Load_OBJ
 
-#ifdef _DEBUG
+    if(!QFile::exists(filePath))
+    {
+        qDebug("Reading geometry failed: \"%s\" does not exist.", qPrintable(filePath));
+        return nullptr;
+    }
+
     qDebug("Reading geometry from \"%s\".", qPrintable(filePath));
-#endif
 
     const std::string path(filePath.toStdString());
 
@@ -52,7 +58,7 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
     if(!stream)
     {
         qCritical("Read from \"%s\" failed.", path.c_str());
-        return NULL;
+        return nullptr;
     }
 
     t_objects objects;

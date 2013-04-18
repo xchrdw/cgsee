@@ -7,10 +7,11 @@
 #include <QMap>
 #include <QSet>
 
+#include "declspec.h"
 
 class Program;
 
-class Shader
+class CGSEE_API Shader
 {
 public:
 	typedef QSet<Program *> t_programs;

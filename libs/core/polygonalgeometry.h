@@ -4,11 +4,13 @@
 
 #include <QString>
 
+#include "declspec.h"
+
 #include "node.h"
 #include "common.h"
 
 
-class PolygonalGeometry : public Node
+class CGSEE_API PolygonalGeometry : public Node
 {
 public:
     PolygonalGeometry(const QString & name = "unnamed");

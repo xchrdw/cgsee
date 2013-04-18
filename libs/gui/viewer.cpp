@@ -6,6 +6,7 @@
 
 #include "viewer.h"
 #include "canvas.h"
+#include "abstractpainter.h"
 
 #include <core/glformat.h>
 
@@ -71,7 +72,7 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     const GLXContext qtContextHandle = currentContextHandle();
 #endif
 
-    if(NULL == qtContextHandle)
+    if(nullptr == qtContextHandle)
         qFatal("Acquiring QtGL-Context handle failed.");
 
     // canvas verifies the context itself.
@@ -96,4 +97,20 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_STATE, saveState());
 
     delete m_qtCanvas;
+}
+
+void Viewer::setPainter(AbstractPainter * painter)
+{
+    if(!m_qtCanvas)
+        return;
+
+    m_qtCanvas->setPainter(painter);
+}
+
+AbstractPainter * Viewer::painter()
+{
+    if(!m_qtCanvas)
+        return nullptr;
+
+    return m_qtCanvas->painter();
 }

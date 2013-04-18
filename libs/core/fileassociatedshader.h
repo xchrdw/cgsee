@@ -4,12 +4,13 @@
 #include <QSet>
 #include <QMap>
 
+#include "declspec.h"
 #include "shader.h"
 
 
 // TODO: QFileSystemWatcher could be added for automated update.
 
-class FileAssociatedShader : public Shader
+class CGSEE_API FileAssociatedShader : public Shader
 {
 public:
     FileAssociatedShader(

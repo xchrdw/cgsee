@@ -4,12 +4,15 @@
 #include <QSet>
 #include <QList>
 
+#include "declspec.h"
+
 #include "aabb.h"
+
 
 class Program;
 class Group;
 
-class Node
+class CGSEE_API Node
 {
 public:
     typedef QList<Node *> t_nodes;
