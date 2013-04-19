@@ -19,7 +19,7 @@ If you are contributing to this project, please keep the following notes in mind
 
 ## Build Notes
 
-The project is actively developed on linux, mac, and windws plattforms.
+CGSee is actively developed on all major platforms (Windows, Mac, Linux).
 
 ### Dependencies
 
