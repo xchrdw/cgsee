@@ -56,7 +56,7 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
 
-    QGLContext * qContext(m_qtCanvas->context());
+    QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
 
     if(!qContext)
         qFatal("Creating QtGL-Context failed.");
