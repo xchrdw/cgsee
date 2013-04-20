@@ -24,6 +24,7 @@ qt5_use_modules(${target} OpenGL)
 
 target_link_libraries(${target}
     ${OPENGL_LIBRARIES}
+    ${EXTRA_LIBS}
     core)
 
 set_target_properties(${target}
