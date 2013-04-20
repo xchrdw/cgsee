@@ -1,4 +1,4 @@
 
 call _configure.bat
 
-cmake-gui
+"D:\CMake 2.8\bin\cmake-gui.exe"
