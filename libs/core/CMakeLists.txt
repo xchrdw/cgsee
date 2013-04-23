@@ -12,6 +12,8 @@ set(SOURCES
     aabb.cpp
     abstractapplication.h
     abstractapplication.cpp
+    datacore/abstractdata.h
+    datacore/abstractdata.cpp
     abstracttimer.h
     bufferobject.h
     bufferobject.cpp

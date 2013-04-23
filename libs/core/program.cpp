@@ -10,8 +10,6 @@
 #include "shader.h"
 #include "gpuquery.h"
 
-
-
 Program::Program()
 :	m_program(0)
 ,   m_linked(false)
