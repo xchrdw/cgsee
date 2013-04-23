@@ -98,7 +98,8 @@ void FrameBufferObject::initialize() const
 {
     if(m_depth) // Initialize Render Buffer for Depth
     {
-		glGenRenderbuffers(1, &m_render);
+//		glGenRenderbuffers(1, &m_render);
+        glGenTextures(1, &m_render);
 		glError();
     }
 
@@ -114,8 +115,8 @@ void FrameBufferObject::initialize() const
 
 	if(m_depth)
 	{
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT
-			, GL_RENDERBUFFER, m_render);
+//		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render, 0);
 		glError();
 	}
 

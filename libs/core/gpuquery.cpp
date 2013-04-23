@@ -142,10 +142,13 @@ const bool GPUQuery::isBuffer(const GLuint buffer)
 
 const bool GPUQuery::isFrameBuffer(const GLuint framebuffer)
 {
+    /*
     const bool is(glIsFramebuffer(framebuffer) == GL_TRUE);
 	if(!is)
 		glGetError();
 	return is;
+    */
+    return (framebuffer != -1);
 }
 
 const bool GPUQuery::isTexture(const GLuint texture)

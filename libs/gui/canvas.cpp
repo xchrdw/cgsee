@@ -46,6 +46,9 @@ void Canvas::initializeGL()
     qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));
     qDebug("GLEW Version: %s\n", qPrintable(GPUQuery::glewVersion()));
 
+    // This is required, otherwise glGenFramebuffers is null ..
+    glewExperimental = GL_TRUE;
+
     const GLenum error = glewInit();
     if(GLEW_OK != error)
         qCritical("Glew failed to initialized: %s\n", qPrintable(GPUQuery::glewError(error)));

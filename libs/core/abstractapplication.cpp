@@ -51,9 +51,9 @@ const GLFormat AbstractApplication::format() const
 {
     GLFormat format;
 
-    format.setVersion(4, 3);
+    format.setVersion(3, 2);
     // Version 3.2 + yields CoreProfile context by default.
-    format.setProfile(GLFormat::CompatibilityProfile);
+    format.setProfile(GLFormat::CoreProfile);
 
     format.setVSync(true);
 
