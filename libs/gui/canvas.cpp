@@ -29,7 +29,8 @@ Canvas::Canvas(
     setMinimumSize(1, 1);
 
     // Important for overdraw, not occluding the scene.
-    setAutoFillBackground(false); 
+    setAutoFillBackground(false);
+	setUpdatesEnabled(false);
 }
 
 Canvas::~Canvas()
