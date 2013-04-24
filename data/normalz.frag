@@ -1,4 +1,4 @@
-#version 330 core
+#version 150 core
 
 in vec4 gl_FragCoord;
 out vec4 fragcolor;
