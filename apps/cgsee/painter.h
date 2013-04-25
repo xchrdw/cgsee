@@ -1,17 +1,15 @@
 
 #pragma once
 
+#include <GL/glew.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <QString>
 #include <QMap>
 
 #include <gui/abstractpainter.h>
 
-
-class Camera;
-class Group;
-class ScreenQuad;
-class Program;
-class FrameBufferObject;
 
 class Painter : public AbstractPainter
 {
@@ -29,24 +27,31 @@ protected:
     virtual const bool initialize();
 
 protected:
-    void postShaderRelinked();
+	int m_width;
+	int m_height;
 
-    typedef QMap<QString, FrameBufferObject *> t_samplerByName;
+	float m_aspect;
 
-	static void bindSampler(
-		const t_samplerByName & sampler
-	,	Program * program);
+	float m_fovy;
+	float m_zNear;
+	float m_zFar;
 
-	static void releaseSampler(
-		const t_samplerByName & sampler);
+	glm::vec3 m_eye;
+	glm::vec3 m_center;
+	glm::vec3 m_up;
 
-protected:
-    Camera * m_camera;
-    Group * m_group;
-    ScreenQuad * m_quad;
+	glm::mat4 m_projection;
+	glm::mat4 m_model;
+	glm::mat4 m_view;
 
-    Program * m_normalz;
-    FrameBufferObject * m_fboNormalz;
+	GLint m_vert;
+	GLint m_frag;
+	GLint m_program;
 
-    Program * m_flush;
+	GLint a_vertex;
+	GLint u_transform;
+
+	GLuint m_vao;
+	GLuint m_indices;
+    GLuint m_vertices;
 };

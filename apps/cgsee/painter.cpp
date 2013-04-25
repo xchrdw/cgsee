@@ -1,114 +1,308 @@
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "painter.h"
 
 #include <core/mathmacros.h>
 #include <core/glformat.h>
-#include <core/camera.h>
-#include <core/fileassociatedshader.h>
-#include <core/framebufferobject.h>
 #include <core/gpuquery.h>
-#include <core/group.h>
-#include <core/objio.h>
-#include <core/program.h>
-#include <core/screenquad.h>
+#include <core/timer.h>
 
 
 Painter::Painter()
 :   AbstractPainter()
-,   m_group(nullptr)
-,   m_camera(nullptr)
-,   m_normalz(nullptr)
-,   m_fboNormalz(nullptr)
-,   m_flush(nullptr)
-,   m_quad(nullptr)
+
+,	m_height(1)
+,	m_width (1)
+,	m_aspect(1.f)
+
+,	m_model(1.f)
+,	m_view(1.f)
+,	m_projection(1.f)
+
+,	m_eye   (glm::vec3(0.f, 0.f,-4.f))
+,	m_center(glm::vec3(0.f, 0.f, 0.f))
+,	m_up    (glm::vec3(0.f, 1.f, 0.f))
+
+,	m_fovy  (45.f)
+,	m_zNear ( .1f)
+,	m_zFar  (10.f)
+
+,	m_vert(-1)
+,	m_frag(-1)
+,	m_program(-1)
+
+,	a_vertex(-1)
+,	u_transform(-1)
+
+,	m_vao(-1)
+,	m_indices(-1)
+,   m_vertices(-1)
 {
 }
 
 Painter::~Painter()
 {
-    delete m_group;
-    delete m_quad;
+    glDeleteBuffers(1, &m_vertices);
+    glDeleteBuffers(1, &m_indices);
 
-    delete m_normalz;
-    delete m_fboNormalz;
-    delete m_flush;    
+	glDetachShader(m_program, m_vert);
+	glError();
+	glDetachShader(m_program, m_frag);
+	glError();
+
+	glDeleteShader(m_vert);
+	glError();
+	glDeleteShader(m_frag);
+	glError();
+
+	glDeleteProgram(m_program);
+	glError();
 }
+
+void getCompileInfo(const GLint shader)
+{
+	GLint status(GL_FALSE);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+
+	const GLboolean compiled = (GL_TRUE == status);
+    GLchar * log = "";
+
+    if(!compiled)
+    {
+        GLint maxLength(0);
+        GLint logLength(0);
+
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+        glError();
+
+        GLchar *chr = new GLchar[maxLength];
+        glGetShaderInfoLog(shader, maxLength, &logLength, chr);
+        glError();
+
+        log = chr;
+
+		qCritical("Compiling shader failed.");
+        qCritical("%s", log);
+    }
+}
+
 
 const bool Painter::initialize()
 {
-    m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
-    if(!m_group)
-    {
-        qWarning("Have you set the Working Directory?");
-        return false;
-    }
+    // initialize view
 
-    glEnable(GL_CULL_FACE);
+	m_view = glm::lookAt(m_eye, m_center, m_up);
+
+	// initialize shaders and program
+
+	glError();
+	m_vert = glCreateShader(GL_VERTEX_SHADER);
+	glError();
+	m_frag = glCreateShader(GL_FRAGMENT_SHADER);
+	glError();
+
+	static const char * srcv = // c++11
+
+        "#version 150 core\n"
+        "\n"
+        "in vec3 a_vertex;\n"
+        "in vec3 a_normal;\n"
+		"\n"
+		"out vec3 local;\n"
+        "out vec3 world;\n"
+		"\n"
+		"uniform mat4 transform;\n"
+        "\n"
+        "void main(void)\n"
+        "{\n"
+        "   vec4 vertex = transform * vec4(a_vertex, 1.0);\n"
+        "   local = a_vertex;\n"
+        "   world = vertex.xyz;\n"
+        "	gl_Position = vertex;\n"
+        "}\n";
+
+	static const char * srcf =
+
+        "#version 150 core\n"
+        "\n"
+        "uniform vec3 bg;\n"
+        "\n"
+		"in vec3 local;\n"
+        "in vec3 world;\n"
+        "out vec4 fragcolor;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    float znear =  0.1;\n"
+        "    float zfar  = 10.0;\n"
+        "\n"
+        "    vec3 c = normalize(local) * 0.5 + 0.5;\n"
+        "\n"
+        "    float z = gl_FragCoord.z;\n"
+        "    z = - znear * z / (zfar * z - zfar - znear * z);\n"
+        "\n"
+        "    c = mix(c, bg, z);\n"
+        "    fragcolor = vec4(c, 1.0);\n"
+        "}\n";
+
+	glShaderSource(m_vert, 1, &srcv, nullptr);
+	glError();
+	glCompileShader(m_vert);
+	glError();
+
+	getCompileInfo(m_vert);
+
+	glShaderSource(m_frag, 1, &srcf, nullptr);
+	glError();
+	glCompileShader(m_frag);
+	glError();
+
+	getCompileInfo(m_frag);
+
+
+	m_program = glCreateProgram();
+
+	glAttachShader(m_program, m_vert);
+	glError();
+	glAttachShader(m_program, m_frag);
+	glError();
+
+	glLinkProgram(m_program);
+	glError();
+	// get error log!
+
+	a_vertex = glGetAttribLocation(m_program, "a_vertex");
+	glError();
+	u_transform = glGetUniformLocation(m_program, "transform");
+	glError();
+
+    GLint bg = glGetUniformLocation(m_program, "bg");
+    glError();
+
+
+	// initialize geometry
+
+	static const GLfloat vertices[24] = 
+    {
+        -1.f,-1.f,-1.f,	// 0
+	    -1.f,-1.f, 1.f,	// 1
+		-1.f, 1.f,-1.f,	// 2
+		-1.f, 1.f, 1.f,	// 3
+		 1.f,-1.f,-1.f,	// 4
+		 1.f,-1.f, 1.f, // 5
+		 1.f, 1.f,-1.f, // 6
+		 1.f, 1.f, 1.f  // 7
+    };
+
+    static const GLubyte indices[14] = {
+        2, 0, 6, 4, 5, 0, 1, 2, 3, 6, 7, 5, 3, 1 };
+
+
+    glGenVertexArrays(1, &m_vao);
+    glError();
+    glBindVertexArray(m_vao);
+    glError();
+
+    glGenBuffers(1, &m_indices);
+	glError();
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
+	glError();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (6 * 2 + 2) * sizeof(GLubyte), indices, GL_STATIC_DRAW);
+	glError();
+
+    glGenBuffers(1, &m_vertices);
+	glError();
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertices);
+	glError();
+	glBufferData(GL_ARRAY_BUFFER, (8 * 3) * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+	glError();
+
+	// initialize state
+
+	glClearColor(.3f, .4f, .5f, 1.f);
+
+    glUseProgram(m_program);
+    glUniform3f(bg, .3f, .4f, .5f);
+
     glEnable(GL_DEPTH_TEST);
 
-    glm::mat4 transform(1.f);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
 
-    transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-    transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
-
-    m_group->setTransform(transform);
-
-    // Camera Setup
-
-    m_camera = new Camera();
-
-    m_camera->setFovy (45.0f);
-    m_camera->setZNear( 1.0f);
-    m_camera->setZFar (10.0f);
-
-    m_camera->append(m_group);
-
-    m_camera->setView(glm::lookAt(
-        glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
-
-    m_quad = new ScreenQuad();
-
-    // G-Buffer Shader
-
-	m_normalz = new Program();
-	m_normalz->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
-	m_normalz->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
-
-    // Post Processing Shader
-
-    m_flush = new Program();
-	m_flush->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
-	m_flush->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
-
-    m_fboNormalz = new FrameBufferObject(
-        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-
-    return true;
+	return true;
 }
+
+Timer t; 
+float angleY(0.f);
+float angleZ(0.f);
+float angle (0.f);
 
 void Painter::paint()
 {
     AbstractPainter::paint();
+	glError();
 
-	t_samplerByName sampler;
+    if(t.paused())
+        t.start();
 
-	// Normals and Depth to RGBA
+    angleY =  _deg(_PI2 * t.elapsed() / 8.f);
+    angleZ =  _deg(sin(_PI * t.elapsed() / 16.f));
+    angle  =  ((sin(_PI2 * t.elapsed() / 16.f) + 1.f) * 0.5 + 1.0) * 0.1f;
 
-    m_camera->draw(m_normalz, m_fboNormalz);
+    m_model = glm::rotate(glm::mat4(1), angleY, glm::vec3(0.f, 1.f, 0.f));
+    m_model = glm::rotate(m_model, angleZ, glm::vec3(0.f, 0.f, 1.f));
 
+	const glm::mat4 M = m_projection * m_view * m_model;
 
-    sampler.clear();
-	sampler["source"] = m_fboNormalz;
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	bindSampler(sampler, m_flush);
-    m_quad->draw(*m_flush, nullptr);
-	releaseSampler(sampler);
+	// use program and set uniforms
+
+	glUseProgram(m_program);
+	glError();
+
+	// bind vertices
+
+    glBindVertexArray(m_vao);
+    glError();
+
+    glEnableVertexAttribArray(a_vertex);
+    glError();
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertices);
+    glError();
+    glVertexAttribPointer(a_vertex, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glError();
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
+    glError();
+
+    for(int x = -7; x < 8; ++x)
+    for(int y = -7; y < 8; ++y)
+    for(int z = -7; z < 8; ++z)
+    {
+        glm::mat4 t = glm::translate(m_model, glm::vec3(x, y, z));
+        t = glm::scale(t, glm::vec3(angle, angle, angle));
+
+        const glm::mat4 T = m_projection * m_view * t;
+           
+        glUniformMatrix4fv(u_transform, 1, false, glm::value_ptr(T));
+	    glError();
+
+        glDrawElements(GL_TRIANGLE_STRIP, 14, GL_UNSIGNED_BYTE, 0);
+        glError();
+    }
+
+    glDisableVertexAttribArray(a_vertex);
+    glError();
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glError();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glError();
+
+	glUseProgram(0);
+	glError();
 }
 
 void Painter::resize(
@@ -116,35 +310,11 @@ void Painter::resize(
 ,   const int height)
 {
     AbstractPainter::resize(width, height);
-    
-    m_camera->setViewport(width, height);
-
-    m_fboNormalz->resize(width, height);
+   
+	m_width = width;
+	m_height = height;
 	
-	postShaderRelinked();
-}
+	m_aspect = static_cast<float>(width) / static_cast<float>(height);
 
-void Painter::postShaderRelinked()
-{
-}
-
-void Painter::bindSampler(
-	const t_samplerByName & sampler
-,	Program * program)
-{
-	t_samplerByName::const_iterator i(sampler.begin());
-	const t_samplerByName::const_iterator iEnd(sampler.end());
-	
-	for(glm::uint slot(0); i != iEnd; ++i, ++slot)
-        i.value()->bindTexture2D(program, i.key(), slot);
-}
-
-void Painter::releaseSampler(
-	const t_samplerByName & sampler)
-{
-	t_samplerByName::const_iterator i(sampler.begin());
-	const t_samplerByName::const_iterator iEnd(sampler.end());
-
-	for(; i != iEnd; ++i)
-		i.value()->releaseTexture2D();
+	m_projection = glm::perspective(m_fovy, m_aspect, m_zNear, m_zFar);
 }

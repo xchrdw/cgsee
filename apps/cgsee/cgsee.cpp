@@ -3,6 +3,7 @@
 #include "painter.h"
 
 #include <gui/viewer.h>
+#include <core/gpuquery.h>
 
 
 CGSee::CGSee(int & argc, char ** argv)
@@ -11,6 +12,8 @@ CGSee::CGSee(int & argc, char ** argv)
 ,   m_painter(nullptr)
 {
     // Create Viewer
+
+    glError();
 
     m_viewer = new Viewer();
     m_viewer->setWindowTitle(title());
