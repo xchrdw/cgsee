@@ -62,8 +62,13 @@ void Camera::draw(
 		program->setUniform(ZNEAR_UNIFORM, m_zNear);
 		program->setUniform(ZFAR_UNIFORM, m_zFar);
     }
+
+	
+	glEnable(GL_DEPTH_TEST);
     
     Group::draw(program, glm::mat4());
+
+	glDisable(GL_DEPTH_TEST);
 
     if(target)
         target->release();
