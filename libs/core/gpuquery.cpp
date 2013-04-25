@@ -117,51 +117,51 @@ const bool GPUQuery::error(
 
 const bool GPUQuery::isShader(const GLuint shader)
 {
-	const bool is(glIsShader(shader) == GL_TRUE);
-	if(!is)
-		glGetError();
+    const bool is(glIsShader(shader) == GL_TRUE);
+    if(!is)
+        glGetError();
 
-	return is;
+    return is;
 }
 
 const bool GPUQuery::isProgram(const GLuint program)
 {
-	const bool is(glIsProgram(program) == GL_TRUE);
-	if(!is)
-		glGetError();
-	return is;
+    const bool is(glIsProgram(program) == GL_TRUE);
+    if(!is)
+        glGetError();
+    return is;
 }
 
 const bool GPUQuery::isBuffer(const GLuint buffer)
 {
     const bool is(glIsBuffer(buffer) == GL_TRUE);
-	if(!is)
-		glGetError();
-	return is;
+    if(!is)
+        glGetError();
+    return is;
 }
 
 const bool GPUQuery::isFrameBuffer(const GLuint framebuffer)
 {
     const bool is(glIsFramebuffer(framebuffer) == GL_TRUE);
-	if(!is)
-		glGetError();
-	return is;
+    if(!is)
+        glGetError();
+    return is;
 }
 
 const bool GPUQuery::isTexture(const GLuint texture)
 {
     const bool is(glIsTexture(texture) == GL_TRUE);
-	if(!is)
-		glGetError();
-	return is;
+    if(!is)
+        glGetError();
+    return is;
 }
 
 const bool GPUQuery::isRenderBuffer(const GLuint renderbuffer)
 {
     const bool is(glIsTexture(renderbuffer) == GL_TRUE);
-	if(!is)
-		glGetError();
-	return is;
+    if(!is)
+        glGetError();
+    return is;
 }
 
 const bool GPUQuery::extensionSupported(const char * extension)

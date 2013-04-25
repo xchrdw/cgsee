@@ -23,16 +23,16 @@ public:
 
     template <typename T>
     void data(
-		const QVector<T> & v
-	,	const GLenum type
-	,	const GLint  size);
+        const QVector<T> & v
+    ,   const GLenum type
+    ,   const GLint  size);
 
     template <typename T>
     void data(
         const T * v
     ,   const GLsizei count
-	,	const GLenum type
-	,	const GLint size);
+    ,   const GLenum type
+    ,   const GLint size);
 
     void bind();
     void bind(const GLint attributeLocation);
@@ -40,7 +40,7 @@ public:
     void release();
     void release(const GLint attributeLocation);
 
-	void draw(const GLenum mode);
+    void draw(const GLenum mode);
 
 protected:
     void generateBuffer();
@@ -51,43 +51,43 @@ protected:
     const GLenum  m_target;
     const GLenum  m_usage;
 
-	GLsizei m_count;
-	GLint   m_size;
-	GLenum  m_type;
+    GLsizei m_count;
+    GLint   m_size;
+    GLenum  m_type;
 };
 
 
 template <typename T>
 void BufferObject::data(
     const QVector<T> & v
-,	const GLenum type
-,	const GLint  size)
+,   const GLenum type
+,   const GLint  size)
 {
     bind();
 
-	m_count  = static_cast<GLsizei>(v.size());
-	m_type   = type;
-	m_size   = size;
+    m_count  = static_cast<GLsizei>(v.size());
+    m_type   = type;
+    m_size   = size;
 
-	int te = sizeof(T);
+    int te = sizeof(T);
 
-	glBufferData(m_target, m_count * sizeof(T), v.data(), m_usage);
-	glError();
+    glBufferData(m_target, m_count * sizeof(T), v.data(), m_usage);
+    glError();
 }
 
 template <typename T>
 void BufferObject::data(
     const T * v
 ,   const GLsizei count
-,	const GLenum type
-,	const GLint size)
+,   const GLenum type
+,   const GLint size)
 {
     bind();
 
-	m_count = count;
-	m_type  = type;
-	m_size  = size;
+    m_count = count;
+    m_type  = type;
+    m_size  = size;
 
     glBufferData(m_target, m_count * sizeof(T), v, m_usage);
-	glError();
+    glError();
 }

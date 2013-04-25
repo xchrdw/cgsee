@@ -16,8 +16,8 @@ public:
     PolygonalGeometry(const QString & name = "unnamed");
     virtual ~PolygonalGeometry();
 
-	const GLenum mode() const;
-	void setMode(const GLenum mode);	
+    const GLenum mode() const;
+    void setMode(const GLenum mode);	
 
     const t_vec3s & vertices() const;
     t_vec3s & vertices();  
@@ -41,5 +41,5 @@ protected:
 
     t_uints m_indices;
 
-	GLenum  m_mode;
+    GLenum  m_mode;
 };

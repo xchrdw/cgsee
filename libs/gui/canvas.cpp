@@ -30,7 +30,7 @@ Canvas::Canvas(
 
     // Important for overdraw, not occluding the scene.
     setAutoFillBackground(false);
-	setUpdatesEnabled(false);
+    setUpdatesEnabled(false);
 }
 
 Canvas::~Canvas()

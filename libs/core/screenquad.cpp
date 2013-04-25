@@ -125,8 +125,8 @@ void ScreenQuad::draw(
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glError();
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
 
     if(target)
         target->release();
@@ -169,8 +169,8 @@ void ScreenQuad::draw(
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glError();
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
 
     if(target)
         target->release();

@@ -110,26 +110,26 @@ void FileAssociatedShader::reloadAll()
 void FileAssociatedShader::reload()
 {
     if(!QFile::exists(m_filePath))
-	{
+    {
         qCritical("\"%s\" does not exist: shader will not reload from associated file.", qPrintable(m_filePath));
         return;
-	}
+    }
 
     if(isCompiled())
     {
         // if current version works, use its source code as
         // backup if new changes lead to uncompilable shader.
 
-		const QString backup(source());
+        const QString backup(source());
         if(setSourceFromFile(false))
         {
             update();
             return;
         }
 
-		setSource(backup, true);
-		assert(isCompiled());
-	}
+        setSource(backup, true);
+        assert(isCompiled());
+    }
     else
-		setSourceFromFile();
+        setSourceFromFile();
 }

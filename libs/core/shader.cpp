@@ -32,11 +32,11 @@ const Shader::t_typeStrings Shader::initializeTypeStrings()
 
 Shader::Shader(const GLenum type)
 
-:	m_type(type)
-,	m_shader(0)
+:   m_type(type)
+,   m_shader(0)
 ,   m_compiled(false)
 {
-	if(typeStrings.end() == typeStrings.find(type))
+    if(typeStrings.end() == typeStrings.find(type))
         qCritical("Shader type %i is not supported.", type);
 
     m_shader = glCreateShader(type);
@@ -45,7 +45,7 @@ Shader::Shader(const GLenum type)
     
 Shader::~Shader()
 {
-	if(GPUQuery::isShader(m_shader))
+    if(GPUQuery::isShader(m_shader))
     {
         glDeleteShader(m_shader);
         glError();
@@ -79,7 +79,7 @@ const bool Shader::setSource(
         GLint maxLength(0);
         GLint logLength(0);
 
-		glGetShaderiv(m_shader, GL_INFO_LOG_LENGTH, &maxLength);
+        glGetShaderiv(m_shader, GL_INFO_LOG_LENGTH, &maxLength);
         glError();
 
         GLchar *log = new GLchar[maxLength];
@@ -88,13 +88,13 @@ const bool Shader::setSource(
 
         m_log = log;
 
-		t_typeStrings::const_iterator i(typeStrings.find(type()));
-		if(typeStrings.end() != i)
+        t_typeStrings::const_iterator i(typeStrings.find(type()));
+        if(typeStrings.end() != i)
             qCritical("Compiling shader of type %s failed.", qPrintable(i.value()));
-		else
+        else
             qCritical("Compiling shader of type %i failed.", type());
 
-		if(!m_log.isEmpty())
+        if(!m_log.isEmpty())
             qCritical("%s", qPrintable(m_log));
     }
 
@@ -111,11 +111,11 @@ const QString & Shader::source() const
 
 void Shader::update()
 {
-	t_programs::const_iterator i(m_programs.begin());
-	const t_programs::const_iterator iEnd(m_programs.end());
+    t_programs::const_iterator i(m_programs.begin());
+    const t_programs::const_iterator iEnd(m_programs.end());
 
-	for(; i != iEnd; ++i)
-		(*i)->invalidate();
+    for(; i != iEnd; ++i)
+        (*i)->invalidate();
 }
 
 const GLenum Shader::type() const
@@ -135,10 +135,10 @@ const bool Shader::isCompiled() const
 
 const Shader::t_programs & Shader::programs() const
 {
-	return m_programs;
+    return m_programs;
 }
 
 Shader::t_programs & Shader::programs()
 {
-	return m_programs;
+    return m_programs;
 }

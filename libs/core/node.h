@@ -48,7 +48,7 @@ public:
     const e_ReferenceFrame referenceFrame() const;
     void setReferenceFrame(const e_ReferenceFrame referenceFrame);
 
-	// This saves casting during traversal.
+    // This saves casting during traversal.
     virtual Group * asGroup();
 
 protected:

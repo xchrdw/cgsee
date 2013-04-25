@@ -20,18 +20,18 @@ void Group::draw(
     Program * program
 ,   const glm::mat4 & transform)
 {
-	t_nodes::const_iterator i(m_children.begin());
-	const t_nodes::const_iterator iEnd(m_children.end());
+    t_nodes::const_iterator i(m_children.begin());
+    const t_nodes::const_iterator iEnd(m_children.end());
 
-	for(; i != iEnd; ++i)
-	{
-		Node * node(*i);
-		
+    for(; i != iEnd; ++i)
+    {
+        Node * node(*i);
+        
         if(RF_Absolute == m_rf)
             node->draw(program, this->transform());
         else
             node->draw(program, transform * this->transform());
-	}	
+    }
 }
 
 const bool Group::contains(Node * node) const
@@ -174,5 +174,5 @@ const AxisAlignedBoundingBox Group::boundingBox() const
 
 Group * Group::asGroup()
 {
-	return this;
+    return this;
 }
