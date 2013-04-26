@@ -4,6 +4,8 @@
 
 #include <gui/viewer.h>
 
+#include <QImageReader>
+#include <QFileDialog>
 
 CGSee::CGSee(int & argc, char ** argv)
 :   AbstractApplication(argc, argv)
@@ -35,5 +37,19 @@ CGSee::~CGSee()
 
 void CGSee::takeScreenshot()
 {
-    m_painter->takeScreenshot();
+    // get supported image formats
+    QString ext = tr("All files (*.*)");
+    QStringList fmts;
+    QList<QByteArray> formats = QImageReader::supportedImageFormats();
+    for (QList<QByteArray>::iterator i = formats.begin();
+        i != formats.end(); ++i) {
+            fmts.push_back(QString("*.%0").arg(QString::fromLocal8Bit(*i).toLower()));
+    }
+    ext = tr("Image files (%1)\nAll files (*.*)").arg(fmts.join(" "));
+
+    QString fileName = QFileDialog::getSaveFileName(m_viewer, QString("Save screenshot as..."), QString(), ext);
+    if (fileName.isEmpty())
+        return;
+
+    m_painter->takeScreenshot(fileName);
 }

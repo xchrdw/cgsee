@@ -14,9 +14,6 @@
 #include <core/program.h>
 #include <core/screenquad.h>
 
-// TODO
-#include <glm/glm.hpp>
-#include <iostream>
 #include <QImage>
 
 Painter::Painter()
@@ -190,17 +187,12 @@ glm::mat4 gluPickMatrix2(
     return M;
 }
 
-void Painter::takeScreenshot()
+void Painter::takeScreenshot(const QString& fileName)
 {
     if(!m_camera)
         return;
 
     bool withAlphaChannel = false;
-
-    std::cout << "TEST SCREENSHOT33" << std::endl;
-
-    //const unsigned int targetWidth = 512;
-    //const unsigned int targetHeight = 512;
 
     glm::mat4 projMatrix = m_camera->projection();
     glm::mat4 viewMatrix = m_camera->view();
@@ -209,7 +201,7 @@ void Painter::takeScreenshot()
 
     // Compute ratio
     float ratio = (float)width / (float)height;
-    unsigned int targetHeight = 2048;
+    unsigned int targetHeight = height;
     unsigned int targetWidth  = (unsigned int)(targetHeight * ratio);
 
     // Set tile size
@@ -253,8 +245,5 @@ void Painter::takeScreenshot()
     m_camera->setTransform(projMatrix * viewMatrix);
 
     res = res.mirrored(false, true); // flip vertically
-    res.save("D:/test.png");
-
-    //return true; //!progress.wasCanceled();
-
+    res.save(fileName);
 }

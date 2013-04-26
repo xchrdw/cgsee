@@ -25,7 +25,7 @@ public:
         const int width
     ,   const int height);
 
-    virtual void takeScreenshot();
+    virtual void takeScreenshot(const QString& fileName);
 
 protected:
     virtual const bool initialize();
