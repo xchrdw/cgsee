@@ -22,10 +22,18 @@ CGSee::CGSee(int & argc, char ** argv)
     // Start
 
     m_viewer->show();
+
+    // connect signals
+    connect(m_viewer, SIGNAL(takeScreenshot()), this, SLOT(takeScreenshot()));
 }
 
 CGSee::~CGSee()
 {
     delete m_viewer;
     delete m_painter;
+}
+
+void CGSee::takeScreenshot()
+{
+    m_painter->takeScreenshot();
 }

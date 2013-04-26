@@ -10,6 +10,7 @@
 
 #include <core/glformat.h>
 
+#include <iostream>
 
 namespace 
 {
@@ -34,6 +35,9 @@ Viewer::Viewer(
 
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
+
+    // connect signals
+    connect(m_ui->takeScreenshotAction, SIGNAL(triggered()), this, SIGNAL(takeScreenshot()));
 };
 
 #ifdef WIN32
@@ -56,7 +60,7 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
 
-    QGLContext * qContext(m_qtCanvas->context());
+    QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
 
     if(!qContext)
         qFatal("Creating QtGL-Context failed.");

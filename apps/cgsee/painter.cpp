@@ -14,6 +14,10 @@
 #include <core/program.h>
 #include <core/screenquad.h>
 
+// TODO
+#include <glm/glm.hpp>
+#include <iostream>
+#include <QImage>
 
 Painter::Painter()
 :   AbstractPainter()
@@ -147,4 +151,110 @@ void Painter::releaseSampler(
 
 	for(; i != iEnd; ++i)
 		i.value()->releaseTexture2D();
+}
+
+glm::mat4 gluPickMatrix2(
+                GLdouble x,
+                GLdouble y,
+                GLdouble width,
+                GLdouble height,
+                const GLint viewport[4]
+            )
+{
+    glm::mat4 M;
+    GLfloat sx, sy;
+    GLfloat tx, ty;
+
+    sx = viewport[2] / width;
+    sy = viewport[3] / height;
+    tx = (viewport[2] + 2.0 * (viewport[0] - x)) / width;
+    ty = (viewport[3] + 2.0 * (viewport[1] - y)) / height;
+
+    M[0][0] = sx;
+    M[1][0] = 0.0;
+    M[2][0] = 0.0;
+    M[3][0] = tx;
+    M[0][1] = 0.0;
+    M[1][1] = sy;
+    M[2][1] = 0.0;
+    M[3][1] = ty;
+    M[0][2] = 0.0;
+    M[1][2] = 0.0;
+    M[2][2] = 1.0;
+    M[3][2] = 0.0;
+    M[0][3] = 0.0;
+    M[1][3] = 0.0;
+    M[2][3] = 0.0;
+    M[3][3] = 1.0;
+
+    return M;
+}
+
+void Painter::takeScreenshot()
+{
+    if(!m_camera)
+        return;
+
+    bool withAlphaChannel = false;
+
+    std::cout << "TEST SCREENSHOT33" << std::endl;
+
+    //const unsigned int targetWidth = 512;
+    //const unsigned int targetHeight = 512;
+
+    glm::mat4 projMatrix = m_camera->projection();
+    glm::mat4 viewMatrix = m_camera->view();
+    unsigned int width = m_camera->viewport().x;
+    unsigned int height = m_camera->viewport().y;
+
+    // Compute ratio
+    float ratio = (float)width / (float)height;
+    unsigned int targetHeight = 2048;
+    unsigned int targetWidth  = (unsigned int)(targetHeight * ratio);
+
+    // Set tile size
+    unsigned int tileWidth  = 256;
+    unsigned int tileHeight = 256;
+
+    this->resize(tileWidth, tileHeight);
+
+    QImage res( targetWidth, targetHeight, QImage::Format_RGB888 );
+
+    GLint screenshotviewport[4]={0, 0, static_cast<GLint>(targetWidth), static_cast<GLint>(targetHeight)};
+
+    m_camera->update();
+
+    unsigned int numPixel = 0;
+    for (unsigned int y = 0; y < targetHeight; y += tileHeight) {
+        for (unsigned int x = 0; x < targetWidth; x += tileWidth) {
+            glm::mat4 projMatrixNew = gluPickMatrix2(x + tileWidth/2, y + tileHeight/2, tileWidth, tileHeight, screenshotviewport) * projMatrix;
+
+            m_camera->setTransform(projMatrixNew * viewMatrix);
+
+            paint();
+
+            QImage res_tile( tileWidth, tileHeight, QImage::Format_RGB888 );
+            glReadPixels(0, 0, tileWidth, tileHeight, withAlphaChannel ? GL_RGB : GL_RGB, GL_UNSIGNED_BYTE, res_tile.bits());
+
+            // Copy tile image data to our real image
+            const unsigned int w = qMin(x + tileWidth, targetWidth) - x;
+            const unsigned int h = qMin(y + tileHeight, targetHeight) - y;
+            for (unsigned int tx = 0; tx < w; tx++)
+            {
+                for (unsigned int ty = 0; ty < h; ty++)
+                {
+                    res.setPixel(x + tx, y + ty, res_tile.pixel(tx, ty));
+                }
+            }
+        }
+    }
+
+    this->resize(width, height);
+    m_camera->setTransform(projMatrix * viewMatrix);
+
+    res = res.mirrored(false, true); // flip vertically
+    res.save("D:/test.png");
+
+    //return true; //!progress.wasCanceled();
+
 }

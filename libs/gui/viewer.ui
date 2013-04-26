@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>734</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="viewMenu">
@@ -42,6 +42,8 @@
     <addaction name="separator"/>
     <addaction name="toggleFullScreenAction"/>
     <addaction name="specifyResolutionAction"/>
+    <addaction name="separator"/>
+    <addaction name="takeScreenshotAction"/>
     <addaction name="separator"/>
     <addaction name="loadPresentationAction"/>
    </widget>
@@ -368,6 +370,11 @@
    </property>
    <property name="text">
     <string>&amp;Load Presentation ...</string>
+   </property>
+  </action>
+  <action name="takeScreenshotAction">
+   <property name="text">
+    <string>Take &amp;Screenshot</string>
    </property>
   </action>
  </widget>

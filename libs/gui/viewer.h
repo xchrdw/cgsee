@@ -23,6 +23,7 @@ class AbstractPainter;
 
 class CGSEE_API Viewer : public QMainWindow
 {
+    Q_OBJECT
 public:
     Viewer(
         QWidget * parent = nullptr
@@ -33,6 +34,9 @@ public:
 
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
+
+signals:
+    void takeScreenshot();
 
 protected:
 

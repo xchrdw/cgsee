@@ -25,6 +25,8 @@ public:
         const int width
     ,   const int height);
 
+    virtual void takeScreenshot();
+
 protected:
     virtual const bool initialize();
 
