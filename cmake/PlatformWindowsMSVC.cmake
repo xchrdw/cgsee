@@ -83,3 +83,7 @@ set(DEFAULT_LINKER_FLAGS_RELEASE
 	# LTCG         -> link time code generation: use link time code generation
 	# DELAY:UNLOAD -> delay loaded dll: support unload
 )
+
+
+# Add platform specific libraries for linking
+set(EXTRA_LIBS "")

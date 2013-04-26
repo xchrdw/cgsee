@@ -37,3 +37,7 @@ set(LINUX_COMPILE_FLAGS
 	# fPIC          -> use position independent code
 )
 set(DEFAULT_COMPILE_FLAGS ${LINUX_COMPILE_FLAGS})
+
+
+# Add platform specific libraries for linking
+set(EXTRA_LIBS "")

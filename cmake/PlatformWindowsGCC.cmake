@@ -40,3 +40,7 @@ set(MINGW_COMPILE_FLAGS
 )
 
 set(DEFAULT_COMPILE_FLAGS ${MINGW_COMPILE_FLAGS})
+
+
+# Add platform specific libraries for linking
+set(EXTRA_LIBS "")

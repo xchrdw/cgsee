@@ -171,8 +171,10 @@ const bool GPUQuery::extensionSupported(const char * extension)
     if(!supported)
 #ifdef WIN32
         return wglewIsSupported(extension) ? true : false;
-#else
+#elif defined(LINUX)
         return glxewIsSupported(extension) ? true : false;
+#else
+        return supported;
 #endif
 
     return supported;

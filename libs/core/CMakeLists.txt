@@ -66,6 +66,7 @@ qt5_use_modules(${target} Widgets OpenGL)
 target_link_libraries(${target}
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}
+    ${EXTRA_LIBS}
 )
 
 

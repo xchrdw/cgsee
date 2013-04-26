@@ -121,9 +121,12 @@ elseif(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
 elseif(LINUX AND CMAKE_COMPILER_IS_GNUCXX)
     message(STATUS "Configuring for platform Linux/GCC.")
     include(${CMAKE_SOURCE_DIR}/cmake/PlatformLinuxGCC.cmake)
+elseif(APPLE)
+    message(STATUS "Configuring for platform MacOS.")
+    include(${CMAKE_SOURCE_DIR}/cmake/PlatformMacOS.cmake)
 else()
     # TODO configure for apple        
-    message(WARNING "No Platform configuration for APPLE yet: TODO")
+    message(WARNING "Unsupported platform/compiler combination")
 endif()
 
 
