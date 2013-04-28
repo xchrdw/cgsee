@@ -1,3 +1,11 @@
+#!/bin/sh
+
 mkdir build
 cd build
-cmake -DCMAKE_PREFIX_PATH=/opt/Qt5.0.2/5.0.2/gcc_64/lib/cmake/ ..
+ARCH=`uname -p`
+if [ $ARCH = 'i686' ] 
+    then 
+        cmake -DCMAKE_PREFIX_PATH=/opt/Qt5.0.2/5.0.2/gcc/lib/cmake/ ..
+    else     
+        cmake -DCMAKE_PREFIX_PATH=/opt/Qt5.0.2/5.0.2/gcc_64/lib/cmake/ ..
+fi
