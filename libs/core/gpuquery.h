@@ -17,7 +17,10 @@ public:
 
     static const QString vendor();
     static const QString renderer();
+    static const QString version();
     static const QString glewVersion();
+
+    static const bool isCoreProfile();
 
     // Checks for an opengl error and prints to console if one occurred
     static const bool error(
@@ -30,14 +33,6 @@ public:
     
     static const bool extensionSupported(const char * extension);
     static const bool extensionSupported(const QString & extension);
-
-	static const bool isShader(const GLuint shader);
-	static const bool isProgram(const GLuint program);
-	static const bool isBuffer(const GLuint buffer);
-    static const bool isFrameBuffer(const GLuint framebuffer);
-    static const bool isTexture(const GLuint texture);
-    static const bool isRenderBuffer(const GLuint renderbuffer);
-
 
     // Memory Info (return -1 if query is not possible or failed)
 

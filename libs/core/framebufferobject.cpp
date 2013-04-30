@@ -30,26 +30,41 @@ FrameBufferObject::FrameBufferObject(
 
 FrameBufferObject::~FrameBufferObject()
 {
-	if(GPUQuery::isTexture(m_texture))
+	if(isTexture())
 	{
         glDeleteTextures(1, &m_texture);
 		glError();
 	}
-	if(GPUQuery::isRenderBuffer(m_render))
+	if(isRenderBuffer())
 	{
         glDeleteRenderbuffers(1, &m_render);
 		glError();
 	}
-	if(GPUQuery::isFrameBuffer(m_fbo))
+	if(isFrameBuffer())
 	{
         glDeleteFramebuffers(1, &m_fbo);
 		glError();
 	}
 }
 
+inline const bool FrameBufferObject::isTexture() const
+{
+    return m_texture != -1;
+}
+
+inline const bool FrameBufferObject::isRenderBuffer() const
+{
+    return m_render != -1;
+}
+
+inline const bool FrameBufferObject::isFrameBuffer() const
+{
+    return m_fbo != -1;
+}
+
 void FrameBufferObject::bind() const
 {
-    if(!GPUQuery::isFrameBuffer(m_fbo))
+    if(!isFrameBuffer())
         initialize();
 
     glViewport(0, 0, m_size.x, m_size.y);
@@ -60,7 +75,7 @@ void FrameBufferObject::bind() const
 
 void FrameBufferObject::release() const
 {
-    if(!GPUQuery::isFrameBuffer(m_fbo))
+    if(!isFrameBuffer())
         return;
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -72,7 +87,7 @@ void FrameBufferObject::bindTexture2D(
 ,   const QString & uniform
 ,   const glm::uint slot) const
 {
-    if(!GPUQuery::isTexture(m_texture))
+    if(!isTexture())
         initialize();
 
 	glActiveTexture(GL_TEXTURE0 + slot);
@@ -87,7 +102,7 @@ void FrameBufferObject::bindTexture2D(
 
 void FrameBufferObject::releaseTexture2D() const
 {
-    if(!GPUQuery::isTexture(m_texture))
+    if(!isTexture())
         return;
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -98,8 +113,7 @@ void FrameBufferObject::initialize() const
 {
     if(m_depth) // Initialize Render Buffer for Depth
     {
-//		glGenRenderbuffers(1, &m_render);
-        glGenTextures(1, &m_render);
+		glGenRenderbuffers(1, &m_render);
 		glError();
     }
 
@@ -115,8 +129,7 @@ void FrameBufferObject::initialize() const
 
 	if(m_depth)
 	{
-//		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
 		glError();
 	}
 

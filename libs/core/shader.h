@@ -36,6 +36,9 @@ public:
 	t_programs & programs();
 
 protected:
+    inline const bool isShader() const;
+
+protected:
     const GLenum m_type;
     GLuint m_shader;
 

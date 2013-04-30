@@ -95,6 +95,9 @@ public:
     ,   const bool transpose = false) const;
 
 protected:
+    inline const bool isProgram() const;
+
+protected:
     GLuint m_program;
 
     mutable QString m_log;

@@ -13,7 +13,7 @@
 
 
 Program::Program()
-:	m_program(0)
+:	m_program(-1)
 ,   m_linked(false)
 ,   m_dirty(true)
 {
@@ -23,7 +23,7 @@ Program::Program()
 
 Program::~Program()
 {
-	if(GPUQuery::isProgram(m_program))
+	if(isProgram())
     {
 		t_shaders::const_iterator i;
 		while(m_shaders.end() != m_shaders.begin())
@@ -34,6 +34,11 @@ Program::~Program()
 
         m_program = 0;
     }
+}
+
+inline const bool Program::isProgram() const
+{
+    return m_program != -1;
 }
 
 const bool Program::use() const
@@ -73,6 +78,7 @@ const bool Program::link() const
 
     GLint status(GL_FALSE);
     glGetProgramiv(m_program, GL_LINK_STATUS, &status);
+    glError();
 
     m_linked = (GL_TRUE == status);
     m_log = "";
@@ -90,6 +96,9 @@ const bool Program::link() const
         glError();
 
         m_log = log;
+
+        if(!m_log.isEmpty())
+            qWarning("%s", log);
     /*}*/
 
     return isLinked();

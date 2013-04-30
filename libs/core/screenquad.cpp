@@ -8,21 +8,30 @@
 
 
 ScreenQuad::ScreenQuad()
-:   m_buffer(0)
+:   m_buffer(-1)
+,   m_vao(-1)
 ,   m_program(nullptr)
 {
-}    
+} 
 
 ScreenQuad::~ScreenQuad()
 {
-    if(GPUQuery::isBuffer(m_buffer))
+    if(isBuffer())
     {
+        glDeleteVertexArrays(1, &m_vao);
+        glError();
+
         glDeleteBuffers(1, &m_buffer);
         glError();
     }
 
     if(m_program)
         delete m_program;
+}
+
+inline const bool ScreenQuad::isBuffer() const
+{
+    return m_buffer != -1;
 }
 
 void ScreenQuad::initialize() const
@@ -38,12 +47,23 @@ void ScreenQuad::initialize() const
     ,   -1.f, +1.f
     };
 
+    glGenVertexArrays(1, &m_vao);
+	glError();
+    glBindVertexArray(m_vao);                                                                  
+	glError();
+
     glGenBuffers(1, &m_buffer);
     glError();
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
     glError();
     glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
     glError();
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glError();
+
+    glBindVertexArray(0);
+	glError();
 }
 
 void ScreenQuad::initializeDefaultProgram() const
@@ -99,7 +119,7 @@ void ScreenQuad::draw(
     const Program & program
 ,   FrameBufferObject * target) const
 {
-    if(!GPUQuery::isBuffer(m_buffer))
+    if(!isBuffer())
         initialize();
 
     program.use();
@@ -115,15 +135,23 @@ void ScreenQuad::draw(
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
+    glBindVertexArray(m_vao);                                                                  
+	glError();
+
+    glEnableVertexAttribArray(a_vertex);
+    glError();
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
     glError();
-    glEnableVertexAttribArrayARB(a_vertex);
-    glError();
-    glVertexAttribPointerARB(a_vertex, 2, GL_FLOAT, 0, 0, 0);
+    glVertexAttribPointer(a_vertex, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
     glError();
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glError();
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+    glError();
+    glBindVertexArray(0);
+	glError();
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -139,13 +167,13 @@ void ScreenQuad::draw(
 ,   const GLint vertexAttributeLocation
 ,   FrameBufferObject * target) const
 {
-    if(!GPUQuery::isProgram(program))
+    if(program == -1)
     {
         qCritical("No valid program available for rendering screen aligned quad.");
         return;
     }
 
-    if(!GPUQuery::isBuffer(m_buffer))
+    if(!isBuffer())
         initialize();
 
     glUseProgram(program);
@@ -161,9 +189,9 @@ void ScreenQuad::draw(
 
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
     glError();
-    glVertexAttribPointerARB(vertexAttributeLocation, 2, GL_FLOAT, 0, 0, 0);
+    glVertexAttribPointer(vertexAttributeLocation, 2, GL_FLOAT, 0, 0, 0);
     glError();
-    glEnableVertexAttribArrayARB(vertexAttributeLocation);
+    glEnableVertexAttribArray(vertexAttributeLocation);
     glError();
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -176,4 +204,5 @@ void ScreenQuad::draw(
         target->release();
 
     glUseProgram(0);
+    glError();
 }

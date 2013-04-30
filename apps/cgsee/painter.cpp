@@ -38,6 +38,8 @@ Painter::~Painter()
 
 const bool Painter::initialize()
 {
+    glError();
+
     m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
     if(!m_group)
     {
@@ -46,12 +48,14 @@ const bool Painter::initialize()
     }
 
     glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
+    glCullFace(GL_BACK);
+
+    glDisable(GL_DEPTH_TEST);
 
     glm::mat4 transform(1.f);
 
     transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-    transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
+    transform *= glm::rotate(glm::mat4(1.f), 100.f, glm::vec3(0.f, 1.f, 0.f));
 
     m_group->setTransform(transform);
 
@@ -88,6 +92,8 @@ const bool Painter::initialize()
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+
+    glDisable(GL_DEPTH_TEST);
 
     return true;
 }
