@@ -14,7 +14,7 @@ public:
     virtual ~CGSee();
 
 public slots:
-    void takeScreenshot();
+    void exportCanvasAsImage();
 
 protected:
     Viewer * m_viewer;

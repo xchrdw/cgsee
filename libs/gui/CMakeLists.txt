@@ -7,6 +7,8 @@ set(SOURCES
     abstractpainter.cpp
     canvas.h
     canvas.cpp
+    imageexport.h
+    imageexport.cpp
     viewer.h
     viewer.cpp
     viewer.ui

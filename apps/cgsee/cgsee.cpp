@@ -3,9 +3,8 @@
 #include "painter.h"
 
 #include <gui/viewer.h>
+#include <gui/imageexport.h>
 
-#include <QImageReader>
-#include <QFileDialog>
 
 CGSee::CGSee(int & argc, char ** argv)
 :   AbstractApplication(argc, argv)
@@ -26,7 +25,7 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->show();
 
     // connect signals
-    connect(m_viewer, SIGNAL(takeScreenshot()), this, SLOT(takeScreenshot()));
+    connect(m_viewer, SIGNAL(takeScreenshot()), this, SLOT(exportCanvasAsImage()));
 }
 
 CGSee::~CGSee()
@@ -35,23 +34,18 @@ CGSee::~CGSee()
     delete m_painter;
 }
 
-void CGSee::takeScreenshot()
+void CGSee::exportCanvasAsImage()
 {
-    // get supported image formats
-    QString ext = tr("All files (*.*)");
-    QStringList fmts;
-    QList<QByteArray> formats = QImageReader::supportedImageFormats();
-    for (QList<QByteArray>::iterator i = formats.begin();
-        i != formats.end(); ++i) {
-            fmts.push_back(QString("*.%0").arg(QString::fromLocal8Bit(*i).toLower()));
-    }
-    ext = tr("Image files (%1)\nAll files (*.*)").arg(fmts.join(" "));
-
-    QString fileName = QFileDialog::getSaveFileName(m_viewer, QString("Save screenshot as..."), QString(), ext);
-    if (fileName.isEmpty())
+    ImageExport ie(m_viewer);
+    if(!ie.show())
         return;
 
-    const QImage frame(m_painter->capture(QSize(1000, 500)));
-    if(!frame.isNull())
-        frame.save(fileName);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
+
+    // TODO: Size GUI in ImageExport...
+
+    ie.save(m_painter->capture(QSize(10000, 5000)));
+
+    QApplication::restoreOverrideCursor();
 }
