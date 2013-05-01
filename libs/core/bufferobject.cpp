@@ -13,20 +13,20 @@ BufferObject::BufferObject(
 ,   m_target(target)
 ,   m_usage(usage)
 
-,	m_count(0)
-,	m_size(0)
+,   m_count(0)
+,   m_size(0)
 
-,	m_type(GL_NONE)
+,   m_type(GL_NONE)
 {
 }
 
 BufferObject::~BufferObject()
 {
-	if(isBuffer())
-	{
-		glDeleteBuffers(1, &m_buffer);
-		glError();
-	}
+    if(isBuffer())
+    {
+        glDeleteBuffers(1, &m_buffer);
+        glError();
+    }
 }
 
 inline const bool BufferObject::isBuffer() const
@@ -66,26 +66,26 @@ void BufferObject::bind(const GLint attributeLocation)
     if(-1 == attributeLocation)
         return;
 
-	assert(m_target == GL_ARRAY_BUFFER);
+    assert(m_target == GL_ARRAY_BUFFER);
 
     bind();
 
-	glEnableVertexAttribArray(attributeLocation);
+    glEnableVertexAttribArray(attributeLocation);
     glError();
-	glVertexAttribPointer(attributeLocation, m_size, m_type, GL_FALSE, 0, 0);
-	glError();
+    glVertexAttribPointer(attributeLocation, m_size, m_type, GL_FALSE, 0, 0);
+    glError();
 }
 
 void BufferObject::draw(const GLenum mode)
 {
-	assert(m_target == GL_ELEMENT_ARRAY_BUFFER);
+    assert(m_target == GL_ELEMENT_ARRAY_BUFFER);
 
-	bind();
+    bind();
 
-	glDrawElements(mode, m_count, m_type, 0);
-	glError();
+    glDrawElements(mode, m_count, m_type, 0);
+    glError();
 
-	release();
+    release();
 }
 
 void BufferObject::release(const GLint attributeLocation)

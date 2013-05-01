@@ -16,7 +16,7 @@ class Shader;
 class CGSEE_API Program
 {
 public:
-	typedef QSet<Shader *> t_shaders;
+    typedef QSet<Shader *> t_shaders;
 
 public:
     Program();
@@ -30,12 +30,12 @@ public:
     const bool attach(Shader * shader);
     const bool detach(Shader * shader);
 
-	const t_shaders & shaders();
+    const t_shaders & shaders();
 
     const bool link() const;
     const bool isLinked() const;
 
-	void invalidate();
+    void invalidate();
 
     // location access
 
@@ -102,7 +102,7 @@ protected:
 
     mutable QString m_log;
 
-	mutable bool m_linked;
+    mutable bool m_linked;
     mutable bool m_dirty;
 
     t_shaders m_shaders;

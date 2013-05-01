@@ -15,14 +15,14 @@
 
 
 AbstractApplication::AbstractApplication(
-	int & argc,
-	char ** argv)
+    int & argc,
+    char ** argv)
 
 :   QApplication(argc, argv)
 {
-	const QFileInfo fi(QCoreApplication::applicationFilePath());
+    const QFileInfo fi(QCoreApplication::applicationFilePath());
 
-	QApplication::setApplicationDisplayName(fi.baseName());
+    QApplication::setApplicationDisplayName(fi.baseName());
 
     QApplication::setApplicationName(META_PROJECT_NAME);
     QApplication::setApplicationVersion(META_VERSION);
@@ -43,8 +43,8 @@ const QString AbstractApplication::title() const
 {
     return QString("%1 - %2 %3")
         .arg(QApplication::applicationDisplayName())
-		.arg(QApplication::applicationName())
-		.arg(QApplication::applicationVersion());
+        .arg(QApplication::applicationName())
+        .arg(QApplication::applicationVersion());
 }
 
 const GLFormat AbstractApplication::format() const

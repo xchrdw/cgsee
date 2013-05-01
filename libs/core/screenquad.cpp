@@ -48,9 +48,9 @@ void ScreenQuad::initialize() const
     };
 
     glGenVertexArrays(1, &m_vao);
-	glError();
+    glError();
     glBindVertexArray(m_vao);                                                                  
-	glError();
+    glError();
 
     glGenBuffers(1, &m_buffer);
     glError();
@@ -63,7 +63,7 @@ void ScreenQuad::initialize() const
     glError();
 
     glBindVertexArray(0);
-	glError();
+    glError();
 }
 
 void ScreenQuad::initializeDefaultProgram() const
@@ -84,8 +84,8 @@ void ScreenQuad::initializeDefaultProgram() const
         "\n"
         "void main(void)\n"
         "{\n"
-        "	v_uv = a_vertex.xy * 0.5 + 0.5;\n"
-        "	gl_Position = vec4(a_vertex, 1.0);\n"
+        "    v_uv = a_vertex.xy * 0.5 + 0.5;\n"
+        "    gl_Position = vec4(a_vertex, 1.0);\n"
         "}\n");
 
     f->setSource(
@@ -134,7 +134,7 @@ void ScreenQuad::draw(
     glDepthMask(GL_FALSE);
 
     glBindVertexArray(m_vao);                                                                  
-	glError();
+    glError();
 
     glEnableVertexAttribArray(a_vertex);
     glError();
@@ -149,10 +149,10 @@ void ScreenQuad::draw(
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
     glError();
     glBindVertexArray(0);
-	glError();
+    glError();
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
 
     if(target)
         target->release();
@@ -195,8 +195,8 @@ void ScreenQuad::draw(
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glError();
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
 
     if(target)
         target->release();

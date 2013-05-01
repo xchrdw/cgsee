@@ -6,7 +6,7 @@
 
 PolygonalGeometry::PolygonalGeometry(const QString & name)
 :   Node(name)
-,	m_mode(GL_TRIANGLES)
+,   m_mode(GL_TRIANGLES)
 {
 }
 
@@ -16,12 +16,12 @@ PolygonalGeometry::~PolygonalGeometry()
 
 const GLenum PolygonalGeometry::mode() const
 {
-	return m_mode;
+    return m_mode;
 }
 
 void PolygonalGeometry::setMode(const GLenum mode)
 {
-	m_mode = mode;
+    m_mode = mode;
 }
 
 const t_vec3s & PolygonalGeometry::vertices() const

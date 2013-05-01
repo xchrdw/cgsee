@@ -13,7 +13,7 @@
 
 
 Program::Program()
-:	m_program(-1)
+:   m_program(-1)
 ,   m_linked(false)
 ,   m_dirty(true)
 {
@@ -23,11 +23,11 @@ Program::Program()
 
 Program::~Program()
 {
-	if(isProgram())
+    if(isProgram())
     {
-		t_shaders::const_iterator i;
-		while(m_shaders.end() != m_shaders.begin())
-			detach(*(m_shaders.begin()));
+        t_shaders::const_iterator i;
+        while(m_shaders.end() != m_shaders.begin())
+            detach(*(m_shaders.begin()));
 
         glDeleteProgram(m_program);
         glError();
@@ -64,8 +64,8 @@ const bool Program::link() const
     if(!m_dirty)
         return isLinked();
 
-	t_shaders::const_iterator i(m_shaders.begin());
-	const t_shaders::const_iterator iEnd(m_shaders.end());
+    t_shaders::const_iterator i(m_shaders.begin());
+    const t_shaders::const_iterator iEnd(m_shaders.end());
 
     for(; i != iEnd; ++i)
         if(!(*i)->isCompiled())
@@ -111,11 +111,11 @@ const bool Program::attach(Shader * shader)
     if(!shader)
         return false;
 
-	if(m_shaders.end() != m_shaders.find(shader))
+    if(m_shaders.end() != m_shaders.find(shader))
         return true;
 
-	m_shaders.insert(shader);
-	shader->programs().insert(this);
+    m_shaders.insert(shader);
+    shader->programs().insert(this);
 
     glAttachShader(m_program, shader->shader());
     m_dirty = true;
@@ -131,15 +131,15 @@ const bool Program::detach(Shader * shader)
         return true;
 
     glDetachShader(m_program, shader->shader());
-	const bool result(glError());
+    const bool result(glError());
 
     m_dirty = true;
 
     shader->programs().remove(this);
     m_shaders.remove(shader);
 
-	if(shader->programs().empty())
-		delete shader;
+    if(shader->programs().empty())
+        delete shader;
 
     return !result;
 }
