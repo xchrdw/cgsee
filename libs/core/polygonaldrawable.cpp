@@ -7,7 +7,7 @@
 #include "bufferobject.h"
 #include "polygonalgeometry.h"
 #include "program.h"
-#include "VertexCacheOpt.h"
+#include "VertexCacheOptimizer.h"
 
 
 static const QString TRANSFORM_UNIFORM ("transform");
@@ -116,7 +116,7 @@ void PolygonalDrawable::setupBuffers()
 	glError();
 
 	// Apply Vertex Cache Optimization
-	VertexCacheOpt::applyOptimization(m_geometry->indices());
+	VertexCacheOptimizer().applyOptimization(m_geometry->indices(), m_geometry->vertices().size());
 
 	// setup element array buffers
 
