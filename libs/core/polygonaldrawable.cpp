@@ -7,7 +7,7 @@
 #include "bufferobject.h"
 #include "polygonalgeometry.h"
 #include "program.h"
-#include "VertexCacheOptimizer.h"
+#include "vertexcacheoptimizer.h"
 
 
 static const QString TRANSFORM_UNIFORM ("transform");

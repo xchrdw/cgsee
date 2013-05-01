@@ -1,7 +1,7 @@
 //#include <cstdlib>     
 //#include <ctime>       
 
-#include "VertexCacheOptimizer.h"
+#include "vertexcacheoptimizer.h"
 #include <vector>
 
 const float FindVertexScore_CacheDecayPower = 1.5f;
