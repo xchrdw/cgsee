@@ -65,12 +65,15 @@ void Canvas::initializeGL()
         qCritical("Glew failed to initialized: %s\n", qPrintable(GPUQuery::glewError(error)));
 
     if(!m_format.verify(context()->format()))
-        qCritical("There might be problems during scene initialization and rendering.\n");
+        qWarning("There might be problems during scene initialization and rendering.\n");
 
     glError();
 
-    qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
-    qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
+    if(!GPUQuery::isCoreProfile())
+    {
+        qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
+        qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
+    }
 
     glClearColor(1.f, 1.f, 1.f, 1.f);
     glError();

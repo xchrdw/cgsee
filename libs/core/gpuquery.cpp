@@ -49,7 +49,6 @@ const GLint GPUQuery::memoryInfo(const GLenum penum)
 
     GLint memory(0); // in kb
     glGetIntegerv(penum, &memory);
-
     glError();
 
     return memory;
@@ -131,7 +130,7 @@ const bool GPUQuery::error(
 const bool GPUQuery::extensionSupported(const char * extension)
 {
     if(isCoreProfile())
-        return true;    // extension check always fails, thus return true and hope for correct core programming
+        return false;
 
     bool supported = glewIsSupported(extension) ? true : false;
 
