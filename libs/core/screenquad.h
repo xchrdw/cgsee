@@ -29,8 +29,11 @@ protected:
     void initialize() const;
     void initializeDefaultProgram() const;
 
+    inline const bool isBuffer() const;
+
 protected:  
     mutable GLuint m_buffer;
+    mutable GLuint m_vao;
     
     mutable Program * m_program;
     mutable GLint m_vertex;

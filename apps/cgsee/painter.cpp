@@ -38,6 +38,8 @@ Painter::~Painter()
 
 const bool Painter::initialize()
 {
+    glError();
+
     m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
     if(!m_group)
     {
@@ -69,19 +71,19 @@ const bool Painter::initialize()
 
     // G-Buffer Shader
 
-	m_normalz = new Program();
-	m_normalz->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
-	m_normalz->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
+    m_normalz = new Program();
+    m_normalz->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
+    m_normalz->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
     // Post Processing Shader
 
     m_flush = new Program();
-	m_flush->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
-	m_flush->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
+    m_flush->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
+    m_flush->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
@@ -93,19 +95,19 @@ void Painter::paint()
 {
     AbstractPainter::paint();
 
-	t_samplerByName sampler;
+    t_samplerByName sampler;
 
-	// Normals and Depth to RGBA
+    // Normals and Depth to RGBA
 
     m_camera->draw(m_normalz, m_fboNormalz);
 
 
     sampler.clear();
-	sampler["source"] = m_fboNormalz;
+    sampler["source"] = m_fboNormalz;
 
-	bindSampler(sampler, m_flush);
+    bindSampler(sampler, m_flush);
     m_quad->draw(*m_flush, nullptr);
-	releaseSampler(sampler);
+    releaseSampler(sampler);
 }
 
 void Painter::resize(
@@ -117,8 +119,8 @@ void Painter::resize(
     m_camera->setViewport(width, height);
 
     m_fboNormalz->resize(width, height);
-	
-	postShaderRelinked();
+    
+    postShaderRelinked();
 }
 
 void Painter::postShaderRelinked()
@@ -126,22 +128,22 @@ void Painter::postShaderRelinked()
 }
 
 void Painter::bindSampler(
-	const t_samplerByName & sampler
-,	Program * program)
+    const t_samplerByName & sampler
+,    Program * program)
 {
-	t_samplerByName::const_iterator i(sampler.begin());
-	const t_samplerByName::const_iterator iEnd(sampler.end());
-	
-	for(glm::uint slot(0); i != iEnd; ++i, ++slot)
+    t_samplerByName::const_iterator i(sampler.begin());
+    const t_samplerByName::const_iterator iEnd(sampler.end());
+    
+    for(glm::uint slot(0); i != iEnd; ++i, ++slot)
         i.value()->bindTexture2D(program, i.key(), slot);
 }
 
 void Painter::releaseSampler(
-	const t_samplerByName & sampler)
+    const t_samplerByName & sampler)
 {
-	t_samplerByName::const_iterator i(sampler.begin());
-	const t_samplerByName::const_iterator iEnd(sampler.end());
+    t_samplerByName::const_iterator i(sampler.begin());
+    const t_samplerByName::const_iterator iEnd(sampler.end());
 
-	for(; i != iEnd; ++i)
-		i.value()->releaseTexture2D();
+    for(; i != iEnd; ++i)
+        i.value()->releaseTexture2D();
 }
