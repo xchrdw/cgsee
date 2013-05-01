@@ -29,6 +29,7 @@ public:
         const bool alpha = false);
     const QImage Painter::capture(
         const QSize & size
+    ,   const bool aspect = true
     ,   const bool alpha = false);
 
 protected:

@@ -158,11 +158,13 @@ const QImage Painter::capture(
     if(!m_camera)
         return QImage();
 
-    return capture(QSize(m_camera->viewport().x, m_camera->viewport().y), alpha);
+    // aspect is false, since this accesses the cameras projection matrix with same aspect...
+    return capture(QSize(m_camera->viewport().x, m_camera->viewport().y), false, alpha);
 }
 
 const QImage Painter::capture(
     const QSize & size
+,   const bool aspect
 ,   const bool alpha)
 {
     static const GLuint tileW(256);
@@ -174,14 +176,17 @@ const QImage Painter::capture(
         return QImage();
     }
 
-    const glm::mat4 proj(m_camera->projection());
-    const glm::mat4 view(m_camera->view());
-
     const GLuint w(m_camera->viewport().x);
     const GLuint h(m_camera->viewport().y);
 
     const GLuint frameW = size.width();
     const GLuint frameH = size.height();
+
+    const glm::mat4 proj(aspect ? glm::perspective(m_camera->fovy()
+        , static_cast<float>(frameW) / static_cast<float>(frameH)
+        , m_camera->zNear(), m_camera->zFar()) : m_camera->projection());
+
+    const glm::mat4 view(m_camera->view());
 
     const glm::vec4 viewport(0, 0, frameW, frameH);
 
