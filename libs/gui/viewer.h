@@ -37,11 +37,12 @@ public:
 protected:
 
 #ifdef WIN32
-    // Create canvas with a qt context (based on GLWidget).
     const HGLRC createQtContext(const GLFormat & format);
     static const HGLRC currentContextHandle();
+#elif __APPLE__
+    void * createQtContext(const GLFormat & format);
+    static void * currentContextHandle();
 #else
-    // Create canvas with a qt context (based on GLWidget).
     const GLXContext createQtContext(const GLFormat & format);
     static const GLXContext currentContextHandle();
 #endif
