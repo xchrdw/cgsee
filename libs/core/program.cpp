@@ -83,23 +83,25 @@ const bool Program::link() const
     m_linked = (GL_TRUE == status);
     m_log = "";
 
-    /*if(!m_linked)
-    {*/
-        GLint maxLength(0);
-        GLint logLength(0);
+    // check for compile errors
 
-        glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &maxLength);
-        glError();
+    GLint maxLength(0);
+    GLint logLength(0);
 
-        GLchar *log = new GLchar[maxLength];
-        glGetProgramInfoLog(m_program, maxLength, &logLength, log);
-        glError();
+    glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &maxLength);
+    glError();
 
-        m_log = log;
+    if(!maxLength)
+        return isLinked();
 
-        if(!m_log.isEmpty())
-            qWarning("%s", log);
-    /*}*/
+    GLchar *log = new GLchar[maxLength];
+    glGetProgramInfoLog(m_program, maxLength, &logLength, log);
+    glError();
+
+    m_log = log;
+
+    if(!m_log.isEmpty())
+        qWarning("%s", log);
 
     return isLinked();
 }

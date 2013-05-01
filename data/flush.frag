@@ -7,5 +7,5 @@ uniform sampler2D source;
 
 void main()
 {
-	fragcolor = texture2D(source, v_uv);
+	fragcolor = texture(source, v_uv);
 }

@@ -3,14 +3,14 @@
 in vec4 gl_FragCoord;
 out vec4 fragcolor;
 
-in vec3 normal;
+in vec3 v_normal;
 
 uniform float znear;
 uniform float zfar;
 
 void main()
 {
-	vec3 n = normalize(normal);
+	vec3 n = normalize(v_normal);
 	n *= 0.5;
 	n += 0.5;
 

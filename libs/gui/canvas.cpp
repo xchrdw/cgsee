@@ -97,33 +97,40 @@ void Canvas::resizeGL(
 // http://harmattan-dev.nokia.com/docs/library/html/qt4/opengl-overpainting.html
 // -> does not work for core profile or modern rendering
 
-void Canvas::paintEvent(QPaintEvent *)
+//void Canvas::paintEvent(QPaintEvent *)
+//{
+//    glError();
+//    paint();
+//    glError();
+//
+//    // The fixed function OGL is used to support old school OpenGL calls for overlay painting.
+//    // NOTE: it is not tested, what happens on contexts in newer core profiles.
+//
+//    // NOTE: QPainter is off use here: http://qt-project.org/forums/viewthread/26510
+//    // It does not support 3.2 core profile rendering "any time soon"...
+//
+//    //QPainter painter(this);
+//    //paintOverlay(painter);
+//    //painter.end();
+//    //glError();
+//}
+
+//void Canvas::paintOverlay(QPainter & painter)
+//{
+//    painter.setRenderHint(QPainter::Antialiasing);
+//    painter.setRenderHint(QPainter::TextAntialiasing);
+//}
+
+void Canvas::paintGL()
 {
-    glError();
-    paint();
-    glError();
+    glError();  
 
-    // The fixed function OGL is used to support old school OpenGL calls for overlay painting.
-    // NOTE: it is not tested, what happens on contexts in newer core profiles.
-
-    QPainter painter(this);
-    paintOverlay(painter);
-    painter.end();
-    glError();
-}
-
-void Canvas::paint()
-{
     if(m_painter)
         m_painter->paint();
     else 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Canvas::paintOverlay(QPainter & painter)
-{
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setRenderHint(QPainter::TextAntialiasing);
+     
+    glError();  
 }
 
 void Canvas::timerEvent(QTimerEvent *event)

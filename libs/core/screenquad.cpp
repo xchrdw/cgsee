@@ -77,7 +77,7 @@ void ScreenQuad::initializeDefaultProgram() const
     Shader * f = new Shader(GL_FRAGMENT_SHADER);
 
     v->setSource(
-        "#version 330\n"
+        "#version 150 core\n"
         "\n"
         "in vec3 a_vertex;\n"
         "out vec2 v_uv;\n"
@@ -89,12 +89,10 @@ void ScreenQuad::initializeDefaultProgram() const
         "}\n");
 
     f->setSource(
-        "#version 330\n"
+        "#version 150 core\n"
         "\n"
         "in vec2 v_uv;\n"
         "out vec4 fragcolor;\n"
-        //"\n"
-        //"uniform sampler2D source;\n"
         "\n"
         "void main()\n"
         "{\n"
