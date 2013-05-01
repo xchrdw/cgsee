@@ -31,7 +31,7 @@ public:
         const QSize & size
     ,   const bool aspect = true
     ,   const bool alpha = false);
-
+     
 protected:
     virtual const bool initialize();
 
