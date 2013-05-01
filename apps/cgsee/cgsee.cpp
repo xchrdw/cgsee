@@ -51,5 +51,7 @@ void CGSee::takeScreenshot()
     if (fileName.isEmpty())
         return;
 
-    m_painter->takeScreenshot(fileName);
+    const QImage frame(m_painter->capture());
+    if(!frame.isNull())
+        frame.save(fileName);
 }

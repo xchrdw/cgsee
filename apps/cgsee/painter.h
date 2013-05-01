@@ -25,7 +25,11 @@ public:
         const int width
     ,   const int height);
 
-    virtual void takeScreenshot(const QString& fileName);
+    const QImage Painter::capture(
+        const bool alpha = false);
+    const QImage Painter::capture(
+        const QSize & size
+    ,   const bool alpha = false);
 
 protected:
     virtual const bool initialize();
