@@ -45,9 +45,6 @@ const bool Painter::initialize()
         return false;
     }
 
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
-
     glm::mat4 transform(1.f);
 
     transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.5f));

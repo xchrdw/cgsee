@@ -61,7 +61,8 @@ const GLFormat AbstractApplication::format() const
     // be verified, since they are not listed by glew.
 
     const QStringList extensions = QStringList() 
-        << "GL_EXT_abgr"; // extension with number 1 ;)
+        << "GL_EXT_abgr" // extension with number 1 ;)
+        << "AMD_interleaved_elements";
 
     format.setExtensions(extensions);
 

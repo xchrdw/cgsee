@@ -85,8 +85,16 @@ void PolygonalDrawable::draw(
 	t_bufferObjects::const_iterator e(m_elementArrayBOs.begin());
 	const t_bufferObjects::const_iterator eEnd(m_elementArrayBOs.end());
 
-	for(; e != eEnd; ++e)
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
+    glEnable(GL_DEPTH_TEST);
+
+    for(; e != eEnd; ++e)
 		(*e)->draw(m_geometry->mode());
+
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
 
 	for(i = m_arrayBOsByAttribute.begin(); i != iEnd; ++i)
 		i.value()->release(program->attributeLocation(i.key()));
