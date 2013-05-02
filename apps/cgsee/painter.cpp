@@ -20,6 +20,7 @@ Painter::Painter()
 ,   m_group(nullptr)
 ,   m_camera(nullptr)
 ,   m_normalz(nullptr)
+,   m_flat(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
 ,   m_quad(nullptr)
@@ -32,6 +33,7 @@ Painter::~Painter()
     delete m_quad;
 
     delete m_normalz;
+	delete m_flat;
     delete m_fboNormalz;
     delete m_flush;    
 }
@@ -78,6 +80,12 @@ const bool Painter::initialize()
 	m_normalz->attach(
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
+	m_flat = new Program();
+	m_flat->attach(
+		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flat.frag"));
+	m_flat->attach(
+		new FileAssociatedShader(GL_VERTEX_SHADER, "data/flat.vert"));
+
     // Post Processing Shader
 
     m_flush = new Program();
@@ -100,7 +108,8 @@ void Painter::paint()
 
 	// Normals and Depth to RGBA
 
-    m_camera->draw(m_normalz, m_fboNormalz);
+    //m_camera->draw(m_normalz, m_fboNormalz);
+	m_camera->draw(m_flat, m_fboNormalz);
 
 
     sampler.clear();

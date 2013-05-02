@@ -46,6 +46,7 @@ protected:
     ScreenQuad * m_quad;
 
     Program * m_normalz;
+	Program * m_flat;
     FrameBufferObject * m_fboNormalz;
 
     Program * m_flush;

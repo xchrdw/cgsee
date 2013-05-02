@@ -13,6 +13,7 @@ static const QString PROJECTION_UNIFORM ("projection");
 
 static const QString ZNEAR_UNIFORM      ("znear");
 static const QString ZFAR_UNIFORM       ("zfar");
+//static const QString CAMERA_POSITION       ("camera_postion");
 
 
 Camera::Camera(const QString & name)
