@@ -13,9 +13,9 @@ public:
     Group(const QString & name = "unnamed");
     virtual ~Group();
 
-	virtual Group * asGroup();
+    virtual Group * asGroup();
 
-	virtual void draw(
+    virtual void draw(
         Program * program
     ,   const glm::mat4 & transform);
 

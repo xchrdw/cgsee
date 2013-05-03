@@ -18,7 +18,7 @@ FrameBufferObject::FrameBufferObject(
 ,   m_texture(-1)
 ,   m_render(-1)
 
-,	m_size(glm::ivec2(0))
+,   m_size(glm::ivec2(0))
 
 ,   m_internal(internalFormat)
 ,   m_format(format)
@@ -30,26 +30,41 @@ FrameBufferObject::FrameBufferObject(
 
 FrameBufferObject::~FrameBufferObject()
 {
-	if(GPUQuery::isTexture(m_texture))
-	{
+    if(isTexture())
+    {
         glDeleteTextures(1, &m_texture);
-		glError();
-	}
-	if(GPUQuery::isRenderBuffer(m_render))
-	{
+        glError();
+    }
+    if(isRenderBuffer())
+    {
         glDeleteRenderbuffers(1, &m_render);
-		glError();
-	}
-	if(GPUQuery::isFrameBuffer(m_fbo))
-	{
+        glError();
+    }
+    if(isFrameBuffer())
+    {
         glDeleteFramebuffers(1, &m_fbo);
-		glError();
-	}
+        glError();
+    }
+}
+
+inline const bool FrameBufferObject::isTexture() const
+{
+    return m_texture != -1;
+}
+
+inline const bool FrameBufferObject::isRenderBuffer() const
+{
+    return m_render != -1;
+}
+
+inline const bool FrameBufferObject::isFrameBuffer() const
+{
+    return m_fbo != -1;
 }
 
 void FrameBufferObject::bind() const
 {
-    if(!GPUQuery::isFrameBuffer(m_fbo))
+    if(!isFrameBuffer())
         initialize();
 
     glViewport(0, 0, m_size.x, m_size.y);
@@ -60,7 +75,7 @@ void FrameBufferObject::bind() const
 
 void FrameBufferObject::release() const
 {
-    if(!GPUQuery::isFrameBuffer(m_fbo))
+    if(!isFrameBuffer())
         return;
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -72,11 +87,11 @@ void FrameBufferObject::bindTexture2D(
 ,   const QString & uniform
 ,   const glm::uint slot) const
 {
-    if(!GPUQuery::isTexture(m_texture))
+    if(!isTexture())
         initialize();
 
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glError();
+    glActiveTexture(GL_TEXTURE0 + slot);
+    glError();
 
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glError();
@@ -87,7 +102,7 @@ void FrameBufferObject::bindTexture2D(
 
 void FrameBufferObject::releaseTexture2D() const
 {
-    if(!GPUQuery::isTexture(m_texture))
+    if(!isTexture())
         return;
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -98,8 +113,8 @@ void FrameBufferObject::initialize() const
 {
     if(m_depth) // Initialize Render Buffer for Depth
     {
-		glGenRenderbuffers(1, &m_render);
-		glError();
+        glGenRenderbuffers(1, &m_render);
+        glError();
     }
 
     glGenTextures(1, &m_texture);
@@ -108,16 +123,15 @@ void FrameBufferObject::initialize() const
     glGenFramebuffers(1, &m_fbo);
     glError();
 
-	resize();
+    resize();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-	if(m_depth)
-	{
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT
-			, GL_RENDERBUFFER, m_render);
-		glError();
-	}
+    if(m_depth)
+    {
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
+        glError();
+    }
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, m_attachment
         , GL_TEXTURE_2D, m_texture, 0);
@@ -144,28 +158,28 @@ void FrameBufferObject::resize(
 
 void FrameBufferObject::resize() const
 {
-	if(m_depth && m_render != -1)
-	{
+    if(m_depth && m_render != -1)
+    {
         glBindRenderbuffer(GL_RENDERBUFFER, m_render);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_size.x, m_size.y);
         glError();
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
         glError();
-	}
+    }
 
-	if(m_texture != -1)
-	{
-		glBindTexture(GL_TEXTURE_2D, m_texture);
+    if(m_texture != -1)
+    {
+        glBindTexture(GL_TEXTURE_2D, m_texture);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, m_internal, m_size.x, m_size.y, 0, m_format, m_type, 0);
-		glError();
+        glTexImage2D(GL_TEXTURE_2D, 0, m_internal, m_size.x, m_size.y, 0, m_format, m_type, 0);
+        glError();
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glError();
-	}
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glError();
+    }
 }

@@ -15,7 +15,7 @@ public:
     Camera(const QString & name = "unnamed");
     virtual ~Camera();
 
-	virtual Camera * asCamera();
+    virtual Camera * asCamera();
 
     virtual void draw(
         Program * program

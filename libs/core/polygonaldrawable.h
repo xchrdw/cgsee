@@ -36,7 +36,7 @@ protected:
 
     const glm::mat4 & transform() const;
 
-	void setupBuffers();
+    void setupBuffers();
     void deleteBuffers();
 
     virtual void invalidateBoundingBox();
@@ -46,9 +46,9 @@ protected:
 
     PolygonalGeometry * m_geometry;
 
-	typedef QVector<BufferObject *> t_bufferObjects;
-	t_bufferObjects m_elementArrayBOs;
+    typedef QVector<BufferObject *> t_bufferObjects;
+    t_bufferObjects m_elementArrayBOs;
 
-	typedef QMap<QString, BufferObject *> t_bufferObjectsByAttribute;
-	t_bufferObjectsByAttribute m_arrayBOsByAttribute;	
+    typedef QMap<QString, BufferObject *> t_bufferObjectsByAttribute;
+    t_bufferObjectsByAttribute m_arrayBOsByAttribute;    
 };

@@ -13,7 +13,7 @@
 
 
 Program::Program()
-:	m_program(0)
+:   m_program(-1)
 ,   m_linked(false)
 ,   m_dirty(true)
 {
@@ -23,17 +23,22 @@ Program::Program()
 
 Program::~Program()
 {
-	if(GPUQuery::isProgram(m_program))
+    if(isProgram())
     {
-		t_shaders::const_iterator i;
-		while(m_shaders.end() != m_shaders.begin())
-			detach(*(m_shaders.begin()));
+        t_shaders::const_iterator i;
+        while(m_shaders.end() != m_shaders.begin())
+            detach(*(m_shaders.begin()));
 
         glDeleteProgram(m_program);
         glError();
 
         m_program = 0;
     }
+}
+
+inline const bool Program::isProgram() const
+{
+    return m_program != -1;
 }
 
 const bool Program::use() const
@@ -59,8 +64,8 @@ const bool Program::link() const
     if(!m_dirty)
         return isLinked();
 
-	t_shaders::const_iterator i(m_shaders.begin());
-	const t_shaders::const_iterator iEnd(m_shaders.end());
+    t_shaders::const_iterator i(m_shaders.begin());
+    const t_shaders::const_iterator iEnd(m_shaders.end());
 
     for(; i != iEnd; ++i)
         if(!(*i)->isCompiled())
@@ -73,24 +78,30 @@ const bool Program::link() const
 
     GLint status(GL_FALSE);
     glGetProgramiv(m_program, GL_LINK_STATUS, &status);
+    glError();
 
     m_linked = (GL_TRUE == status);
     m_log = "";
 
-    /*if(!m_linked)
-    {*/
-        GLint maxLength(0);
-        GLint logLength(0);
+    // check for compile errors
 
-        glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &maxLength);
-        glError();
+    GLint maxLength(0);
+    GLint logLength(0);
 
-        GLchar *log = new GLchar[maxLength];
-        glGetProgramInfoLog(m_program, maxLength, &logLength, log);
-        glError();
+    glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &maxLength);
+    glError();
 
-        m_log = log;
-    /*}*/
+    if(!maxLength)
+        return isLinked();
+
+    GLchar *log = new GLchar[maxLength];
+    glGetProgramInfoLog(m_program, maxLength, &logLength, log);
+    glError();
+
+    m_log = log;
+
+    if(!m_log.isEmpty())
+        qWarning("%s", log);
 
     return isLinked();
 }
@@ -100,11 +111,11 @@ const bool Program::attach(Shader * shader)
     if(!shader)
         return false;
 
-	if(m_shaders.end() != m_shaders.find(shader))
+    if(m_shaders.end() != m_shaders.find(shader))
         return true;
 
-	m_shaders.insert(shader);
-	shader->programs().insert(this);
+    m_shaders.insert(shader);
+    shader->programs().insert(this);
 
     glAttachShader(m_program, shader->shader());
     m_dirty = true;
@@ -120,15 +131,15 @@ const bool Program::detach(Shader * shader)
         return true;
 
     glDetachShader(m_program, shader->shader());
-	const bool result(glError());
+    const bool result(glError());
 
     m_dirty = true;
 
     shader->programs().remove(this);
     m_shaders.remove(shader);
 
-	if(shader->programs().empty())
-		delete shader;
+    if(shader->programs().empty())
+        delete shader;
 
     return !result;
 }

@@ -103,7 +103,7 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
         else if("g " == type)
             parseG (s, object);
     }
-	stream.close();
+    stream.close();
 
     Group * group = toGroup(objects);
     group->setName(filePath);
@@ -329,7 +329,7 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
     {
         // add vertex and its new index based on obj index
 
-		// TODO: make use of vertex reuse!
+        // TODO: make use of vertex reuse!
 
         geom->indices().push_back(i);
         geom->vertices().push_back(object.vs[group.vis[i]]);
@@ -340,8 +340,8 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
             geom->normals().push_back(object.vns[group.vnis[i]]);
     }
 
-	// TODO: support other modes here!
-	geom->setMode(GL_TRIANGLES);
+    // TODO: support other modes here!
+    geom->setMode(GL_TRIANGLES);
 
     if(!usesNormalIndices)
         geom->retrieveNormals();
