@@ -108,8 +108,6 @@ void BufferObject::release()
     if(!isBuffer())
         return;
 
-    glBindVertexArray(0);
-
     glBindBuffer(m_target, 0);
     glError();
 }
