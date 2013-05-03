@@ -1,4 +1,3 @@
-
 #include <GL/glew.h>
 
 #include "polygonaldrawable.h"
@@ -145,5 +144,6 @@ void PolygonalDrawable::deleteBuffers()
     {
         glDeleteVertexArrays(1, &m_vao);
 	    glError();
+        m_vao = -1;
     }
 }
