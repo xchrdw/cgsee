@@ -34,6 +34,15 @@ public:
 
     virtual const AxisAlignedBoundingBox boundingBox() const;
 
+    // Geometry Computation
+
+    // TODO:
+    // * generate triangle strip
+    // * vertex cache optimization
+    // * per face, per vertex normals
+
+    void retrieveNormals();
+
 protected:
     t_vec3s m_vertices;
     t_vec3s m_normals;
