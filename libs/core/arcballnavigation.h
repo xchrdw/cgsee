@@ -8,8 +8,8 @@ public:
 	ArcballNavigation(void);
 	~ArcballNavigation(void);
 	
-	virtual void mouseMoveEvent(QMouseEvent *event);
-
+    virtual void mouseMoveEvent(const glm::vec2 point);
+    virtual void reset();
 	
 	virtual const glm::mat4 viewMatrix();
 
@@ -20,6 +20,6 @@ private:
 	bool invalid;
 
 	QPoint oldPos;
-
+    glm::mat4 viewmatrix;
 };
 
