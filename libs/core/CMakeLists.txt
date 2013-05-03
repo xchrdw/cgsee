@@ -10,6 +10,10 @@ set(SOURCES
 
     aabb.h
     aabb.cpp
+    abstractnavigation.h
+    abstractnavigation.cpp
+    arcballnavigation.h
+    arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstracttimer.h
