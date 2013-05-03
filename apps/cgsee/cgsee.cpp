@@ -1,4 +1,3 @@
-
 #include "cgsee.h"
 #include "painter.h"
 
@@ -28,6 +27,7 @@ CGSee::~CGSee()
 {
     // NOTE: painter must be destroyed before viewer, since viewer deletes context, 
     // and painter deinitializes all opengl handles...
+
     delete m_painter;
     delete m_viewer;
 }
