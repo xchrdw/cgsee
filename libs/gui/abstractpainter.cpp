@@ -3,11 +3,12 @@
 
 #include "abstractpainter.h"
 
+#include <core/camera.h>
 #include <core/gpuquery.h>
 
 
 AbstractPainter::AbstractPainter()
-:   m_initialized(false)
+:   m_initialized(false), m_camera(nullptr)
 {
 }
  
@@ -38,6 +39,12 @@ void AbstractPainter::resize(
 void AbstractPainter::keyPress(QKeyEvent * event)
 {
 }
+
+Camera* AbstractPainter::getCamera() const
+{
+    return m_camera;
+}
+
 
 void AbstractPainter::keyRelease(QKeyEvent * event)
 {

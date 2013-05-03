@@ -23,6 +23,13 @@ public:
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
+    const QImage capture(
+        const bool alpha = false);
+    const QImage capture(
+        const QSize & size
+    ,   const bool aspect = true
+    ,   const bool alpha = false);
+
 protected:
     
     // QGLWidget Interface

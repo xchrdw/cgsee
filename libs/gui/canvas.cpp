@@ -1,6 +1,8 @@
 
 #include <GL/glew.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <cassert>
 
 #include <QApplication>
@@ -11,6 +13,7 @@
 
 #include <core/gpuquery.h>
 #include <core/glformat.h>
+#include <core/camera.h>
 
 
 Canvas::Canvas(
@@ -146,4 +149,83 @@ void Canvas::setPainter(AbstractPainter * painter)
 AbstractPainter * Canvas::painter()
 {
     return m_painter;
+}
+
+const QImage Canvas::capture(
+    const bool alpha)
+{
+    if(!m_painter)
+        return QImage();
+
+    Camera* camera = m_painter->getCamera();
+
+    if(!camera)
+        return QImage();
+
+    // aspect is false, since this accesses the cameras projection matrix with same aspect...
+    return capture(QSize(camera->viewport().x, camera->viewport().y), false, alpha);
+}
+
+const QImage Canvas::capture(
+    const QSize & size
+,   const bool aspect
+,   const bool alpha)
+{
+    static const GLuint tileW(1024);
+    static const GLuint tileH(1024);
+
+    if(!m_painter)
+        return QImage();
+
+    Camera* camera = m_painter->getCamera();
+
+    if(!camera)
+    {
+        qWarning("No camera for frame capture available.");
+        return QImage();
+    }
+
+    const GLuint w(camera->viewport().x);
+    const GLuint h(camera->viewport().y);
+
+    const GLuint frameW = size.width();
+    const GLuint frameH = size.height();
+
+    const glm::mat4 proj(aspect ? glm::perspective(camera->fovy()
+        , static_cast<float>(frameW) / static_cast<float>(frameH)
+        , camera->zNear(), camera->zFar()) : camera->projection());
+
+    const glm::mat4 view(camera->view());
+
+    const glm::vec4 viewport(0, 0, frameW, frameH);
+
+    QImage frame(frameW, frameH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
+    QImage tile(tileW, tileH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
+
+    QPainter p(&frame);
+
+    resize(tileW, tileH);
+    camera->update();
+
+    for (GLuint y = 0; y < frameH; y += tileH)
+    for (GLuint x = 0; x < frameW; x += tileW)
+    {
+        const glm::mat4 pick = glm::pickMatrix(glm::vec2(x + tileW / 2,  y + tileH / 2),
+                                               glm::vec2(tileW, tileH), viewport);
+
+        const glm::mat4 projTile(pick * proj);
+
+        camera->setTransform(projTile * view);
+
+        paint();
+
+        glReadPixels(0, 0, tileW, tileH, alpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, tile.bits());
+        p.drawImage(x, y, tile);
+    }
+    p.end();
+
+    resize(w, h);
+    camera->setTransform(proj * view);
+
+    return frame.mirrored(false, true); // flip vertically
 }

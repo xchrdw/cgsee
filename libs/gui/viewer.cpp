@@ -9,6 +9,7 @@
 #include "abstractpainter.h"
 
 #include <core/glformat.h>
+#include <gui/canvas.h>
 
 #include <iostream>
 
@@ -117,4 +118,9 @@ AbstractPainter * Viewer::painter()
         return nullptr;
 
     return m_qtCanvas->painter();
+}
+
+Canvas * Viewer::canvas() const
+{
+    return m_qtCanvas;
 }

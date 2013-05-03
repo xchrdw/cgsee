@@ -35,6 +35,8 @@ public:
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
+    Canvas * canvas() const;
+
 signals:
     void takeScreenshot();
 

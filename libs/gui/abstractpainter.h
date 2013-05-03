@@ -8,6 +8,7 @@
 
 
 class QKeyEvent;
+class Camera;
 
 class CGSEE_API AbstractPainter
 {
@@ -25,6 +26,8 @@ public:
     virtual void keyPress(QKeyEvent * event);
     virtual void keyRelease(QKeyEvent * event);
 
+    virtual Camera* getCamera() const;
+
     // TODO: more to come...
 
 protected:
@@ -32,4 +35,5 @@ protected:
 
 protected:
     bool m_initialized;
+    Camera * m_camera;
 };

@@ -21,7 +21,6 @@
 Painter::Painter()
 :   AbstractPainter()
 ,   m_group(nullptr)
-,   m_camera(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
@@ -150,74 +149,4 @@ void Painter::releaseSampler(
 
 	for(; i != iEnd; ++i)
 		i.value()->releaseTexture2D();
-}
-
-const QImage Painter::capture(
-    const bool alpha)
-{
-    if(!m_camera)
-        return QImage();
-
-    // aspect is false, since this accesses the cameras projection matrix with same aspect...
-    return capture(QSize(m_camera->viewport().x, m_camera->viewport().y), false, alpha);
-}
-
-const QImage Painter::capture(
-    const QSize & size
-,   const bool aspect
-,   const bool alpha)
-{
-    static const GLuint tileW(256);
-    static const GLuint tileH(256);
-
-    if(!m_camera)
-    {
-        qWarning("No camera for frame capture available.");
-        return QImage();
-    }
-
-    const GLuint w(m_camera->viewport().x);
-    const GLuint h(m_camera->viewport().y);
-
-    const GLuint frameW = size.width();
-    const GLuint frameH = size.height();
-
-    const glm::mat4 proj(aspect ? glm::perspective(m_camera->fovy()
-        , static_cast<float>(frameW) / static_cast<float>(frameH)
-        , m_camera->zNear(), m_camera->zFar()) : m_camera->projection());
-
-    const glm::mat4 view(m_camera->view());
-
-    const glm::vec4 viewport(0, 0, frameW, frameH);
-
-    QImage frame(frameW, frameH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
-    QImage tile(tileW, tileH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
-
-    QPainter p(&frame);
-
-    resize(tileW, tileH);
-
-    m_camera->update();
-
-    for (GLuint y = 0; y < frameH; y += tileH)
-    for (GLuint x = 0; x < frameW; x += tileW) 
-    {
-        const glm::mat4 pick = glm::pickMatrix(glm::vec2(x + tileW / 2,  y + tileH / 2),
-            glm::vec2(tileW, tileH), viewport);
-
-        const glm::mat4 projTile(pick * proj);
-
-        m_camera->setTransform(projTile * view);
-
-        paint();
-
-        glReadPixels(0, 0, tileW, tileH, alpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, tile.bits());
-        p.drawImage(x, y, tile);
-    }
-    p.end();
-
-    resize(w, h);
-    m_camera->setTransform(proj * view);
-
-    return frame.mirrored(false, true); // flip vertically
 }

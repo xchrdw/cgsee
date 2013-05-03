@@ -2,6 +2,7 @@
 #include "cgsee.h"
 #include "painter.h"
 
+#include <gui/canvas.h>
 #include <gui/viewer.h>
 #include <gui/imageexport.h>
 
@@ -45,7 +46,7 @@ void CGSee::exportCanvasAsImage()
 
     // TODO: Size GUI in ImageExport...
 
-    ie.save(m_painter->capture(QSize(10000, 5000)));
+    ie.save(m_viewer->canvas()->capture(QSize(10000, 5000)));
 
     QApplication::restoreOverrideCursor();
 }

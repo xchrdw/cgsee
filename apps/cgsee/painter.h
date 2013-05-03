@@ -24,13 +24,6 @@ public:
     virtual void resize(
         const int width
     ,   const int height);
-
-    const QImage Painter::capture(
-        const bool alpha = false);
-    const QImage Painter::capture(
-        const QSize & size
-    ,   const bool aspect = true
-    ,   const bool alpha = false);
      
 protected:
     virtual const bool initialize();
@@ -48,7 +41,6 @@ protected:
 		const t_samplerByName & sampler);
 
 protected:
-    Camera * m_camera;
     Group * m_group;
     ScreenQuad * m_quad;
 
