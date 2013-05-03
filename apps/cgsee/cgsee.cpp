@@ -1,4 +1,3 @@
-
 #include "cgsee.h"
 #include "painter.h"
 
@@ -26,6 +25,6 @@ CGSee::CGSee(int & argc, char ** argv)
 
 CGSee::~CGSee()
 {
-    delete m_viewer;
     delete m_painter;
+    delete m_viewer;
 }
