@@ -343,6 +343,9 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
 	// TODO: support other modes here!
 	geom->setMode(GL_TRIANGLES);
 
+    if(!usesNormalIndices)
+        geom->retrieveNormals();
+
     PolygonalDrawable * drawable(new PolygonalDrawable(object.qname()));
     drawable->setGeometry(geom);
 

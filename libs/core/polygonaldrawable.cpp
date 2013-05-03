@@ -125,12 +125,19 @@ void PolygonalDrawable::setupBuffers()
 
 	BufferObject * vertexBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
 	vertexBO->data<glm::vec3>(m_geometry->vertices(), GL_FLOAT, 3);
+    
+    m_arrayBOsByAttribute["a_vertex"] = vertexBO;
 
-	BufferObject * normalBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
-	normalBO->data<glm::vec3>(m_geometry->normals(), GL_FLOAT, 3);
 
-	m_arrayBOsByAttribute["a_vertex"] = vertexBO;
-    m_arrayBOsByAttribute["a_normal"] = normalBO;
+    // TODO: the geometry should provide this information.
+
+    if(!m_geometry->normals().isEmpty())
+    {
+	    BufferObject * normalBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
+	    normalBO->data<glm::vec3>(m_geometry->normals(), GL_FLOAT, 3);
+
+        m_arrayBOsByAttribute["a_normal"] = normalBO;
+    }
 
     glBindVertexArray(0);
 	glError();
