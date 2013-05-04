@@ -103,6 +103,9 @@ void Painter::paint()
 
     // Normals and Depth to RGBA
 
+
+    m_camera->setView(m_navigation->viewMatrix());
+
     m_camera->draw(m_normalz, m_fboNormalz);
 
 
@@ -121,6 +124,7 @@ void Painter::resize(
     AbstractPainter::resize(width, height);
     
     m_camera->setViewport(width, height);
+    m_navigation->setViewPort(width, height);
 
     m_fboNormalz->resize(width, height);
     

@@ -45,9 +45,12 @@ public:
 	// lazy matrices getters
 
 	virtual const glm::mat4 viewMatrix() = 0;
+    virtual const glm::mat4 viewMatrixInverted() = 0;
+    
+    void setViewPort( const int width, const int height );
 
-	virtual const glm::mat4 viewMatrixInverted() = 0;
-
-
+protected:
+    int m_width;
+    int m_height;
 
 };
