@@ -45,9 +45,6 @@ const bool Painter::initialize()
         return false;
     }
 
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
-
     glm::mat4 transform(1.f);
 
     transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
@@ -89,6 +86,7 @@ const bool Painter::initialize()
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
+
     return true;
 }
 
@@ -98,15 +96,13 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    // Normals and Depth to RGBA
-
-    m_camera->draw(m_normalz, m_fboNormalz);
-
+    m_normalz->use();
+    m_camera->draw(*m_normalz, m_fboNormalz);
 
     sampler.clear();
     sampler["source"] = m_fboNormalz;
 
-    bindSampler(sampler, m_flush);
+    bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
 }
@@ -130,8 +126,10 @@ void Painter::postShaderRelinked()
 
 void Painter::bindSampler(
     const t_samplerByName & sampler
-,    Program * program)
+,   const Program & program)
 {
+    program.use();
+
     t_samplerByName::const_iterator i(sampler.begin());
     const t_samplerByName::const_iterator iEnd(sampler.end());
     

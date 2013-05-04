@@ -114,7 +114,7 @@ void PolygonalGeometry::retrieveNormals()
 }
 
 void PolygonalGeometry::draw(
-    Program * program
+    const Program & program
 ,   const glm::mat4 & transform)
 {
 }

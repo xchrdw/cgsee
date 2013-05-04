@@ -27,7 +27,7 @@ public:
     PolygonalGeometry * geometry();
 
     virtual void draw(
-        Program * program
+        const Program & program
     ,   const glm::mat4 & transform);
 
     virtual const AxisAlignedBoundingBox boundingBox() const;
@@ -36,7 +36,7 @@ protected:
 
     const glm::mat4 & transform() const;
 
-    void setupBuffers();
+    void initialize(const Program & program);
     void deleteBuffers();
 
     virtual void invalidateBoundingBox();
