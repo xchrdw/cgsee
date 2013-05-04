@@ -90,7 +90,6 @@ const bool Painter::initialize()
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
-
     return true;
 }
 

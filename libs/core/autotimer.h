@@ -3,7 +3,8 @@
 
 #include "declspec.h"
 
-#include <QStringList>
+#include <QString>
+
 
 class Timer;
 
@@ -28,7 +29,7 @@ public:
 
 protected:
     static int m_numActiveInstances;
-    const static QStringList m_units;
+    static const char * m_units;
 
     const QString m_info;
     const int m_index;

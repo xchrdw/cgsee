@@ -9,8 +9,7 @@
 
 int AutoTimer::m_numActiveInstances(0);
 
-const QStringList AutoTimer::m_units = QStringList() 
-    << "ns" << "µs" << "ms" << "s";
+const char * AutoTimer::m_units("n\xE6m ");
 
 
 AutoTimer::AutoTimer(const QString & info)
@@ -29,13 +28,13 @@ AutoTimer::~AutoTimer()
 
     // use number of digits to retrieve exp in 10^(3 exp)
     const unsigned char u(qMin<unsigned char>(3
-        , floor(log10(delta) / 3.0)));
+        , ceil(log10(delta) / 3.0)));
 
     // shorten the time to nearest time unit
     delta /= pow(1000.0, u);
 
-    qDebug("%s took %.4f %s (Timer%02i)", qPrintable(m_info)
-        , delta, qPrintable(m_units[u]), m_index);
+    qDebug("%s took %.4f %cs (Timer%02i)", qPrintable(m_info)
+        , delta, m_units[u], m_index);
     delete m_timer;
 
     assert(0 < m_numActiveInstances);
