@@ -1,4 +1,5 @@
 #include "abstractdata.h"
+GlobalDataRegistry GlobalDataRegistry::s_instance;
 
 QString GlobalDataRegistry::registerNewData(QString proposedName, DataItem* data)
 {
@@ -47,5 +48,3 @@ DataItem::StandardPointer DataItem::clone(QString *newName)
 {
     return clone(newName, GlobalDataRegistry::getGlobalInstance());
 }
-
-GlobalDataRegistry GlobalDataRegistry::s_instance;
