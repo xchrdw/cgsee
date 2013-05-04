@@ -17,7 +17,7 @@ Group::~Group()
 }
 
 void Group::draw(
-    Program * program
+    const Program & program
 ,   const glm::mat4 & transform)
 {
     t_nodes::const_iterator i(m_children.begin());

@@ -100,7 +100,7 @@ const bool Program::link() const
 
     m_log = log;
 
-    if(!m_log.isEmpty())
+    if(!m_log.isEmpty() && m_log != "No errors.\n")
         qWarning("%s", log);
 
     return isLinked();
@@ -167,7 +167,8 @@ const bool Program::isLinked() const
 
 const GLint Program::attributeLocation(const QString & name) const
 {
-    use();
+    if(m_dirty || !m_linked)
+        link();
 
     const QByteArray bytes(name.toLocal8Bit());
     const GLchar * chr(bytes.constData());
@@ -180,7 +181,8 @@ const GLint Program::attributeLocation(const QString & name) const
 
 const GLint Program::uniformLocation(const QString & name) const
 {
-    use();
+    if(m_dirty || !m_linked)
+        link();
 
     const QByteArray bytes(name.toLocal8Bit());
     const GLchar * chr(bytes.constData());

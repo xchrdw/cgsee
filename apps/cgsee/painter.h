@@ -35,7 +35,7 @@ protected:
 
     static void bindSampler(
         const t_samplerByName & sampler
-    ,    Program * program);
+    ,   const Program & program);
 
     static void releaseSampler(
         const t_samplerByName & sampler);

@@ -26,7 +26,7 @@ public:
     void release() const;
 
     void bindTexture2D(
-        Program * program
+        const Program & program
     ,   const QString & uniform
     ,   const glm::uint slot) const;
 
