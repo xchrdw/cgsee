@@ -3,6 +3,7 @@
 
 #include "painter.h"
 
+#include <core/autotimer.h>
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
@@ -38,7 +39,10 @@ Painter::~Painter()
 
 const bool Painter::initialize()
 {
+    AutoTimer t("Initialization of Painter");
+
     m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
+
     if(!m_group)
     {
         qWarning("Have you set the Working Directory?");
@@ -96,7 +100,6 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    m_normalz->use();
     m_camera->draw(*m_normalz, m_fboNormalz);
 
     sampler.clear();
@@ -129,10 +132,10 @@ void Painter::bindSampler(
 ,   const Program & program)
 {
     program.use();
-
-    t_samplerByName::const_iterator i(sampler.begin());
-    const t_samplerByName::const_iterator iEnd(sampler.end());
     
+    t_samplerByName::const_iterator i(sampler.cbegin());
+    const t_samplerByName::const_iterator iEnd(sampler.cend());
+
     for(glm::uint slot(0); i != iEnd; ++i, ++slot)
         i.value()->bindTexture2D(program, i.key(), slot);
 }
@@ -141,7 +144,7 @@ void Painter::releaseSampler(
     const t_samplerByName & sampler)
 {
     t_samplerByName::const_iterator i(sampler.begin());
-    const t_samplerByName::const_iterator iEnd(sampler.end());
+    const t_samplerByName::const_iterator iEnd(sampler.cend());
 
     for(; i != iEnd; ++i)
         i.value()->releaseTexture2D();
