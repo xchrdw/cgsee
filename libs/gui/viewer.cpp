@@ -126,17 +126,5 @@ AbstractPainter * Viewer::painter()
     return m_qtCanvas->painter();
 }
 
-void Viewer::mousePressEvent( QMouseEvent * event )
-{
-    painter()->mousePressEvent(event);
-}
 
-void Viewer::mouseReleaseEvent( QMouseEvent * event )
-{
-    painter()->mouseReleaseEvent(event);
-}
 
-void Viewer::mouseMoveEvent( QMouseEvent * event )
-{
-    painter()->mouseMoveEvent(event);
-}

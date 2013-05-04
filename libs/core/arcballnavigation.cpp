@@ -54,6 +54,7 @@ glm::vec3 ArcballNavigation::get_arcball_vector(glm::vec2 v) {
 
 void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 {
+    qDebug("move");
     if (m_arcball_on) {
         m_cur = glm::vec2(event->pos().x(), event->pos().y());
     }
@@ -61,7 +62,7 @@ void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 
 void ArcballNavigation::mousePressEvent(QMouseEvent * event)
 {
-    qDebug("press");
+    qDebug("press %i %i", event->pos().x(), event->pos().y());
 
     if (event->button() == Qt::LeftButton) {
         m_arcball_on = true;

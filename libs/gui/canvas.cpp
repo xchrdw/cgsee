@@ -158,3 +158,18 @@ AbstractPainter * Canvas::painter()
 {
     return m_painter;
 }
+
+void Canvas::mousePressEvent( QMouseEvent * event )
+{
+    m_painter->mousePressEvent(event);
+}
+
+void Canvas::mouseReleaseEvent( QMouseEvent * event )
+{
+    m_painter->mouseReleaseEvent(event);
+}
+
+void Canvas::mouseMoveEvent( QMouseEvent * event )
+{
+    m_painter->mouseMoveEvent(event);
+}
