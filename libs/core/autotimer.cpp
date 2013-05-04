@@ -1,8 +1,6 @@
 
 #include <cassert>
 
-#include <qDebug>
-
 #include "autotimer.h"
 #include "timer.h"
 
