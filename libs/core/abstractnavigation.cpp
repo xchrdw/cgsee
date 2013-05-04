@@ -12,12 +12,11 @@ AbstractNavigation::~AbstractNavigation(void)
 
 void AbstractNavigation::keyPressEvent( QKeyEvent *event ) { }
 
-
 void AbstractNavigation::keyReleaseEvent( QKeyEvent *event ) { }
 
-void AbstractNavigation::mouseMoveEvent(const glm::vec2 point) { }
-void AbstractNavigation::mousePressEvent(const glm::vec2 point, MouseButton button) { }
-void AbstractNavigation::mouseReleaseEvent(const glm::vec2 point, MouseButton button) { }
-void AbstractNavigation::mouseDoubleClickEvent(const glm::vec2 point, MouseButton button) { }
+void AbstractNavigation::mouseMoveEvent(QMouseEvent * event) { }
+void AbstractNavigation::mousePressEvent(QMouseEvent * event) { }
+void AbstractNavigation::mouseReleaseEvent(QMouseEvent * event) { }
+void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) { }
 
 void AbstractNavigation::wheelEvent(QWheelEvent *event) { }

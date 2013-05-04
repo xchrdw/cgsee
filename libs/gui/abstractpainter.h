@@ -5,9 +5,10 @@
 
 #include <core/declspec.h>
 #include <core/glformat.h>
-
+#include <core/abstractnavigation.h>
 
 class QKeyEvent;
+class QMouseEvent;
 
 class CGSEE_API AbstractPainter
 {
@@ -24,6 +25,9 @@ public:
 
     virtual void keyPress(QKeyEvent * event);
     virtual void keyRelease(QKeyEvent * event);
+    virtual void mouseMoveEvent (QMouseEvent * event);
+    virtual void mousePressEvent (QMouseEvent * event);
+    virtual void mouseReleaseEvent (QMouseEvent * event);
 
     // TODO: more to come...
 
@@ -32,4 +36,6 @@ protected:
 
 protected:
     bool m_initialized;
+    AbstractNavigation *m_navigation;
+
 };

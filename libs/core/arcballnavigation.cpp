@@ -6,6 +6,11 @@ ArcballNavigation::ArcballNavigation(void)
     reset();
 }
 
+ArcballNavigation::~ArcballNavigation(void)
+{
+}
+
+
 void ArcballNavigation::reset()
 {
     m_center = glm::vec3(0, 0, 0);
@@ -13,10 +18,6 @@ void ArcballNavigation::reset()
     m_arcball_on = false;
 }
 
-
-ArcballNavigation::~ArcballNavigation(void)
-{
-}
 
 const glm::mat4 ArcballNavigation::viewMatrix() {
     if (m_cur != m_last) {
@@ -39,36 +40,45 @@ const glm::mat4 ArcballNavigation::viewMatrix() {
  * sphere, return the nearest point on the virtual ball surface.
  */
 glm::vec3 ArcballNavigation::get_arcball_vector(glm::vec2 v) {
-  glm::vec3 P = glm::vec3(1.0*v.x/m_screen_width*2 - 1.0,
-                          1.0*v.y/m_screen_height*2 - 1.0,
+  glm::vec3 P = glm::vec3(1.0 * v.x/m_screen_width * 2 - 1.0,
+                          1.0 * v.y/m_screen_height * 2 - 1.0,
                           0);
   P.y = -P.y;
   float OP_squared = P.x * P.x + P.y * P.y;
   if (OP_squared <= 1*1)
-    P.z = sqrt(1*1 - OP_squared);
+      P.z = sqrt(1*1 - OP_squared);
   else
-    P = glm::normalize(P);  // nearest point
+      P = glm::normalize(P);  // nearest point
   return P;
 }
 
-void ArcballNavigation::mouseMoveEvent(const glm::vec2 point)
+void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 {
-    if (m_arcball_on) {  // if left button is pressed
-        m_cur = point;
+    if (m_arcball_on) {
+        m_cur = glm::vec2(event->pos().x(), event->pos().y());
     }
 }
 
-void ArcballNavigation::mousePressEvent( const glm::vec2 point, MouseButton button )
+void ArcballNavigation::mousePressEvent(QMouseEvent * event)
 {
-    if (button == LEFT) {
+    qDebug("press");
+
+    if (event->button() == Qt::LeftButton) {
         m_arcball_on = true;
-        m_last = m_cur = point;
+        m_last = m_cur = glm::vec2(event->pos().x(), event->pos().y());
     }
 }
 
-void ArcballNavigation::mouseReleaseEvent( const glm::vec2 point, MouseButton button )
+void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
 {
-    if (button == LEFT) {
+    qDebug("release");
+
+    if (event->button() == Qt::LeftButton) {
         m_arcball_on = false;
     }
+}
+
+const glm::mat4 ArcballNavigation::viewMatrixInverted()
+{
+     return glm::inverse(viewMatrix()); // TODO
 }

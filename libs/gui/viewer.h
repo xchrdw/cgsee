@@ -34,6 +34,10 @@ public:
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
+    virtual void mouseMoveEvent ( QMouseEvent * event );
+    virtual void mousePressEvent ( QMouseEvent * event );
+    virtual void mouseReleaseEvent ( QMouseEvent * event );
+
 protected:
 
 #ifdef WIN32

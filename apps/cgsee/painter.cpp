@@ -13,6 +13,7 @@
 #include <core/objio.h>
 #include <core/program.h>
 #include <core/screenquad.h>
+#include "core/arcballnavigation.h"
 
 
 Painter::Painter()
@@ -67,6 +68,8 @@ const bool Painter::initialize()
 
     m_camera->setView(glm::lookAt(
         glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+
+    m_navigation = new ArcballNavigation();
 
     m_quad = new ScreenQuad();
 

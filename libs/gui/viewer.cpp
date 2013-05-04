@@ -28,7 +28,7 @@ Viewer::Viewer(
 ,   m_qtCanvas(nullptr)
 {
     m_ui->setupUi(this);
-
+    
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings s;
 
@@ -124,4 +124,19 @@ AbstractPainter * Viewer::painter()
         return nullptr;
 
     return m_qtCanvas->painter();
+}
+
+void Viewer::mousePressEvent( QMouseEvent * event )
+{
+    painter()->mousePressEvent(event);
+}
+
+void Viewer::mouseReleaseEvent( QMouseEvent * event )
+{
+    painter()->mouseReleaseEvent(event);
+}
+
+void Viewer::mouseMoveEvent( QMouseEvent * event )
+{
+    painter()->mouseMoveEvent(event);
 }
