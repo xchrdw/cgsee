@@ -29,12 +29,12 @@ const glm::mat4 ArcballNavigation::viewMatrix() {
         glm::vec3 vb = get_arcball_vector(m_cur);
         float angle = acos(std::min(1.0f, glm::dot(va, vb)));
         glm::vec3 axis_in_camera_coord = glm::cross(va, vb);
-        //glm::mat3 camera2object = glm::inverse(glm::mat3(transforms[MODE_CAMERA]) * glm::mat3(mesh.object2world));
-        //glm::vec3 axis_in_object_coord = camera2object * axis_in_camera_coord;
-        //mesh.object2world = glm::rotate(mesh.object2world, glm::degrees(angle), axis_in_object_coord);
-        m_viewMatrix = m_viewMatrix * glm::rotate(glm::mat4(), angle*60, axis_in_camera_coord);
+
+        glm::mat3 camera2world = glm::inverse(glm::mat3(m_viewMatrix));
+        glm::vec3 axis_in_world_coord = camera2world * axis_in_camera_coord;
+        m_viewMatrix = m_viewMatrix * glm::rotate(glm::mat4(), angle*50, axis_in_world_coord);
+
         m_last = m_cur;
-        //m_viewMatrix = glm::lookAt(m_center - m_direction, m_center, glm::vec3( 0.f, 1.f, 0.f));
     }
     return m_viewMatrix;
 }
