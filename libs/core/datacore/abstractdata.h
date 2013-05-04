@@ -45,11 +45,7 @@ public:
     typedef DataItem * StandardPointer;
 
     template<class DataItemSubclass>
-    static StandardPointer createDataItemWithName(QString &name, GlobalDataRegistry &registry)
-    {
-        DataItem result;
-        result.m_name = registry.registerNewData(name, &result);
-    }
+    static StandardPointer createDataItemWithName(QString &name, GlobalDataRegistry &registry);
 
     // attempt to clone the item.
     // it will be given a new name and saved in the registry provided.
@@ -70,6 +66,16 @@ protected:
     DataItem(const DataItem&){}
 };
 
-typedef DataItem::StandardPointer DataItemP;
+typedef DataItem::StandardPointer t_DataItemP;
+
+template <class DataItemSubclass>
+static t_DataItemP DataItem::createDataItemWithName(QString& name, GlobalDataRegistry &registry)
+{
+    t_DataItemP result = new DataItemSubclass;
+    if (nullptr == result)
+        return result;
+    result->m_name = registry.registerNewData(name, result);
+    return result;
+}
 
 #endif //DATAINTERFACE_H
