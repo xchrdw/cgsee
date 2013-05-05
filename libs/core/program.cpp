@@ -25,8 +25,7 @@ Program::~Program()
 {
     if(isProgram())
     {
-        t_shaders::const_iterator i;
-        while(m_shaders.end() != m_shaders.begin())
+        while(m_shaders.cend() != m_shaders.cbegin())
             detach(*(m_shaders.begin()));
 
         glDeleteProgram(m_program);
@@ -64,11 +63,8 @@ const bool Program::link() const
     if(!m_dirty)
         return isLinked();
 
-    t_shaders::const_iterator i(m_shaders.begin());
-    const t_shaders::const_iterator iEnd(m_shaders.end());
-
-    for(; i != iEnd; ++i)
-        if(!(*i)->isCompiled())
+    for(const Shader * shader : m_shaders)
+        if(!shader->isCompiled())
             return false;
 
     m_dirty = false;
