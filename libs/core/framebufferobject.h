@@ -26,7 +26,7 @@ public:
     void release() const;
 
     void bindTexture2D(
-        Program * program
+        const Program & program
     ,   const QString & uniform
     ,   const glm::uint slot) const;
 
@@ -39,6 +39,10 @@ public:
 protected:
     void initialize() const;
     void resize() const;
+
+    inline const bool isFrameBuffer() const;
+    inline const bool isRenderBuffer() const;
+    inline const bool isTexture() const;
 
 protected:
     mutable GLuint m_fbo;

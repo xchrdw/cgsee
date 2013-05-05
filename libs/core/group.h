@@ -16,7 +16,7 @@ public:
     virtual Group * asGroup();
 
     virtual void draw(
-        Program * program
+        const Program & program
     ,   const glm::mat4 & transform);
 
 

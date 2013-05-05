@@ -34,6 +34,7 @@ public:
 
     const bool link() const;
     const bool isLinked() const;
+    const bool isUsed() const;
 
     void invalidate();
 
@@ -93,6 +94,9 @@ public:
         const QString & name
     ,   const glm::mat4 & mat
     ,   const bool transpose = false) const;
+
+protected:
+    inline const bool isProgram() const;
 
 protected:
     GLuint m_program;

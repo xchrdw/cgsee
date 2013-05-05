@@ -22,16 +22,21 @@ BufferObject::BufferObject(
 
 BufferObject::~BufferObject()
 {
-    if(GPUQuery::isBuffer(m_buffer))
+    if(isBuffer())
     {
         glDeleteBuffers(1, &m_buffer);
         glError();
     }
 }
 
+inline const bool BufferObject::isBuffer() const
+{
+    return m_buffer != -1;
+}
+
 const GLuint BufferObject::buffer()
 {
-    if(!GPUQuery::isBuffer(m_buffer))
+    if(!isBuffer())
         generateBuffer();
 
     return m_buffer;
@@ -49,7 +54,7 @@ const GLenum BufferObject::usage() const
 
 void BufferObject::bind()
 {
-    if(!GPUQuery::isBuffer(m_buffer))
+    if(!isBuffer())
         generateBuffer();
 
     glBindBuffer(m_target, m_buffer);
@@ -73,14 +78,16 @@ void BufferObject::bind(const GLint attributeLocation)
 
 void BufferObject::draw(const GLenum mode)
 {
-    assert(m_target == GL_ELEMENT_ARRAY_BUFFER);
-
-    bind();
-
-    glDrawElements(mode, m_count, m_type, 0);
+    switch(m_target)
+    {
+    case GL_ELEMENT_ARRAY_BUFFER:
+        glDrawElements(mode, m_count, m_type, 0);
+        break;
+    case GL_ARRAY_BUFFER:
+        glDrawArrays(mode, 0, m_count);
+        break;
+    };
     glError();
-
-    release();
 }
 
 void BufferObject::release(const GLint attributeLocation)
@@ -88,7 +95,7 @@ void BufferObject::release(const GLint attributeLocation)
     if(-1 == attributeLocation)
         return;
 
-    if(!GPUQuery::isBuffer(m_buffer))
+    if(!isBuffer())
         return;
 
     glDisableVertexAttribArray(attributeLocation);
@@ -100,10 +107,8 @@ void BufferObject::release(const GLint attributeLocation)
 
 void BufferObject::release()
 {
-    if(!GPUQuery::isBuffer(m_buffer))
+    if(!isBuffer())
         return;
-
-    glBindVertexArray(0);
 
     glBindBuffer(m_target, 0);
     glError();
@@ -111,7 +116,7 @@ void BufferObject::release()
 
 void BufferObject::generateBuffer()
 {
-    if(GPUQuery::isBuffer(m_buffer))
+    if(isBuffer())
         return;
 
     glGenBuffers(1, &m_buffer);

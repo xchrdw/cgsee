@@ -23,7 +23,6 @@ Canvas::Canvas(
 ,   m_painter(nullptr)
 {
     m_timer = new QBasicTimer();
-
     m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
@@ -40,42 +39,51 @@ Canvas::~Canvas()
 
 void Canvas::initializeGL()
 {
+    glError();  // nothing should be done before this!
+
     if(!context()->isValid())
         qCritical("Qt OpenGL context is not valid.");
 
     qDebug("Vendor: %s", qPrintable(GPUQuery::vendor()));
     qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));
+    qDebug("Version: %s", qPrintable(GPUQuery::version()));
+
     qDebug("GLEW Version: %s\n", qPrintable(GPUQuery::glewVersion()));
 
+    // NOTE : Important for e.g., 3.2 core
+    // http://glew.sourceforge.net/basic.html
+
+    glError();
+    glewExperimental = GL_TRUE;
     const GLenum error = glewInit();
+
+    // http://stackoverflow.com/questions/10857335/opengl-glgeterror-returns-invalid-enum-after-call-to-glewinit
+    // use glGetError instead of userdefined glError, to avoid console/log output
+    glGetError();   
+    glError();
+
     if(GLEW_OK != error)
         qCritical("Glew failed to initialized: %s\n", qPrintable(GPUQuery::glewError(error)));
 
     if(!m_format.verify(context()->format()))
-        qCritical("There might be problems during scene initialization and rendering.\n");
+        qWarning("There might be problems during scene initialization and rendering.\n");
 
-    qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
-    qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
+    glError();
+
+    if(!GPUQuery::isCoreProfile())
+    {
+        qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
+        qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
+    }
 
     glClearColor(1.f, 1.f, 1.f, 1.f);
+    glError();
 }
 
 void Canvas::updateViewport() const
 {
     glViewport(0, 0, width(), height());
-
-    // This is required e.g. for overlay painting
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-#ifdef QT_OPENGL_ES
-    glOrthof(0.f, 1.f, 0.f, 1.f, 0.f, 1.f);
- #else
-    glOrtho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
- #endif
-
-    glMatrixMode(GL_MODELVIEW);
+    glError();
 }
 
 void Canvas::resizeGL(
@@ -91,39 +99,42 @@ void Canvas::resizeGL(
 
 // http://doc.qt.digia.com/qt/opengl-overpainting-glwidget-cpp.html
 // http://harmattan-dev.nokia.com/docs/library/html/qt4/opengl-overpainting.html
+// -> does not work for core profile or modern rendering
 
-void Canvas::paintEvent(QPaintEvent *)
+//void Canvas::paintEvent(QPaintEvent *)
+//{
+//    glError();
+//    paint();
+//    glError();
+//
+//    // The fixed function OGL is used to support old school OpenGL calls for overlay painting.
+//    // NOTE: it is not tested, what happens on contexts in newer core profiles.
+//
+//    // NOTE: QPainter is off use here: http://qt-project.org/forums/viewthread/26510
+//    // It does not support 3.2 core profile rendering "any time soon"...
+//
+//    //QPainter painter(this);
+//    //paintOverlay(painter);
+//    //painter.end();
+//    //glError();
+//}
+
+//void Canvas::paintOverlay(QPainter & painter)
+//{
+//    painter.setRenderHint(QPainter::Antialiasing);
+//    painter.setRenderHint(QPainter::TextAntialiasing);
+//}
+
+void Canvas::paintGL()
 {
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    glError();  
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-
-    paint();
-
-    glPopMatrix();
-    glPopAttrib();
-
-    // The fixed function OGL is used to support old school OpenGL calls for overlay painting.
-    // NOTE: it is not tested, what happens on contexts in newer core profiles.
-
-    QPainter painter(this);
-    paintOverlay(painter);
-    painter.end();
-}
-
-void Canvas::paint()
-{
     if(m_painter)
         m_painter->paint();
     else 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Canvas::paintOverlay(QPainter & painter)
-{
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setRenderHint(QPainter::TextAntialiasing);
+     
+    glError();  
 }
 
 void Canvas::timerEvent(QTimerEvent *event)

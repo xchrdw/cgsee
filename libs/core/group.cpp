@@ -17,7 +17,7 @@ Group::~Group()
 }
 
 void Group::draw(
-    Program * program
+    const Program & program
 ,   const glm::mat4 & transform)
 {
     t_nodes::const_iterator i(m_children.begin());
@@ -26,7 +26,7 @@ void Group::draw(
     for(; i != iEnd; ++i)
     {
         Node * node(*i);
-        
+
         if(RF_Absolute == m_rf)
             node->draw(program, this->transform());
         else
