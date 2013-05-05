@@ -8,6 +8,22 @@
 
 class DataBlockRegistry;
 
+namespace
+{
+    template <typename DataBlockType>
+    struct DataBlockTraits_StandardAccess
+    {
+        typedef DataBlockType * t_ptr;
+
+    };
+}
+
+template <typename RealType, template<typename T> typename AccessTraits = DataBlockTraits_StandardAccess>
+class DataBlockTemplate
+{
+    /// Something to think about here...
+};
+
 class CGSEE_API DataBlock: public QObject
 {
     Q_OBJECT
