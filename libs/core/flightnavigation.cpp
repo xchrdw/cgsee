@@ -12,33 +12,37 @@ FlightNavigation::~FlightNavigation(void)
 }
 
 void FlightNavigation::keyPressEvent(QKeyEvent *event){
+    float speed = 0.005;
     switch (event->key()) {
         case Qt::Key_W:
             //go forward
-            qDebug("forward");
-            m_position.z += 0.01;
+            //qDebug("forward");
+            m_position.z += speed;
             break;
         case Qt::Key_S:
             //go backward
-            m_position.z -= 0.01;
+            m_position.z -= speed;
             break;
         case Qt::Key_A:
             //go right
-            m_position.x += 0.01;
+            m_position.x += speed;
             break;
         case Qt::Key_D:
-            m_position.x -= 0.01;
+            m_position.x -= speed;
             break;
         case Qt::Key_Space:
             //go up
-            m_position.y += 0.01;
+            m_position.y += speed;
             break;
         case Qt::Key_Shift:
             //go down
-            m_position.y -= 0.01;
+            m_position.y -= speed;
             break;
+        case Qt::Key_R:
+            reset();
         default:
             break;
+      //      qDebug(m_position.x);
     }
 }
 
