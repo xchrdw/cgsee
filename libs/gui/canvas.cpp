@@ -176,10 +176,10 @@ void Canvas::mouseMoveEvent( QMouseEvent * event )
 
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
-    
+    m_painter->keyPress(event);
 }
 
 void Canvas::keyReleaseEvent(QKeyEvent *event)
 {
-    
+    m_painter->keyRelease(event);
 }
