@@ -43,6 +43,7 @@ public:
     void draw(const GLenum mode);
 
 protected:
+    inline const bool isBuffer() const;
     void generateBuffer();
 
 protected:

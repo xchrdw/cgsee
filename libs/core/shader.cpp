@@ -31,9 +31,8 @@ const Shader::t_typeStrings Shader::initializeTypeStrings()
 }
 
 Shader::Shader(const GLenum type)
-
 :   m_type(type)
-,   m_shader(0)
+,   m_shader(-1)
 ,   m_compiled(false)
 {
     if(typeStrings.end() == typeStrings.find(type))
@@ -45,13 +44,18 @@ Shader::Shader(const GLenum type)
     
 Shader::~Shader()
 {
-    if(GPUQuery::isShader(m_shader))
+    if(isShader())
     {
         glDeleteShader(m_shader);
         glError();
 
         m_shader = 0;
     }
+}
+
+inline const bool Shader::isShader() const
+{
+    return m_shader != -1;
 }
 
 const bool Shader::setSource(

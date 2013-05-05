@@ -262,8 +262,8 @@ Group * ObjIO::toGroup(const t_objects & objects)
 {
     std::vector<Group *> groups;
 
-    t_objects::const_iterator io(objects.begin());
-    const t_objects::const_iterator ioEnd(objects.end());
+    t_objects::const_iterator io(objects.cbegin());
+    const t_objects::const_iterator ioEnd(objects.cend());
 
     for(; io != ioEnd; ++io)
     {
@@ -275,8 +275,8 @@ Group * ObjIO::toGroup(const t_objects & objects)
         if(!oobject.vis.empty())
             group->append(createPolygonalDrawable(oobject, oobject));
 
-        t_groups::const_iterator ig(oobject.groups.begin());
-        const t_groups::const_iterator igEnd(oobject.groups.end());
+        t_groups::const_iterator ig(oobject.groups.cbegin());
+        const t_groups::const_iterator igEnd(oobject.groups.cend());
 
         for(; ig != igEnd; ++ig)
         {
@@ -342,6 +342,9 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
 
     // TODO: support other modes here!
     geom->setMode(GL_TRIANGLES);
+
+    if(!usesNormalIndices)
+        geom->retrieveNormals();
 
     PolygonalDrawable * drawable(new PolygonalDrawable(object.qname()));
     drawable->setGeometry(geom);

@@ -29,7 +29,7 @@ public:
     virtual ~Node();
 
     virtual void draw(
-        Program * program
+        const Program & program
     ,   const glm::mat4 & transform) = 0;
 
     const QString name() const;

@@ -3,6 +3,7 @@
 
 #include "painter.h"
 
+#include <core/autotimer.h>
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
@@ -38,15 +39,15 @@ Painter::~Painter()
 
 const bool Painter::initialize()
 {
+    AutoTimer t("Initialization of Painter");
+
     m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
+
     if(!m_group)
     {
         qWarning("Have you set the Working Directory?");
         return false;
     }
-
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
 
     glm::mat4 transform(1.f);
 
@@ -81,10 +82,10 @@ const bool Painter::initialize()
     // Post Processing Shader
 
     m_flush = new Program();
-    m_flush->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
-    m_flush->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
+	m_flush->attach(
+		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
+	m_flush->attach(
+		new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
@@ -98,15 +99,12 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    // Normals and Depth to RGBA
-
-    m_camera->draw(m_normalz, m_fboNormalz);
-
+    m_camera->draw(*m_normalz, m_fboNormalz);
 
     sampler.clear();
     sampler["source"] = m_fboNormalz;
 
-    bindSampler(sampler, m_flush);
+    bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
 }
@@ -130,11 +128,11 @@ void Painter::postShaderRelinked()
 
 void Painter::bindSampler(
     const t_samplerByName & sampler
-,   Program * program)
+,   const Program & program)
 {
-    t_samplerByName::const_iterator i(sampler.begin());
-    const t_samplerByName::const_iterator iEnd(sampler.end());
-    
+    t_samplerByName::const_iterator i(sampler.cbegin());
+    const t_samplerByName::const_iterator iEnd(sampler.cend());
+
     for(glm::uint slot(0); i != iEnd; ++i, ++slot)
         i.value()->bindTexture2D(program, i.key(), slot);
 }
@@ -143,7 +141,7 @@ void Painter::releaseSampler(
     const t_samplerByName & sampler)
 {
     t_samplerByName::const_iterator i(sampler.begin());
-    const t_samplerByName::const_iterator iEnd(sampler.end());
+    const t_samplerByName::const_iterator iEnd(sampler.cend());
 
     for(; i != iEnd; ++i)
         i.value()->releaseTexture2D();

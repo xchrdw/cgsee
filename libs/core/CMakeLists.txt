@@ -15,6 +15,8 @@ set(SOURCES
     datacore/abstractdata.h
     datacore/abstractdata.cpp
     abstracttimer.h
+    autotimer.h
+    autotimer.cpp
     bufferobject.h
     bufferobject.cpp
     camera.h

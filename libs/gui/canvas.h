@@ -36,11 +36,11 @@ protected:
     //  widget, we implement a normal QWidget::paintEvent(). This
     //  allows us to mix OpenGL calls and QPainter operations in a
     //  controlled way."
-    //virtual void paintGL();
-    virtual void paintEvent(QPaintEvent * event);
+    
+    //virtual void paintEvent(QPaintEvent * event); // Does not work for 3.2 anyway. :(
+    //void paintOverlay(QPainter & painter);
 
-    void paint();
-    void paintOverlay(QPainter & painter);
+    virtual void paintGL();
 
     // For Rendering Loop
     void timerEvent(QTimerEvent *event);
