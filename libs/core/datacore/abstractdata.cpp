@@ -1,5 +1,36 @@
 #include "abstractdata.h"
 
+DataBlock::DataBlock() // protected
+{
+}
+
+DataBlock::DataBlock(const DataBlock &) // protected
+{
+}
+
+DataBlock::~DataBlock() // virtual
+{
+}
+
+QString DataBlock::name() const
+{
+    return m_name;
+}
+
+t_DataBlockP DataBlock::clone(QString *newName, DataBlockRegistry & registry)
+{
+    t_DataBlockP newItem = new DataBlock(*this);
+    QString chosenName = (nullptr == newName) ? name() : *newName;
+    chosenName = registry.registerNewData(chosenName, newItem);
+    if (newName)
+        *newName = chosenName;
+    return newItem;
+}
+
+DataBlockRegistry::~DataBlockRegistry() // virtual
+{
+}
+
 QString DataBlockRegistry::registerNewData(QString proposedName, t_DataBlockP data)
 {
     static const QString extraFormat("%1%2");
@@ -26,19 +57,4 @@ void DataBlockRegistry::dataItemRemoved(QObject* removedItem)
     auto iter = qFind(m_dataMap.begin(), m_dataMap.end(), removedItem);
     if (iter != m_dataMap.end())
         m_dataMap.erase(iter);
-}
-
-QString DataBlock::name() const
-{
-    return m_name;
-}
-
-t_DataBlockP DataBlock::clone(QString *newName, DataBlockRegistry & registry)
-{
-    t_DataBlockP newItem = new DataBlock(*this);
-    QString chosenName = (nullptr == newName) ? name() : *newName;
-    chosenName = registry.registerNewData(chosenName, newItem);
-    if (newName)
-        *newName = chosenName;
-    return newItem;
 }

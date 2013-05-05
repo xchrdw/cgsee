@@ -15,7 +15,7 @@ public:
     typedef DataBlock * t_StandardPointer;
 
 public:
-    virtual ~DataBlock(){}
+    virtual ~DataBlock();
 
     template<class DataBlockSubclass>
     static t_StandardPointer createDataItemWithName(QString &name, DataBlockRegistry &registry);
@@ -31,11 +31,11 @@ protected:
     
     // Objects are created with static function createDataItemWithName which
     // registers them automatically in the registry provided
-    DataBlock(){}
+    DataBlock();
 
     // This is already done in QObject, but in case if anyone forgets:
     // QObjects cannot be copied with a constructor
-    DataBlock(const DataBlock&){}
+    DataBlock(const DataBlock&);
 };
 
 typedef DataBlock::t_StandardPointer t_DataBlockP;
@@ -54,7 +54,7 @@ class CGSEE_API DataBlockRegistry: public QObject
 {
     Q_OBJECT
 public:
-    virtual ~DataBlockRegistry(){}
+    virtual ~DataBlockRegistry();
 
     // This Method registers the new data item using the name given; 
     // if an item with this name already exists, GlobalDataRegistry will
