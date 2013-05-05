@@ -1,7 +1,6 @@
 #include "abstractdata.h"
-GlobalDataRegistry GlobalDataRegistry::s_instance;
 
-QString GlobalDataRegistry::registerNewData(QString proposedName, DataItem* data)
+QString DataBlockRegistry::registerNewData(QString proposedName, t_DataBlockP data)
 {
     static const QString extraFormat("%1%2");
     QString realName = proposedName;
@@ -17,34 +16,29 @@ QString GlobalDataRegistry::registerNewData(QString proposedName, DataItem* data
     return realName;
 }
 
-DataItem * GlobalDataRegistry::getDataItemByName(QString name)
+t_DataBlockP DataBlockRegistry::getDataItemByName(QString name)
 {
     return m_dataMap[name];
 }
 
-void GlobalDataRegistry::dataItemRemoved(QObject* removedItem)
+void DataBlockRegistry::dataItemRemoved(QObject* removedItem)
 {
     auto iter = qFind(m_dataMap.begin(), m_dataMap.end(), removedItem);
     if (iter != m_dataMap.end())
         m_dataMap.erase(iter);
 }
 
-QString DataItem::name() const
+QString DataBlock::name() const
 {
     return m_name;
 }
 
-DataItem::StandardPointer DataItem::clone(QString *newName, GlobalDataRegistry & registry)
+t_DataBlockP DataBlock::clone(QString *newName, DataBlockRegistry & registry)
 {
-    DataItem::StandardPointer newItem = new DataItem(*this);
+    t_DataBlockP newItem = new DataBlock(*this);
     QString chosenName = (nullptr == newName) ? name() : *newName;
     chosenName = registry.registerNewData(chosenName, newItem);
     if (newName)
         *newName = chosenName;
     return newItem;
-}
-
-DataItem::StandardPointer DataItem::clone(QString *newName)
-{
-    return clone(newName, GlobalDataRegistry::getGlobalInstance());
 }
