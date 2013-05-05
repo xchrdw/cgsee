@@ -96,8 +96,6 @@ void PolygonalDrawable::initialize(const Program & program)
 
     // bind all buffers to their attributes
 
-    program.use();
-
     t_bufferObjectsByAttribute::const_iterator i(m_arrayBOsByAttribute.begin());
     const t_bufferObjectsByAttribute::const_iterator iEnd(m_arrayBOsByAttribute.end());
 

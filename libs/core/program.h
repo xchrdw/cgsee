@@ -34,6 +34,7 @@ public:
 
     const bool link() const;
     const bool isLinked() const;
+    const bool isUsed() const;
 
     void invalidate();
 

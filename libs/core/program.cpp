@@ -40,6 +40,17 @@ inline const bool Program::isProgram() const
     return m_program != -1;
 }
 
+const bool Program::isUsed() const
+{
+    GLint program(-1);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+    if(-1 == program)
+        return false;
+
+    return program == m_program;
+}
+
 const bool Program::use() const
 {
     if(m_dirty)
@@ -48,12 +59,17 @@ const bool Program::use() const
     if(!m_linked)
         return false;
 
+    if(isUsed())
+        return true;
+
     glUseProgram(m_program);
     return !glError();
 }
 
 const bool Program::release() const
 {
+    assert(isUsed());
+
     glUseProgram(0);
     return !glError();
 }
@@ -179,6 +195,8 @@ const GLint Program::uniformLocation(const QString & name) const
 {
     if(m_dirty || !m_linked)
         link();
+
+    use();
 
     const QByteArray bytes(name.toLocal8Bit());
     const GLchar * chr(bytes.constData());

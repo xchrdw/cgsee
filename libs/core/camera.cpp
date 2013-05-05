@@ -51,8 +51,6 @@ void Camera::draw(
     glViewport(0, 0, m_viewport.x, m_viewport.y);
     glError();
 
-    program.use();
-
     program.setUniform(VIEWPORT_UNIFORM, m_viewport);
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
