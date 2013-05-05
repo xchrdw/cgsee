@@ -1,5 +1,6 @@
 
 #include <cassert>
+#include <cmath>
 
 #include "autotimer.h"
 #include "timer.h"

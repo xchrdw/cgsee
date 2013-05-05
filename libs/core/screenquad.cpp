@@ -71,6 +71,8 @@ void ScreenQuad::draw(
 
     glClear(GL_COLOR_BUFFER_BIT);
 
+    program.use();
+
     glBindVertexArray(m_vao);                                                                  
     glError();
 

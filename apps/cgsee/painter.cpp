@@ -130,8 +130,6 @@ void Painter::bindSampler(
     const t_samplerByName & sampler
 ,   const Program & program)
 {
-    program.use();
-    
     t_samplerByName::const_iterator i(sampler.cbegin());
     const t_samplerByName::const_iterator iEnd(sampler.cend());
 
