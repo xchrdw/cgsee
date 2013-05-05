@@ -24,7 +24,7 @@ class Timer;
 class CGSEE_API AutoTimer
 {
 public:
-    AutoTimer(const QString & info = QString());
+    explicit AutoTimer(const QString & info = QString());
     virtual ~AutoTimer();
 
 protected:
