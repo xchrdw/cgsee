@@ -17,13 +17,11 @@ QString DataBlock::name() const
     return m_name;
 }
 
-t_DataBlockP DataBlock::clone(QString *newName, DataBlockRegistry & registry)
+t_DataBlockP DataBlock::clone(QString &newName, DataBlockRegistry &registry)
 {
     t_DataBlockP newItem = new DataBlock(*this);
-    QString chosenName = (nullptr == newName) ? name() : *newName;
-    chosenName = registry.registerNewData(chosenName, newItem);
-    if (newName)
-        *newName = chosenName;
+    QString chosenName = (newName.isNull() || newName.isEmpty()) ? name() : newName;
+    newName = registry.registerNewData(chosenName, newItem);
     return newItem;
 }
 

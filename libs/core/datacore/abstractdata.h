@@ -18,11 +18,17 @@ public:
     virtual ~DataBlock();
 
     template<class DataBlockSubclass>
-    static t_StandardPointer createDataItemWithName(QString &name, DataBlockRegistry &registry);
+    static typename DataBlockSubclass::t_StandardPointer 
+        createDataBlockWithName(QString &name, DataBlockRegistry &registry);
+
+    // support createDataBlockWithName<...>("mainCamera", registry)
+    template<class DataBlockSubclass>
+    static typename DataBlockSubclass::t_StandardPointer 
+        createDataBlockWithName(QString const &name, DataBlockRegistry &registry);
 
     // attempt to clone the item.
     // it will be given a new name and saved in the registry provided.
-    virtual t_StandardPointer clone(QString *newName, DataBlockRegistry & registry);
+    virtual t_StandardPointer clone(QString &newName, DataBlockRegistry &registry);
 
     QString name() const;
     Q_PROPERTY(QString name READ name)
@@ -40,10 +46,26 @@ protected:
 
 typedef DataBlock::t_StandardPointer t_DataBlockP;
 
-template <class DataItemSubclass>
-static t_DataItemP DataItem::createDataItemWithName(QString& name, GlobalDataRegistry &registry)
+template <class DataBlockSubclass>
+static typename DataBlockSubclass::t_StandardPointer
+    DataBlock::createDataBlockWithName(QString& name, DataBlockRegistry &registry)
 {
-    t_DataItemP result = new DataItemSubclass;
+    typedef typename DataBlockSubclass::t_StandardPointer t_RetType;
+
+    t_RetType result = new DataBlockSubclass;
+    if (nullptr == result)
+        return result;
+    name = result->m_name = registry.registerNewData(name, result);
+    return result;
+}
+
+template <class DataBlockSubclass>
+static typename DataBlockSubclass::t_StandardPointer
+    DataBlock::createDataBlockWithName(QString const &name, DataBlockRegistry &registry)
+{
+    typedef typename DataBlockSubclass::t_StandardPointer t_RetType;
+
+    t_RetType result = new DataBlockSubclass;
     if (nullptr == result)
         return result;
     result->m_name = registry.registerNewData(name, result);
