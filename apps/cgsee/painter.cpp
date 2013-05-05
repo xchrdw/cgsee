@@ -14,6 +14,7 @@
 #include <core/program.h>
 #include <core/screenquad.h>
 #include "core/arcballnavigation.h"
+#include "core/flightnavigation.h"
 
 
 Painter::Painter()
@@ -68,9 +69,14 @@ const bool Painter::initialize()
 
     m_camera->setView(glm::lookAt(
         glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
-
+    
+    //For testing only, need to find solution with both ways working at the same time
+#define ARC true
+#if ARC
     m_navigation = new ArcballNavigation();
-
+#else
+    m_navigation = new FlightNavigation();
+#endif
     m_quad = new ScreenQuad();
 
     // G-Buffer Shader

@@ -37,10 +37,12 @@ void AbstractPainter::resize(
 
 void AbstractPainter::keyPress(QKeyEvent * event)
 {
+    m_navigation->keyPressEvent(event);
 }
 
-void AbstractPainter::keyRelease(QKeyEvent * event)
+void AbstractPainter::keyRelease(QKeyEvent *event)
 {
+    m_navigation->keyReleaseEvent(event);
 }
 
 void AbstractPainter::mousePressEvent(QMouseEvent * event)

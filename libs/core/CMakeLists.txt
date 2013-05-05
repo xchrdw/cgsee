@@ -24,6 +24,8 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+    flightnavigation.h
+    flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
     framebufferobject.h
