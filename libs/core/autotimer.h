@@ -29,7 +29,7 @@ public:
 
 protected:
     static int m_numActiveInstances;
-    static const char * m_units;
+    static const QByteArray m_units;
 
     const QString m_info;
     const int m_index;

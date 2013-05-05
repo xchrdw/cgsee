@@ -7,7 +7,7 @@
 
 int AutoTimer::m_numActiveInstances(0);
 
-const char * AutoTimer::m_units("n\xE6m ");
+const QByteArray AutoTimer::m_units("num ");
 
 
 AutoTimer::AutoTimer(const QString & info)
@@ -22,10 +22,10 @@ AutoTimer::~AutoTimer()
 {
     m_timer->pause();
 
-    long double delta(m_timer->elapsed());
+    double delta(static_cast<double>(m_timer->elapsed()));
 
     // use number of digits to retrieve exp in 10^(3 exp)
-    const unsigned char u(qMin<unsigned char>(3
+    const unsigned char u(qMin<unsigned char>(m_units.length() - 1
         , ceil(log10(delta) / 3.0)));
 
     // shorten the time to nearest time unit
