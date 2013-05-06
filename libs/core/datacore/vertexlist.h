@@ -3,6 +3,7 @@
 #pragma once
 
 #include <typeinfo>
+#include <memory>
 
 #include "abstractdata.h"
 
@@ -15,6 +16,7 @@ struct AbstractInPlaceObjectFactory
 
 template <typename T>
 struct InPlaceObjectFactory : public AbstractInPlaceObjectFactory
+    , public std::enable_shared_from_this<InPlaceObjectFactory<T> >
 {
     void construct(void * place) const
     {
@@ -27,6 +29,7 @@ struct InPlaceObjectFactory : public AbstractInPlaceObjectFactory
 };
 
 class QObjectFactory : public AbstractInPlaceObjectFactory
+    , public std::enable_shared_from_this<QObjectFactory>
 {
 public:
     QObjectFactory(const char * qTypeName);
@@ -44,8 +47,8 @@ typedef struct AttributeDescriptor
     unsigned int location;
     unsigned int size;
     QString typeName;
-    AbstractInPlaceObjectFactory *factory;
-    const type_info & typeInfo;
+    std::shared_ptr<AbstractInPlaceObjectFactory> factory;
+    type_info const* typeInfo;
 } t_AttrDesc;
 
 struct AttributeSpec
@@ -66,12 +69,16 @@ class AttributeStorage final
 public:
     typedef unsigned char * t_StorageType;
 
+    AttributeStorage();
+    AttributeStorage(AttributeStorage &&rhs);
     // Initializes attributeStorage and creates in-place default constructed
     // data objects, which hold 
     explicit AttributeStorage(const t_AttrMap &attrMap);
 
     // Runs destructors of all subtypes
     ~AttributeStorage();
+
+    void initialize(const t_AttrMap &attrMap);
 
     // prepares storage for deletion.
     // invalidates its content
@@ -85,6 +92,8 @@ public:
 protected:
     t_StorageType m_storage;
     bool m_destroyed;
+
+    AttributeStorage(const AttributeStorage&);
 };
 
 template <class RetType>
