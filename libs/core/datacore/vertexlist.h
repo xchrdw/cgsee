@@ -2,20 +2,19 @@
 #define VERTEXLIST_H
 #pragma once
 
-#include <glm/glm.hpp>
 #include <typeinfo>
-#include <functional>
 
 #include "abstractdata.h"
 
 struct AbstractInPlaceObjectFactory
 {
+    virtual ~AbstractInPlaceObjectFactory();
     virtual void construct(void * place) const=0;
     virtual void destruct(void * place) const=0;
 };
 
 template <typename T>
-struct InPlaceObjectFactory
+struct InPlaceObjectFactory : public AbstractInPlaceObjectFactory
 {
     void construct(void * place) const
     {
@@ -25,6 +24,18 @@ struct InPlaceObjectFactory
     {
         static_cast<T*>(place)->~T();
     }
+};
+
+class QObjectFactory : public AbstractInPlaceObjectFactory
+{
+public:
+    QObjectFactory(const char * qTypeName);
+
+    void construct(void * place) const;
+    void destruct(void * place) const;
+
+protected:
+    int m_typeId;
 };
 
 // describes layout of vertex attributes in a storage.
@@ -37,6 +48,13 @@ typedef struct AttributeDescriptor
     const type_info & typeInfo;
 } t_AttrDesc;
 
+struct AttributeSpec
+{
+    QString attrName;
+    QString attrType;
+
+    AttributeSpec(const QString &name, const QString &type);
+};
 
 typedef QHash<QString, t_AttrDesc> t_AttrMap;
 
@@ -55,6 +73,10 @@ public:
     // Runs destructors of all subtypes
     ~AttributeStorage();
 
+    // prepares storage for deletion.
+    // invalidates its content
+    void runDestructors(const t_AttrMap &attrMap);
+
     // Returns a pointer to attribute data object(eg. glm::vec3), 
     // checks for the right type(with typeid) and returns nullptr
     // when something is wrong
@@ -62,11 +84,15 @@ public:
     RetType* getData(const t_AttrDesc &loc); 
 protected:
     t_StorageType m_storage;
+    bool m_destroyed;
 };
 
 template <class RetType>
 RetType * AttributeStorage::getData(const t_AttrDesc & loc)
 {
+    if (m_destroyed)
+        return nullptr;
+
     AttributeStorage::t_StorageType resultPtr = m_storage + loc.location;
     if (typeid(resultPtr) != loc.typeInfo)
         return nullptr;
@@ -78,10 +104,36 @@ class CGSEE_API VertexList: public DataBlock
 {
     Q_OBJECT
 public:
+    VertexList();
+    ~VertexList();
+
+    void initialize(const QList<AttributeSpec> &attrTypes);
+
+    template <class RetType>
+    RetType * getVertexAttribute(int index, const QString &attrName);
 
 protected:
     QVector<AttributeStorage> m_vertices;
-    QList<t_AttrMap> m_attrLayout; 
+    t_AttrMap m_attrLayout; 
+    
+    bool m_initialized;
 };
+
+template <class RetType>
+RetType * VertexList::getVertexAttribute(int index, const QString &attrName)
+{
+    if (!m_initialized)
+        return nullptr;
+
+    if (m_vertices.size() <= index)
+    {
+        createNewVertices(index - m_vertices.size() + 1);
+    }
+
+    if (m_attrLayout.contains(attrName) == false)
+        return nullptr;
+
+    return m_vertices.at(index).getData(m_attrLayout[attrName]);
+}
 
 #endif
