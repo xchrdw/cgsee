@@ -76,7 +76,6 @@ install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION .)
 find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(ASSIMP REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
@@ -101,8 +100,7 @@ include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLM_INCLUDE_PATH}
     ${GLEW_INCLUDE_PATH}
-    ${CMAKE_SOURCE_DIR}/libs
-    ${ASSIMP_INCLUDE_PATH})
+    ${CMAKE_SOURCE_DIR}/libs)
 
 set(CGSEE_LIB_FOLDER "CGSee Libs")
 set(CGSEE_APP_FOLDER "CGsee Apps")
