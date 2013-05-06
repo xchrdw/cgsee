@@ -13,6 +13,7 @@ set(SOURCES
     abstractapplication.h
     abstractapplication.cpp
     abstracttimer.h
+    assimpwrapper.h
     autotimer.h
     autotimer.cpp
     bufferobject.h
@@ -66,6 +67,7 @@ add_library(${target} SHARED ${HEADERS} ${SOURCES})
 qt5_use_modules(${target} Widgets OpenGL)
 
 target_link_libraries(${target}
+    ${ASSIMP_LIBRARY}
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}
     ${EXTRA_LIBS}
