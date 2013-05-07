@@ -18,6 +18,29 @@ private:
     
     glm::vec3 m_position; //cameraposition
     glm::vec3 m_center; // Direction of reference point
+    glm::vec3 m_up;
     
+    //Rotation angle of the camera
+    glm::vec3 m_xRotation;
+    glm::vec3 m_yRotation;
+    glm::vec3 m_zRotation;
+    
+    void translate(float direction);
+    
+    //updates Rotation after translation
+    void updateRotation();
+    
+    
+    //Yaw, pitch, roll: http://upload.wikimedia.org/wikipedia/commons/7/7e/Rollpitchyawplain.png
+    //Rotation around z-axis
+    void yaw(float angle);
+    
+    //Rotation around y-axis
+    void pitch(float angle);
+    
+    //Rotation around x axis
+    void roll(float angle);
+    
+
 
 };
