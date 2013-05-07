@@ -16,7 +16,8 @@ public:
 private:
     glm::mat4 m_viewMatrix;
     
-    glm::vec3 m_position;
+    glm::vec3 m_position; //cameraposition
+    glm::vec3 m_center; // Direction of reference point
     
 
 };
