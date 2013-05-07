@@ -72,7 +72,7 @@ void PolygonalDrawable::initialize(const Program & program)
     glError();
 
     // Apply Vertex Cache Optimization
-    VertexCacheOptimizer().applyOptimization(m_geometry->indices(), m_geometry->vertices().size());
+    VertexCacheOptimizer::applyOptimization(m_geometry->indices(), m_geometry->vertices().size());
 
     // setup element array buffers
 
