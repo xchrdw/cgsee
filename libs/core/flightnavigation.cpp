@@ -4,8 +4,11 @@
 //glm to rotate around axis
 #include "glm/gtx/rotate_vector.hpp"
 
+#include <iostream>
+
 FlightNavigation::FlightNavigation(void)
 {
+    m_timesKeyPressed = 0;
     reset();
 }
 
@@ -15,35 +18,36 @@ FlightNavigation::~FlightNavigation(void)
 }
 
 void FlightNavigation::keyPressEvent(QKeyEvent *event){
-  //  float speed = 0.05;
+    float angle = 0.5 + m_timesKeyPressed/10;
+    float speed = 0.05 + m_timesKeyPressed/50;
+    std::cout << angle;
     switch (event->key()) {
-            
         // Pitch, Yaw, roll
         case Qt::Key_W:
-            pitch(0.2);
+            pitch(angle);
             break;
         case Qt::Key_S:
-            pitch(-0.2);
+            pitch(-angle);
             break;
         case Qt::Key_A:
-            yaw(-0.2);
+            yaw(-angle);
             break;
         case Qt::Key_D:
-            yaw(0.2);
+            yaw(angle);
             break;
         case Qt::Key_Q:
-            roll(-0.2);
+            roll(-angle);
             break;
         case Qt::Key_E:
-            roll(0.2);
+            roll(angle);
             break;
 
         //Move forward, backward
         case Qt::Key_Up:
-            translate(0.02);
+            translate(speed);
             break;
         case Qt::Key_Down:
-            translate(-0.02);
+            translate(-speed);
             break;
          
         //Reset to views
@@ -59,7 +63,7 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
 }
 
 void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
-    
+    m_timesKeyPressed = 0;
 }
 
 void FlightNavigation::reset(){

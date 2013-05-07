@@ -42,4 +42,6 @@ private:
     
     //Move forward or backward (negative speed) to the center of the view
     void translate(float speed);
+    
+    int m_timesKeyPressed;
 };
