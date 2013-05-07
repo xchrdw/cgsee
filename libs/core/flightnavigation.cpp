@@ -20,7 +20,6 @@ FlightNavigation::~FlightNavigation(void)
 void FlightNavigation::keyPressEvent(QKeyEvent *event){
     float angle = 0.5 + m_timesKeyPressed/10;
     float speed = 0.05 + m_timesKeyPressed/50;
-    std::cout << angle;
     switch (event->key()) {
         // Pitch, Yaw, roll
         case Qt::Key_W:
@@ -58,7 +57,6 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
             
         default:
             break;
-      //      qDebug(m_eye.x);
     }
 }
 
@@ -66,14 +64,20 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
     m_timesKeyPressed = 0;
 }
 
+void FlightNavigation::wheelEvent(QWheelEvent *event){
+    setFovy(event->delta());
+
+}
+
 void FlightNavigation::reset(){
+    m_fovy = 45.0f;
     m_xView = glm::vec3(0.0f ,0.0f, 0.0f);
     m_yView = glm::vec3(0.0f ,0.0f ,0.0f);
     m_zView = glm::vec3(0.0f ,0.0f ,0.0f);
     m_eye = glm::vec3(0.0f ,0.0f , -2.0f);
     m_center = glm::vec3(0.0f ,0.0f ,0.0f);
     m_up = glm::vec3( 0.f, 1.f, 0.f);
-    m_viewMatrix = glm::lookAt(m_eye, m_center, m_up);
+    updateView();
     updateAxis();
 }
 
@@ -92,8 +96,7 @@ const glm::mat4 FlightNavigation::viewMatrix(){
     return m_viewMatrix;
 }
 
-const glm::mat4 FlightNavigation::viewMatrixInverted()
-{
+const glm::mat4 FlightNavigation::viewMatrixInverted(){
     return glm::inverse(viewMatrix()); // TODO
 }
 
@@ -121,13 +124,22 @@ void FlightNavigation::roll(float angle){
 }
 
 void FlightNavigation::translate(float speed){
-    //Todo: Move the view towards or backwards the center
-    
     glm::vec3 step = speed * m_zView;
     m_center += step;
     m_eye += step;
     updateView();
     updateAxis();
+}
+
+void FlightNavigation::setFovy(float fovy){
+    m_fovy += fovy;
+    m_fovy = glm::min(m_fovy, 175.0f);
+    m_fovy = glm::max(m_fovy, 0.0f);
+    std::cout << m_fovy << "\n";
+}
+
+float FlightNavigation::getFovy(){
+    return m_fovy;
 }
 
 

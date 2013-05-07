@@ -174,12 +174,17 @@ void Canvas::mouseMoveEvent( QMouseEvent * event )
     m_painter->mouseMoveEvent(event);
 }
 
-void Canvas::keyPressEvent(QKeyEvent *event)
+void Canvas::keyPressEvent(QKeyEvent * event)
 {
     m_painter->keyPress(event);
 }
 
-void Canvas::keyReleaseEvent(QKeyEvent *event)
+void Canvas::keyReleaseEvent(QKeyEvent * event)
 {
     m_painter->keyRelease(event);
+}
+
+void Canvas::wheelEvent(QWheelEvent * event)
+{
+    m_painter->wheelEvent(event);
 }

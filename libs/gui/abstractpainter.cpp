@@ -40,7 +40,7 @@ void AbstractPainter::keyPress(QKeyEvent * event)
     m_navigation->keyPressEvent(event);
 }
 
-void AbstractPainter::keyRelease(QKeyEvent *event)
+void AbstractPainter::keyRelease(QKeyEvent * event)
 {
     m_navigation->keyReleaseEvent(event);
 }
@@ -58,4 +58,9 @@ void AbstractPainter::mouseReleaseEvent(QMouseEvent * event)
 void AbstractPainter::mouseMoveEvent(QMouseEvent * event)
 {
     m_navigation->mouseMoveEvent(event);
+}
+
+void AbstractPainter::wheelEvent(QWheelEvent * event)
+{
+    m_navigation->wheelEvent(event);
 }

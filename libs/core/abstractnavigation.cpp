@@ -26,3 +26,6 @@ void AbstractNavigation::setViewPort( const int width, const int height )
     m_width = width;
     m_height = height;
 }
+
+void AbstractNavigation::setFovy(float fovy) { }
+float AbstractNavigation::getFovy(){ };

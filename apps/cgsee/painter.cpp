@@ -70,8 +70,8 @@ const bool Painter::initialize()
     m_camera->setView(glm::lookAt(
         glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
     
-    //For testing only, need to find solution with both ways working at the same time
-#define ARC true
+    //For testing only
+#define ARC false
 #if ARC
     m_navigation = new ArcballNavigation();
 #else
@@ -111,6 +111,7 @@ void Painter::paint()
 
 
     m_camera->setView(m_navigation->viewMatrix());
+    m_camera->setFovy(m_navigation->getFovy());
 
     m_camera->draw(m_normalz, m_fboNormalz);
 

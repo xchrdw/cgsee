@@ -48,6 +48,9 @@ public:
     virtual const glm::mat4 viewMatrixInverted() = 0;
     
     void setViewPort( const int width, const int height );
+    
+    virtual void setFovy(float fovy);
+    virtual float getFovy();
 
 protected:
     int m_width;
