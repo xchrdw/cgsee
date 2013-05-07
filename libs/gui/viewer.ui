@@ -208,7 +208,7 @@
   </action>
   <action name="flightManipulatorAction">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>&amp;Flight Manipulator</string>
@@ -230,7 +230,7 @@
   </action>
   <action name="trackballManipulatorAction">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Track&amp;ball Manipulator</string>
