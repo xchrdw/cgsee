@@ -40,6 +40,6 @@ private:
     //Rotate up-vector around z axis
     void roll(float angle);
     
-    //Move forward or backward to the center of the view
-    void translate(float direction);
+    //Move forward or backward (negative speed) to the center of the view
+    void translate(float speed);
 };

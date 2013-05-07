@@ -130,9 +130,12 @@ void FlightNavigation::roll(float angle){
     updateAxis();
 }
 
-void FlightNavigation::translate(float direction){
+void FlightNavigation::translate(float speed){
     //Todo: Move the view towards or backwards the center
     
+    glm::vec3 step = speed * m_zView;
+    m_center += step;
+    m_eye += step;
     updateView();
     updateAxis();
 }
