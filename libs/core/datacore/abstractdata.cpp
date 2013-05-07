@@ -25,6 +25,11 @@ t_DataBlockP DataBlock::clone(QString &newName, DataBlockRegistry &registry)
     return newItem;
 }
 
+void DataBlock::triggerUpdatedSignal()
+{
+    emit updated(this);
+}
+
 DataBlockRegistry::~DataBlockRegistry() // virtual
 {
 }
@@ -42,15 +47,17 @@ QString DataBlockRegistry::registerNewData(QString proposedName, t_DataBlockP da
     }
     m_dataMap.insert(realName, data);
     this->connect(data, SIGNAL(destroyed(QObject*)), SLOT(dataItemRemoved(QObject*)));
+
+    emit dataBlockAdded(data);
     return realName;
 }
 
-t_DataBlockP DataBlockRegistry::getDataItemByName(QString name)
+t_DataBlockP DataBlockRegistry::getDataBlockByName(QString name)
 {
     return m_dataMap[name];
 }
 
-void DataBlockRegistry::dataItemRemoved(QObject* removedItem)
+void DataBlockRegistry::dataBlockRemoved(QObject* removedItem)
 {
     auto iter = qFind(m_dataMap.begin(), m_dataMap.end(), removedItem);
     if (iter != m_dataMap.end())
