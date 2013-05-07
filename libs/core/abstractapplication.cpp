@@ -15,14 +15,14 @@
 
 
 AbstractApplication::AbstractApplication(
-	int & argc,
-	char ** argv)
+    int & argc,
+    char ** argv)
 
 :   QApplication(argc, argv)
 {
-	const QFileInfo fi(QCoreApplication::applicationFilePath());
+    const QFileInfo fi(QCoreApplication::applicationFilePath());
 
-	QApplication::setApplicationDisplayName(fi.baseName());
+    QApplication::setApplicationDisplayName(fi.baseName());
 
     QApplication::setApplicationName(META_PROJECT_NAME);
     QApplication::setApplicationVersion(META_VERSION);
@@ -43,25 +43,26 @@ const QString AbstractApplication::title() const
 {
     return QString("%1 - %2 %3")
         .arg(QApplication::applicationDisplayName())
-		.arg(QApplication::applicationName())
-		.arg(QApplication::applicationVersion());
+        .arg(QApplication::applicationName())
+        .arg(QApplication::applicationVersion());
 }
 
 const GLFormat AbstractApplication::format() const
 {
     GLFormat format;
 
-    format.setVersion(4, 3);
+    format.setVersion(3, 2);
     // Version 3.2 + yields CoreProfile context by default.
-    format.setProfile(GLFormat::CompatibilityProfile);
+    format.setProfile(GLFormat::CoreProfile);
 
-    format.setVSync(true);
+    format.setVSync(false);
 
     // NOTE: If profile is core, extensions availability will not 
     // be verified, since they are not listed by glew.
 
     const QStringList extensions = QStringList() 
-        << "GL_EXT_abgr"; // extension with number 1 ;)
+        << "GL_EXT_abgr" // extension with number 1 ;)
+        << "AMD_interleaved_elements";
 
     format.setExtensions(extensions);
 

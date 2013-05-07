@@ -29,7 +29,7 @@ public:
     virtual ~Node();
 
     virtual void draw(
-        Program * program
+        const Program & program
     ,   const glm::mat4 & transform) = 0;
 
     const QString name() const;
@@ -48,7 +48,7 @@ public:
     const e_ReferenceFrame referenceFrame() const;
     void setReferenceFrame(const e_ReferenceFrame referenceFrame);
 
-	// This saves casting during traversal.
+    // This saves casting during traversal.
     virtual Group * asGroup();
 
 protected:
