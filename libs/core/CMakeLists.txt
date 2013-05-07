@@ -16,6 +16,7 @@ set(SOURCES
     datacore/abstractdata.cpp
     datacore/vertexlist.h
     datacore/vertexlist.cpp
+    datacore/datacursor.h
     abstracttimer.h
     autotimer.h
     autotimer.cpp

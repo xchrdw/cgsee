@@ -11,7 +11,7 @@ struct AbstractInPlaceObjectFactory
 {
     virtual ~AbstractInPlaceObjectFactory();
     virtual void construct(void * place) const=0;
-    virtual void destruct(void * place) const=0;
+    //virtual void destruct(void * place) const=0;
 };
 
 template <typename T>
@@ -22,20 +22,19 @@ struct InPlaceObjectFactory : public AbstractInPlaceObjectFactory
     {
         new(place) T;
     }
-    void destruct(void * place) const
-    {
-        static_cast<T*>(place)->~T();
-    }
+    //void destruct(void * place) const
+    //{
+    //    static_cast<T*>(place)->~T();
+    //}
 };
 
 class QObjectFactory : public AbstractInPlaceObjectFactory
-    , public std::enable_shared_from_this<QObjectFactory>
 {
 public:
     QObjectFactory(const char * qTypeName);
 
     void construct(void * place) const;
-    void destruct(void * place) const;
+    //void destruct(void * place) const;
 
 protected:
     int m_typeId;
@@ -75,7 +74,10 @@ public:
     // data objects, which hold 
     explicit AttributeStorage(const t_AttrMap &attrMap);
 
-    // Runs destructors of all subtypes
+    // copy constructor and assignment.
+    AttributeStorage(const AttributeStorage&);
+    AttributeStorage const& operator =(const AttributeStorage&);
+
     ~AttributeStorage();
 
     void initialize(const t_AttrMap &attrMap);
@@ -91,9 +93,12 @@ public:
     RetType* getData(const t_AttrDesc &loc); 
 protected:
     t_StorageType m_storage;
+    unsigned int m_storageSize;
     bool m_destroyed;
 
-    AttributeStorage(const AttributeStorage&);
+    mutable unsigned int * m_useCount;
+
+    void copyStorage();
 };
 
 template <class RetType>
@@ -102,6 +107,7 @@ RetType * AttributeStorage::getData(const t_AttrDesc & loc)
     if (m_destroyed)
         return nullptr;
 
+    copyStorage();
     AttributeStorage::t_StorageType resultPtr = m_storage + loc.location;
     if (typeid(resultPtr) != loc.typeInfo)
         return nullptr;

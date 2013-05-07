@@ -1,4 +1,4 @@
-#ifndef DATAINTERFACE_H
+﻿#ifndef DATAINTERFACE_H
 #define DATAINTERFACE_H
 #pragma once
 
@@ -90,6 +90,7 @@ public slots:
     void dataItemRemoved(QObject* dataItem);
 
 protected:
+    // TODO: Multihash -> für bessere hierarchie-unterstützung?
     QHash<QString, t_DataBlockP> m_dataMap;
 };
 

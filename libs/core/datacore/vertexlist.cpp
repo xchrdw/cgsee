@@ -31,11 +31,11 @@ void QObjectFactory::construct(void * place) const
     QMetaType::construct(m_typeId, place, nullptr);
 }
 
-void QObjectFactory::destruct(void * place) const
-{
-    assert(m_typeId != 0);
-    QMetaType::destroy(m_typeId, place);
-}
+//void QObjectFactory::destruct(void * place) const
+//{
+//    assert(m_typeId != 0);
+//    QMetaType::destroy(m_typeId, place);
+//}
 
 AttributeSpec::AttributeSpec(const QString &name, const QString &type):
     attrName(name)
@@ -46,36 +46,108 @@ AttributeSpec::AttributeSpec(const QString &name, const QString &type):
 
 AttributeStorage::AttributeStorage():
     m_storage(nullptr)
+,   m_storageSize(0)
 ,   m_destroyed(false)
+,   m_useCount(new unsigned int(1))
 {
+}
+
+AttributeStorage::AttributeStorage(const AttributeStorage& rhs):
+    m_storage(rhs.m_storage)
+,   m_storageSize(rhs.m_storageSize)
+,   m_destroyed(rhs.m_destroyed)
+{
+    if (!m_destroyed && m_storage != nullptr)
+    {
+        m_useCount = rhs.m_useCount;
+        ++(*m_useCount);
+    }
+    else // m_destroyed || m_storage == nullptr
+    {
+        m_useCount = new unsigned int(1);
+    }
 }
 
 AttributeStorage::AttributeStorage(AttributeStorage &&rhs):
     m_storage(rhs.m_storage)
+,   m_storageSize(rhs.m_storageSize)
 ,   m_destroyed(rhs.m_destroyed)
+,   m_useCount(rhs.m_useCount)
 {
     rhs.m_storage = nullptr;
+    rhs.m_storageSize = 0;
     rhs.m_destroyed = true;
+    rhs.m_useCount = nullptr;
 }
 
 AttributeStorage::AttributeStorage(const t_AttrMap &attrMap):
     m_storage(nullptr)
+,   m_storageSize(0)
 ,   m_destroyed(false)
+,   m_useCount(new unsigned int(1))
 {
     initialize(attrMap);
 }
 
 AttributeStorage::~AttributeStorage()
 {
-    if (m_storage && !m_destroyed)
-        //something bad has happened
-        qWarning(QObject::tr("Destroying Attribute storage with objects in it intact. Potential leak. In %1, line %2").arg(__FILE__).arg(__LINE__).toLocal8Bit());
-    delete [] m_storage;
+    if (m_useCount)
+    {
+        assert(*m_useCount > 0);
+        if (--(*m_useCount) == 0)
+        {    
+            if (m_storage && !m_destroyed)
+            {
+                //something bad has happened
+                qWarning(QObject::tr("Destroying Attribute storage with objects in it intact. Potential leak. In %1, line %2")
+                    .arg(__FILE__)
+                    .arg(__LINE__)
+                    .toLocal8Bit());
+            }
+
+            delete [] m_storage;
+            delete m_useCount;
+        }
+        else
+        {
+            // storage is still in use
+        }
+    }
+    else
+    {
+        assert (!m_storage || m_destroyed);
+        delete [] m_storage;
+    }
+}
+
+const AttributeStorage & AttributeStorage::operator=(const AttributeStorage &rhs)
+{
+    if (this == &rhs) // NOTE: perhaps not needed, but it is in some cases
+        return *this;
+
+    m_storage = rhs.m_storage;
+    m_storageSize = rhs.m_storageSize;
+    m_destroyed = rhs.m_destroyed;
+
+    if (!m_destroyed && m_storage != nullptr)
+    {
+        m_useCount = rhs.m_useCount;
+        ++(*m_useCount);
+    }
+    else // m_destroyed || m_storage == nullptr
+    {
+        m_useCount = new unsigned int(1);
+    }
+
+    return *this;
 }
 
 void AttributeStorage::initialize(const t_AttrMap &attrMap)
 {
     assert(m_storage == nullptr);
+    assert(!m_destroyed);
+    assert(m_useCount && *m_useCount == 1);
+
     delete [] m_storage;
     unsigned int memoryNeeded = 0;
 
@@ -84,6 +156,7 @@ void AttributeStorage::initialize(const t_AttrMap &attrMap)
 
     m_storage = new unsigned char[memoryNeeded];
     assert(m_storage != nullptr);
+    m_storageSize = memoryNeeded;
 
     for (const t_AttrDesc &attr: attrMap)
     {
@@ -93,13 +166,32 @@ void AttributeStorage::initialize(const t_AttrMap &attrMap)
 
 void AttributeStorage::runDestructors(const t_AttrMap &attrMap)
 {
-    if (m_destroyed)
-        return;
+    // NOTE: not really needed anymore, since the types are trivially destructible anyway
 
-    for (const t_AttrDesc & attr: attrMap)
-        attr.factory->destruct(m_storage + attr.location);
+    //if (m_destroyed)
+    //    return;
+
+    //if (m_useCount && *m_useCount > 1)
+    //    copyStorage();
+    //for (const t_AttrDesc & attr: attrMap)
+    //    attr.factory->destruct(m_storage + attr.location);
 
     m_destroyed = true;
+}
+
+void AttributeStorage::copyStorage()
+{
+    assert (m_useCount && *m_useCount > 0);
+    if (*m_useCount == 1) 
+    {
+        return;
+    }
+
+    t_StorageType newStorage = new unsigned char [m_storageSize];
+    memcpy(newStorage, m_storage, m_storageSize);
+    --(*m_useCount);
+    m_useCount = new unsigned int(1);
+    m_storage = newStorage;
 }
 
 VertexList::VertexList():

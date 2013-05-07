@@ -1,0 +1,7 @@
+#ifndef DATACORE_DATACURSOR_H
+#define DATACORE_DATACURSOR_H
+#pragma once
+
+// TODO
+
+#endif // DATACORE_DATACURSOR_H
