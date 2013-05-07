@@ -15,17 +15,17 @@ FlightNavigation::~FlightNavigation(void)
 }
 
 void FlightNavigation::keyPressEvent(QKeyEvent *event){
-    float speed = 0.05;
+  //  float speed = 0.05;
     switch (event->key()) {
         case Qt::Key_W:
             //go forward
             //qDebug("forward");
-            //m_position.z += speed;
+            //m_eye.z += speed;
             roll(0.2);
             break;
         case Qt::Key_S:
             //go backward
-            //m_position.z -= speed;
+            //m_eye.z -= speed;
             roll(-0.2);
             break;
         case Qt::Key_A:
@@ -33,31 +33,33 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
             yaw(-0.2);
             break;
         case Qt::Key_D:
-            //m_position.x -= speed;
+            //m_eye.x -= speed;
             yaw(0.2);
             break;
         case Qt::Key_Space:
             //go up
-            //m_position.y += speed;
+            //m_eye.y += speed;
             pitch(0.2);
             break;
         case Qt::Key_Shift:
             //go down
-            //m_position.y -= speed;
+            //m_eye.y -= speed;
             pitch(-0.2);
             break;
             
         case Qt::Key_Left:
-            m_center.x += speed;
+            //m_center.x += speed;
             break;
         case Qt::Key_Right:
-            m_center.x -= speed;
+            //m_center.x -= speed;
             break;
         case Qt::Key_Up:
-            m_center.y += speed;
+            //m_center.y += speed;
+            translate(0.02);
             break;
         case Qt::Key_Down:
-            m_center.y -= speed;
+            //m_center.y -= speed;
+            translate(-0.02);
             break;
             
         case Qt::Key_R:
@@ -66,7 +68,7 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
             
         default:
             break;
-      //      qDebug(m_position.x);
+      //      qDebug(m_eye.x);
     }
 }
 
@@ -75,18 +77,28 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
 }
 
 void FlightNavigation::reset(){
-    m_xRotation = glm::vec3(0.0f ,0.0f, 0.0f);
-    m_yRotation = glm::vec3(0.0f ,0.0f ,0.0f);
-    m_zRotation = glm::vec3(0.0f ,0.0f ,0.0f);
-    m_position = glm::vec3(0.0f ,0.0f , -2.0f);
+    m_xView = glm::vec3(0.0f ,0.0f, 0.0f);
+    m_yView = glm::vec3(0.0f ,0.0f ,0.0f);
+    m_zView = glm::vec3(0.0f ,0.0f ,0.0f);
+    m_eye = glm::vec3(0.0f ,0.0f , -2.0f);
     m_center = glm::vec3(0.0f ,0.0f ,0.0f);
     m_up = glm::vec3( 0.f, 1.f, 0.f);
-    m_viewMatrix = glm::lookAt(m_position, m_center, m_up);
-    updateRotation();
+    m_viewMatrix = glm::lookAt(m_eye, m_center, m_up);
+    updateAxis();
 }
 
+void FlightNavigation::updateAxis(){
+    m_yView = m_up;
+    m_zView = m_center - m_eye;
+    m_xView = glm::cross(m_yView, m_zView);
+}
+
+void FlightNavigation::updateView(){
+    m_viewMatrix =  glm::lookAt(m_eye, m_center, m_up);
+}
+
+
 const glm::mat4 FlightNavigation::viewMatrix(){
-    //m_viewMatrix = glm::lookAt(m_position + glm::vec3(0, 0, -2), m_position + m_center, glm::vec3( 0.f, 1.f, 0.f));
     return m_viewMatrix;
 }
 
@@ -96,32 +108,33 @@ const glm::mat4 FlightNavigation::viewMatrixInverted()
 }
 
 void FlightNavigation::yaw(float angle){
-    glm::vec3 diffLR = glm::rotate( m_zRotation, -angle, m_yRotation) - m_zRotation;
+    glm::vec3 diffLR = glm::rotate( m_zView, -angle, m_yView) - m_zView;
     m_center += diffLR;
-    m_viewMatrix =  glm::lookAt(m_position, m_center, m_up);
-    updateRotation();
-}
-
-void FlightNavigation::roll(float angle){
-    glm::vec3 diffRotZ = glm::rotate(m_yRotation, angle, m_zRotation) - m_yRotation;
-    m_up += diffRotZ;
-    m_viewMatrix =  glm::lookAt(m_position, m_center, m_up);
-    updateRotation();
+    updateView();
+    updateAxis();
 }
 
 void FlightNavigation::pitch(float angle){
-    glm::vec3 diffCenter = glm::rotate( m_zRotation, -angle, m_xRotation) - m_zRotation;
-    glm::vec3 diffUp = glm::rotate( m_yRotation, -angle, m_xRotation) - m_yRotation;
+    glm::vec3 diffCenter = glm::rotate( m_zView, -angle, m_xView) - m_zView;
+    glm::vec3 diffUp = glm::rotate( m_yView, -angle, m_xView) - m_yView;
     m_center += diffCenter;
     m_up += diffUp;
-    m_viewMatrix =  glm::lookAt(m_position, m_center, m_up);
-    updateRotation();
+    updateView();
+    updateAxis();
 }
 
-void FlightNavigation::updateRotation(){
-    m_yRotation = m_up;
-    m_zRotation = m_center - m_position;
-    m_xRotation = glm::cross(m_yRotation, m_zRotation);
+void FlightNavigation::roll(float angle){
+    glm::vec3 diffRotZ = glm::rotate(m_yView, angle, m_zView) - m_yView;
+    m_up += diffRotZ;
+    updateView();
+    updateAxis();
+}
+
+void FlightNavigation::translate(float direction){
+    //Todo: Move the view towards or backwards the center
+    
+    updateView();
+    updateAxis();
 }
 
 

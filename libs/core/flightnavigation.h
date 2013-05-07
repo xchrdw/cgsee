@@ -16,31 +16,30 @@ public:
 private:
     glm::mat4 m_viewMatrix;
     
-    glm::vec3 m_position; //cameraposition
-    glm::vec3 m_center; // Direction of reference point
-    glm::vec3 m_up;
+    //Defines the view
+    glm::vec3 m_eye;
+    glm::vec3 m_center; 
+    glm::vec3 m_up; 
     
-    //Rotation angle of the camera
-    glm::vec3 m_xRotation;
-    glm::vec3 m_yRotation;
-    glm::vec3 m_zRotation;
+    void updateView();
     
-    void translate(float direction);
+    //Coordinatesystem of the view
+    glm::vec3 m_xView;
+    glm::vec3 m_yView;
+    glm::vec3 m_zView;
     
-    //updates Rotation after translation
-    void updateRotation();
-    
+    void updateAxis();
     
     //Yaw, pitch, roll: http://upload.wikimedia.org/wikipedia/commons/7/7e/Rollpitchyawplain.png
-    //Rotation around z-axis
+    //Rotate center around y-axis
     void yaw(float angle);
     
-    //Rotation around y-axis
+    //Rotate up - vector and center around x-axis
     void pitch(float angle);
     
-    //Rotation around x axis
+    //Rotate up-vector around z axis
     void roll(float angle);
     
-
-
+    //Move forward or backward to the center of the view
+    void translate(float direction);
 };
