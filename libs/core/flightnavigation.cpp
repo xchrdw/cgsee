@@ -17,51 +17,37 @@ FlightNavigation::~FlightNavigation(void)
 void FlightNavigation::keyPressEvent(QKeyEvent *event){
   //  float speed = 0.05;
     switch (event->key()) {
+            
+        // Pitch, Yaw, roll
         case Qt::Key_W:
-            //go forward
-            //qDebug("forward");
-            //m_eye.z += speed;
-            roll(0.2);
+            pitch(0.2);
             break;
         case Qt::Key_S:
-            //go backward
-            //m_eye.z -= speed;
-            roll(-0.2);
+            pitch(-0.2);
             break;
         case Qt::Key_A:
-            //go right
             yaw(-0.2);
             break;
         case Qt::Key_D:
-            //m_eye.x -= speed;
             yaw(0.2);
             break;
-        case Qt::Key_Space:
-            //go up
-            //m_eye.y += speed;
-            pitch(0.2);
+        case Qt::Key_Q:
+            roll(-0.2);
             break;
-        case Qt::Key_Shift:
-            //go down
-            //m_eye.y -= speed;
-            pitch(-0.2);
+        case Qt::Key_E:
+            roll(0.2);
             break;
-            
-        case Qt::Key_Left:
-            //m_center.x += speed;
-            break;
-        case Qt::Key_Right:
-            //m_center.x -= speed;
-            break;
+
+        //Move forward, backward
         case Qt::Key_Up:
-            //m_center.y += speed;
             translate(0.02);
             break;
         case Qt::Key_Down:
-            //m_center.y -= speed;
             translate(-0.02);
             break;
-            
+         
+        //Reset to views
+        //Todo: Define Default views along different axis (like Blender)
         case Qt::Key_R:
             reset();
             break;
