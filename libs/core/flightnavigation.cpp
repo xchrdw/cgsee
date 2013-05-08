@@ -1,12 +1,13 @@
 
 #include "flightnavigation.h"
+#include "camera.h"
 
 //glm to rotate around axis
 #include "glm/gtx/rotate_vector.hpp"
 
 #include <iostream>
 
-FlightNavigation::FlightNavigation(void)
+FlightNavigation::FlightNavigation(Camera * camera) : AbstractNavigation(camera)
 {
     m_timesKeyPressed = 0;
     reset();
@@ -89,6 +90,7 @@ void FlightNavigation::updateAxis(){
 
 void FlightNavigation::updateView(){
     m_viewMatrix =  glm::lookAt(m_eye, m_center, m_up);
+    m_camera->setView(m_viewMatrix);
 }
 
 

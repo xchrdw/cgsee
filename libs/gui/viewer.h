@@ -19,7 +19,7 @@ class GLFormat;
 class Ui_Viewer;
 class Canvas;
 class AbstractPainter;
-
+class AbstractNavigation;
 
 class CGSEE_API Viewer : public QMainWindow
 {
@@ -31,11 +31,14 @@ public:
 
     void initialize(const GLFormat & format);
 
+    void setNavigation(AbstractNavigation * navigation);
+    AbstractNavigation * navigation();
+
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
-	void keyPressEvent(QKeyEvent * event);
-	void keyReleaseEvent (QKeyEvent *event);
+    void keyPressEvent(QKeyEvent * event);
+    void keyReleaseEvent (QKeyEvent *event);
 
 protected:
 

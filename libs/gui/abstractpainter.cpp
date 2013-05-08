@@ -8,6 +8,7 @@
 
 AbstractPainter::AbstractPainter()
 :   m_initialized(false)
+,   m_camera(nullptr)
 {
 }
  
@@ -35,32 +36,8 @@ void AbstractPainter::resize(
         qFatal("Painter initialization failed.");
 }
 
-void AbstractPainter::keyPress(QKeyEvent * event)
+Camera * AbstractPainter::camera()
 {
-    m_navigation->keyPressEvent(event);
+    return m_camera;
 }
 
-void AbstractPainter::keyRelease(QKeyEvent * event)
-{
-    m_navigation->keyReleaseEvent(event);
-}
-
-void AbstractPainter::mousePressEvent(QMouseEvent * event)
-{
-    m_navigation->mousePressEvent(event);
-}
-
-void AbstractPainter::mouseReleaseEvent(QMouseEvent * event)
-{
-    m_navigation->mouseReleaseEvent(event);
-}
-
-void AbstractPainter::mouseMoveEvent(QMouseEvent * event)
-{
-    m_navigation->mouseMoveEvent(event);
-}
-
-void AbstractPainter::wheelEvent(QWheelEvent * event)
-{
-    m_navigation->wheelEvent(event);
-}

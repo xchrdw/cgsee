@@ -7,6 +7,7 @@
 #include "viewer.h"
 #include "canvas.h"
 #include "abstractpainter.h"
+#include "core/abstractnavigation.h"
 
 #include <core/glformat.h>
 
@@ -126,13 +127,29 @@ AbstractPainter * Viewer::painter()
     return m_qtCanvas->painter();
 }
 
+void Viewer::setNavigation(AbstractNavigation * navigation)
+{
+    if(!m_qtCanvas)
+        return;
+    m_qtCanvas->setNavigation(navigation);
+}
+
+
+AbstractNavigation * Viewer::navigation() {
+    if(!m_qtCanvas)
+        return nullptr;
+    return m_qtCanvas->navigation();
+}
+
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
-	m_qtCanvas->painter()->keyPress(event);
+    m_qtCanvas->navigation()->keyPressEvent(event);
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )
 {
-	m_qtCanvas->painter()->keyRelease(event);
+    m_qtCanvas->navigation()->keyReleaseEvent(event);
 }
+
+
 

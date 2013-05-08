@@ -3,11 +3,11 @@
 class CGSEE_API FlightNavigation : public AbstractNavigation
 {
 public:
-	FlightNavigation(void);
-	~FlightNavigation(void);
+    FlightNavigation(Camera * camera);
+    ~FlightNavigation(void);
     
     virtual void keyPressEvent(QKeyEvent *event);
-	virtual void keyReleaseEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
     
     virtual void wheelEvent(QWheelEvent *event);
     virtual void reset();
@@ -17,7 +17,7 @@ public:
     
     virtual void setFovy(float fovy);
     float getFovy();
-	
+    
 private:
     glm::mat4 m_viewMatrix;
     

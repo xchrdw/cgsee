@@ -1,9 +1,9 @@
 #include "arcballnavigation.h"
+#include "camera.h"
 
-
-ArcballNavigation::ArcballNavigation(void)
+ArcballNavigation::ArcballNavigation(Camera * camera) : AbstractNavigation(camera)
 {
-    reset();
+
 }
 
 ArcballNavigation::~ArcballNavigation(void)
@@ -14,26 +14,12 @@ ArcballNavigation::~ArcballNavigation(void)
 
 void ArcballNavigation::reset()
 {
-    m_center = glm::vec3(0, 0, 0);
-    m_direction = glm::vec3(0, 0, -2);
-    m_mouse_last = m_mouse_cur = glm::vec2(0, 0);
     m_arcball_on = false;
-    m_viewMatrix = glm::lookAt(m_center + m_direction, m_center, glm::vec3( 0.f, 1.f, 0.f));
+    m_zoom_on = false;
+    m_camera->setView(glm::lookAt(
+        glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+    m_viewMatrix = m_camera->view();
     m_viewMatrixInverted = glm::inverse(m_viewMatrix);
-}
-
-
-const glm::mat4 ArcballNavigation::viewMatrix() {
-    if (m_mouse_cur != m_mouse_last) {
-        if(m_arcball_on)
-            updateArcball();
-        if(m_zoom_on)
-            updateZoom();
-
-        m_viewMatrixInverted = glm::inverse(m_viewMatrix); // is needed in next call anyway
-        m_mouse_last = m_mouse_cur;
-    }
-    return m_viewMatrix;
 }
 
 void ArcballNavigation::updateArcball()
@@ -83,9 +69,16 @@ void ArcballNavigation::updateZoom()
 
 void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 {
-    if (m_arcball_on || m_zoom_on) {
-        m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
+    m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
+    if (m_arcball_on) {
+            updateArcball();
     }
+    if (m_zoom_on) {
+        updateZoom();
+    }
+    m_viewMatrixInverted = glm::inverse(m_viewMatrix);
+    m_camera->setView(m_viewMatrix);
+    m_mouse_last = m_mouse_cur;
 }
 
 void ArcballNavigation::mousePressEvent(QMouseEvent * event)
@@ -110,5 +103,13 @@ const glm::mat4 ArcballNavigation::viewMatrixInverted()
      return m_viewMatrixInverted;
 }
 
+void ArcballNavigation::wheelEvent(QWheelEvent * event)
+{
+    event->angleDelta();
+}
+
+const glm::mat4 ArcballNavigation::viewMatrix() {
+    return m_viewMatrix;
+}
 
 

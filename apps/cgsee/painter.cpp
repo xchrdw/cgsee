@@ -20,12 +20,15 @@
 Painter::Painter()
 :   AbstractPainter()
 ,   m_group(nullptr)
-,   m_camera(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
 ,   m_quad(nullptr)
 {
+    m_camera = new Camera(); // insert camera from cgsee.cpp?
+    m_camera->setFovy (45.0f);
+    m_camera->setZNear( 1.0f);
+    m_camera->setZFar (10.0f);
 }
 
 Painter::~Painter()
@@ -59,24 +62,14 @@ const bool Painter::initialize()
 
     // Camera Setup
 
-    m_camera = new Camera();
-
-    m_camera->setFovy (45.0f);
-    m_camera->setZNear( 1.0f);
-    m_camera->setZFar (10.0f);
+  
 
     m_camera->append(m_group);
 
     m_camera->setView(glm::lookAt(
         glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
-    
-    //For testing only
-#define ARC false
-#if ARC
-    m_navigation = new ArcballNavigation();
-#else
-    m_navigation = new FlightNavigation();
-#endif
+
+
     m_quad = new ScreenQuad();
 
     // G-Buffer Shader
@@ -109,10 +102,6 @@ void Painter::paint()
 
     // Normals and Depth to RGBA
 
-
-    m_camera->setView(m_navigation->viewMatrix());
-    m_camera->setFovy(m_navigation->getFovy());
-
     m_camera->draw(m_normalz, m_fboNormalz);
 
 
@@ -131,7 +120,6 @@ void Painter::resize(
     AbstractPainter::resize(width, height);
     
     m_camera->setViewport(width, height);
-    m_navigation->setViewPort(width, height);
 
     m_fboNormalz->resize(width, height);
     

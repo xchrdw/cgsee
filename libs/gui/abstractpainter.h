@@ -5,10 +5,10 @@
 
 #include <core/declspec.h>
 #include <core/glformat.h>
-#include <core/abstractnavigation.h>
 
 class QKeyEvent;
 class QMouseEvent;
+class Camera;
 
 class CGSEE_API AbstractPainter
 {
@@ -23,12 +23,14 @@ public:
         const int width
     ,   const int height);
 
-    virtual void keyPress(QKeyEvent * event);
+    Camera * camera();
+    
+    /*virtual void keyPress(QKeyEvent * event);
     virtual void keyRelease(QKeyEvent * event);
     virtual void mouseMoveEvent (QMouseEvent * event);
     virtual void mousePressEvent (QMouseEvent * event);
     virtual void mouseReleaseEvent (QMouseEvent * event);
-    virtual void wheelEvent(QWheelEvent * event);
+    virtual void wheelEvent(QWheelEvent * event);*/
 
     // TODO: more to come...
 
@@ -37,6 +39,5 @@ protected:
 
 protected:
     bool m_initialized;
-    AbstractNavigation *m_navigation;
-
+    Camera * m_camera;
 };

@@ -8,6 +8,10 @@
 
 #include "canvas.h"
 #include "abstractpainter.h"
+#include "core/abstractnavigation.h"
+#include "core/flightnavigation.h"
+#include "core/arcballnavigation.h"
+#include "abstractpainter.h"
 
 #include <core/gpuquery.h>
 #include <core/glformat.h>
@@ -21,12 +25,13 @@ Canvas::Canvas(
 ,   m_format(format)
 ,   m_timer(nullptr)
 ,   m_painter(nullptr)
+,   m_navigation(nullptr)
 {
     m_timer = new QBasicTimer();
     m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
-
+	
     // Important for overdraw, not occluding the scene.
     setAutoFillBackground(false); 
 }
@@ -93,6 +98,9 @@ void Canvas::resizeGL(
     
     if(m_painter)
         m_painter->resize(width, height);
+    if(m_navigation)
+        m_navigation->setViewPort(width, height);
+
 }
 
 
@@ -159,22 +167,34 @@ AbstractPainter * Canvas::painter()
     return m_painter;
 }
 
+AbstractNavigation * Canvas::navigation()
+{
+	return m_navigation;
+}
+
+void Canvas::setNavigation( AbstractNavigation * navigation )
+{
+	m_navigation = navigation;
+}
+
 void Canvas::mousePressEvent( QMouseEvent * event )
 {
-    m_painter->mousePressEvent(event);
+	m_navigation->mousePressEvent(event);
 }
 
 void Canvas::mouseReleaseEvent( QMouseEvent * event )
 {
-    m_painter->mouseReleaseEvent(event);
+	m_navigation->mouseReleaseEvent(event);
 }
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
-    m_painter->mouseMoveEvent(event);
+	m_navigation->mouseMoveEvent(event);
 }
 
 void Canvas::wheelEvent(QWheelEvent * event)
 {
-    m_painter->wheelEvent(event);
+	m_navigation->wheelEvent(event);
 }
+
+
