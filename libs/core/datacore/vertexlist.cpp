@@ -249,6 +249,14 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
     m_initialized = true;
 }
 
+void VertexList::createNewVertices(unsigned int amount)
+{
+    for (unsigned int i = 0; i < amount; ++i)
+    {
+        m_vertices.append(AttributeStorage(*this));
+    }
+}
+
 const t_AttrMap& VertexList::getAttrMap()
 {
     return m_attrLayout;

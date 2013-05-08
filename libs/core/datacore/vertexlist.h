@@ -40,7 +40,7 @@ public:
     AttributeStorage();
     AttributeStorage(AttributeStorage &&rhs);
     // Initializes attributeStorage and creates in-place default constructed
-    // data objects, which hold 
+    // data objects, which hold vertex attributes
     explicit AttributeStorage(VertexList &owner);
 
     // copy constructor and assignment.
@@ -96,6 +96,8 @@ public:
 
     template <class RetType>
     RetType * getVertexAttribute(int index, const QString &attrName);
+
+    void createNewVertices(unsigned int amount);
 
     friend class AttributeStorage;
 protected:
