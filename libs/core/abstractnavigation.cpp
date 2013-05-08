@@ -28,4 +28,7 @@ void AbstractNavigation::setViewPort( const int width, const int height )
 }
 
 void AbstractNavigation::setFovy(float fovy) { }
-float AbstractNavigation::getFovy(){ };
+float AbstractNavigation::getFovy(){
+    //Return Standard FOV if Navigation hasn't implemented a FOV manipulator
+    return 45.0f;
+}
