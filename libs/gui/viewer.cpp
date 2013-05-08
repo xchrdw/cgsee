@@ -126,5 +126,13 @@ AbstractPainter * Viewer::painter()
     return m_qtCanvas->painter();
 }
 
+void Viewer::keyPressEvent(QKeyEvent * event)
+{
+	m_qtCanvas->painter()->keyPress(event);
+}
 
+void Viewer::keyReleaseEvent( QKeyEvent *event )
+{
+	m_qtCanvas->painter()->keyRelease(event);
+}
 

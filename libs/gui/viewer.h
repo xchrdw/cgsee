@@ -34,8 +34,11 @@ public:
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
+	void keyPressEvent(QKeyEvent * event);
+	void keyReleaseEvent (QKeyEvent *event);
 
 protected:
+
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
