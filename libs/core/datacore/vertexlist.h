@@ -89,10 +89,13 @@ class CGSEE_API VertexList: public DataBlock
 {
     Q_OBJECT
 public:
-    VertexList();
+    typedef VertexList * t_StandardPointer;
+
     ~VertexList();
 
     void initialize(const QList<AttributeSpec> &attrTypes);
+
+    t_StandardPointer clone(QString &newName, DataBlockRegistry &registry) override;
 
     template <class RetType>
     RetType * getVertexAttribute(int index, const QString &attrName);
@@ -101,12 +104,16 @@ public:
 
     friend class AttributeStorage;
 protected:
+    VertexList();
+
     QVector<AttributeStorage> m_vertices;
     t_AttrMap m_attrLayout; 
     const t_AttrMap& getAttrMap();
     
     bool m_initialized;
 };
+
+typedef VertexList::t_StandardPointer t_VertexListP;
 
 template <class RetType>
 RetType * VertexList::getVertexAttribute(int index, const QString &attrName)
