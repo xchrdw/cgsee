@@ -58,13 +58,14 @@ AttributeStorage::AttributeStorage(AttributeStorage &&rhs):
     rhs.m_useCount = nullptr;
 }
 
-AttributeStorage::AttributeStorage(const t_AttrMap &attrMap):
+AttributeStorage::AttributeStorage(VertexList &owner):
     m_storage(nullptr)
 ,   m_storageSize(0)
 ,   m_destroyed(false)
 ,   m_useCount(new unsigned int(1))
+,   m_owner(&owner)
 {
-    initialize(attrMap);
+    initialize(owner);
 }
 
 AttributeStorage::~AttributeStorage()
@@ -76,11 +77,17 @@ AttributeStorage::~AttributeStorage()
         {    
             if (m_storage && !m_destroyed)
             {
-                //something bad has happened
-                qWarning(QObject::tr("Destroying Attribute storage with objects in it intact. Potential leak. In %1, line %2")
-                    .arg(__FILE__)
-                    .arg(__LINE__)
-                    .toLocal8Bit());
+                if (m_owner)
+                {
+                    runDestructors(m_owner->getAttrMap());
+                    assert(m_destroyed);
+                }
+                else
+                    //something bad has happened
+                    qWarning(QObject::tr("Destroying Attribute storage with objects in it intact. Potential leak. In %1, line %2")
+                        .arg(__FILE__)
+                        .arg(__LINE__)
+                        .toLocal8Bit());
             }
 
             delete [] m_storage;
@@ -120,7 +127,7 @@ const AttributeStorage & AttributeStorage::operator=(const AttributeStorage &rhs
     return *this;
 }
 
-void AttributeStorage::initialize(const t_AttrMap &attrMap)
+void AttributeStorage::initialize(VertexList &owner)
 {
     assert(m_storage == nullptr);
     assert(!m_destroyed);
@@ -128,6 +135,7 @@ void AttributeStorage::initialize(const t_AttrMap &attrMap)
 
     delete [] m_storage;
     unsigned int memoryNeeded = 0;
+    const t_AttrMap &attrMap = owner.getAttrMap();
 
     for (const t_AttrDesc &attr: attrMap)
         memoryNeeded = qMax(memoryNeeded, attr.size + attr.location);
@@ -241,7 +249,7 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
     m_initialized = true;
 }
 
-const t_AttrMap& VertexList::getAttrMap() const
+const t_AttrMap& VertexList::getAttrMap()
 {
     return m_attrLayout;
 }

@@ -41,7 +41,7 @@ public:
     AttributeStorage(AttributeStorage &&rhs);
     // Initializes attributeStorage and creates in-place default constructed
     // data objects, which hold 
-    explicit AttributeStorage(const t_AttrMap &attrMap);
+    explicit AttributeStorage(VertexList &owner);
 
     // copy constructor and assignment.
     AttributeStorage(const AttributeStorage&);
@@ -49,7 +49,7 @@ public:
 
     ~AttributeStorage();
 
-    void initialize(const t_AttrMap &attrMap);
+    void initialize(VertexList &owner);
 
     // prepares storage for deletion.
     // invalidates its content
@@ -101,7 +101,7 @@ public:
 protected:
     QVector<AttributeStorage> m_vertices;
     t_AttrMap m_attrLayout; 
-    const t_AttrMap& getAttrMap() const;
+    const t_AttrMap& getAttrMap();
     
     bool m_initialized;
 };
