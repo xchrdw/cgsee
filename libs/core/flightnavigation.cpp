@@ -37,10 +37,10 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
             yaw(angle);
             break;
         case Qt::Key_Q:
-            roll(-angle);
+            roll(angle);
             break;
         case Qt::Key_E:
-            roll(angle);
+            roll(-angle);
             break;
 
         //Move forward, backward
