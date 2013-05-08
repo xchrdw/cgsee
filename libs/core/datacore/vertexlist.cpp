@@ -1,5 +1,6 @@
 #include <assert.h>
 
+#include "typefunctions.h"
 #include "vertexlist.h"
 
 namespace
@@ -7,35 +8,12 @@ namespace
     struct TypeSpec
     {
         unsigned int size;
-        std::shared_ptr<AbstractInPlaceObjectFactory> factory;
+        std::shared_ptr<AbstractInPlaceTypeFunctions> factory;
         const type_info *typeInfo;
     };
 
     QMap<QString, TypeSpec> g_registeredTypes;
 }
-
-AbstractInPlaceObjectFactory::~AbstractInPlaceObjectFactory()
-{
-
-}
-
-QObjectFactory::QObjectFactory(const char * qTypeName)
-{
-    m_typeId = QMetaType::type(qTypeName);
-    assert(m_typeId != 0);
-}
-
-void QObjectFactory::construct(void * place) const
-{
-    assert(m_typeId != 0);
-    QMetaType::construct(m_typeId, place, nullptr);
-}
-
-//void QObjectFactory::destruct(void * place) const
-//{
-//    assert(m_typeId != 0);
-//    QMetaType::destroy(m_typeId, place);
-//}
 
 AttributeSpec::AttributeSpec(const QString &name, const QString &type):
     attrName(name)
@@ -245,7 +223,7 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
         {
             newAttribute.size = QMetaType::sizeOf(attrTypeId);
             newAttribute.factory = decltype(t_AttrDesc::factory)
-                (new QObjectFactory(attrSpec.attrType.toUtf8()));
+                (new QtTypeFunctions(attrSpec.attrType.toUtf8()));
             newAttribute.typeInfo = &typeid(QMetaType);
         }
 

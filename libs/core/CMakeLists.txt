@@ -17,6 +17,8 @@ set(SOURCES
     datacore/vertexlist.h
     datacore/vertexlist.cpp
     datacore/datacursor.h
+    datacore/typefunctions.h
+    datacore/typefunctions.cpp
     abstracttimer.h
     autotimer.h
     autotimer.cpp

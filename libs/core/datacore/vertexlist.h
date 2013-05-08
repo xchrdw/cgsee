@@ -5,40 +5,8 @@
 #include <typeinfo>
 #include <memory>
 
+#include "typefunctions.h"
 #include "abstractdata.h"
-
-struct AbstractInPlaceObjectFactory
-{
-    virtual ~AbstractInPlaceObjectFactory();
-    virtual void construct(void * place) const=0;
-    //virtual void destruct(void * place) const=0;
-};
-
-template <typename T>
-struct InPlaceObjectFactory : public AbstractInPlaceObjectFactory
-    , public std::enable_shared_from_this<InPlaceObjectFactory<T> >
-{
-    void construct(void * place) const
-    {
-        new(place) T;
-    }
-    //void destruct(void * place) const
-    //{
-    //    static_cast<T*>(place)->~T();
-    //}
-};
-
-class QObjectFactory : public AbstractInPlaceObjectFactory
-{
-public:
-    QObjectFactory(const char * qTypeName);
-
-    void construct(void * place) const;
-    //void destruct(void * place) const;
-
-protected:
-    int m_typeId;
-};
 
 // describes layout of vertex attributes in a storage.
 typedef struct AttributeDescriptor
@@ -46,7 +14,7 @@ typedef struct AttributeDescriptor
     unsigned int location;
     unsigned int size;
     QString typeName;
-    std::shared_ptr<AbstractInPlaceObjectFactory> factory;
+    std::shared_ptr<AbstractInPlaceTypeFunctions> factory;
     type_info const* typeInfo;
 } t_AttrDesc;
 
