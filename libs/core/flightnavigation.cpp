@@ -19,8 +19,9 @@ FlightNavigation::~FlightNavigation(void)
 }
 
 void FlightNavigation::keyPressEvent(QKeyEvent *event){
-    float angle = 0.5 + m_timesKeyPressed/10;
-    float speed = 0.05 + m_timesKeyPressed/50;
+    m_timesKeyPressed++;
+    float angle = 0.5 + m_timesKeyPressed/10.0;
+    float speed = 0.05 + m_timesKeyPressed/50.0;
     switch (event->key()) {
         // Pitch, Yaw, roll
         case Qt::Key_W:
@@ -58,6 +59,7 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
             
         default:
             break;
+
     }
 }
 
@@ -135,9 +137,8 @@ void FlightNavigation::translate(float speed){
 
 void FlightNavigation::setFovy(float fovy){
     m_fovy += fovy;
-    m_fovy = glm::min(m_fovy, 175.0f);
+    m_fovy = glm::min(m_fovy, 180.0f);
     m_fovy = glm::max(m_fovy, 0.0f);
-    std::cout << m_fovy << "\n";
 }
 
 float FlightNavigation::getFovy(){
