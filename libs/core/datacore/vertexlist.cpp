@@ -144,15 +144,17 @@ void AttributeStorage::initialize(const t_AttrMap &attrMap)
 
 void AttributeStorage::runDestructors(const t_AttrMap &attrMap)
 {
-    // NOTE: not really needed anymore, since the types are trivially destructible anyway
+    if (m_destroyed)
+        return;
 
-    //if (m_destroyed)
-    //    return;
-
-    //if (m_useCount && *m_useCount > 1)
-    //    copyStorage();
-    //for (const t_AttrDesc & attr: attrMap)
-    //    attr.factory->destruct(m_storage + attr.location);
+    if (m_useCount && *m_useCount > 1)
+    {
+        --(*m_useCount);
+        m_useCount = nullptr;
+        m_storage = nullptr;
+    }
+    else for (const t_AttrDesc & attr: attrMap)
+        attr.factory->destruct(m_storage + attr.location);
 
     m_destroyed = true;
 }
@@ -166,7 +168,13 @@ void AttributeStorage::copyStorage()
     }
 
     t_StorageType newStorage = new unsigned char [m_storageSize];
-    memcpy(newStorage, m_storage, m_storageSize);
+
+    // TODO: differentiate between trivially copyable and not types
+    // memcpy(newStorage, m_storage, m_storageSize); // for trivially copyable types
+    assert(m_owner);
+    for (const t_AttrDesc & attrD: m_owner->getAttrMap())
+        attrD.factory->copyTo(m_storage + attrD.location, newStorage + attrD.location);
+
     --(*m_useCount);
     m_useCount = new unsigned int(1);
     m_storage = newStorage;
@@ -233,3 +241,7 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
     m_initialized = true;
 }
 
+const t_AttrMap& VertexList::getAttrMap() const
+{
+    return m_attrLayout;
+}

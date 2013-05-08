@@ -27,6 +27,7 @@ struct AttributeSpec
 };
 
 typedef QHash<QString, t_AttrDesc> t_AttrMap;
+class VertexList;
 
 // A vertex (and everything really) can be described by its attributes.
 // This class provides a storage for them, but it doesn't memorize the right layout.
@@ -65,6 +66,7 @@ protected:
     bool m_destroyed;
 
     mutable unsigned int * m_useCount;
+    QPointer<VertexList> m_owner;
 
     void copyStorage();
 };
@@ -95,9 +97,11 @@ public:
     template <class RetType>
     RetType * getVertexAttribute(int index, const QString &attrName);
 
+    friend class AttributeStorage;
 protected:
     QVector<AttributeStorage> m_vertices;
     t_AttrMap m_attrLayout; 
+    const t_AttrMap& getAttrMap() const;
     
     bool m_initialized;
 };
