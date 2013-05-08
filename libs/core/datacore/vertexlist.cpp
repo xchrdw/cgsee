@@ -188,8 +188,9 @@ void AttributeStorage::copyStorage()
     m_storage = newStorage;
 }
 
-VertexList::VertexList():
-    m_initialized(false)
+VertexList::VertexList(QObject* parent):
+    DataBlock(parent)
+,   m_initialized(false)
 {
     
 }
@@ -249,14 +250,6 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
     m_initialized = true;
 }
 
-t_VertexListP VertexList::clone(QString &newName, DataBlockRegistry &registry)
-{
-    t_VertexListP newItem = new VertexList(*this);
-    QString chosenName = (newName.isNull() || newName.isEmpty()) ? name() : newName;
-    newName = registry.registerNewData(chosenName, newItem);
-    return newItem;
-}
-
 void VertexList::createNewVertices(unsigned int amount)
 {
     for (unsigned int i = 0; i < amount; ++i)
@@ -268,4 +261,9 @@ void VertexList::createNewVertices(unsigned int amount)
 const t_AttrMap& VertexList::getAttrMap()
 {
     return m_attrLayout;
+}
+
+t_VertexListP VertexList::createClone()
+{
+    return new VertexList(*this);
 }

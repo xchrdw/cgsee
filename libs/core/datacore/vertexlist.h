@@ -95,8 +95,6 @@ public:
 
     void initialize(const QList<AttributeSpec> &attrTypes);
 
-    t_StandardPointer clone(QString &newName, DataBlockRegistry &registry) override;
-
     template <class RetType>
     RetType * getVertexAttribute(int index, const QString &attrName);
 
@@ -104,13 +102,14 @@ public:
 
     friend class AttributeStorage;
 protected:
-    VertexList();
+    explicit VertexList(QObject* parent = nullptr);
 
     QVector<AttributeStorage> m_vertices;
     t_AttrMap m_attrLayout; 
-    const t_AttrMap& getAttrMap();
-    
     bool m_initialized;
+
+    const t_AttrMap& getAttrMap();
+    virtual t_StandardPointer createClone() override;
 };
 
 typedef VertexList::t_StandardPointer t_VertexListP;

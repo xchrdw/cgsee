@@ -1,6 +1,7 @@
 #include "abstractdata.h"
 
-DataBlock::DataBlock() // protected
+DataBlock::DataBlock(QObject * parent):
+    QObject(parent)
 {
 }
 
@@ -12,22 +13,20 @@ DataBlock::~DataBlock() // virtual
 {
 }
 
-QString DataBlock::name() const
-{
-    return m_name;
-}
-
-t_DataBlockP DataBlock::clone(QString &newName, DataBlockRegistry &registry)
-{
-    t_DataBlockP newItem = new DataBlock(*this);
-    QString chosenName = (newName.isNull() || newName.isEmpty()) ? name() : newName;
-    newName = registry.registerNewData(chosenName, newItem);
-    return newItem;
-}
-
 void DataBlock::triggerUpdatedSignal()
 {
     emit updated(this);
+}
+
+t_DataBlockP DataBlock::createClone()
+{
+    return new DataBlock(*this);
+}
+
+DataBlockRegistry::DataBlockRegistry(QString const &objName, QObject *parent):
+    QObject(parent)
+{
+    setObjectName(objName);
 }
 
 DataBlockRegistry::~DataBlockRegistry() // virtual
