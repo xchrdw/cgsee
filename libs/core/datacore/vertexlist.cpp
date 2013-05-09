@@ -219,7 +219,7 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
         
         // Looking if Qt knows about this type
         int attrTypeId = newAttribute.typeId = QMetaType::type(attrSpec.attrType.toUtf8());
-        if (0 == attrTypeId)
+        if (QMetaType::UnknownType == attrTypeId)
         {
             // Apparently it doesn't
             if (false == g_registeredTypes.contains(attrSpec.attrType))
