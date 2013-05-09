@@ -5,6 +5,7 @@
 
 class Viewer;
 class Painter;
+class Camera;
 class AbstractNavigation;
 
 class CGSee : public AbstractApplication
@@ -16,5 +17,4 @@ public:
 protected:
     Viewer * m_viewer;
     Painter * m_painter;
-    AbstractNavigation * m_navigation;
 };

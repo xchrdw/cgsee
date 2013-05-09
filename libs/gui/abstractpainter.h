@@ -13,7 +13,7 @@ class Camera;
 class CGSEE_API AbstractPainter
 {
 public:
-    AbstractPainter();
+    AbstractPainter(Camera * camera);
     virtual ~AbstractPainter();
 
     // calls initialize if not initialized - so call this when subclassed
@@ -23,7 +23,6 @@ public:
         const int width
     ,   const int height);
 
-    Camera * camera();
     
     /*virtual void keyPress(QKeyEvent * event);
     virtual void keyRelease(QKeyEvent * event);

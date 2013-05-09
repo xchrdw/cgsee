@@ -16,7 +16,7 @@ class FrameBufferObject;
 class Painter : public AbstractPainter
 {
 public:
-    Painter();
+    Painter(Camera * camera);
     virtual ~Painter();
 
     virtual void paint();

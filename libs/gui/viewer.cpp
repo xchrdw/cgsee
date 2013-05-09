@@ -8,7 +8,8 @@
 #include "canvas.h"
 #include "abstractpainter.h"
 #include "core/abstractnavigation.h"
-
+#include "core/flightnavigation.h"
+#include "core/arcballnavigation.h"
 #include <core/glformat.h>
 
 
@@ -129,11 +130,8 @@ AbstractPainter * Viewer::painter()
 
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
-    if(!m_qtCanvas)
-        return;
     m_qtCanvas->setNavigation(navigation);
 }
-
 
 AbstractNavigation * Viewer::navigation() {
     if(!m_qtCanvas)
@@ -141,15 +139,35 @@ AbstractNavigation * Viewer::navigation() {
     return m_qtCanvas->navigation();
 }
 
+void Viewer::setCamera(Camera * camera )
+{
+    m_camera = camera;
+}
+
+Camera * Viewer::camera()
+{
+    return m_camera;
+}
+
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
     m_qtCanvas->navigation()->keyPressEvent(event);
+    switch (event->key())
+    {
+    case Qt::Key_1:
+        setNavigation(new FlightNavigation(m_camera)); break;
+    case Qt::Key_2:
+        setNavigation(new ArcballNavigation(m_camera)); break;
+    default:
+        break;
+    }
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )
 {
     m_qtCanvas->navigation()->keyReleaseEvent(event);
 }
+
 
 
 

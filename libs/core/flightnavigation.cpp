@@ -7,9 +7,10 @@
 
 #include <iostream>
 
-FlightNavigation::FlightNavigation(Camera * camera) : AbstractNavigation(camera)
+FlightNavigation::FlightNavigation(Camera * camera) 
+    : AbstractNavigation(camera)
+    , m_timesKeyPressed(0)
 {
-    m_timesKeyPressed = 0;
     reset();
 }
 
@@ -72,7 +73,7 @@ void FlightNavigation::wheelEvent(QWheelEvent *event){
 
 }
 
-void FlightNavigation::reset(){
+void FlightNavigation::setFromViewMatrix(glm::mat4 view){ // TODO!
     m_fovy = 45.0f;
     m_xView = glm::vec3(0.0f ,0.0f, 0.0f);
     m_yView = glm::vec3(0.0f ,0.0f ,0.0f);
@@ -80,8 +81,12 @@ void FlightNavigation::reset(){
     m_eye = glm::vec3(0.0f ,0.0f , -2.0f);
     m_center = glm::vec3(0.0f ,0.0f ,0.0f);
     m_up = glm::vec3( 0.f, 1.f, 0.f);
-    updateView();
     updateAxis();
+}
+
+void FlightNavigation::reset() {
+    AbstractNavigation::reset();
+    setFromViewMatrix(m_camera->view());
 }
 
 void FlightNavigation::updateAxis(){

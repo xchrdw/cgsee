@@ -8,28 +8,27 @@ public:
     ArcballNavigation(Camera * camera);
     ~ArcballNavigation(void);
     
-    virtual void mouseMoveEvent(QMouseEvent * event);
-    virtual void mousePressEvent(QMouseEvent * event);
-    virtual void mouseReleaseEvent(QMouseEvent * event);
-    virtual void wheelEvent(QWheelEvent * event);
+    virtual void mouseMoveEvent(QMouseEvent * event) override;
+    virtual void mousePressEvent(QMouseEvent * event) override;
+    virtual void mouseReleaseEvent(QMouseEvent * event) override;
+    virtual void wheelEvent(QWheelEvent * event) override;
 
-    virtual const glm::mat4 viewMatrix();
+    virtual void reset(void) override;
 
-
-
-    virtual const glm::mat4 viewMatrixInverted();
-    virtual void reset();
+    const glm::mat4 viewMatrix() override;
+    //virtual const glm::mat4 viewMatrixInverted(); 
 
 private: 
-    void updateArcball(); 
+    void updateArcball(void); 
     glm::vec3 getArcballVector(glm::vec2 v);
-    void updateZoom();
-    glm::vec3 m_center;
-    glm::vec3 m_direction;
+    void updateZoom(void);
 
+private:
     glm::vec2 m_mouse_last;
     glm::vec2 m_mouse_cur;
     bool m_arcball_on;
     bool m_zoom_on;
+    
+    glm::mat4 m_viewMatrix;
 };
 

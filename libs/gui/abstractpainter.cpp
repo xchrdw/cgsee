@@ -6,9 +6,9 @@
 #include <core/gpuquery.h>
 
 
-AbstractPainter::AbstractPainter()
+AbstractPainter::AbstractPainter(Camera * camera)
 :   m_initialized(false)
-,   m_camera(nullptr)
+,   m_camera(camera)
 {
 }
  
@@ -35,9 +35,3 @@ void AbstractPainter::resize(
     if(!(m_initialized = initialize()))
         qFatal("Painter initialization failed.");
 }
-
-Camera * AbstractPainter::camera()
-{
-    return m_camera;
-}
-

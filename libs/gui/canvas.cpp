@@ -174,6 +174,7 @@ AbstractNavigation * Canvas::navigation()
 
 void Canvas::setNavigation( AbstractNavigation * navigation )
 {
+    // TODO delete old nav / shared_pointer
 	m_navigation = navigation;
 }
 

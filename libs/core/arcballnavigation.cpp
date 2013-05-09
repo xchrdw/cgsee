@@ -1,9 +1,14 @@
 #include "arcballnavigation.h"
 #include "camera.h"
 
-ArcballNavigation::ArcballNavigation(Camera * camera) : AbstractNavigation(camera)
+ArcballNavigation::ArcballNavigation(Camera * camera) 
+    : AbstractNavigation(camera)
+    , m_arcball_on(false)
+    , m_zoom_on(false)
+    , m_mouse_last(0)
+    , m_mouse_cur(0)
+    , m_viewMatrix(camera->view())
 {
-
 }
 
 ArcballNavigation::~ArcballNavigation(void)
@@ -12,14 +17,9 @@ ArcballNavigation::~ArcballNavigation(void)
 }
 
 
-void ArcballNavigation::reset()
-{
-    m_arcball_on = false;
-    m_zoom_on = false;
-    m_camera->setView(glm::lookAt(
-        glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+void ArcballNavigation::reset(void) {
+    AbstractNavigation::reset();
     m_viewMatrix = m_camera->view();
-    m_viewMatrixInverted = glm::inverse(m_viewMatrix);
 }
 
 void ArcballNavigation::updateArcball()
@@ -30,7 +30,7 @@ void ArcballNavigation::updateArcball()
     float angle = acos(std::min(1.0f, glm::dot(va, vb)));
     glm::vec3 axis_in_camera_coord = glm::cross(va, vb);
 
-    glm::mat3 camera2world = glm::mat3(m_viewMatrixInverted);
+    glm::mat3 camera2world = glm::mat3(glm::inverse(m_viewMatrix));
     glm::vec3 axis_in_world_coord = camera2world * axis_in_camera_coord;
     m_viewMatrix = m_viewMatrix * glm::rotate(glm::mat4(), glm::degrees(angle), axis_in_world_coord);
 }
@@ -76,7 +76,6 @@ void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
     if (m_zoom_on) {
         updateZoom();
     }
-    m_viewMatrixInverted = glm::inverse(m_viewMatrix);
     m_camera->setView(m_viewMatrix);
     m_mouse_last = m_mouse_cur;
 }
@@ -98,10 +97,10 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
     }
 }
 
-const glm::mat4 ArcballNavigation::viewMatrixInverted()
-{
-     return m_viewMatrixInverted;
-}
+//const glm::mat4 ArcballNavigation::viewMatrixInverted()
+//{
+//     return m_viewMatrixInverted;
+//}
 
 void ArcballNavigation::wheelEvent(QWheelEvent * event)
 {

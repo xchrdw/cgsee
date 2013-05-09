@@ -50,5 +50,7 @@ private:
     //Move forward or backward (negative speed) to the center of the view
     void translate(float speed);
     
+    void setFromViewMatrix(glm::mat4 view);
+
     int m_timesKeyPressed;
 };

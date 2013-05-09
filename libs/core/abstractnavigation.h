@@ -23,7 +23,7 @@ public:
     AbstractNavigation(Camera *camera);
     virtual ~ AbstractNavigation();
 
-    virtual void reset() = 0;
+    virtual void reset();
 
     //void assignCoordinateProvider(AbstractCoordinateProvider *provider);
 
@@ -39,10 +39,8 @@ public:
 
     virtual void wheelEvent(QWheelEvent *event);
 
-    // lazy matrices getters
-
     virtual const glm::mat4 viewMatrix() = 0;
-    virtual const glm::mat4 viewMatrixInverted() = 0;
+    //virtual const glm::mat4 viewMatrixInverted() = 0;
     
     void setViewPort( const int width, const int height );
     
@@ -53,8 +51,4 @@ protected:
     int m_width;
     int m_height;
     Camera * m_camera;
-
-    glm::mat4 m_viewMatrix;
-    glm::mat4 m_viewMatrixInverted; // TODO make calculation lazy
-
 };
