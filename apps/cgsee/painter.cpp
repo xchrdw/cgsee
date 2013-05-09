@@ -34,7 +34,7 @@ Painter::~Painter()
 
     delete m_normalz;
     delete m_fboNormalz;
-    delete m_flush;    
+    delete m_flush;
 }
 
 const bool Painter::initialize()
@@ -75,9 +75,11 @@ const bool Painter::initialize()
 
     m_normalz = new Program();
     m_normalz->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
+        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo"));
     m_normalz->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe.frag"));
+    m_normalz->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert"));
 
     // Post Processing Shader
 
@@ -114,11 +116,11 @@ void Painter::resize(
 ,   const int height)
 {
     AbstractPainter::resize(width, height);
-    
+
     m_camera->setViewport(width, height);
 
     m_fboNormalz->resize(width, height);
-    
+
     postShaderRelinked();
 }
 
