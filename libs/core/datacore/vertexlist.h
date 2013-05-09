@@ -75,28 +75,6 @@ protected:
     void copyStorage();
 };
 
-template <class RetType>
-RetType * AttributeStorage::getData(const t_AttrDesc & loc)
-{
-    if (m_destroyed)
-        return nullptr;
-
-    copyStorage();
-    AttributeStorage::t_StorageType resultPtr = m_storage + loc.location;
-    if (nullptr == loc.typeInfo)
-    {
-        if (loc.typeId == qMetaTypeId<RetType>())
-            return reinterpret_cast<RetType*> (resultPtr);
-        else
-            return nullptr;
-    }
-
-    if (typeid(resultPtr) != *loc.typeInfo)
-        return nullptr;
-
-    return reinterpret_cast<RetType*> (resultPtr);
-}
-
 class CGSEE_API VertexList: public DataBlock
 {
     Q_OBJECT
@@ -114,7 +92,7 @@ public:
     void injectVertexAttributes(int startIndex
         ,   int endIndex
         ,   const QString &attrName
-        ,   std::function<bool(int)> select
+        ,   std::function<bool(int)> select // can be null
         ,   std::function<void(int, const T&)> inject);
 
     template <class T>
