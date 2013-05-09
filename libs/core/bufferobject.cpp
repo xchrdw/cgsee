@@ -78,14 +78,16 @@ void BufferObject::bind(const GLint attributeLocation)
 
 void BufferObject::draw(const GLenum mode)
 {
-    assert(m_target == GL_ELEMENT_ARRAY_BUFFER);
-
-    bind();
-
-    glDrawElements(mode, m_count, m_type, 0);
+    switch(m_target)
+    {
+    case GL_ELEMENT_ARRAY_BUFFER:
+        glDrawElements(mode, m_count, m_type, 0);
+        break;
+    case GL_ARRAY_BUFFER:
+        glDrawArrays(mode, 0, m_count);
+        break;
+    };
     glError();
-
-    release();
 }
 
 void BufferObject::release(const GLint attributeLocation)
@@ -118,6 +120,5 @@ void BufferObject::generateBuffer()
         return;
 
     glGenBuffers(1, &m_buffer);
-    assert(m_buffer != -1);
     glError();
 }

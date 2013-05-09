@@ -25,8 +25,7 @@ Program::~Program()
 {
     if(isProgram())
     {
-        t_shaders::const_iterator i;
-        while(m_shaders.end() != m_shaders.begin())
+        while(m_shaders.cend() != m_shaders.cbegin())
             detach(*(m_shaders.begin()));
 
         glDeleteProgram(m_program);
@@ -41,6 +40,17 @@ inline const bool Program::isProgram() const
     return m_program != -1;
 }
 
+const bool Program::isUsed() const
+{
+    GLint program(-1);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+    if(-1 == program)
+        return false;
+
+    return program == m_program;
+}
+
 const bool Program::use() const
 {
     if(m_dirty)
@@ -49,12 +59,17 @@ const bool Program::use() const
     if(!m_linked)
         return false;
 
+    if(isUsed())
+        return true;
+
     glUseProgram(m_program);
     return !glError();
 }
 
 const bool Program::release() const
 {
+    assert(isUsed());
+
     glUseProgram(0);
     return !glError();
 }
@@ -64,11 +79,8 @@ const bool Program::link() const
     if(!m_dirty)
         return isLinked();
 
-    t_shaders::const_iterator i(m_shaders.begin());
-    const t_shaders::const_iterator iEnd(m_shaders.end());
-
-    for(; i != iEnd; ++i)
-        if(!(*i)->isCompiled())
+    for(const Shader * shader : m_shaders)
+        if(!shader->isCompiled())
             return false;
 
     m_dirty = false;
@@ -100,7 +112,7 @@ const bool Program::link() const
 
     m_log = log;
 
-    if(!m_log.isEmpty())
+    if(!m_log.isEmpty() && m_log != "No errors.\n")
         qWarning("%s", log);
 
     return isLinked();
@@ -167,7 +179,8 @@ const bool Program::isLinked() const
 
 const GLint Program::attributeLocation(const QString & name) const
 {
-    use();
+    if(m_dirty || !m_linked)
+        link();
 
     const QByteArray bytes(name.toLocal8Bit());
     const GLchar * chr(bytes.constData());
@@ -180,6 +193,9 @@ const GLint Program::attributeLocation(const QString & name) const
 
 const GLint Program::uniformLocation(const QString & name) const
 {
+    if(m_dirty || !m_linked)
+        link();
+
     use();
 
     const QByteArray bytes(name.toLocal8Bit());

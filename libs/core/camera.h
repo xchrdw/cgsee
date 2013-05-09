@@ -18,10 +18,10 @@ public:
     virtual Camera * asCamera();
 
     virtual void draw(
-        Program * program
+        const Program & program
     ,   FrameBufferObject * target = nullptr);
     virtual void draw(
-        Program * program
+        const Program & program
     ,   const glm::mat4 & transform);
 
 
