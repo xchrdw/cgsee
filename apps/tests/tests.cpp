@@ -4,29 +4,7 @@
 #include <QString>
 #include <QMetaType>
 
-#include "core/datacore/vertexlist.h"
-
-class DataCoreTest: public QObject
-{
-    Q_OBJECT
-public:
-    DataCoreTest(QObject* parent = nullptr):
-        QObject(parent)
-    ,   registry("")
-    {
-
-    }
-protected:
-    t_VertexListP vertexList;
-    DataBlockRegistry registry;
-
-    void initVertexList();
-
-private slots:
-    void initTestCase();
-    void firstTest();
-    void cleanupTestCase();
-};
+#include "tests.h"
 
 void DataCoreTest::initVertexList()
 {
@@ -43,16 +21,16 @@ void DataCoreTest::initTestCase()
     QVERIFY(vertexList);
     QVERIFY(vertexList->objectName() == "vertex");
     QVERIFY(registry.getDataBlockByName("vertex") == vertexList);
+    qDebug(tr("%1").arg((int)this).toLocal8Bit());
 
     initVertexList();
 }
 
 void DataCoreTest::firstTest()
 {
-    initTestCase();
     glm::vec3 * pos1 = vertexList->getVertexAttribute<glm::vec3>(1, "position");
     QVERIFY(pos1 != nullptr);
-    (*pos1) = glm::vec3(1.0f, 2.0f, 3.0f);
+    (*pos1) = glm::vec3(1.0f, 2.0f, 3.0f); // you can now safely access the vertex attribute, but thats not easy
 };
 
 void DataCoreTest::cleanupTestCase()
@@ -60,4 +38,3 @@ void DataCoreTest::cleanupTestCase()
 }
 
 QTEST_MAIN(DataCoreTest);
-#include "tests.moc"

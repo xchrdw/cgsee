@@ -3,7 +3,7 @@ set(target tests)
 message(STATUS "app ${target}")
 
 set(SOURCES
-
+    tests.h
     tests.cpp
 )
 

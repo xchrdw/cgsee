@@ -246,6 +246,7 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
 
         newAttribute.typeName = attrSpec.attrType;
         m_attrLayout.insert(attrSpec.attrName, newAttribute);
+        currentLoc += newAttribute.size;
     }
     m_initialized = true;
 }

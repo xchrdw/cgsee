@@ -79,7 +79,7 @@ RetType * AttributeStorage::getData(const t_AttrDesc & loc)
 
     copyStorage();
     AttributeStorage::t_StorageType resultPtr = m_storage + loc.location;
-    if (typeid(resultPtr) == *loc.typeInfo)
+    if (typeid(resultPtr) != *loc.typeInfo)
         return nullptr;
 
     return reinterpret_cast<RetType*> (resultPtr);
