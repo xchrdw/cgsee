@@ -13,8 +13,6 @@ public:
     virtual void mouseReleaseEvent(QMouseEvent * event) override;
     virtual void wheelEvent(QWheelEvent * event) override;
 
-    const glm::mat4 viewMatrix() override;
-    //virtual const glm::mat4 viewMatrixInverted(); 
 
 private: 
     void updateArcball(void); 

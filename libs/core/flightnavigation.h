@@ -6,21 +6,16 @@ public:
     FlightNavigation(Camera * camera);
     ~FlightNavigation(void);
     
-    virtual void keyPressEvent(QKeyEvent *event);
-    virtual void keyReleaseEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
     
-    virtual void wheelEvent(QWheelEvent *event);
-    virtual void reset();
-    
-    virtual const glm::mat4 viewMatrix();
-    virtual const glm::mat4 viewMatrixInverted();
+    void wheelEvent(QWheelEvent *event) override;
+    void reset();
     
     virtual void setFovy(float fovy);
     float getFovy();
     
 private:
-    glm::mat4 m_viewMatrix;
-    
     //Defines the view
     glm::vec3 m_eye;
     glm::vec3 m_center; 
@@ -50,7 +45,7 @@ private:
     //Move forward or backward (negative speed) to the center of the view
     void translate(float speed);
     
-    void setFromViewMatrix(glm::mat4 view);
+    void setFromMatrix(glm::mat4 view);
 
     int m_timesKeyPressed;
 };

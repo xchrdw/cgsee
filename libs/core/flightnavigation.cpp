@@ -73,7 +73,7 @@ void FlightNavigation::wheelEvent(QWheelEvent *event){
 
 }
 
-void FlightNavigation::setFromViewMatrix(glm::mat4 view){ // TODO!
+void FlightNavigation::setFromMatrix(glm::mat4 view){ // TODO!
     m_fovy = 45.0f;
     m_xView = glm::vec3(0.0f ,0.0f, 0.0f);
     m_yView = glm::vec3(0.0f ,0.0f ,0.0f);
@@ -86,7 +86,7 @@ void FlightNavigation::setFromViewMatrix(glm::mat4 view){ // TODO!
 
 void FlightNavigation::reset() {
     AbstractNavigation::reset();
-    setFromViewMatrix(m_camera->view());
+    setFromMatrix(m_viewMatrix);
 }
 
 void FlightNavigation::updateAxis(){
@@ -97,17 +97,9 @@ void FlightNavigation::updateAxis(){
 
 void FlightNavigation::updateView(){
     m_viewMatrix =  glm::lookAt(m_eye, m_center, m_up);
-    m_camera->setView(m_viewMatrix);
+    updateCamera();
 }
 
-
-const glm::mat4 FlightNavigation::viewMatrix(){
-    return m_viewMatrix;
-}
-
-const glm::mat4 FlightNavigation::viewMatrixInverted(){
-    return glm::inverse(viewMatrix()); // TODO
-}
 
 void FlightNavigation::yaw(float angle){
     glm::vec3 diffLR = glm::rotate( m_zView, -angle, m_yView) - m_zView;
@@ -142,8 +134,7 @@ void FlightNavigation::translate(float speed){
 
 void FlightNavigation::setFovy(float fovy){
     m_fovy += fovy;
-    m_fovy = glm::min(m_fovy, 180.0f);
-    m_fovy = glm::max(m_fovy, 0.0f);
+    m_fovy = glm::clamp(m_fovy, 0.0f, 180.0f);
 }
 
 float FlightNavigation::getFovy(){

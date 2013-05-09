@@ -151,14 +151,16 @@ Camera * Viewer::camera()
 
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
-    m_qtCanvas->navigation()->keyPressEvent(event);
-
     switch (event->key())
     {
     case Qt::Key_1:
-        setNavigation(new FlightNavigation(m_camera)); break;
+        setNavigation(new FlightNavigation(m_camera)); 
+        qDebug("Flight navigation, use WASD and arrow keys");
+        break;
     case Qt::Key_2:
-        setNavigation(new ArcballNavigation(m_camera)); break;
+        setNavigation(new ArcballNavigation(m_camera));
+        qDebug("Arcball navigation, use left and right mousebuttons");
+        break;
     default:
         if (event->key() >= Qt::Key_F1 && event->key() <= Qt::Key_F12)
         {
@@ -167,13 +169,12 @@ void Viewer::keyPressEvent(QKeyEvent * event)
             } else {
                 navigation()->loadView(event->key() - Qt::Key_F1);
             }
-            
+        }
+        else {
+            m_qtCanvas->navigation()->keyPressEvent(event);
         }
         break;
     }
-
-
-
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )

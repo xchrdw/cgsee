@@ -64,12 +64,12 @@ void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 {
     m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
     if (m_arcball_on) {
-            updateArcball();
+        updateArcball();
     }
     if (m_zoom_on) {
         updateZoom();
     }
-    m_camera->setView(m_viewMatrix);
+    updateCamera();    
     m_mouse_last = m_mouse_cur;
 }
 
@@ -90,18 +90,9 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
     }
 }
 
-//const glm::mat4 ArcballNavigation::viewMatrixInverted()
-//{
-//     return m_viewMatrixInverted;
-//}
-
 void ArcballNavigation::wheelEvent(QWheelEvent * event)
 {
-    event->angleDelta();
-}
-
-const glm::mat4 ArcballNavigation::viewMatrix() {
-    return m_viewMatrix;
+    qDebug("%i", event->delta());
 }
 
 

@@ -28,7 +28,7 @@ Canvas::Canvas(
 ,   m_navigation(nullptr)
 {
     m_timer = new QBasicTimer();
-    m_timer->start(format.vsync() ? 1000/60 : 0, this);
+    m_timer->start(format.vsync() ? 1000/60 : 1000/300, this); // 2000 Frames aren't usefull
 
     setMinimumSize(1, 1);
 	

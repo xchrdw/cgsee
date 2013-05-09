@@ -8,15 +8,18 @@
 
 #include "declspec.h"
 
-#include <QApplication>
-#include <QFileInfo>
-#include <QStringList>
-#include <QSettings>
+#include <QObject>
 #include <QKeyEvent>
+#include <QWheelEvent>
+#include <QMouseEvent>
+#include <QBasicTimer>
+
 
 class Camera;
 
-class CGSEE_API AbstractNavigation {
+class CGSEE_API AbstractNavigation : QObject {
+    
+    // Q_OBJECT how does this work?
 
 public:
 
@@ -39,8 +42,7 @@ public:
 
     virtual void wheelEvent(QWheelEvent *event);
 
-    virtual const glm::mat4 viewMatrix() = 0;
-    //virtual const glm::mat4 viewMatrixInverted() = 0;
+    virtual const glm::mat4 viewMatrix();
     
     void saveView(int viewnr);
     void loadView(int viewnr);
@@ -50,11 +52,19 @@ public:
     virtual void setFovy(float fovy);
     virtual float getFovy();
 
+    void updateCamera();
+
 protected:
     int m_width;
     int m_height;
-    Camera * m_camera;
     glm::mat4 m_viewMatrix;
-
+    
     std::vector<glm::mat4> m_saved_views;
+
+private:
+    Camera * m_camera;
+    void timerEvent(QTimerEvent* event);
+    QBasicTimer * m_timer;
+    glm::mat4 m_oldMatrix;
+    float m_animation;
 };
