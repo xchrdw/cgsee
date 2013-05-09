@@ -241,7 +241,7 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
             newAttribute.size = QMetaType::sizeOf(attrTypeId);
             newAttribute.factory = decltype(t_AttrDesc::factory)
                 (new QtTypeFunctions(attrSpec.attrType.toUtf8()));
-            newAttribute.typeInfo = &typeid(QMetaType);
+            newAttribute.typeInfo = nullptr;
         }
 
         newAttribute.typeName = attrSpec.attrType;

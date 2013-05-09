@@ -28,7 +28,7 @@ void DataCoreTest::initTestCase()
 
 void DataCoreTest::firstTest()
 {
-    glm::vec3 * pos1 = vertexList->getVertexAttribute<glm::vec3>(1, "vec3", "position");
+    glm::vec3 * pos1 = vertexList->getVertexAttribute<glm::vec3>(1, "position");
     QVERIFY(pos1 != nullptr);
     (*pos1) = glm::vec3(1.0f, 2.0f, 3.0f); // you can now safely access the vertex attribute, but thats not easy
 };

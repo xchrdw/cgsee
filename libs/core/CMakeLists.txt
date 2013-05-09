@@ -19,6 +19,7 @@ set(SOURCES
     datacore/datacursor.h
     datacore/typefunctions.h
     datacore/typefunctions.cpp
+    datacore/registertypeshere.h
     abstracttimer.h
     autotimer.h
     autotimer.cpp
