@@ -16,6 +16,7 @@ typedef struct AttributeDescriptor
     QString typeName;
     std::shared_ptr<AbstractInPlaceTypeFunctions> factory;
     type_info const* typeInfo;
+    unsigned int typeId;
 } t_AttrDesc;
 
 struct CGSEE_API AttributeSpec
@@ -59,7 +60,7 @@ public:
     // checks for the right type(with typeid) and returns nullptr
     // when something is wrong
     template <class RetType>
-    RetType* getData(const t_AttrDesc &loc); 
+    RetType* getData(const t_AttrDesc &loc, const QString& attrType); 
 protected:
     t_StorageType m_storage;
     unsigned int m_storageSize;
@@ -72,13 +73,16 @@ protected:
 };
 
 template <class RetType>
-RetType * AttributeStorage::getData(const t_AttrDesc & loc)
+RetType * AttributeStorage::getData(const t_AttrDesc & loc, const QString &attrType)
 {
     if (m_destroyed)
         return nullptr;
 
     copyStorage();
     AttributeStorage::t_StorageType resultPtr = m_storage + loc.location;
+    if (typeid(QMetaType) == *loc.typeInfo && loc.typeId == QMetaType::type(attrType.toUtf8()))
+        return reinterpret_cast<RetType*> (resultPtr);
+
     if (typeid(resultPtr) != *loc.typeInfo)
         return nullptr;
 
@@ -96,7 +100,7 @@ public:
     void initialize(const QList<AttributeSpec> &attrTypes);
 
     template <class RetType>
-    RetType * getVertexAttribute(int index, const QString &attrName);
+    RetType * getVertexAttribute(int index, const QString &attrType, const QString &attrName);
 
     void createNewVertices(unsigned int amount);
 
@@ -116,7 +120,7 @@ protected:
 typedef VertexList::t_StandardPointer t_VertexListP;
 
 template <class RetType>
-RetType * VertexList::getVertexAttribute(int index, const QString &attrName)
+RetType * VertexList::getVertexAttribute(int index, const QString &attrType, const QString &attrName)
 {
     if (!m_initialized)
         return nullptr;
@@ -129,7 +133,7 @@ RetType * VertexList::getVertexAttribute(int index, const QString &attrName)
     if (m_attrLayout.contains(attrName) == false)
         return nullptr;
 
-    return m_vertices[index].getData<RetType>(m_attrLayout[attrName]);
+    return m_vertices[index].getData<RetType>(m_attrLayout[attrName], attrType);
 }
 
 #endif

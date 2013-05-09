@@ -218,7 +218,7 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
         newAttribute.location = currentLoc;
         
         // Looking if Qt knows about this type
-        int attrTypeId = QMetaType::type(attrSpec.attrType.toUtf8());
+        int attrTypeId = newAttribute.typeId = QMetaType::type(attrSpec.attrType.toUtf8());
         if (0 == attrTypeId)
         {
             // Apparently it doesn't
