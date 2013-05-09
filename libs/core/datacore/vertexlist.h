@@ -4,6 +4,7 @@
 
 #include <typeinfo>
 #include <memory>
+#include <functional>
 
 #include "typefunctions.h"
 #include "abstractdata.h"
@@ -109,6 +110,19 @@ public:
     template <class RetType>
     RetType * getVertexAttribute(int index, const QString &attrName);
 
+    template <class T>
+    void injectVertexAttributes(int startIndex
+        ,   int endIndex
+        ,   const QString &attrName
+        ,   std::function<bool(int)> select
+        ,   std::function<void(int, const T&)> inject);
+
+    template <class T>
+    void setVertexAttributes(int startIndex
+        ,   int endIndex
+        ,   const QString &attrName
+        ,   std::function<void (int, T&)> setter);
+
     void createNewVertices(unsigned int amount);
 
     friend class AttributeStorage;
@@ -126,21 +140,6 @@ protected:
 
 typedef VertexList::t_StandardPointer t_VertexListP;
 
-template <class RetType>
-RetType * VertexList::getVertexAttribute(int index, const QString &attrName)
-{
-    if (!m_initialized)
-        return nullptr;
-
-    if (m_vertices.size() <= index)
-    {
-        createNewVertices(index - m_vertices.size() + 1);
-    }
-
-    if (m_attrLayout.contains(attrName) == false)
-        return nullptr;
-
-    return m_vertices[index].getData<RetType>(m_attrLayout[attrName]);
-}
+#include "vertexlist_impl.inl"
 
 #endif

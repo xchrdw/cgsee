@@ -20,6 +20,8 @@ set(SOURCES
     datacore/typefunctions.h
     datacore/typefunctions.cpp
     datacore/registertypeshere.h
+    datacore/vertexlist_impl.inl
+    datacore/abstractdata_impl.inl
     abstracttimer.h
     autotimer.h
     autotimer.cpp
@@ -61,7 +63,7 @@ set(SOURCES
     timer.cpp
 )
 
-source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$" 
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$|\\\\.inl$" 
     ${CGSEE_SOURCE_GROUP} ${SOURCES})
 
 # setup target
