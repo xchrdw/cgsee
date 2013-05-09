@@ -152,6 +152,7 @@ Camera * Viewer::camera()
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
     m_qtCanvas->navigation()->keyPressEvent(event);
+
     switch (event->key())
     {
     case Qt::Key_1:
@@ -159,8 +160,20 @@ void Viewer::keyPressEvent(QKeyEvent * event)
     case Qt::Key_2:
         setNavigation(new ArcballNavigation(m_camera)); break;
     default:
+        if (event->key() >= Qt::Key_F1 && event->key() <= Qt::Key_F12)
+        {
+            if(event->modifiers() == Qt::ControlModifier) {
+                navigation()->saveView(event->key() - Qt::Key_F1);
+            } else {
+                navigation()->loadView(event->key() - Qt::Key_F1);
+            }
+            
+        }
         break;
     }
+
+
+
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )

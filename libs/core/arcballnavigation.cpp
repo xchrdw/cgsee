@@ -7,20 +7,13 @@ ArcballNavigation::ArcballNavigation(Camera * camera)
     , m_zoom_on(false)
     , m_mouse_last(0)
     , m_mouse_cur(0)
-    , m_viewMatrix(camera->view())
 {
 }
 
 ArcballNavigation::~ArcballNavigation(void)
 {
-
 }
 
-
-void ArcballNavigation::reset(void) {
-    AbstractNavigation::reset();
-    m_viewMatrix = m_camera->view();
-}
 
 void ArcballNavigation::updateArcball()
 {

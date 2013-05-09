@@ -42,7 +42,10 @@ public:
     virtual const glm::mat4 viewMatrix() = 0;
     //virtual const glm::mat4 viewMatrixInverted() = 0;
     
-    void setViewPort( const int width, const int height );
+    void saveView(int viewnr);
+    void loadView(int viewnr);
+
+    void setViewPort(const int width, const int height);
     
     virtual void setFovy(float fovy);
     virtual float getFovy();
@@ -51,4 +54,7 @@ protected:
     int m_width;
     int m_height;
     Camera * m_camera;
+    glm::mat4 m_viewMatrix;
+
+    std::vector<glm::mat4> m_saved_views;
 };
