@@ -45,7 +45,7 @@ QString DataBlockRegistry::registerNewData(QString proposedName, t_DataBlockP da
         } while(m_dataMap.contains(realName));
     }
     m_dataMap.insert(realName, data);
-    this->connect(data, SIGNAL(destroyed(QObject*)), SLOT(dataItemRemoved(QObject*)));
+    this->connect(data, SIGNAL(destroyed(QObject*)), SLOT(dataBlockRemoved(QObject*)));
 
     emit dataBlockAdded(data);
     return realName;

@@ -18,7 +18,7 @@ typedef struct AttributeDescriptor
     type_info const* typeInfo;
 } t_AttrDesc;
 
-struct AttributeSpec
+struct CGSEE_API AttributeSpec
 {
     QString attrName;
     QString attrType;
@@ -32,7 +32,7 @@ class VertexList;
 // A vertex (and everything really) can be described by its attributes.
 // This class provides a storage for them, but it doesn't memorize the right layout.
 // Which is not needed anyway, as most of the times many vertecies have same attribute types.
-class AttributeStorage final
+class CGSEE_API AttributeStorage final
 {
 public:
     typedef unsigned char * t_StorageType;
@@ -79,10 +79,10 @@ RetType * AttributeStorage::getData(const t_AttrDesc & loc)
 
     copyStorage();
     AttributeStorage::t_StorageType resultPtr = m_storage + loc.location;
-    if (typeid(resultPtr) != loc.typeInfo)
+    if (typeid(resultPtr) == *loc.typeInfo)
         return nullptr;
 
-    return static_cast<RetType*> (resultPtr);
+    return reinterpret_cast<RetType*> (resultPtr);
 }
 
 class CGSEE_API VertexList: public DataBlock
@@ -101,6 +101,7 @@ public:
     void createNewVertices(unsigned int amount);
 
     friend class AttributeStorage;
+    friend class DataBlock;
 protected:
     explicit VertexList(QObject* parent = nullptr);
 
@@ -128,7 +129,7 @@ RetType * VertexList::getVertexAttribute(int index, const QString &attrName)
     if (m_attrLayout.contains(attrName) == false)
         return nullptr;
 
-    return m_vertices.at(index).getData(m_attrLayout[attrName]);
+    return m_vertices[index].getData<RetType>(m_attrLayout[attrName]);
 }
 
 #endif
