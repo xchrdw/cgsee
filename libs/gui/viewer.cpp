@@ -43,17 +43,25 @@ Viewer::Viewer(
 
 void Viewer::createFileExplorer()
 {
+    QString currentPath = QDir::currentPath();
+
     QFileSystemModel *dirModel = new QFileSystemModel;
-    dirModel->setRootPath(QDir::currentPath());
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+    // dirModel->setRootPath(currentPath);
 
     QTreeView *treeView = new QTreeView();
     treeView->setModel(dirModel);
+    treeView->setRootIndex(dirModel->setRootPath(currentPath));
 
     QDockWidget * leftNav = new QDockWidget(tr("Explorer"));
     leftNav->setWidget(treeView);
     leftNav->setAllowedAreas(Qt::LeftDockWidgetArea);
     this->addDockWidget(Qt::LeftDockWidgetArea, leftNav);
+
+
+    QFileSystemModel *fileModel = new QFileSystemModel;
+    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    fileModel->setRootPath(currentPath);
 }
 
 #ifdef WIN32
