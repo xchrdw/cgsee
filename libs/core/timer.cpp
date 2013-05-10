@@ -5,8 +5,8 @@
 
 
 Timer::Timer(
-    const bool start,
-    const bool auto_update)
+    const bool start
+,   const bool auto_update)
 : m_chrono(new ChronoTimer(start, auto_update))
 {
 }

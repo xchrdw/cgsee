@@ -13,6 +13,8 @@ set(SOURCES
     abstractapplication.h
     abstractapplication.cpp
     abstracttimer.h
+    autotimer.h
+    autotimer.cpp
     bufferobject.h
     bufferobject.cpp
     camera.h
