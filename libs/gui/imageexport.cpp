@@ -69,10 +69,12 @@ ImageExport::~ImageExport()
 
 const bool ImageExport::show()
 {
-    this->exec();
+    if (this->exec() == QDialog::Accepted) {
+        m_filePath = m_filedialog->selectedFiles().value(0);
+        return !m_filePath.isEmpty();
+    }
 
-    m_filePath = m_filedialog->selectedFiles().value(0);
-    return !m_filePath.isEmpty();
+    return false;
 }
 
 const bool ImageExport::save(
