@@ -1,6 +1,8 @@
 #version 150
 
-varying float edge_dist[3];
+in float edge_dist[3];
+
+out vec4 fragColor;
 
 void main(void) {
     float dist = min(edge_dist[0], min(edge_dist[1], edge_dist[2]));
@@ -10,5 +12,5 @@ void main(void) {
 
     float m = dist*50;
 
-    gl_FragColor = vec4(m, m + 0.7, m, 1.0);
+    fragColor = vec4(m, m + 0.7, m, 1.0);
 }

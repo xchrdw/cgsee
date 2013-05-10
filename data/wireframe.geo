@@ -3,7 +3,7 @@
 #define M_PI 3.1415926535897932384626433832795
 
 in vec3 v_normal[];
-varying float edge_dist[3];
+out float edge_dist[3];
 
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
@@ -31,9 +31,14 @@ float dist(vec4 v1, vec4 v2, vec4 v3) {
 }
 
 void main(void) {
-    _EmitVertex(gl_PositionIn[0], dist(gl_PositionIn[0], gl_PositionIn[1], gl_PositionIn[2]), 0, 0);
-    _EmitVertex(gl_PositionIn[1], 0, dist(gl_PositionIn[1], gl_PositionIn[0], gl_PositionIn[2]), 0);
-    _EmitVertex(gl_PositionIn[2], 0, 0, dist(gl_PositionIn[2], gl_PositionIn[0], gl_PositionIn[1]));
+
+    vec4 p0 = gl_in[0].gl_Position;
+    vec4 p1 = gl_in[1].gl_Position;
+    vec4 p2 = gl_in[2].gl_Position;
+
+    _EmitVertex(p0, dist(p0, p1, p2), 0, 0);
+    _EmitVertex(p1, 0, dist(p1, p0, p2), 0);
+    _EmitVertex(p2, 0, 0, dist(p2, p0, p1));
 
     EndPrimitive();
 }
