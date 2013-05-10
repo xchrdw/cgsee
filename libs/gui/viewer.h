@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include <gui/fileNavigator.h>
+#include <gui/fileExplorer.h>
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -11,6 +14,7 @@
 
 #include <QMainWindow>
 
+
 #include <core/declspec.h>
 
 
@@ -19,6 +23,8 @@ class GLFormat;
 class Ui_Viewer;
 class Canvas;
 class AbstractPainter;
+class FileNavigator;
+class FileExplorer;
 
 
 class CGSEE_API Viewer : public QMainWindow
@@ -36,7 +42,7 @@ public:
 
 protected:
 
-    void createFileExplorer();
+    void initializeNavigatorExplorer();
 
 #ifdef WIN32
     // Create canvas with a qt context (based on GLWidget).
@@ -52,4 +58,6 @@ protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
 
     Canvas * m_qtCanvas;
+    FileNavigator * m_fileNavigator;
+    FileExplorer * m_fileExplorer;
 };

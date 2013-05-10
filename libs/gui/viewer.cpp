@@ -1,7 +1,7 @@
-#include <QFileSystemModel>
-#include <QTreeView>
-#include <QListView>
-#include <QDockWidget>
+// #include <QFileSystemModel>
+// #include <QTreeView>
+// #include <QListView>
+// #include <QDockWidget>
 
 #include <QOpenGLContext>
 #include <QSettings>
@@ -30,6 +30,8 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 
 ,   m_qtCanvas(nullptr)
+,   m_fileNavigator(nullptr)
+,   m_fileExplorer(nullptr)
 {
     m_ui->setupUi(this);
 
@@ -39,38 +41,19 @@ Viewer::Viewer(
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
 
-    createFileExplorer();
+    initializeNavigatorExplorer();
 };
 
-void Viewer::createFileExplorer()
+void Viewer::initializeNavigatorExplorer()
 {
-    QString currentPath = QDir::currentPath();
+    m_fileNavigator = new FileNavigator(this);
+    m_fileExplorer = new FileExplorer(this);
 
-    QFileSystemModel *dirModel = new QFileSystemModel;
-    dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
-    // dirModel->setRootPath(currentPath);
+    m_fileNavigator->setExplorer(m_fileExplorer);
+    m_fileExplorer->setNavigator(m_fileNavigator);
 
-    QTreeView *treeView = new QTreeView;
-    treeView->setModel(dirModel);
-    treeView->setRootIndex(dirModel->setRootPath(currentPath));
-
-    QFileSystemModel *fileModel = new QFileSystemModel;
-    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
-    // fileModel->setRootPath(currentPath);
-
-    QListView *listView = new QListView;
-    listView->setModel(fileModel);
-    listView->setRootIndex(fileModel->setRootPath(currentPath));
-
-    QDockWidget * leftNav = new QDockWidget(tr("Navigator"));
-    leftNav->setWidget(treeView);
-    leftNav->setAllowedAreas(Qt::LeftDockWidgetArea);
-    this->addDockWidget(Qt::LeftDockWidgetArea, leftNav);
-
-    QDockWidget * bottomExp = new QDockWidget(tr("Explorer"));
-    bottomExp->setWidget(listView);
-    bottomExp->setAllowedAreas(Qt::BottomDockWidgetArea);
-    this->addDockWidget(Qt::BottomDockWidgetArea, bottomExp);
+    this->addDockWidget(Qt::LeftDockWidgetArea, m_fileNavigator->dock());
+    this->addDockWidget(Qt::BottomDockWidgetArea, m_fileExplorer->dock());
 }
 
 #ifdef WIN32
@@ -134,6 +117,8 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_STATE, saveState());
 
     delete m_qtCanvas;
+    delete m_fileNavigator;
+    delete m_fileExplorer;
 }
 
 void Viewer::setPainter(AbstractPainter * painter)

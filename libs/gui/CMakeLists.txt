@@ -7,6 +7,10 @@ set(SOURCES
     abstractpainter.cpp
     canvas.h
     canvas.cpp
+    fileExplorer.h
+    fileExplorer.cpp
+    fileNavigator.h
+    fileNavigator.cpp
     viewer.h
     viewer.cpp
     viewer.ui
