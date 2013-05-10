@@ -38,18 +38,23 @@ Viewer::Viewer(
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
 
+    createFileExplorer();
+};
+
+void Viewer::createFileExplorer()
+{
     QFileSystemModel *dirModel = new QFileSystemModel;
     dirModel->setRootPath(QDir::currentPath());
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
 
-    QTreeView *dirTree = new QTreeView();
-    dirTree->setModel(dirModel);
+    QTreeView *treeView = new QTreeView();
+    treeView->setModel(dirModel);
 
     QDockWidget * leftNav = new QDockWidget(tr("Explorer"));
-    leftNav->setWidget(dirTree);
+    leftNav->setWidget(treeView);
     leftNav->setAllowedAreas(Qt::LeftDockWidgetArea);
     this->addDockWidget(Qt::LeftDockWidgetArea, leftNav);
-};
+}
 
 #ifdef WIN32
 const HGLRC Viewer::currentContextHandle()
