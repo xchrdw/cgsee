@@ -39,16 +39,5 @@ CGSee::~CGSee()
 
 void CGSee::exportCanvasAsImage()
 {
-    ImageExport ie(m_viewer);
-    if(!ie.show())
-        return;
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    QApplication::processEvents();
-
-    // TODO: Size GUI in ImageExport...
-
-    ie.save(m_viewer->canvas()->capture(QSize(10000, 5000)));
-
-    QApplication::restoreOverrideCursor();
+    ImageExport::save(*m_painter, m_viewer);
 }

@@ -3,7 +3,8 @@
 
 #include "ui_imageexport.h"
 #include "imageexport.h"
-#include "filewidget.h"
+
+#include <core/abstractpainter.h>
 
 
 ImageExport::ImageExport(QWidget * parent)
@@ -27,44 +28,44 @@ void ImageExport::initialize()
 {
     m_ui->setupUi(this);
 
-    // embedded file dialog as widget
-    m_filewidget = new FileWidget(this, "FileDialog");
+    // TODO: restore with QSettings
+    // - last file path
+    // - all other settings (alpha, size, aspect, units displayed in ...)
 
-    static QString filter;
-    if(filter.isEmpty())
-    {
-        const QList<QByteArray> formats = QImageReader::supportedImageFormats();
-        QStringList extensions;
-
-        foreach(const QByteArray & format, formats)
-            extensions << QString("*." + QString::fromLocal8Bit(format).toLower());
-
-        filter = QObject::tr("Images (%1)\nAll Files (*.*)").arg(extensions.join("; "));
-    }
-
-    m_filewidget->setNameFilter(filter);
-
-    m_ui->filedialoglayout->addWidget(m_filewidget);
-
-    // options
-
-    // ...
 }
 
 ImageExport::~ImageExport()
 {
-    //
 }
-
-const bool ImageExport::show()
-{
-    if (this->exec() == QDialog::Accepted) {
-        m_filePath = m_filewidget->selectedFiles().value(0);
-        return !m_filePath.isEmpty();
-    }
-
-    return false;
-}
+//
+//const bool ImageExport::show()        // TODO: do this on OK event... 
+//{
+//    //m_filewidget = new FileWidget(this, "FileDialog");
+//
+//    //static QString filter;
+//    //if(filter.isEmpty())
+//    //{
+//    //    const QList<QByteArray> formats = QImageReader::supportedImageFormats();
+//    //    QStringList extensions;
+//
+//    //    foreach(const QByteArray & format, formats)
+//    //        extensions << QString("*." + QString::fromLocal8Bit(format).toLower());
+//
+//    //    filter = QObject::tr("Images (%1)\nAll Files (*.*)").arg(extensions.join("; "));
+//    //}
+//
+//    //m_filewidget->setNameFilter(filter);
+//
+//
+//
+//
+//    //if (this->exec() == QDialog::Accepted) {
+//    //    m_filePath = m_filewidget->selectedFiles().value(0);
+//    //    return !m_filePath.isEmpty();
+//    //}
+//
+//    return false;
+//}
 
 const bool ImageExport::save(
     const QImage & image) const
@@ -85,4 +86,47 @@ const bool ImageExport::save() const
     }
 
     return m_image.save(m_filePath);
+}
+
+const bool ImageExport::aspect() const
+{
+    return m_aspect;
+}
+
+const bool ImageExport::alpha() const
+{
+    return m_alpha;
+}
+
+const QSize & ImageExport::size() const
+{
+    return m_size;
+}
+
+const QString & ImageExport::filePath() const
+{
+    return m_filePath;
+}
+
+const bool ImageExport::save(
+    AbstractPainter & painter
+,   QWidget * parent)
+{
+    ImageExport ie(parent);
+
+    if(!ie.exec())
+        return false;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
+
+    QImage image(painter.capture(ie.size(), ie.aspect(), ie.alpha()));
+    const bool result = ie.save(image);
+
+    QApplication::restoreOverrideCursor();
+
+    if(!result)
+        qWarning("Image export to \"%s\" failed", qPrintable(ie.filePath()));
+
+    return result ;
 }
