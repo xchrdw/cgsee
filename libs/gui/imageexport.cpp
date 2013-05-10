@@ -5,7 +5,6 @@
 
 #include "ui_imageexport.h"
 #include "imageexport.h"
-#include "canvascapturedialog.h"
 
 
 ImageExport::ImageExport(QWidget * parent)
