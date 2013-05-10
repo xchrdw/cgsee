@@ -1,9 +1,6 @@
 
 #pragma once
 
-#include <QFileSystemModel>
-#include <QTreeView>
-#include <QDockWidget>
 
 #include <core/abstractapplication.h>
 

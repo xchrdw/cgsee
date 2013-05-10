@@ -1,3 +1,6 @@
+#include <QFileSystemModel>
+#include <QTreeView>
+#include <QDockWidget>
 
 #include <QOpenGLContext>
 #include <QSettings>
@@ -34,6 +37,18 @@ Viewer::Viewer(
 
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
+
+    QFileSystemModel *dirModel = new QFileSystemModel;
+    dirModel->setRootPath(QDir::currentPath());
+    dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+
+    QTreeView *dirTree = new QTreeView();
+    dirTree->setModel(dirModel);
+
+    QDockWidget * leftNav = new QDockWidget(tr("Explorer"));
+    leftNav->setWidget(dirTree);
+    leftNav->setAllowedAreas(Qt::LeftDockWidgetArea);
+    this->addDockWidget(Qt::LeftDockWidgetArea, leftNav);
 };
 
 #ifdef WIN32
