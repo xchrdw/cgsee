@@ -1,5 +1,6 @@
 #include <QFileSystemModel>
 #include <QTreeView>
+#include <QListView>
 #include <QDockWidget>
 
 #include <QOpenGLContext>
@@ -49,19 +50,27 @@ void Viewer::createFileExplorer()
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
     // dirModel->setRootPath(currentPath);
 
-    QTreeView *treeView = new QTreeView();
+    QTreeView *treeView = new QTreeView;
     treeView->setModel(dirModel);
     treeView->setRootIndex(dirModel->setRootPath(currentPath));
 
-    QDockWidget * leftNav = new QDockWidget(tr("Explorer"));
+    QFileSystemModel *fileModel = new QFileSystemModel;
+    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    // fileModel->setRootPath(currentPath);
+
+    QListView *listView = new QListView;
+    listView->setModel(fileModel);
+    listView->setRootIndex(fileModel->setRootPath(currentPath));
+
+    QDockWidget * leftNav = new QDockWidget(tr("Navigator"));
     leftNav->setWidget(treeView);
     leftNav->setAllowedAreas(Qt::LeftDockWidgetArea);
     this->addDockWidget(Qt::LeftDockWidgetArea, leftNav);
 
-
-    QFileSystemModel *fileModel = new QFileSystemModel;
-    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
-    fileModel->setRootPath(currentPath);
+    QDockWidget * bottomExp = new QDockWidget(tr("Explorer"));
+    bottomExp->setWidget(listView);
+    bottomExp->setAllowedAreas(Qt::BottomDockWidgetArea);
+    this->addDockWidget(Qt::BottomDockWidgetArea, bottomExp);
 }
 
 #ifdef WIN32
