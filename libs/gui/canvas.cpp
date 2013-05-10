@@ -1,19 +1,16 @@
 
 #include <GL/glew.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <cassert>
 
 #include <QApplication>
 #include <QBasicTimer>
 
 #include "canvas.h"
-#include "abstractpainter.h"
 
+#include <core/abstractpainter.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
-#include <core/camera.h>
 
 
 Canvas::Canvas(
@@ -26,7 +23,6 @@ Canvas::Canvas(
 ,   m_painter(nullptr)
 {
     m_timer = new QBasicTimer();
-
     m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
@@ -42,42 +38,51 @@ Canvas::~Canvas()
 
 void Canvas::initializeGL()
 {
+    glError();  // nothing should be done before this!
+
     if(!context()->isValid())
         qCritical("Qt OpenGL context is not valid.");
 
     qDebug("Vendor: %s", qPrintable(GPUQuery::vendor()));
     qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));
+    qDebug("Version: %s", qPrintable(GPUQuery::version()));
+
     qDebug("GLEW Version: %s\n", qPrintable(GPUQuery::glewVersion()));
 
+    // NOTE : Important for e.g., 3.2 core
+    // http://glew.sourceforge.net/basic.html
+
+    glError();
+    glewExperimental = GL_TRUE;
     const GLenum error = glewInit();
+
+    // http://stackoverflow.com/questions/10857335/opengl-glgeterror-returns-invalid-enum-after-call-to-glewinit
+    // use glGetError instead of userdefined glError, to avoid console/log output
+    glGetError();   
+    glError();
+
     if(GLEW_OK != error)
         qCritical("Glew failed to initialized: %s\n", qPrintable(GPUQuery::glewError(error)));
 
     if(!m_format.verify(context()->format()))
-        qCritical("There might be problems during scene initialization and rendering.\n");
+        qWarning("There might be problems during scene initialization and rendering.\n");
 
-    qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
-    qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
+    glError();
+
+    if(!GPUQuery::isCoreProfile())
+    {
+        qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
+        qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
+    }
 
     glClearColor(1.f, 1.f, 1.f, 1.f);
+    glError();
 }
 
 void Canvas::updateViewport() const
 {
     glViewport(0, 0, width(), height());
-
-    // This is required e.g. for overlay painting
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-#ifdef QT_OPENGL_ES
-    glOrthof(0.f, 1.f, 0.f, 1.f, 0.f, 1.f);
- #else
-    glOrtho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
- #endif
-
-    glMatrixMode(GL_MODELVIEW);
+    glError();
 }
 
 void Canvas::resizeGL(
@@ -93,39 +98,42 @@ void Canvas::resizeGL(
 
 // http://doc.qt.digia.com/qt/opengl-overpainting-glwidget-cpp.html
 // http://harmattan-dev.nokia.com/docs/library/html/qt4/opengl-overpainting.html
+// -> does not work for core profile or modern rendering
 
-void Canvas::paintEvent(QPaintEvent *)
+//void Canvas::paintEvent(QPaintEvent *)
+//{
+//    glError();
+//    paint();
+//    glError();
+//
+//    // The fixed function OGL is used to support old school OpenGL calls for overlay painting.
+//    // NOTE: it is not tested, what happens on contexts in newer core profiles.
+//
+//    // NOTE: QPainter is off use here: http://qt-project.org/forums/viewthread/26510
+//    // It does not support 3.2 core profile rendering "any time soon"...
+//
+//    //QPainter painter(this);
+//    //paintOverlay(painter);
+//    //painter.end();
+//    //glError();
+//}
+
+//void Canvas::paintOverlay(QPainter & painter)
+//{
+//    painter.setRenderHint(QPainter::Antialiasing);
+//    painter.setRenderHint(QPainter::TextAntialiasing);
+//}
+
+void Canvas::paintGL()
 {
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    glError();  
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-
-    paint();
-
-    glPopMatrix();
-    glPopAttrib();
-
-    // The fixed function OGL is used to support old school OpenGL calls for overlay painting.
-    // NOTE: it is not tested, what happens on contexts in newer core profiles.
-
-    QPainter painter(this);
-    paintOverlay(painter);
-    painter.end();
-}
-
-void Canvas::paint()
-{
     if(m_painter)
         m_painter->paint();
     else 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Canvas::paintOverlay(QPainter & painter)
-{
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setRenderHint(QPainter::TextAntialiasing);
+     
+    glError();  
 }
 
 void Canvas::timerEvent(QTimerEvent *event)
@@ -157,13 +165,8 @@ const QImage Canvas::capture(
     if(!m_painter)
         return QImage();
 
-    Camera* camera = m_painter->getCamera();
-
-    if(!camera)
-        return QImage();
-
     // aspect is false, since this accesses the cameras projection matrix with same aspect...
-    return capture(QSize(camera->viewport().x, camera->viewport().y), false, alpha);
+    return m_painter->capture(size(), false, alpha);
 }
 
 const QImage Canvas::capture(
@@ -171,61 +174,8 @@ const QImage Canvas::capture(
 ,   const bool aspect
 ,   const bool alpha)
 {
-    static const GLuint tileW(1024);
-    static const GLuint tileH(1024);
-
     if(!m_painter)
         return QImage();
 
-    Camera* camera = m_painter->getCamera();
-
-    if(!camera)
-    {
-        qWarning("No camera for frame capture available.");
-        return QImage();
-    }
-
-    const GLuint w(camera->viewport().x);
-    const GLuint h(camera->viewport().y);
-
-    const GLuint frameW = size.width();
-    const GLuint frameH = size.height();
-
-    const glm::mat4 proj(aspect ? glm::perspective(camera->fovy()
-        , static_cast<float>(frameW) / static_cast<float>(frameH)
-        , camera->zNear(), camera->zFar()) : camera->projection());
-
-    const glm::mat4 view(camera->view());
-
-    const glm::vec4 viewport(0, 0, frameW, frameH);
-
-    QImage frame(frameW, frameH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
-    QImage tile(tileW, tileH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
-
-    QPainter p(&frame);
-
-    resize(tileW, tileH);
-    camera->update();
-
-    for (GLuint y = 0; y < frameH; y += tileH)
-    for (GLuint x = 0; x < frameW; x += tileW)
-    {
-        const glm::mat4 pick = glm::pickMatrix(glm::vec2(x + tileW / 2,  y + tileH / 2),
-                                               glm::vec2(tileW, tileH), viewport);
-
-        const glm::mat4 projTile(pick * proj);
-
-        camera->setTransform(projTile * view);
-
-        paint();
-
-        glReadPixels(0, 0, tileW, tileH, alpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, tile.bits());
-        p.drawImage(x, y, tile);
-    }
-    p.end();
-
-    resize(w, h);
-    camera->setTransform(proj * view);
-
-    return frame.mirrored(false, true); // flip vertically
+    return m_painter->capture(size, aspect, alpha);
 }

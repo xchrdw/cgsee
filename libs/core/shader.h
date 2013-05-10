@@ -14,7 +14,7 @@ class Program;
 class CGSEE_API Shader
 {
 public:
-	typedef QSet<Program *> t_programs;
+    typedef QSet<Program *> t_programs;
 
 public:
     Shader(const GLenum type);
@@ -32,8 +32,11 @@ public:
 
     const bool isCompiled() const;
 
-	const t_programs & programs() const;
-	t_programs & programs();
+    const t_programs & programs() const;
+    t_programs & programs();
+
+protected:
+    inline const bool isShader() const;
 
 protected:
     const GLenum m_type;
@@ -42,9 +45,9 @@ protected:
     QString m_source;
     QString m_log;
     
-	bool m_compiled;
+    bool m_compiled;
 
-	t_programs m_programs;
+    t_programs m_programs;
 
 protected:
     typedef QMap<GLenum, QString> t_typeStrings;

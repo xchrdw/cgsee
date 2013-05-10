@@ -19,27 +19,27 @@ public:
 
     virtual ~FileAssociatedShader();
 
-	void reload();
+    void reload();
 
-	static void reloadAll();
+    static void reloadAll();
 
 protected:
     const bool setSourceFromFile(const bool update = true);
 
     static void registerShader(
-		const QString & filePath
-	,	FileAssociatedShader * shader);
+        const QString & filePath
+    ,   FileAssociatedShader * shader);
 
     static void unregisterShader(
-		const QString & filePath
-	,	FileAssociatedShader * shader);
+        const QString & filePath
+    ,   FileAssociatedShader * shader);
 
 protected:
-	const QString m_filePath;
+    const QString m_filePath;
 
 protected:
-	typedef QSet<FileAssociatedShader *> t_shaders;
-	typedef QMap<QString, t_shaders *> t_shadersByFilePath;
+    typedef QSet<FileAssociatedShader *> t_shaders;
+    typedef QMap<QString, t_shaders *> t_shadersByFilePath;
 
-	static t_shadersByFilePath shadersByFilePath;
+    static t_shadersByFilePath shadersByFilePath;
 };

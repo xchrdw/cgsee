@@ -4,7 +4,7 @@
 #include <QString>
 #include <QMap>
 
-#include <gui/abstractpainter.h>
+#include <core/abstractpainter.h>
 
 
 class Camera;
@@ -27,18 +27,19 @@ public:
      
 protected:
     virtual const bool initialize();
+    virtual Camera * camera();
 
 protected:
     void postShaderRelinked();
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 
-	static void bindSampler(
-		const t_samplerByName & sampler
-	,	Program * program);
+    static void bindSampler(
+        const t_samplerByName & sampler
+    ,   const Program & program);
 
-	static void releaseSampler(
-		const t_samplerByName & sampler);
+    static void releaseSampler(
+        const t_samplerByName & sampler);
 
 protected:
     Group * m_group;
@@ -48,4 +49,5 @@ protected:
     FrameBufferObject * m_fboNormalz;
 
     Program * m_flush;
+    Camera * m_camera;
 };

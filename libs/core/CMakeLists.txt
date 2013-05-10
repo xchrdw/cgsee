@@ -12,7 +12,11 @@ set(SOURCES
     aabb.cpp
     abstractapplication.h
     abstractapplication.cpp
+    abstractpainter.h
+    abstractpainter.cpp
     abstracttimer.h
+    autotimer.h
+    autotimer.cpp
     bufferobject.h
     bufferobject.cpp
     camera.h
