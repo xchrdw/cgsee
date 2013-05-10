@@ -3,12 +3,16 @@
 #include <QFileDialog>
 #include <QSettings>
 
+#include "ui_imageexport.h"
 #include "imageexport.h"
+#include "canvascapturedialog.h"
 
 
 ImageExport::ImageExport(QWidget * parent)
 :   m_parent(parent)
+,   m_ui(new Ui_ImageExport)
 {
+    initialize();
 }
 
 ImageExport::ImageExport(
@@ -16,16 +20,29 @@ ImageExport::ImageExport(
 ,   QWidget * parent)
 :   m_parent(parent)
 ,   m_image(image)
+,   m_ui(new Ui_ImageExport)
 {
+    initialize();
 }
 
-ImageExport::~ImageExport()
+void ImageExport::initialize()
 {
-}
+    m_ui->setupUi(this);
 
-const bool ImageExport::show() const
-{
-    static QString filter;    
+    // embedded file dialog as widget
+    m_filedialog = new QFileDialog(this, "FileDialog");
+    m_filedialog->setSizeGripEnabled(false);
+    m_filedialog->setModal(false);
+    m_filedialog->setWindowFlags(Qt::Widget);
+
+    // hack: removing button box of filedialog
+    QDialogButtonBox * buttonBox = m_filedialog->findChild<QDialogButtonBox*>("buttonBox");
+    if(buttonBox)
+    {
+        buttonBox->hide();
+    }
+
+    static QString filter;
     if(filter.isEmpty())
     {
         const QList<QByteArray> formats = QImageReader::supportedImageFormats();
@@ -37,8 +54,26 @@ const bool ImageExport::show() const
         filter = QObject::tr("Images (%1)\nAll Files (*.*)").arg(extensions.join("; "));
     }
 
-    m_filePath = QFileDialog::getSaveFileName(m_parent, QString("Export Image"), QString(), filter);
-    return !m_filePath.isEmpty();    
+    m_filedialog->setNameFilter(filter);
+
+    m_ui->filedialoglayout->addWidget(m_filedialog);
+
+    // options
+
+    // ...
+}
+
+ImageExport::~ImageExport()
+{
+    //
+}
+
+const bool ImageExport::show()
+{
+    this->exec();
+
+    m_filePath = m_filedialog->selectedFiles().value(0);
+    return !m_filePath.isEmpty();
 }
 
 const bool ImageExport::save(

@@ -9,6 +9,7 @@ set(SOURCES
     canvas.cpp
     imageexport.h
     imageexport.cpp
+    imageexport.ui
     viewer.h
     viewer.cpp
     viewer.ui
