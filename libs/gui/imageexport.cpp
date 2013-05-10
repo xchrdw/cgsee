@@ -1,10 +1,9 @@
 
 #include <QImageReader>
-#include <QFileDialog>
-#include <QSettings>
 
 #include "ui_imageexport.h"
 #include "imageexport.h"
+#include "filewidget.h"
 
 
 ImageExport::ImageExport(QWidget * parent)
@@ -29,17 +28,7 @@ void ImageExport::initialize()
     m_ui->setupUi(this);
 
     // embedded file dialog as widget
-    m_filedialog = new QFileDialog(this, "FileDialog");
-    m_filedialog->setSizeGripEnabled(false);
-    m_filedialog->setModal(false);
-    m_filedialog->setWindowFlags(Qt::Widget);
-
-    // hack: removing button box of filedialog
-    QDialogButtonBox * buttonBox = m_filedialog->findChild<QDialogButtonBox*>("buttonBox");
-    if(buttonBox)
-    {
-        buttonBox->hide();
-    }
+    m_filewidget = new FileWidget(this, "FileDialog");
 
     static QString filter;
     if(filter.isEmpty())
@@ -53,9 +42,9 @@ void ImageExport::initialize()
         filter = QObject::tr("Images (%1)\nAll Files (*.*)").arg(extensions.join("; "));
     }
 
-    m_filedialog->setNameFilter(filter);
+    m_filewidget->setNameFilter(filter);
 
-    m_ui->filedialoglayout->addWidget(m_filedialog);
+    m_ui->filedialoglayout->addWidget(m_filewidget);
 
     // options
 
@@ -70,7 +59,7 @@ ImageExport::~ImageExport()
 const bool ImageExport::show()
 {
     if (this->exec() == QDialog::Accepted) {
-        m_filePath = m_filedialog->selectedFiles().value(0);
+        m_filePath = m_filewidget->selectedFiles().value(0);
         return !m_filePath.isEmpty();
     }
 

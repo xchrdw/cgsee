@@ -8,7 +8,7 @@
 #include <core/declspec.h>
 
 class Ui_ImageExport;
-class QFileDialog;
+class FileWidget;
 
 class CGSEE_API ImageExport : public QDialog
 {
@@ -32,7 +32,7 @@ protected:
     QWidget * m_parent;
 
     const std::unique_ptr<Ui_ImageExport> m_ui;
-    QFileDialog * m_filedialog;
+    FileWidget * m_filewidget;
 
     mutable QString m_filePath;
     mutable QImage m_image;
