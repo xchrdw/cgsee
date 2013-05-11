@@ -161,6 +161,11 @@ void Viewer::keyPressEvent(QKeyEvent * event)
         setNavigation(new ArcballNavigation(m_camera));
         qDebug("Arcball navigation, use left and right mousebuttons");
         break;
+    //Reset to views
+    case Qt::Key_R:
+        navigation()->reset();
+        break;
+
     default:
         if (event->key() >= Qt::Key_F1 && event->key() <= Qt::Key_F12)
         {
