@@ -11,7 +11,8 @@ FlightNavigation::FlightNavigation(Camera * camera)
     : AbstractNavigation(camera)
     , m_timesKeyPressed(0)
 {
-    reset();
+    //need fix if viewmatrix isn't defined
+    setFromMatrix(m_viewMatrix);
 }
 
 FlightNavigation::~FlightNavigation(void)
@@ -73,14 +74,29 @@ void FlightNavigation::wheelEvent(QWheelEvent *event){
 
 }
 
-void FlightNavigation::setFromMatrix(glm::mat4 view){ // TODO!
+void FlightNavigation::setFromMatrix(glm::mat4 view){ 
     m_fovy = 45.0f;
     m_xView = glm::vec3(0.0f ,0.0f, 0.0f);
     m_yView = glm::vec3(0.0f ,0.0f ,0.0f);
     m_zView = glm::vec3(0.0f ,0.0f ,0.0f);
-    m_eye = glm::vec3(0.0f ,0.0f , -2.0f);
-    m_center = glm::vec3(0.0f ,0.0f ,0.0f);
-    m_up = glm::vec3( 0.f, 1.f, 0.f);
+    
+    //inverse glm lookat
+    m_yView.x = view[0][1];
+    m_yView.y = view[1][1];
+    m_yView.z = view[2][1];
+    
+    m_zView.x = - view [0][2];
+    m_zView.y = - view [1][2];
+    m_zView.z = - view [2][2];
+    
+    m_eye.x = view._inverse()[0][3];
+    m_eye.y = view._inverse()[1][3];
+    m_eye.z = view._inverse()[2][3];
+    
+    m_up = m_yView;
+    m_center = glm::normalize(m_eye + m_zView);
+    updateView();
+ //   updateCamera();
     updateAxis();
 }
 
