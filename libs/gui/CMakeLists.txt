@@ -5,9 +5,11 @@ message(STATUS "lib ${target}")
 set(SOURCES
     canvas.h
     canvas.cpp
-    imageexport.h
-    imageexport.cpp
-    imageexport.ui
+    canvasexporter.h
+    canvasexporter.cpp
+    canvasexporter.ui
+    canvasexportconfig.h
+    canvasexportconfig.cpp
     viewer.h
     viewer.cpp
     viewer.ui

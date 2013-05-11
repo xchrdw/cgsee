@@ -13,9 +13,6 @@ public:
     CGSee(int & argc, char ** argv);
     virtual ~CGSee();
 
-public slots:
-    void exportCanvasAsImage();
-
 protected:
     Viewer * m_viewer;
     Painter * m_painter;

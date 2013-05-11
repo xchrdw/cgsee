@@ -1,36 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ImageExport</class>
- <widget class="QDialog" name="ImageExport">
+ <class>CanvasExporter</class>
+ <widget class="QDialog" name="CanvasExporter">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>221</height>
+    <width>332</width>
+    <height>193</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Image Export</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_2">
+   <item row="4" column="0">
+    <widget class="QLabel" name="heightLabel">
      <property name="text">
-      <string>&amp;Preset:</string>
+      <string>&amp;Height:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>comboBox_2</cstring>
+      <cstring>heightLineEdit</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QLabel" name="sizeInfoLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QComboBox" name="comboBox_2"/>
+    <widget class="QComboBox" name="presetsComboBox"/>
    </item>
-   <item row="0" column="3" rowspan="7">
+   <item row="0" column="3" rowspan="8">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -40,8 +50,24 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="presetLabel">
+     <property name="text">
+      <string>&amp;Preset:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>presetsComboBox</cstring>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="label_8">
+    <widget class="QLabel" name="sizeLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>Image Size:</string>
      </property>
@@ -50,44 +76,21 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>900.0</string>
-     </property>
-    </widget>
+   <item row="3" column="2">
+    <widget class="QComboBox" name="widthUnitComboBox"/>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>&amp;Width:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>doubleSpinBox</cstring>
-     </property>
-    </widget>
+   <item row="4" column="2">
+    <widget class="QComboBox" name="heightUnitComboBox"/>
    </item>
-   <item row="5" column="1" colspan="2">
-    <widget class="QCheckBox" name="checkBox">
+   <item row="6" column="1" colspan="2">
+    <widget class="QCheckBox" name="aspectCheckBox">
      <property name="text">
       <string>Enforce Camera's &amp;Aspect Ratio</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QComboBox" name="comboBox_3"/>
-   </item>
-   <item row="3" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
-   </item>
-   <item row="3" column="2">
-    <widget class="QComboBox" name="comboBox_4"/>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_7">
+   <item row="5" column="0">
+    <widget class="QLabel" name="resolutionLabel">
      <property name="text">
       <string>&amp;Resolution:</string>
      </property>
@@ -95,40 +98,34 @@
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>doubleSpinBox_3</cstring>
+      <cstring>resolutionLineEdit</cstring>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+   <item row="5" column="2">
+    <widget class="QComboBox" name="resolutionUnitComboBox"/>
    </item>
-   <item row="4" column="2">
-    <widget class="QComboBox" name="comboBox_5"/>
-   </item>
-   <item row="6" column="1" colspan="2">
-    <widget class="QCheckBox" name="checkBox_2">
+   <item row="7" column="1" colspan="2">
+    <widget class="QCheckBox" name="alphaCheckBox">
      <property name="text">
       <string>Export Alpha &amp;Channel</string>
      </property>
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="label_6">
+    <widget class="QLabel" name="widthLabel">
      <property name="text">
-      <string>&amp;Height:</string>
+      <string>&amp;Width:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>doubleSpinBox_2</cstring>
+      <cstring>widthLineEdit</cstring>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
-   </item>
-   <item row="7" column="0" colspan="4">
+   <item row="8" column="0" colspan="4">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -141,18 +138,27 @@
      </property>
     </spacer>
    </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="heightLineEdit"/>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLineEdit" name="resolutionLineEdit"/>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="widthLineEdit"/>
+   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>comboBox_2</tabstop>
-  <tabstop>doubleSpinBox</tabstop>
-  <tabstop>comboBox_3</tabstop>
-  <tabstop>doubleSpinBox_2</tabstop>
-  <tabstop>comboBox_4</tabstop>
-  <tabstop>doubleSpinBox_3</tabstop>
-  <tabstop>comboBox_5</tabstop>
-  <tabstop>checkBox</tabstop>
-  <tabstop>checkBox_2</tabstop>
+  <tabstop>presetsComboBox</tabstop>
+  <tabstop>widthLineEdit</tabstop>
+  <tabstop>widthUnitComboBox</tabstop>
+  <tabstop>heightLineEdit</tabstop>
+  <tabstop>heightUnitComboBox</tabstop>
+  <tabstop>resolutionLineEdit</tabstop>
+  <tabstop>resolutionUnitComboBox</tabstop>
+  <tabstop>aspectCheckBox</tabstop>
+  <tabstop>alphaCheckBox</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
@@ -160,7 +166,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ImageExport</receiver>
+   <receiver>CanvasExporter</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -176,7 +182,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ImageExport</receiver>
+   <receiver>CanvasExporter</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

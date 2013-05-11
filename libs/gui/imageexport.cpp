@@ -1,30 +1,30 @@
 
 #include <QImageReader>
 
-#include "ui_imageexport.h"
-#include "imageexport.h"
+#include "ui_CanvasExporter.h"
+#include "CanvasExporter.h"
 
 #include <core/abstractpainter.h>
 
 
-ImageExport::ImageExport(QWidget * parent)
+CanvasExporter::CanvasExporter(QWidget * parent)
 :   m_parent(parent)
-,   m_ui(new Ui_ImageExport)
+,   m_ui(new Ui_CanvasExporter)
 {
     initialize();
 }
 
-ImageExport::ImageExport(
+CanvasExporter::CanvasExporter(
     const QImage & image
 ,   QWidget * parent)
 :   m_parent(parent)
 ,   m_image(image)
-,   m_ui(new Ui_ImageExport)
+,   m_ui(new Ui_CanvasExporter)
 {
     initialize();
 }
 
-void ImageExport::initialize()
+void CanvasExporter::initialize()
 {
     m_ui->setupUi(this);
 
@@ -34,11 +34,11 @@ void ImageExport::initialize()
 
 }
 
-ImageExport::~ImageExport()
+CanvasExporter::~CanvasExporter()
 {
 }
 //
-//const bool ImageExport::show()        // TODO: do this on OK event... 
+//const bool CanvasExporter::show()        // TODO: do this on OK event... 
 //{
 //    //m_filewidget = new FileWidget(this, "FileDialog");
 //
@@ -67,14 +67,14 @@ ImageExport::~ImageExport()
 //    return false;
 //}
 
-const bool ImageExport::save(
+const bool CanvasExporter::save(
     const QImage & image) const
 {
     m_image = image;
     return save();
 }
 
-const bool ImageExport::save() const
+const bool CanvasExporter::save() const
 {
     if(m_filePath.isEmpty())
         return false;
@@ -88,31 +88,31 @@ const bool ImageExport::save() const
     return m_image.save(m_filePath);
 }
 
-const bool ImageExport::aspect() const
+const bool CanvasExporter::aspect() const
 {
     return m_aspect;
 }
 
-const bool ImageExport::alpha() const
+const bool CanvasExporter::alpha() const
 {
     return m_alpha;
 }
 
-const QSize & ImageExport::size() const
+const QSize & CanvasExporter::size() const
 {
     return m_size;
 }
 
-const QString & ImageExport::filePath() const
+const QString & CanvasExporter::filePath() const
 {
     return m_filePath;
 }
 
-const bool ImageExport::save(
+const bool CanvasExporter::save(
     AbstractPainter & painter
 ,   QWidget * parent)
 {
-    ImageExport ie(parent);
+    CanvasExporter ie(parent);
 
     if(!ie.exec())
         return false;

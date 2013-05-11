@@ -37,8 +37,9 @@ public:
 
     Canvas * canvas() const;
 
-signals:
-    void takeScreenshot();
+protected slots:
+    void on_captureAsImageAction_triggered();
+    void on_captureAsImageAdvancedAction_triggered();
 
 protected:
 

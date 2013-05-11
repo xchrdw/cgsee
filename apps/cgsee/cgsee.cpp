@@ -3,7 +3,6 @@
 
 #include <gui/canvas.h>
 #include <gui/viewer.h>
-#include <gui/imageexport.h>
 
 
 CGSee::CGSee(int & argc, char ** argv)
@@ -23,9 +22,6 @@ CGSee::CGSee(int & argc, char ** argv)
     // Start
 
     m_viewer->show();
-
-    // connect signals
-    connect(m_viewer, SIGNAL(takeScreenshot()), this, SLOT(exportCanvasAsImage()));
 }
 
 CGSee::~CGSee()
@@ -35,9 +31,4 @@ CGSee::~CGSee()
 
     delete m_painter;
     delete m_viewer;
-}
-
-void CGSee::exportCanvasAsImage()
-{
-    ImageExport::save(*m_painter, m_viewer);
 }

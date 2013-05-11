@@ -6,12 +6,13 @@
 
 #include "viewer.h"
 #include "canvas.h"
+#include "canvasexporter.h"
 
 #include <core/abstractpainter.h>
 #include <core/glformat.h>
-#include <gui/canvas.h>
 
 #include <iostream>
+
 
 namespace 
 {
@@ -36,9 +37,6 @@ Viewer::Viewer(
 
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
-
-    // connect signals
-    connect(m_ui->takeScreenshotAction, SIGNAL(triggered()), this, SIGNAL(takeScreenshot()));
 };
 
 #ifdef WIN32
@@ -134,4 +132,14 @@ AbstractPainter * Viewer::painter()
 Canvas * Viewer::canvas() const
 {
     return m_qtCanvas;
+}
+
+void Viewer::on_captureAsImageAction_triggered()
+{
+    CanvasExporter::save(*canvas(), this);
+}
+
+void Viewer::on_captureAsImageAdvancedAction_triggered()
+{
+    CanvasExporter::save(*canvas(), this, true);
 }

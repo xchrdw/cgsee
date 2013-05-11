@@ -23,9 +23,9 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="viewMenu">
+   <widget class="QMenu" name="canvasMenu">
     <property name="title">
-     <string>&amp;View</string>
+     <string>&amp;Canvas</string>
     </property>
     <widget class="QMenu" name="selectFrameBufferMenu">
      <property name="title">
@@ -43,7 +43,8 @@
     <addaction name="toggleFullScreenAction"/>
     <addaction name="specifyResolutionAction"/>
     <addaction name="separator"/>
-    <addaction name="takeScreenshotAction"/>
+    <addaction name="captureAsImageAction"/>
+    <addaction name="captureAsImageAdvancedAction"/>
     <addaction name="separator"/>
     <addaction name="loadPresentationAction"/>
    </widget>
@@ -99,7 +100,7 @@
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
    <addaction name="navigationMenu"/>
-   <addaction name="viewMenu"/>
+   <addaction name="canvasMenu"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -372,9 +373,20 @@
     <string>&amp;Load Presentation ...</string>
    </property>
   </action>
-  <action name="takeScreenshotAction">
+  <action name="captureAsImageAction">
    <property name="text">
-    <string>Take &amp;Screenshot</string>
+    <string>Capture as &amp;Image</string>
+   </property>
+   <property name="shortcut">
+    <string>F10</string>
+   </property>
+  </action>
+  <action name="captureAsImageAdvancedAction">
+   <property name="text">
+    <string>Capture as Image &amp;Advanced ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F10</string>
    </property>
   </action>
  </widget>
