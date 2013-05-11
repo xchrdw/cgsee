@@ -48,11 +48,18 @@ public:
 
     const QString sizeString() const;
 
+    const bool aspect() const;
+    void setAspect(const bool enforce);
+
+    const bool alpha() const;
+    void setAlpha(const bool use);
+
 protected:
-    e_Unit m_unit;
+    e_Unit  m_unit;
 
-    QSizeF m_sizei; // size in inches
-    qreal  m_ppi;  // pixel per inch
+    QSizeF  m_sizei; // size in inches
+    qreal   m_ppi;  // pixel per inch
 
-    bool   m_alpha;
+    bool    m_alpha;
+    bool    m_aspect;
 };

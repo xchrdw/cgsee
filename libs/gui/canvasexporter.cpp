@@ -1,8 +1,13 @@
 
+#include <cassert>
+
 #include <QImageReader>
 #include <QValidator>
 #include <QDoubleValidator>
 #include <QIntValidator>
+#include <QPushButton>
+#include <QSettings>
+#include <QFileDialog>
 
 #include "ui_canvasexporter.h"
 #include "canvasexporter.h"
@@ -11,6 +16,13 @@
 #include "canvas.h"
 
 #include <core/abstractpainter.h>
+
+namespace 
+{
+    const QString SETTINGS_GROUP        ("CanvasExport");
+    const QString SETTINGS_GEOMETRY     ("Geometry");
+    const QString SETTINGS_LASTFILEPATH ("LastSaveImagePath");
+}
 
 
 CanvasExporter::CanvasExporter(QWidget * parent)
@@ -22,6 +34,19 @@ CanvasExporter::CanvasExporter(QWidget * parent)
 ,   m_doubleValidator(new QDoubleValidator)
 {
     m_ui->setupUi(this);
+
+    QSettings s;
+    s.beginGroup(SETTINGS_GROUP);
+    restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
+    s.endGroup();
+
+
+    QPushButton * defaultButton = m_ui->buttonBox->button(QDialogButtonBox::RestoreDefaults);
+    assert(defaultButton);
+    defaultButton->setText(QObject::tr("&Default"));
+    defaultButton->setCheckable(true);
+
+    // TODO: set button checked if default is active...
 
     m_ui->widthUnitComboBox->blockSignals(true);
     m_ui->widthUnitComboBox-> addItems(CanvasExportConfig::unitNames());
@@ -46,6 +71,12 @@ CanvasExporter::CanvasExporter(QWidget * parent)
 
 CanvasExporter::~CanvasExporter()
 {
+    QSettings s;
+    s.beginGroup(SETTINGS_GROUP);
+    s.setValue(SETTINGS_GEOMETRY, saveGeometry());
+    s.endGroup();
+
+
     delete m_config;
 
     delete m_intValidator;
@@ -64,18 +95,29 @@ const bool CanvasExporter::save(
     if(!ie.exec())
         return false;
 
-    //QApplication::setOverrideCursor(Qt::WaitCursor);
-    //QApplication::processEvents();
+    const QString filePath(ie.filePath());
+    if(filePath.isEmpty())
+        return false;
 
-    //QImage image(painter.capture(ie.size(), ie.aspect(), ie.alpha()));
-    //const bool result = ie.save(image);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
 
-    //QApplication::restoreOverrideCursor();
+    AbstractPainter * painter(canvas.painter());
+    if(!painter)
+    {
+        qCritical("The is no painter available for capturing the canvas.");
+        return false;
+    }
 
-    //if(!result)
-    //    qWarning("Image export to \"%s\" failed", qPrintable(ie.filePath()));
+    QImage image(painter->capture(ie.m_config->size(), ie.m_config->aspect(), ie.m_config->alpha()));
+    const bool result = image.save(filePath);
 
-    return false;
+    QApplication::restoreOverrideCursor();
+
+    if(!result)
+        qWarning("Image export to \"%s\" failed", qPrintable(filePath));
+
+    return result;
 }
 
 void CanvasExporter::update()
@@ -106,11 +148,12 @@ void CanvasExporter::update()
     if(m_ui->heightLineEdit != m_lastSizeComponentChanged)
         m_ui->heightLineEdit->setText(QString::number(m_config->height(), 'g', 4));
 
-    m_ui->resolutionLineEdit->blockSignals(true);
     m_ui->resolutionLineEdit->setText(QString::number(m_config->ppi(), 'g', 4));
-    m_ui->resolutionLineEdit->blockSignals(false);
 
     m_ui->sizeInfoLabel->setText(m_config->sizeString());
+
+    m_ui->aspectCheckBox->setChecked(m_config->aspect());
+    m_ui->alphaCheckBox->setChecked(m_config->alpha());
 }
 
 void CanvasExporter::on_widthLineEdit_textEdited(const QString & text)
@@ -175,36 +218,45 @@ void CanvasExporter::on_resolutionLineEdit_textEdited(const QString & text)
     update();
 }
 
+void CanvasExporter::on_alphaCheckBox_stateChanged(int state)
+{
+    m_config->setAlpha(state == Qt::Checked);
+    update();
+}
 
-//
-//const bool CanvasExporter::show()        // TODO: do this on OK event... 
-//{
-//    //m_filewidget = new FileWidget(this, "FileDialog");
-//
-//    //static QString filter;
-//    //if(filter.isEmpty())
-//    //{
-//    //    const QList<QByteArray> formats = QImageReader::supportedImageFormats();
-//    //    QStringList extensions;
-//
-//    //    foreach(const QByteArray & format, formats)
-//    //        extensions << QString("*." + QString::fromLocal8Bit(format).toLower());
-//
-//    //    filter = QObject::tr("Images (%1)\nAll Files (*.*)").arg(extensions.join("; "));
-//    //}
-//
-//    //m_filewidget->setNameFilter(filter);
-//
-//
-//
-//
-//    //if (this->exec() == QDialog::Accepted) {
-//    //    m_filePath = m_filewidget->selectedFiles().value(0);
-//    //    return !m_filePath.isEmpty();
-//    //}
-//
-//    return false;
-//}
+void CanvasExporter::on_aspectCheckBox_stateChanged(int state)
+{
+    m_config->setAspect(state == Qt::Checked);
+    update();
+}
+
+const QString CanvasExporter::filePath()
+{
+    // TODO: advanced option should generate a name on last position
+
+    QFileDialog dialog;
+    
+    static QString filter;
+    if(filter.isEmpty())
+    {
+        const QList<QByteArray> formats = QImageReader::supportedImageFormats();
+        QStringList extensions;
+
+        foreach(const QByteArray & format, formats)
+            extensions << QString("*." + QString::fromLocal8Bit(format).toLower());
+
+        filter = QObject::tr("Images (%1)\nAll Files (*.*)").arg(extensions.join(";"));
+    }
+
+    QSettings s;
+    s.beginGroup(SETTINGS_GROUP);
+    const QString laseFilePath(s.value(SETTINGS_LASTFILEPATH).toString());
+    s.endGroup();
+
+    QString filePath = dialog.getSaveFileName(this, QObject::tr("Save as Image"), laseFilePath, filter); 
+
+    return filePath;
+}
 //
 //const bool CanvasExporter::save(
 //    const QImage & image) const

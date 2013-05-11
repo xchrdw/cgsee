@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>332</width>
+    <width>346</width>
     <height>193</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Image Export</string>
+   <string>Capture Canvas</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="4" column="0">
@@ -33,7 +33,7 @@
       <bool>false</bool>
      </property>
      <property name="text">
-      <string/>
+      <string>900.0</string>
      </property>
     </widget>
    </item>
@@ -46,7 +46,7 @@
       <enum>Qt::Vertical</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::RestoreDefaults|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>

@@ -37,6 +37,8 @@ protected:
 
     void update();
 
+    const QString filePath();
+
 protected slots:
     void on_widthLineEdit_textEdited(const QString & text);
     void on_heightLineEdit_textEdited(const QString & text);
@@ -45,6 +47,9 @@ protected slots:
     void on_heightUnitComboBox_currentIndexChanged(int index);
 
     void on_resolutionLineEdit_textEdited(const QString & text);
+
+    void on_alphaCheckBox_stateChanged(int state);
+    void on_aspectCheckBox_stateChanged(int state);
 
 protected:
     QLineEdit * m_lastSizeComponentChanged;

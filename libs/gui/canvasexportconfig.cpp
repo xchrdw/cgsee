@@ -3,12 +3,12 @@
 
 const CanvasExportConfig::t_namedUnits CanvasExportConfig::m_namedUnits = 
     CanvasExportConfig::t_namedUnits() 
-    << "Pixels" 
-    << "Inches" 
-    << "Millimeters" 
-    << "Centimeters"
-    << "Points" 
-    << "Picas";
+    << QObject::tr("Pixels")
+    << QObject::tr("Inches")
+    << QObject::tr("Millimeters")
+    << QObject::tr("Centimeters")
+    << QObject::tr("Points")
+    << QObject::tr("Picas");
 
 const CanvasExportConfig::t_inchBasedMultiplicators CanvasExportConfig::m_multiplicators = 
     CanvasExportConfig::t_inchBasedMultiplicators() 
@@ -24,6 +24,7 @@ CanvasExportConfig::CanvasExportConfig()
 ,   m_sizei(QSizeF(4.4444, 3.3333)) // 320 x 240
 ,   m_ppi(72.0)
 ,   m_alpha(false)
+,   m_aspect(true)
 {
 }
 
@@ -38,7 +39,7 @@ namespace
 
 const QString CanvasExportConfig::ppiUnitName()
 {
-    return QString("Pixels/Inch");
+    return QObject::tr("Pixels/Inch");
 }
 
 const QStringList & CanvasExportConfig::unitNames()
@@ -153,9 +154,29 @@ const QString CanvasExportConfig::sizeString() const
     static const QStringList sizeUnits = QStringList()
         << "B" << "KiB" << "MiB" << "GiB" ; // hope for not reaching TiB and up spaces... :P
 
-    return QString("%1 %2 (%3 x %4 Pixels)")
+    return QObject::tr("%1 %2 (%3 x %4 Pixels)")
         .arg(QString::number(sizef, 'g', 3))
         .arg(sizeUnits[i])
         .arg(pixels.width())
         .arg(pixels.height());
+}
+
+const bool CanvasExportConfig::aspect() const
+{
+    return m_aspect;
+}
+
+void CanvasExportConfig::setAspect(const bool enforce)
+{
+    m_aspect = enforce;
+}
+
+const bool CanvasExportConfig::alpha() const
+{
+    return m_alpha;
+}
+
+void CanvasExportConfig::setAlpha(const bool use)
+{
+    m_alpha = use;
 }
