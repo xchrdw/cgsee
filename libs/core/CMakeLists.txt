@@ -12,6 +12,7 @@ set(SOURCES
     aabb.cpp
     abstractapplication.h
     abstractapplication.cpp
+    abstractglparent.h
     abstractpainter.h
     abstractpainter.cpp
     abstracttimer.h

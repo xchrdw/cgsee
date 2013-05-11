@@ -8,6 +8,7 @@
 
 class QKeyEvent;
 class Camera;
+class AbstractGLParent;
 
 class CGSEE_API AbstractPainter
 {
@@ -19,7 +20,8 @@ public:
     virtual void paint();
 
     const QImage capture(
-        const QSize & size
+        AbstractGLParent & parent
+    ,   const QSize & size
     ,   const bool aspect
     ,   const bool alpha);
 

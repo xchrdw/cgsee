@@ -3,6 +3,7 @@
 
 #include <QGLWidget>
 
+#include <core/abstractglparent.h>
 #include <core/declspec.h>
 #include <core/glformat.h>
 
@@ -12,7 +13,7 @@ class QTimerEvent;
 class AbstractPainter;
 
 
-class CGSEE_API Canvas : public QGLWidget
+class CGSEE_API Canvas : public QGLWidget, public AbstractGLParent
 {
 public:
     Canvas(
@@ -30,8 +31,10 @@ public:
     ,   const bool aspect = true
     ,   const bool alpha = false);
 
+    virtual void resize(int width, int height);
+
 protected:
-    
+
     // QGLWidget Interface
     virtual void initializeGL();
     virtual void resizeGL(
@@ -51,8 +54,6 @@ protected:
 
     // For Rendering Loop
     void timerEvent(QTimerEvent *event);
-
-    void updateViewport() const;
 
 protected:
     AbstractPainter * m_painter;

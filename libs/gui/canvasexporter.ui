@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Capture Canvas</string>
+   <string>Capture Canvas as Image</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="4" column="0">

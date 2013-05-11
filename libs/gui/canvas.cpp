@@ -23,7 +23,7 @@ Canvas::Canvas(
 ,   m_painter(nullptr)
 {
     m_timer = new QBasicTimer();
-    m_timer->start(format.vsync() ? 1000/60 : 0, this);
+    //m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
 
@@ -79,18 +79,10 @@ void Canvas::initializeGL()
     glError();
 }
 
-void Canvas::updateViewport() const
-{
-    glViewport(0, 0, width(), height());
-    glError();
-}
-
 void Canvas::resizeGL(
     int width
 ,   int height)
 {
-    updateViewport();
-    
     if(m_painter)
         m_painter->resize(width, height);
 }
@@ -162,12 +154,11 @@ AbstractPainter * Canvas::painter()
 const QImage Canvas::capture(
     const bool alpha)
 {
-    if(!m_painter)
-        return QImage();
-
     // aspect is false, since this accesses the cameras projection matrix with same aspect...
-    return m_painter->capture(size(), false, alpha);
+    return capture(size(), false, alpha);
 }
+
+#include <QSize>
 
 const QImage Canvas::capture(
     const QSize & size
@@ -177,5 +168,10 @@ const QImage Canvas::capture(
     if(!m_painter)
         return QImage();
 
-    return m_painter->capture(size, aspect, alpha);
+    return m_painter->capture(*this, size, aspect, alpha);
+}
+
+void Canvas::resize(int width, int height)
+{
+    QGLWidget::resize(width, height);
 }

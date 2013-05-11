@@ -102,14 +102,7 @@ const bool CanvasExporter::save(
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QApplication::processEvents();
 
-    AbstractPainter * painter(canvas.painter());
-    if(!painter)
-    {
-        qCritical("The is no painter available for capturing the canvas.");
-        return false;
-    }
-
-    QImage image(painter->capture(ie.m_config->size(), ie.m_config->aspect(), ie.m_config->alpha()));
+    QImage image(canvas.capture(ie.m_config->size(), ie.m_config->aspect(), ie.m_config->alpha()));
     const bool result = image.save(filePath);
 
     QApplication::restoreOverrideCursor();

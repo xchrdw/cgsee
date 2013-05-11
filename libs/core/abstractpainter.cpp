@@ -7,6 +7,7 @@
 
 #include "abstractpainter.h"
 
+#include "abstractglparent.h"
 #include "camera.h"
 #include "gpuquery.h"
 
@@ -33,6 +34,9 @@ void AbstractPainter::resize(
     const int width
 ,   const int height)
 {
+    glViewport(0, 0, width, height);
+    glError();
+
     if(m_initialized)
         return;
 
@@ -49,7 +53,8 @@ void AbstractPainter::keyRelease(QKeyEvent * event)
 }
 
 const QImage AbstractPainter::capture(
-    const QSize & size
+    AbstractGLParent & parent
+,   const QSize & size
 ,   const bool aspect
 ,   const bool alpha)
 {
@@ -83,7 +88,7 @@ const QImage AbstractPainter::capture(
 
     QPainter p(&frame);
 
-    resize(tileW, tileH);
+    parent.resize(tileW, tileH);
     cam->update();
 
     for (GLuint y = 0; y < frameH; y += tileH)
@@ -103,7 +108,7 @@ const QImage AbstractPainter::capture(
     }
     p.end();
 
-    resize(w, h);
+    parent.resize(w, h);
     cam->setTransform(proj * view);
 
     return frame.mirrored(false, true); // flip vertically
