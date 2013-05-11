@@ -182,6 +182,13 @@ void Viewer::keyReleaseEvent( QKeyEvent *event )
     m_qtCanvas->navigation()->keyReleaseEvent(event);
 }
 
+void Viewer::on_flightManipulatorAction_triggered(){
+    setNavigation(new FlightNavigation(m_camera));
+}
+    
+void Viewer::on_trackballManipulatorAction_triggered(){
+    setNavigation(new ArcballNavigation(m_camera));
+}
 
 
 

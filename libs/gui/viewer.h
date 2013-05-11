@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <QMainWindow>
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -8,11 +10,7 @@
 #endif
 
 #include <memory>
-
-#include <QMainWindow>
-
 #include <core/declspec.h>
-
 
 class GLFormat;
 
@@ -24,6 +22,7 @@ class Camera;
 
 class CGSEE_API Viewer : public QMainWindow
 {
+    Q_OBJECT
 public:
     Viewer(
         QWidget * parent = nullptr
@@ -32,7 +31,7 @@ public:
 
     void initialize(const GLFormat & format);
 
-    void setNavigation(AbstractNavigation * navigation);
+   void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
 
     void setPainter(AbstractPainter * painter);
@@ -44,6 +43,10 @@ public:
 
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent (QKeyEvent *event);
+
+    public slots:
+    void on_flightManipulatorAction_triggered();
+    void on_trackballManipulatorAction_triggered();
 
 protected:
 
