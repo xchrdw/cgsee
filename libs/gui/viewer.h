@@ -41,6 +41,8 @@ protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
 
+    void on_reloadAllShadersAction_triggered();
+
 protected:
 
 #ifdef WIN32

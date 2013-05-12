@@ -1,4 +1,6 @@
 
+#include <GL/glew.h>
+
 #include <QOpenGLContext>
 #include <QSettings>
 
@@ -9,6 +11,7 @@
 #include "canvasexporter.h"
 
 #include <core/abstractpainter.h>
+#include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 
 #include <iostream>
@@ -142,4 +145,9 @@ void Viewer::on_captureAsImageAction_triggered()
 void Viewer::on_captureAsImageAdvancedAction_triggered()
 {
     CanvasExporter::save(*canvas(), this, true);
+}
+
+void Viewer::on_reloadAllShadersAction_triggered()
+{
+    FileAssociatedShader::reloadAll();
 }

@@ -35,6 +35,7 @@
      <addaction name="separator"/>
      <addaction name="showFrameBuffersAction"/>
     </widget>
+    <addaction name="reloadAllShadersAction"/>
     <addaction name="selectFrameBufferMenu"/>
     <addaction name="separator"/>
     <addaction name="togglePrintModeAction"/>
@@ -387,6 +388,14 @@
    </property>
    <property name="shortcut">
     <string>Shift+F10</string>
+   </property>
+  </action>
+  <action name="reloadAllShadersAction">
+   <property name="text">
+    <string>&amp;Reload All Shaders</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
  </widget>
