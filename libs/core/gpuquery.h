@@ -47,8 +47,7 @@ protected:
 };
 
 
-#ifdef _DEBUG
-    #define glError() GPUQuery::error(__FILE__, __LINE__)
-#else
-    #define glError() false
-#endif
+inline const bool glError()
+{
+    return GPUQuery::error(__FILE__, __LINE__);
+}

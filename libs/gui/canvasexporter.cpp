@@ -37,11 +37,11 @@ CanvasExporter::CanvasExporter(
     const QSize & size
 ,   QWidget * parent)
 :   QDialog(parent)
-,   m_ui(new Ui_CanvasExporter)
-,   m_config(new CanvasExportConfig)
 ,   m_lastSizeComponentChanged(nullptr)
 ,   m_intValidator(new QIntValidator)
 ,   m_doubleValidator(new QDoubleValidator)
+,   m_ui(new Ui_CanvasExporter)
+,   m_config(new CanvasExportConfig)
 {
     m_ui->setupUi(this);
 

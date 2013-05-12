@@ -19,11 +19,11 @@
 Painter::Painter()
 :   AbstractPainter()
 ,   m_group(nullptr)
-,   m_camera(nullptr)
+,   m_quad(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
-,   m_quad(nullptr)
+,   m_camera(nullptr)
 {
 }
 
