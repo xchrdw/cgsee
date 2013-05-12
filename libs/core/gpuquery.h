@@ -47,7 +47,12 @@ protected:
 };
 
 
-inline const bool glError()
+inline void glError()
+{
+    GPUQuery::error(__FILE__, __LINE__);
+}
+
+inline const bool glIsError()
 {
     return GPUQuery::error(__FILE__, __LINE__);
 }
