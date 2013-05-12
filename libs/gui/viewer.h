@@ -23,6 +23,7 @@ class AbstractPainter;
 
 class CGSEE_API Viewer : public QMainWindow
 {
+    Q_OBJECT
 public:
     Viewer(
         QWidget * parent = nullptr
@@ -34,7 +35,8 @@ public:
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
-protected:
+protected slots:
+    void on_reloadAllShadersAction_triggered();
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
