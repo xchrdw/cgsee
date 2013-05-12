@@ -38,7 +38,13 @@
     </widget>
    </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QComboBox" name="presetsComboBox"/>
+    <widget class="QComboBox" name="presetsComboBox">
+     <property name="font">
+      <font>
+       <family>Courier New</family>
+      </font>
+     </property>
+    </widget>
    </item>
    <item row="0" column="3" rowspan="8">
     <widget class="QDialogButtonBox" name="buttonBox">

@@ -25,7 +25,9 @@ namespace
 }
 
 
-CanvasExporter::CanvasExporter(QWidget * parent)
+CanvasExporter::CanvasExporter(
+    const QSize & size
+,   QWidget * parent)
 :   QDialog(parent)
 ,   m_ui(new Ui_CanvasExporter)
 ,   m_config(new CanvasExportConfig)
@@ -40,6 +42,49 @@ CanvasExporter::CanvasExporter(QWidget * parent)
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     s.endGroup();
 
+    // add current res and last setting
+    
+    QAbstractItemModel * model = m_ui->presetsComboBox->model();
+    const QVariant v(0);
+
+    m_ui->presetsComboBox->addItem("Custom Configuration");
+    QModelIndex index = model->index(model->rowCount() - 1, 0);
+    model->setData(index, v, Qt::UserRole - 1);
+
+    m_customPresets << new CanvasExportConfig(size.width(), size.height(), 72, CanvasExportConfig::Pixels);
+    m_ui->presetsComboBox->addItem(
+        QString("Canvas    %1 x %2 px").arg(size.width(), 4).arg(size.height(), 4),
+        QVariant(m_customPresets.size() - 1));
+
+    m_customPresets << new CanvasExportConfig(size.width() * 2, size.height() * 2, 72, CanvasExportConfig::Pixels);
+    m_ui->presetsComboBox->addItem(
+        QString("Canvas 2x %1 x %2 px").arg(size.width() * 2, 4).arg(size.height() * 2, 4),
+        QVariant(m_customPresets.size() - 1));
+
+    m_customPresets << new CanvasExportConfig(size.width() * 4, size.height() * 4, 72, CanvasExportConfig::Pixels);
+    m_ui->presetsComboBox->addItem(
+        QString("Canvas 4x %1 x %2 px").arg(size.width() * 4, 4).arg(size.height() * 4, 4),
+        QVariant(m_customPresets.size() - 1));
+
+    m_customPresets << new CanvasExportConfig(size.width() * 8, size.height() * 8, 72, CanvasExportConfig::Pixels);
+    m_ui->presetsComboBox->addItem(
+        QString("Canvas 8x %1 x %2 px").arg(size.width() * 8, 4).arg(size.height() * 8, 4),
+        QVariant(m_customPresets.size() - 1));
+
+    // add config presets 
+
+    const QStringList & presetIDs = CanvasExportConfig::presetsIdentifier();
+    for(const QString & identifier : presetIDs)
+    {
+        m_ui->presetsComboBox->addItem(identifier);
+
+        const bool disable = identifier.startsWith("- ");
+
+        QModelIndex index = model->index(model->rowCount() - 1, 0);
+        model->setData(index, v, Qt::UserRole + (disable ? - 1 : 1));
+    }
+
+    // configure "set this config as default" button
 
     QPushButton * defaultButton = m_ui->buttonBox->button(QDialogButtonBox::RestoreDefaults);
     assert(defaultButton);
@@ -47,6 +92,8 @@ CanvasExporter::CanvasExporter(QWidget * parent)
     defaultButton->setCheckable(true);
 
     // TODO: set button checked if default is active...
+
+    // init units 
 
     m_ui->widthUnitComboBox->blockSignals(true);
     m_ui->widthUnitComboBox-> addItems(CanvasExportConfig::unitNames());
@@ -57,15 +104,15 @@ CanvasExporter::CanvasExporter(QWidget * parent)
     m_ui->heightUnitComboBox->blockSignals(false);
     
     m_ui->resolutionUnitComboBox->blockSignals(true);
-    m_ui->resolutionUnitComboBox->addItem(CanvasExportConfig::ppiUnitName());
+    m_ui->resolutionUnitComboBox->addItem(CanvasExportConfig::ppiUnitIdentifier());
     m_ui->resolutionUnitComboBox->blockSignals(false);
 
     m_ui->resolutionLineEdit->setValidator(m_doubleValidator);
 
+
     update();
 
     // TODO: restore with QSettings
-    // - last file path
     // - all other settings (alpha, size, aspect, units displayed in ...)
 }
 
@@ -76,8 +123,11 @@ CanvasExporter::~CanvasExporter()
     s.setValue(SETTINGS_GEOMETRY, saveGeometry());
     s.endGroup();
 
+    if(!m_customPresets.contains(m_config))
+        delete m_config;
 
-    delete m_config;
+    qDeleteAll(m_customPresets);
+    m_customPresets.clear();
 
     delete m_intValidator;
     delete m_doubleValidator;
@@ -88,9 +138,7 @@ const bool CanvasExporter::save(
 ,   QWidget * parent
 ,   const bool advanced)
 {
-    CanvasExporter ie(parent);
-
-    ie.m_canvasSize = canvas.size();
+    CanvasExporter ie(canvas.size(), parent);
 
     if(!ie.exec())
         return false;
@@ -115,18 +163,25 @@ const bool CanvasExporter::save(
 
 void CanvasExporter::update()
 {
-    const int index = static_cast<int>(m_config->unit());
+    if(m_config->modified() && m_ui->presetsComboBox->currentIndex())
+        m_ui->presetsComboBox->setCurrentIndex(0);
+
+    const int unit = static_cast<int>(m_config->unit());
 
     m_ui->widthUnitComboBox->blockSignals(true);
-    m_ui->widthUnitComboBox->setCurrentIndex(index);
+    m_ui->widthUnitComboBox->setCurrentIndex(unit);
     m_ui->widthUnitComboBox->blockSignals(false);
 
     m_ui->heightUnitComboBox->blockSignals(true);
-    m_ui->heightUnitComboBox->setCurrentIndex(index);
+    m_ui->heightUnitComboBox->setCurrentIndex(unit);
     m_ui->heightUnitComboBox->blockSignals(false);
 
+    bool pixels = CanvasExportConfig::Pixels == m_config->unit();
+    const int prec = pixels ?  0  :  4 ;
+    const int f    = pixels ? 'f' : 'g';
+
     QValidator * validator(nullptr);
-    if(CanvasExportConfig::Pixels == m_config->unit())
+    if(pixels)
         validator = m_intValidator;
     else
         validator = m_doubleValidator;
@@ -134,12 +189,12 @@ void CanvasExporter::update()
     if(m_ui->widthLineEdit->validator() != validator)
         m_ui->widthLineEdit->setValidator(validator);
     if(m_ui->widthLineEdit != m_lastSizeComponentChanged)
-        m_ui->widthLineEdit->setText(QString::number(m_config->width(), 'g', 4));
+        m_ui->widthLineEdit->setText(QString::number(m_config->width(), f, prec));
 
     if(m_ui->heightLineEdit->validator() != validator)
         m_ui->heightLineEdit->setValidator(validator);
     if(m_ui->heightLineEdit != m_lastSizeComponentChanged)
-        m_ui->heightLineEdit->setText(QString::number(m_config->height(), 'g', 4));
+        m_ui->heightLineEdit->setText(QString::number(m_config->height(), f, prec));
 
     m_ui->resolutionLineEdit->setText(QString::number(m_config->ppi(), 'g', 4));
 
@@ -250,45 +305,38 @@ const QString CanvasExporter::filePath()
 
     return filePath;
 }
-//
-//const bool CanvasExporter::save(
-//    const QImage & image) const
-//{
-//    m_image = image;
-//    return save();
-//}
-//
-//const bool CanvasExporter::save() const
-//{
-//    if(m_filePath.isEmpty())
-//        return false;
-//
-//    if(m_image.isNull())
-//    {
-//        qWarning("No image for export.");
-//        return false;
-//    }
-//
-//    return m_image.save(m_filePath);
-//}
-//
-//const bool CanvasExporter::aspect() const
-//{
-//    return m_aspect;
-//}
-//
-//const bool CanvasExporter::alpha() const
-//{
-//    return m_alpha;
-//}
-//
-//const QSize & CanvasExporter::size() const
-//{
-//    return m_size;
-//}
-//
-//const QString & CanvasExporter::filePath() const
-//{
-//    return m_filePath;
-//}
-//}
+
+void CanvasExporter::on_presetsComboBox_currentIndexChanged(int index)
+{
+    if(index == 0)  // in this case the custom configuration is active
+        return;
+
+    if(index < m_customPresets.size() + 1)  // these are custom presets
+    {
+        if(!m_customPresets.contains(m_config))
+            delete m_config;
+
+        m_config = m_customPresets[index - 1];
+        update();
+
+        return;
+    }
+
+    // else, common presets from config can be retrieved
+
+    QAbstractItemModel * model = m_ui->presetsComboBox->model();
+    if(!model->data(model->index(index, 0), Qt::UserRole + 1).isValid())
+        return;
+
+    QString identifier(m_ui->presetsComboBox->itemText(index));
+    CanvasExportConfig * config(CanvasExportConfig::preset(identifier));
+    if(!config)
+        return;
+
+    if(!m_customPresets.contains(m_config))
+        delete m_config;
+
+    m_config = config;
+
+    update();
+}

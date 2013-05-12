@@ -32,7 +32,9 @@ public:
     ,   const bool advanced = false);
 
 protected:
-    CanvasExporter(QWidget * parent = nullptr);
+    CanvasExporter(
+        const QSize & size
+    ,   QWidget * parent = nullptr);
     virtual ~CanvasExporter();
 
     void update();
@@ -51,6 +53,8 @@ protected slots:
     void on_alphaCheckBox_stateChanged(int state);
     void on_aspectCheckBox_stateChanged(int state);
 
+    void on_presetsComboBox_currentIndexChanged(int index);
+
 protected:
     QLineEdit * m_lastSizeComponentChanged;
 
@@ -60,5 +64,5 @@ protected:
     const std::unique_ptr<Ui_CanvasExporter> m_ui;
 
     CanvasExportConfig * m_config;
-    QSize m_canvasSize;
+    QList<CanvasExportConfig *> m_customPresets;
 };
