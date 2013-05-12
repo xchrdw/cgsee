@@ -17,6 +17,7 @@ class QDoubleValidator;
 
 class AbstractPainter;
 class Canvas;
+class QSettings;
 
 
 class Ui_CanvasExporter;
@@ -37,9 +38,19 @@ protected:
     ,   QWidget * parent = nullptr);
     virtual ~CanvasExporter();
 
+    const QString filePath();
+    const QString incrementLastFilePath();
+
     void update();
 
-    const QString filePath();
+    void addDummyPreset(const QString & text);
+    void addCustomPreset(
+        const QString & text
+    ,   const QSize & size);
+    void addConfigPreset(const QString & text);
+
+    void restoreState(const QSettings & s);
+    void saveState(QSettings & s);
 
 protected slots:
     void on_widthLineEdit_textEdited(const QString & text);
