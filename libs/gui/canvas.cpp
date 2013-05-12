@@ -18,9 +18,9 @@ Canvas::Canvas(
     QWidget * parent)
 
 :   QGLWidget(format.asQGLFormat(), parent)
-,   m_format(format)
-,   m_timer(nullptr)
 ,   m_painter(nullptr)
+,   m_timer(nullptr)
+,   m_format(format)
 {
     m_timer = new QBasicTimer();
     //m_timer->start(format.vsync() ? 1000/60 : 0, this);

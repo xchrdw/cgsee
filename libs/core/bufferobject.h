@@ -70,8 +70,6 @@ void BufferObject::data(
     m_type   = type;
     m_size   = size;
 
-    int te = sizeof(T);
-
     glBufferData(m_target, m_count * sizeof(T), v.data(), m_usage);
     glError();
 }
