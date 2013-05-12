@@ -35,8 +35,6 @@ public:
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
-    Canvas * canvas() const;
-
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();

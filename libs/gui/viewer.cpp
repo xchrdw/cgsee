@@ -1,6 +1,8 @@
 
 #include <GL/glew.h>
 
+#include <cassert>
+
 #include <QOpenGLContext>
 #include <QSettings>
 
@@ -13,8 +15,6 @@
 #include <core/abstractpainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
-
-#include <iostream>
 
 
 namespace 
@@ -132,19 +132,16 @@ AbstractPainter * Viewer::painter()
     return m_qtCanvas->painter();
 }
 
-Canvas * Viewer::canvas() const
-{
-    return m_qtCanvas;
-}
-
 void Viewer::on_captureAsImageAction_triggered()
 {
-    CanvasExporter::save(*canvas(), this);
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this);
 }
 
 void Viewer::on_captureAsImageAdvancedAction_triggered()
 {
-    CanvasExporter::save(*canvas(), this, true);
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this, true);
 }
 
 void Viewer::on_reloadAllShadersAction_triggered()
