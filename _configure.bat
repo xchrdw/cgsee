@@ -1,5 +1,5 @@
-set GLEW_HOME=C:/p/3rdp/glew-1.9.0
-set QT_DIR=C:/Qt/5.0.2
-set GLM_HOME=C:/p/3rdp/glm-0.9.4.3
-
-set PATH=%GLEW_HOME%\bin;%QT_DIR%\qtbase\bin;%PATH%;
+set GLEW_HOME=<REPLACE>
+set QT_DIR=<REPLACE>
+set GLM_HOME=<REPLACE>
+set QT_QPA_PLATFORM_PLUGIN_PATH=%QT_DIR%/plugins/platforms
+set PATH=%GLEW_HOME%/bin;%QT_DIR%/bin;%PATH%;
