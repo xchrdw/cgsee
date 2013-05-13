@@ -6,16 +6,16 @@ public:
     FlightNavigation(Camera * camera);
     ~FlightNavigation(void);
     
-    void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
     
-    void wheelEvent(QWheelEvent *event) override;
-    void reset();
+    virtual void wheelEvent(QWheelEvent *event);
+    virtual void reset();
     
     virtual void setFovy(float fovy);
     float getFovy();
     
-private:
+protected:
     //Defines the view
     glm::vec3 m_eye;
     glm::vec3 m_center; 

@@ -30,6 +30,8 @@ set(SOURCES
     flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
+    fpsnavigation.h
+    fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
     glformat.h
