@@ -71,28 +71,42 @@ void FlightNavigation::wheelEvent(QWheelEvent *event){
 }
 
 void FlightNavigation::setFromMatrix(glm::mat4 view){ 
-    m_fovy = 45.0f;
-    m_xView = glm::vec3(0.0f ,0.0f, 0.0f);
-    m_yView = glm::vec3(0.0f ,0.0f ,0.0f);
-    m_zView = glm::vec3(0.0f ,0.0f ,0.0f);
     
-    //inverse glm lookat
-    m_yView.x = view[0][1];
-    m_yView.y = view[1][1];
-    m_yView.z = view[2][1];
+    //Extract Up Vector and Viewing direction from viewmatrix
+    m_up.x = view[0][1];
+    m_up.y = view[1][1];
+    m_up.z = view[2][1];
     
-    m_zView.x = - view [0][2];
-    m_zView.y = - view [1][2];
-    m_zView.z = - view [2][2];
+    glm::vec3 direction;
+    direction.x = - view [0][2];
+    direction.y = - view [1][2];
+    direction.z = - view [2][2];
     
-    m_eye.x = view._inverse()[0][3];
-    m_eye.y = view._inverse()[1][3];
-    m_eye.z = view._inverse()[2][3];
+    //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
     
-    m_up = m_yView;
-    m_center = glm::normalize(m_eye + m_zView);
+    glm::mat4 modelViewT = glm::transpose(view);
+    
+    // Get plane normals
+    glm::vec3 n1(modelViewT[0]);
+    glm::vec3 n2(modelViewT[1]);
+    glm::vec3 n3(modelViewT[2]);
+    
+    // Get plane distances
+    float d1(modelViewT[0].w);
+    float d2(modelViewT[1].w);
+    float d3(modelViewT[2].w);
+    
+    // Get the intersection of these 3 planes
+    // (uisng math from RealTime Collision Detection by Christer Ericson)
+    glm::vec3 n2n3 = glm::cross(n2, n3);
+    float denom = glm::dot(n1, n2n3);
+    
+    m_eye = (n2n3 * d1) + glm::cross(n1, (d3*n2) - (d2*n3));
+    m_eye /= -denom;
+    
+    m_center = glm::normalize(m_eye + direction);
+    
     updateView();
- //   updateCamera();
     updateAxis();
 }
 
