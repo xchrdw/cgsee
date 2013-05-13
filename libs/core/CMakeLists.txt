@@ -14,6 +14,7 @@ set(SOURCES
     abstractapplication.cpp
     abstracttimer.h
     assimpwrapper.h
+    assimpwrapper.cpp
     autotimer.h
     autotimer.cpp
     bufferobject.h

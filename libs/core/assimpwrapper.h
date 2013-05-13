@@ -1,12 +1,21 @@
 
 #pragma once
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h> 
-#include <assimp/postprocess.h>
+#include <QString>
+
+#include "declspec.h"
+#include "common.h"
+
+class Group;
+struct aiNode;
+struct aiScene;
 
 class CGSEE_API AssimpWrapper
 {
-private:
-  Assimp::Importer importer;  
+public:
+    static Group * groupFromFile(const QString & filePath);
+    
+protected:
+    static Group * parseNode(const aiScene & scene, aiNode & node);
+    AssimpWrapper();
 };
