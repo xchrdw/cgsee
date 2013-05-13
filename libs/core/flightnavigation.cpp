@@ -104,7 +104,7 @@ void FlightNavigation::setFromMatrix(glm::mat4 view){
     m_eye = (n2n3 * d1) + glm::cross(n1, (d3*n2) - (d2*n3));
     m_eye /= -denom;
     
-    m_center = glm::normalize(m_eye + direction);
+    m_center = m_eye + direction;
     
     updateView();
     updateAxis();
