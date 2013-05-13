@@ -26,7 +26,7 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setPainter(m_painter);
 
     AbstractNavigation * navigation = new ArcballNavigation(camera);
-    navigation->reset();
+    navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
     
     // Start

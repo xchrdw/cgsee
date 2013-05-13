@@ -53,7 +53,7 @@ glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v) {
 void ArcballNavigation::updateZoom()
 {
     float delta = (m_mouse_cur - m_mouse_last).y / m_height; // normalized height difference
-    glm::vec3 zoom_in_camera = glm::vec3(0, 0, -delta) * glm::mat3(m_viewMatrix) ; // TODO relative to z-buffer
+    glm::vec3 zoom_in_camera = glm::vec3(0, 0, -delta*5) * glm::mat3(m_viewMatrix) ; // TODO relative to z-buffer
     
     glm::mat4 translate = glm::translate(glm::mat4(), zoom_in_camera);
     m_viewMatrix = m_viewMatrix * translate;

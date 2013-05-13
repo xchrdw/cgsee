@@ -149,25 +149,44 @@ Camera * Viewer::camera()
     return m_camera;
 }
 
+
+void Viewer::setFlightManipulator()
+{
+    setNavigation(new FlightNavigation(m_camera));
+    m_ui->flightManipulatorAction->setChecked(true);
+    m_ui->trackballManipulatorAction->setChecked(false);
+    qDebug("Flight navigation, use WASD and arrow keys");
+}
+
+void Viewer::setTrackballManipulator()
+{
+    setNavigation(new ArcballNavigation(m_camera));
+    m_ui->flightManipulatorAction->setChecked(false);
+    m_ui->trackballManipulatorAction->setChecked(true);
+    qDebug("Arcball navigation, use left and right mousebuttons");
+}
+
+
+
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
     switch (event->key())
     {
+    case Qt::Key_Escape:
+        close();
+        break;
     case Qt::Key_1:
-        setNavigation(new FlightNavigation(m_camera)); 
-        qDebug("Flight navigation, use WASD and arrow keys");
+        setFlightManipulator();
         break;
     case Qt::Key_2:
-        setNavigation(new ArcballNavigation(m_camera));
-        qDebug("Arcball navigation, use left and right mousebuttons");
+        setTrackballManipulator();
         break;
-    //Reset to views
     case Qt::Key_R:
         navigation()->reset();
         break;
 
     default:
-        if (event->key() >= Qt::Key_F1 && event->key() <= Qt::Key_F12)
+        if (Qt::Key_F1 <= event->key() && event->key() <= Qt::Key_F12)
         {
             if(event->modifiers() == Qt::ControlModifier) {
                 navigation()->saveView(event->key() - Qt::Key_F1);
@@ -188,12 +207,11 @@ void Viewer::keyReleaseEvent( QKeyEvent *event )
 }
 
 void Viewer::on_flightManipulatorAction_triggered(){
-    setNavigation(new FlightNavigation(m_camera));
+    setFlightManipulator();
 }
     
 void Viewer::on_trackballManipulatorAction_triggered(){
-    setNavigation(new ArcballNavigation(m_camera));
+    setTrackballManipulator();
 }
-
 
 

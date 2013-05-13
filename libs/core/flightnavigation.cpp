@@ -11,7 +11,6 @@ FlightNavigation::FlightNavigation(Camera * camera)
     : AbstractNavigation(camera)
     , m_timesKeyPressed(0)
 {
-    //need fix if viewmatrix isn't defined
     setFromMatrix(m_viewMatrix);
 }
 

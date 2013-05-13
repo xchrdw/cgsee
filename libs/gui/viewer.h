@@ -44,13 +44,16 @@ public:
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent (QKeyEvent *event);
 
-    public slots:
+    void setFlightManipulator();
+    void setTrackballManipulator();
+
+
+public slots:
     void on_flightManipulatorAction_triggered();
     void on_trackballManipulatorAction_triggered();
 
+
 protected:
-
-
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
     static const HGLRC currentContextHandle();
