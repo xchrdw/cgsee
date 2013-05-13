@@ -4,6 +4,8 @@
 
 #include <glm/glm.hpp>
 
+#include <QMap>
+
 #include "declspec.h"
 #include "common.h"
 
@@ -18,7 +20,9 @@ public:
     ,   const GLenum format
     ,   const GLenum type
     ,   const GLenum attachment
-    ,   const bool   depth);
+    ,   const bool   depth
+    ,   const bool   multisampling = false
+    ,   const unsigned int samples = 8);
 
     virtual ~FrameBufferObject();
 
@@ -30,7 +34,7 @@ public:
     ,   const QString & uniform
     ,   const glm::uint slot) const;
 
-    void releaseTexture2D() const;
+    void releaseTexture2D(const glm::uint slot) const;
 
     void resize(
         const unsigned int width
@@ -42,12 +46,14 @@ protected:
 
     inline const bool isFrameBuffer() const;
     inline const bool isRenderBuffer() const;
-    inline const bool isTexture() const;
+    inline const bool isTexture(const GLuint texture) const;
 
 protected:
     mutable GLuint m_fbo;
     mutable GLuint m_render;
-    mutable GLuint m_texture;
+
+    typedef QMap<glm::uint, GLuint> t_textures;
+    mutable t_textures m_textures;
 
     glm::ivec2 m_size;
 
@@ -56,4 +62,6 @@ protected:
     const GLenum m_type;
     const GLenum m_attachment;
     const bool   m_depth;
+    const bool   m_multisampling;
+    const unsigned int m_samples;
 };

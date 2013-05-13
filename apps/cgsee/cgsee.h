@@ -5,6 +5,7 @@
 
 class Viewer;
 class Painter;
+class DeferredPainter;
 
 class CGSee : public AbstractApplication
 {
@@ -14,5 +15,6 @@ public:
 
 protected:
     Viewer * m_viewer;
-    Painter * m_painter;
+    //Painter * m_painter;
+    DeferredPainter * m_painter;
 };

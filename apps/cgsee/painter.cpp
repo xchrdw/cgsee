@@ -143,6 +143,6 @@ void Painter::releaseSampler(
     t_samplerByName::const_iterator i(sampler.begin());
     const t_samplerByName::const_iterator iEnd(sampler.cend());
 
-    for(; i != iEnd; ++i)
-        i.value()->releaseTexture2D();
+    for(glm::uint slot(0); i != iEnd; ++i, ++slot)
+        i.value()->releaseTexture2D(slot);
 }

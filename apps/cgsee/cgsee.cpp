@@ -1,5 +1,6 @@
 #include "cgsee.h"
 #include "painter.h"
+#include "deferredpainter.h"
 
 #include <gui/viewer.h>
 
@@ -15,7 +16,8 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setWindowTitle(title());
     m_viewer->initialize(format());
 
-    m_painter = new Painter();
+    //m_painter = new Painter();
+    m_painter = new DeferredPainter();
     m_viewer->setPainter(m_painter);
 
     // Start

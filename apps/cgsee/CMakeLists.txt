@@ -6,6 +6,8 @@ set(SOURCES
 
     cgsee.h
     cgsee.cpp
+    deferredpainter.h
+    deferredpainter.cpp
     main.cpp
     painter.h
     painter.cpp
