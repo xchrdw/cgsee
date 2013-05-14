@@ -7,17 +7,12 @@ FileNavigator::FileNavigator(
 
 :	m_explorer(nullptr)
 ,	m_model(nullptr)
-,	m_dock(nullptr)
 {
 	m_model = new QFileSystemModel;
 	this->setModel(m_model);
 
 	setFilter(QDir::NoDotDot | QDir::AllDirs);
 	setRoot(QDir::currentPath());
-
-	m_dock = new QDockWidget(tr("Navigator"));
-	m_dock->setWidget(this);
-	m_dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 };
 
 void FileNavigator::setRoot(QString rootPath)
@@ -33,7 +28,6 @@ void FileNavigator::setFilter(QDir::Filters filters)
 FileNavigator::~FileNavigator()
 {
 	delete m_model;
-	// delete m_dock;
 }
 
 void FileNavigator::setExplorer(FileExplorer * fileExplorer)
@@ -44,9 +38,4 @@ void FileNavigator::setExplorer(FileExplorer * fileExplorer)
 FileExplorer * FileNavigator::explorer()
 {
 	return m_explorer;
-}
-
-QDockWidget * FileNavigator::dock()
-{
-	return m_dock;
 }

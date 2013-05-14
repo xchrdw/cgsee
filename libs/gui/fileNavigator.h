@@ -5,7 +5,6 @@
 
 #include <QTreeView>
 #include <QFileSystemModel>
-#include <QDockWidget>
 
 #include <core/declspec.h>
 
@@ -25,12 +24,10 @@ public:
 
 	void setExplorer(FileExplorer * fileExplorer);
 	FileExplorer * explorer();
-	QDockWidget * dock();
 
 protected:
 	void setRoot(QString rootPath);
 
 	FileExplorer * m_explorer;
 	QFileSystemModel * m_model;
-	QDockWidget * m_dock;
 };

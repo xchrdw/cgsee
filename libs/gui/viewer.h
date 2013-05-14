@@ -58,6 +58,8 @@ protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
 
     Canvas * m_qtCanvas;
+    QDockWidget * m_dockLeft;
+    QDockWidget * m_dockBottom;
     FileNavigator * m_fileNavigator;
     FileExplorer * m_fileExplorer;
 };

@@ -30,6 +30,8 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 
 ,   m_qtCanvas(nullptr)
+,   m_dockLeft(nullptr)
+,   m_dockBottom(nullptr)
 ,   m_fileNavigator(nullptr)
 ,   m_fileExplorer(nullptr)
 {
@@ -46,14 +48,19 @@ Viewer::Viewer(
 
 void Viewer::initializeNavigatorExplorer()
 {
-    m_fileNavigator = new FileNavigator(this);
-    m_fileExplorer = new FileExplorer(this);
+    m_dockLeft = new QDockWidget(tr("Navigator"));
+    m_fileNavigator = new FileNavigator(m_dockLeft);
+    m_dockLeft->setWidget(m_fileNavigator);
+
+    m_dockBottom = new QDockWidget(tr("Explorer"));
+    m_fileExplorer = new FileExplorer(m_dockBottom);
+    m_dockBottom->setWidget(m_fileExplorer);
 
     m_fileNavigator->setExplorer(m_fileExplorer);
     m_fileExplorer->setNavigator(m_fileNavigator);
 
-    this->addDockWidget(Qt::LeftDockWidgetArea, m_fileNavigator->dock());
-    this->addDockWidget(Qt::BottomDockWidgetArea, m_fileExplorer->dock());
+    this->addDockWidget(Qt::LeftDockWidgetArea, m_dockLeft);
+    this->addDockWidget(Qt::BottomDockWidgetArea, m_dockBottom);
 
     QObject::connect(
         m_fileNavigator, SIGNAL(clicked(const QModelIndex)),

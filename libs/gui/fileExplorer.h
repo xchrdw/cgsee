@@ -5,7 +5,6 @@
 
 #include <QListView>
 #include <QFileSystemModel>
-#include <QDockWidget>
 
 #include <core/declspec.h>
 
@@ -25,7 +24,6 @@ public:
 
 	void setNavigator(FileNavigator * fileNavigator);
 	FileNavigator * navigator();
-	QDockWidget * dock();
 
 public slots:
 	void callSetRoot(const QModelIndex & index);
@@ -35,5 +33,4 @@ protected:
 
 	FileNavigator * m_navigator;
 	QFileSystemModel * m_model;
-	QDockWidget * m_dock;
 };
