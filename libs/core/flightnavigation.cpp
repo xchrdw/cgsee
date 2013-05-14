@@ -46,10 +46,10 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
 
         //Move forward, backward
         case Qt::Key_Up:
-            translate(speed);
+            forward(speed);
             break;
         case Qt::Key_Down:
-            translate(-speed);
+            forward(-speed);
             break;
             
         default:
@@ -147,7 +147,7 @@ void FlightNavigation::roll(float angle){
     updateAxis();
 }
 
-void FlightNavigation::translate(float speed){
+void FlightNavigation::forward(float speed){
     glm::vec3 step = speed * m_zView;
     m_center += step;
     m_eye += step;

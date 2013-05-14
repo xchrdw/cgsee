@@ -18,5 +18,5 @@ public:
     
 private:
     void yawPitch(float yawAngle, float pitchAngle);
-
+    void sideward(float speed);
 };

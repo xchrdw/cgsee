@@ -46,7 +46,7 @@ protected:
     void roll(float angle);
     
     //Move forward or backward (negative speed) to the center of the view
-    void translate(float speed);
+    void forward(float speed);
     
     void setFromMatrix(glm::mat4 view);
 
