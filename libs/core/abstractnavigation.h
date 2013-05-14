@@ -28,7 +28,10 @@ public:
 
     virtual void reset();
 
-    //void assignCoordinateProvider(AbstractCoordinateProvider *provider);
+    //void assignCoordinateProvider(CoordinateProvider *provider);
+
+    virtual void update(); // called on every frame.
+
 
     // interaction mapping
 
@@ -48,9 +51,6 @@ public:
     void loadView(int viewnr);
 
     void setViewPort(const int width, const int height);
-    
-    virtual void setFovy(float fovy);
-    virtual float getFovy();
 
     void updateCamera();
 

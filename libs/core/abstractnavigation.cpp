@@ -59,11 +59,6 @@ void AbstractNavigation::setViewPort( const int width, const int height )
     m_height = height;
 }
 
-void AbstractNavigation::setFovy(float fovy) { }
-float AbstractNavigation::getFovy(){
-    //Return Standard FOV if Navigation hasn't implemented a FOV manipulator
-    return 45.0f;
-}
 
 void AbstractNavigation::saveView(int viewnr)
 {
@@ -96,6 +91,9 @@ const glm::mat4 AbstractNavigation::viewMatrix()
     return m_viewMatrix;
 }
 
+void AbstractNavigation::update()
+{
+}
 
 
 

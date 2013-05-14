@@ -6,13 +6,13 @@ public:
     FlightNavigation(Camera * camera);
     ~FlightNavigation(void);
     
-    virtual void keyPressEvent(QKeyEvent *event);
-    virtual void keyReleaseEvent(QKeyEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void keyReleaseEvent(QKeyEvent *event) override;
     
-    virtual void wheelEvent(QWheelEvent *event);
-    virtual void reset();
+    virtual void wheelEvent(QWheelEvent *event) override;
+    virtual void reset() override;
     
-    virtual void setFovy(float fovy);
+    void setFovy(float fovy);
     float getFovy();
     
 protected:

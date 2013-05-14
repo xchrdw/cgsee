@@ -135,6 +135,8 @@ void Canvas::resizeGL(
 void Canvas::paintGL()
 {
     glError();  
+    if(m_navigation)
+        m_navigation->update();
 
     if(m_painter)
         m_painter->paint();
