@@ -19,11 +19,14 @@ Group * AssimpWrapper::groupFromFile(const QString & filePath)
     if (!scene) {
         qCritical("Assimp couldn't load %s", qPrintable(filePath));
     }
-        
-    return parseNode(*scene, *(scene->mRootNode));
+    
+    const QVector<PolygonalDrawable *> * drawables = parseMeshes(scene->mMeshes, scene->mNumMeshes);
+    Group * group = parseNode(*scene, *drawables, *(scene->mRootNode));
+    delete drawables;
+    return group;
 }
 
-Group * AssimpWrapper::parseNode(const aiScene & scene, const aiNode & node)
+Group * AssimpWrapper::parseNode(const aiScene & scene, const QVector<PolygonalDrawable *> &drawables, const aiNode & node)
 {
     Group * group = new Group(node.mName.C_Str());
     
@@ -37,12 +40,21 @@ Group * AssimpWrapper::parseNode(const aiScene & scene, const aiNode & node)
     group->setTransform(transform);
     
     for (int i = 0; i < node.mNumChildren; i++)
-        group->append(parseNode(scene, *(node.mChildren[i])));
+        group->append(parseNode(scene, drawables, *(node.mChildren[i])));
     
     for (int i = 0; i < node.mNumMeshes; i++)
-        group->append(parseMesh(*(scene.mMeshes[node.mMeshes[i]])));
+        group->append(drawables[node.mMeshes[i]]);
     
     return group;
+}
+
+const QVector<PolygonalDrawable *> * AssimpWrapper::parseMeshes(aiMesh ** meshes, const unsigned int numMeshes)
+{
+    QVector<PolygonalDrawable *> * drawables = new QVector<PolygonalDrawable *>(numMeshes);
+    for (int i = 0; i < numMeshes; i++) 
+        drawables->insert(i, parseMesh(*meshes[i]));
+
+    return drawables;
 }
 
 PolygonalDrawable * AssimpWrapper::parseMesh(const aiMesh & mesh)
