@@ -54,6 +54,10 @@ void Viewer::initializeNavigatorExplorer()
 
     this->addDockWidget(Qt::LeftDockWidgetArea, m_fileNavigator->dock());
     this->addDockWidget(Qt::BottomDockWidgetArea, m_fileExplorer->dock());
+
+    QObject::connect(
+        m_fileNavigator, SIGNAL(clicked(const QModelIndex)),
+        m_fileExplorer, SLOT(callSetRoot(const QModelIndex)));
 }
 
 #ifdef WIN32

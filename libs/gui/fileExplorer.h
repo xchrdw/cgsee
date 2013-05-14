@@ -15,6 +15,8 @@ class FileNavigator;
 
 class CGSEE_API FileExplorer : public QListView
 {
+	Q_OBJECT
+	
 public:
 	FileExplorer(QObject * parent = nullptr);
 	virtual ~FileExplorer();
@@ -24,6 +26,9 @@ public:
 	void setNavigator(FileNavigator * fileNavigator);
 	FileNavigator * navigator();
 	QDockWidget * dock();
+
+public slots:
+	void callSetRoot(const QModelIndex & index);
 
 protected:
 	void setRoot(QString rootPath);
