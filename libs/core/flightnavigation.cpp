@@ -5,8 +5,6 @@
 //glm to rotate around axis
 #include "glm/gtx/rotate_vector.hpp"
 
-#include <iostream>
-
 FlightNavigation::FlightNavigation(Camera * camera) 
     : AbstractNavigation(camera)
     , m_timesKeyPressed(0)

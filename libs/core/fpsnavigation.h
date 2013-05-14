@@ -17,6 +17,15 @@ public:
     virtual void wheelEvent(QWheelEvent *event) override;
     
 private:
-    void yawPitch(float yawAngle, float pitchAngle);
+    void pitchYaw(float pitchAngle, float yawAngle);
     void sideward(float speed);
+    void forward(float speed);
+    
+    void pitch(float angle);
+    void yaw(float angle);
+    
+    bool m_inGameMode;
+    
+    glm::vec2 m_lastMousePosition;
+    float m_pitchAngle;
 };

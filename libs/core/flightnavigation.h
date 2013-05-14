@@ -37,16 +37,16 @@ protected:
     
     //Yaw, pitch, roll: http://upload.wikimedia.org/wikipedia/commons/7/7e/Rollpitchyawplain.png
     //Rotate center around y-axis
-    void yaw(float angle);
+    virtual void yaw(float angle);
     
     //Rotate up - vector and center around x-axis
-    void pitch(float angle);
+   virtual void pitch(float angle);
     
     //Rotate up-vector around z axis
     void roll(float angle);
     
     //Move forward or backward (negative speed) to the center of the view
-    void forward(float speed);
+    virtual void forward(float speed);
     
     void setFromMatrix(glm::mat4 view);
 
