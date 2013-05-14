@@ -1,10 +1,10 @@
 #include "flightnavigation.h"
 
-class CGSEE_API FPSNavigation : public FlightNavigation
+class CGSEE_API FpsNavigation : public FlightNavigation
 {
 public:
-    FPSNavigation(Camera * camera);
-    ~FPSNavigation(void);
+    FpsNavigation(Camera * camera);
+    ~FpsNavigation(void);
     
     virtual void update() override;
 

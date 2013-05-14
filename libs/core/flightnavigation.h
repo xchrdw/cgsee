@@ -1,5 +1,8 @@
 #include "abstractnavigation.h"
 
+#ifndef flightnavigation_h
+#define flightnavigation_h
+
 class CGSEE_API FlightNavigation : public AbstractNavigation
 {
 public:
@@ -49,3 +52,5 @@ protected:
 
     int m_timesKeyPressed;
 };
+
+#endif // flightnavigation_h

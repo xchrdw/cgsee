@@ -1,4 +1,3 @@
-
 #include <QOpenGLContext>
 #include <QSettings>
 
@@ -9,7 +8,9 @@
 #include "abstractpainter.h"
 #include "core/abstractnavigation.h"
 #include "core/flightnavigation.h"
+#include "core/fpsnavigation.h"
 #include "core/arcballnavigation.h"
+
 #include <core/glformat.h>
 
 
@@ -154,6 +155,7 @@ void Viewer::setFlightManipulator()
 {
     setNavigation(new FlightNavigation(m_camera));
     m_ui->flightManipulatorAction->setChecked(true);
+    m_ui->fpsManipulatorAction->setChecked(false);
     m_ui->trackballManipulatorAction->setChecked(false);
     qDebug("Flight navigation, use WASD and arrow keys");
 }
@@ -162,8 +164,18 @@ void Viewer::setTrackballManipulator()
 {
     setNavigation(new ArcballNavigation(m_camera));
     m_ui->flightManipulatorAction->setChecked(false);
+    m_ui->fpsManipulatorAction->setChecked(false);
     m_ui->trackballManipulatorAction->setChecked(true);
     qDebug("Arcball navigation, use left and right mousebuttons");
+}
+    
+void Viewer::setFpsManipulator()
+{
+        setNavigation(new FpsNavigation(m_camera));
+        m_ui->flightManipulatorAction->setChecked(false);
+        m_ui->fpsManipulatorAction->setChecked(true);
+        m_ui->trackballManipulatorAction->setChecked(false);
+        qDebug("FPS Navigation, use mouse and WASD");
 }
 
 
@@ -213,5 +225,8 @@ void Viewer::on_flightManipulatorAction_triggered(){
 void Viewer::on_trackballManipulatorAction_triggered(){
     setTrackballManipulator();
 }
-
+    
+void Viewer::on_fpsManipulatorAction_triggered(){
+    setFpsManipulator();
+}
 

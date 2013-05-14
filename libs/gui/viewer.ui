@@ -228,11 +228,14 @@
   </action>
   <action name="fpsManipulatorAction">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>FPS Manipulator</string>
+    <string>FPS Manipulator</string>    
    </property>
+    <property name="checkable">
+          <bool>false</bool>
+    </property>
   </action>
   <action name="specifyBenchmarkAction">
    <property name="enabled">

@@ -51,8 +51,6 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
         case Qt::Key_Down:
             translate(-speed);
             break;
-         
-        //Todo: Define Default views along different axis (like Blender)
             
         default:
             break;

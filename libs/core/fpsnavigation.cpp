@@ -1,44 +1,49 @@
 #include "fpsnavigation.h"
+#include "camera.h"
 
-FPSNavigation::FPSNavigation(Camera * camera)
+FpsNavigation::FpsNavigation(Camera * camera)
 : FlightNavigation(camera)
 {
     setFromMatrix(m_viewMatrix);
 }
 
-FPSNavigation::~FPSNavigation(void)
+FpsNavigation::~FpsNavigation(void)
 {
     
 }
 
-void FPSNavigation::keyPressEvent(QKeyEvent *event){
+void FpsNavigation::keyPressEvent(QKeyEvent *event){
     
 }
 
-void FPSNavigation::keyReleaseEvent(QKeyEvent *event){
+void FpsNavigation::keyReleaseEvent(QKeyEvent *event){
     
 }
 
-void FPSNavigation::mouseMoveEvent(QMouseEvent * event){
+void FpsNavigation::mouseMoveEvent(QMouseEvent * event){
     
 }
 
-void FPSNavigation::mousePressEvent(QMouseEvent * event){
+
+
+void FpsNavigation::mousePressEvent(QMouseEvent * event){
     
 }
 
-void FPSNavigation::mouseReleaseEvent(QMouseEvent * event){
+void FpsNavigation::mouseReleaseEvent(QMouseEvent * event){
     
 }
 
-void FPSNavigation::wheelEvent(QWheelEvent *event){
+
+void FpsNavigation::wheelEvent(QWheelEvent *event){
     
 }
-void FPSNavigation::yawPitch(float yawAngle, float pitchAngle){
-    
+void FpsNavigation::yawPitch(float yawAngle, float pitchAngle){
+
 }
 
-void FPSNavigation::update()
+void FpsNavigation::update()
 {
     // update on every frame if wasd is pressed to make smooth movements
 }
+

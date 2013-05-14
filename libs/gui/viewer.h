@@ -46,11 +46,13 @@ public:
 
     void setFlightManipulator();
     void setTrackballManipulator();
+    void setFpsManipulator();
 
 
 public slots:
     void on_flightManipulatorAction_triggered();
     void on_trackballManipulatorAction_triggered();
+    void on_fpsManipulatorAction_triggered();
 
 
 protected:
