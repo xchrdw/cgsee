@@ -42,7 +42,7 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    m_group = AssimpWrapper::groupFromFile("data/suzanne.obj");
+    m_group = AssimpWrapper::groupFromFile("data/mario.dae");
 
     if(!m_group)
     {
@@ -52,8 +52,10 @@ const bool Painter::initialize()
 
     glm::mat4 transform(1.f);
 
-    transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
+    transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
     transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
+    transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
+    transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
 
     m_group->setTransform(transform);
 
@@ -68,7 +70,7 @@ const bool Painter::initialize()
     m_camera->append(m_group);
 
     m_camera->setView(glm::lookAt(
-        glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+        glm::vec3( 0.f, 1.5f, -2.f), glm::vec3( 0.f, 0.7f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
     m_quad = new ScreenQuad();
 
