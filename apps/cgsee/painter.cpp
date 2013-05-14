@@ -12,6 +12,7 @@
 #include <core/gpuquery.h>
 #include <core/group.h>
 #include <core/objio.h>
+#include <core/assimpwrapper.h>
 #include <core/program.h>
 #include <core/screenquad.h>
 
@@ -41,7 +42,7 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
+    m_group = AssimpWrapper::groupFromFile("data/suzanne.obj");
 
     if(!m_group)
     {
