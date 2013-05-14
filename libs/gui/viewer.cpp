@@ -5,6 +5,7 @@
 
 #include <QOpenGLContext>
 #include <QSettings>
+#include <QDockWidget>
 
 #include "ui_viewer.h"
 
@@ -128,6 +129,8 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_STATE, saveState());
 
     delete m_qtCanvas;
+    delete m_dockLeft;
+    delete m_dockBottom;
     delete m_fileNavigator;
     delete m_fileExplorer;
 }
