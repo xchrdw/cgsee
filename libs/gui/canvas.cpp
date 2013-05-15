@@ -7,8 +7,8 @@
 #include <QBasicTimer>
 
 #include "canvas.h"
-#include "abstractpainter.h"
 
+#include <core/abstractpainter.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
 
@@ -18,12 +18,12 @@ Canvas::Canvas(
     QWidget * parent)
 
 :   QGLWidget(format.asQGLFormat(), parent)
-,   m_format(format)
-,   m_timer(nullptr)
 ,   m_painter(nullptr)
+,   m_timer(nullptr)
+,   m_format(format)
 {
     m_timer = new QBasicTimer();
-    m_timer->start(format.vsync() ? 1000/60 : 0, this);
+    //m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
 
@@ -79,18 +79,10 @@ void Canvas::initializeGL()
     glError();
 }
 
-void Canvas::updateViewport() const
-{
-    glViewport(0, 0, width(), height());
-    glError();
-}
-
 void Canvas::resizeGL(
     int width
 ,   int height)
 {
-    updateViewport();
-    
     if(m_painter)
         m_painter->resize(width, height);
 }
@@ -157,4 +149,29 @@ void Canvas::setPainter(AbstractPainter * painter)
 AbstractPainter * Canvas::painter()
 {
     return m_painter;
+}
+
+const QImage Canvas::capture(
+    const bool alpha)
+{
+    // aspect is false, since this accesses the cameras projection matrix with same aspect...
+    return capture(size(), false, alpha);
+}
+
+#include <QSize>
+
+const QImage Canvas::capture(
+    const QSize & size
+,   const bool aspect
+,   const bool alpha)
+{
+    if(!m_painter)
+        return QImage();
+
+    return m_painter->capture(*this, size, aspect, alpha);
+}
+
+void Canvas::resize(int width, int height)
+{
+    QGLWidget::resize(width, height);
 }
