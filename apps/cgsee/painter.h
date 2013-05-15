@@ -6,6 +6,8 @@
 
 #include <gui/abstractpainter.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 
 class Camera;
 class Group;
@@ -45,12 +47,15 @@ protected:
     Group * m_group;
     ScreenQuad * m_quad;
 
+	glm::vec3 camPos;
+
     Program * m_normalz;
 	Program * m_flat;
 	Program * m_gouraud;
 	Program * m_phong;
 	Program * m_useProgram;
     FrameBufferObject * m_fboNormalz;
+	int count;
 
     Program * m_flush;
 };

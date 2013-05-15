@@ -1,5 +1,5 @@
 
-#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
 
 #include "painter.h"
 
@@ -30,6 +30,7 @@ Painter::Painter()
 ,   m_normalz(nullptr)
 ,   m_flat(nullptr)
 ,   m_gouraud(nullptr)
+,   m_phong(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
 ,   m_quad(nullptr)
@@ -77,13 +78,12 @@ const bool Painter::initialize()
 
     m_camera->append(m_group);
 
-	glm::vec3 camPos( 0.8f, 0.5f,-2.f);
-
+	camPos=glm::vec3( 1.8f, 0.5f,-2.f);
     m_camera->setView(glm::lookAt(
-        camPos/*glm::vec3( -1.f, 0.f,-2.f)*/, glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+        camPos , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
     m_quad = new ScreenQuad();
-
+	count=0;
     // G-Buffer Shader
 
 	//FLAT
@@ -116,7 +116,7 @@ const bool Painter::initialize()
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/phong.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_phong;
+	m_useProgram = m_flat;
 
 	m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
 	m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,-4.5,7.5));
@@ -129,7 +129,7 @@ const bool Painter::initialize()
 	lightMat[3] = glm::vec4(0,0,0,0);			//nichts?
 	m_useProgram->setUniform(LIGHT_UNIFORM, lightMat, false); 
 	
-	float shin=0.4f;
+	float shin=1.4f;
 	m_useProgram->setUniform(LIGHTSHININESS_UNIFORM, shin);
 	
 	m_useProgram->setUniform(LIGHTAMBIENTGLOBAL_UNIFORM, glm::vec4(0.4));
@@ -154,6 +154,7 @@ const bool Painter::initialize()
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
+
     return true;
 }
 
@@ -162,6 +163,21 @@ void Painter::paint()
     AbstractPainter::paint();
 
 	t_samplerByName sampler;
+	count++;
+	if(count<400){
+		camPos=glm::vec3( (camPos.x-0.01f), camPos.y,camPos.z);}
+	else if(count<800){
+		camPos=glm::vec3( (camPos.x), camPos.y,camPos.z+0.01);}
+	else if(count<1200){
+		camPos=glm::vec3( (camPos.x+0.01), camPos.y,camPos.z);}
+	else if(count<1600){
+		camPos=glm::vec3( (camPos.x), camPos.y,camPos.z-0.01);}
+	else
+		count=0;
+
+    m_camera->setView(glm::lookAt(
+        camPos, glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+
 
 	// Normals and Depth to RGBA
 
