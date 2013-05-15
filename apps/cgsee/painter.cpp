@@ -50,7 +50,7 @@ Painter::~Painter()
 
 const bool Painter::initialize()
 {
-    m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
+    m_group = ObjIO::groupFromObjFile("data/suzanneVertNormals.obj");
     if(!m_group)
     {
         qWarning("Have you set the Working Directory?");
@@ -116,7 +116,7 @@ const bool Painter::initialize()
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/phong.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_normalz;
+	m_useProgram = m_phong;
 
 	m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
 	m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,-4.5,7.5));
