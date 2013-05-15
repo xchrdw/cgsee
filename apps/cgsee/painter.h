@@ -33,12 +33,12 @@ protected:
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 
-	static void bindSampler(
-		const t_samplerByName & sampler
-	,	Program * program);
+    static void bindSampler(
+        const t_samplerByName & sampler
+    ,   const Program & program);
 
-	static void releaseSampler(
-		const t_samplerByName & sampler);
+    static void releaseSampler(
+        const t_samplerByName & sampler);
 
 protected:
     Camera * m_camera;

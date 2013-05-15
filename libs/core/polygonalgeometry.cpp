@@ -6,7 +6,7 @@
 
 PolygonalGeometry::PolygonalGeometry(const QString & name)
 :   Node(name)
-,	m_mode(GL_TRIANGLES)
+,   m_mode(GL_TRIANGLES)
 {
 }
 
@@ -16,12 +16,12 @@ PolygonalGeometry::~PolygonalGeometry()
 
 const GLenum PolygonalGeometry::mode() const
 {
-	return m_mode;
+    return m_mode;
 }
 
 void PolygonalGeometry::setMode(const GLenum mode)
 {
-	m_mode = mode;
+    m_mode = mode;
 }
 
 const t_vec3s & PolygonalGeometry::vertices() const
@@ -69,11 +69,8 @@ const AxisAlignedBoundingBox PolygonalGeometry::boundingBox() const
     if(m_aabb.valid())
         return m_aabb;
 
-    t_vec3s::const_iterator i(m_vertices.begin());
-    const t_vec3s::const_iterator iEnd(m_vertices.end());
-
-    for(; i != iEnd; ++i)
-        m_aabb.extend(*i);
+    for(const glm::vec3 & v : m_vertices)
+        m_aabb.extend(v);
 
     return m_aabb;
 }
@@ -114,7 +111,7 @@ void PolygonalGeometry::retrieveNormals()
 }
 
 void PolygonalGeometry::draw(
-    Program * program
+    const Program & program
 ,   const glm::mat4 & transform)
 {
 }

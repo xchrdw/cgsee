@@ -72,6 +72,10 @@ void Viewer::initializeNavigatorExplorer()
 const HGLRC Viewer::currentContextHandle()
 {
     return  wglGetCurrentContext();
+#elif __APPLE__
+void * Viewer::currentContextHandle()
+{
+    return nullptr;
 #else
 const GLXContext Viewer::currentContextHandle()
 {
@@ -81,6 +85,8 @@ const GLXContext Viewer::currentContextHandle()
 
 #ifdef WIN32
 const HGLRC Viewer::createQtContext(const GLFormat & format)
+#elif __APPLE__
+void * Viewer::createQtContext(const GLFormat & format)
 #else
 const GLXContext Viewer::createQtContext(const GLFormat & format)
 #endif
@@ -100,12 +106,17 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 
 #ifdef WIN32
     const HGLRC qtContextHandle = currentContextHandle();
+#elif __APPLE__
+    void * qtContextHandle = currentContextHandle();
 #else
     const GLXContext qtContextHandle = currentContextHandle();
 #endif
 
+    // NOTE: might work even if no context was returned. 
+    // This just double checks...
+
     if(nullptr == qtContextHandle)
-        qFatal("Acquiring QtGL-Context handle failed.");
+        qWarning("Acquiring QtGL-Context handle failed.");
 
     // canvas verifies the context itself.
 

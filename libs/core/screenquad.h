@@ -6,6 +6,7 @@
 #include "declspec.h"
 
 
+class BufferObject;
 class Program;
 class FrameBufferObject;
 
@@ -16,22 +17,13 @@ public:
     virtual ~ScreenQuad();
 
     void draw(
-        FrameBufferObject * target = nullptr) const;
-    void draw(
         const Program & program
-    ,   FrameBufferObject * target = nullptr) const;
-    void draw(
-        const GLuint program
-    ,   const GLint vertexAttributeLocation
     ,   FrameBufferObject * target = nullptr) const;
 
 protected:
-    void initialize() const;
-    void initializeDefaultProgram() const;
+    void initialize(const Program & program) const;
 
 protected:  
-    mutable GLuint m_buffer;
-    
-    mutable Program * m_program;
-    mutable GLint m_vertex;
+    mutable GLuint m_vao;
+    mutable BufferObject * m_vertexBO;
 };
