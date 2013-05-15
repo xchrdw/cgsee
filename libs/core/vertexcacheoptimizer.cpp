@@ -14,8 +14,6 @@ namespace
 
 inline void swap(uint& a, uint& b)
 {
-    if (a == b) // swap would set the contents to zero in this case
-        return;
     a ^= b ^= a ^= b;
 }
 
