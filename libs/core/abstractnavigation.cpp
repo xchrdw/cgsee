@@ -91,7 +91,7 @@ const glm::mat4 AbstractNavigation::viewMatrix()
     return m_viewMatrix;
 }
 
-void AbstractNavigation::update()
+void AbstractNavigation::update(float delta_t)
 {
 }
 

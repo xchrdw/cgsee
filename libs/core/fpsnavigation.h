@@ -6,7 +6,7 @@ public:
     FpsNavigation(Camera * camera);
     ~FpsNavigation(void);
     
-    virtual void update() override;
+    virtual void update(float delta_t) override;
 
     virtual void keyPressEvent(QKeyEvent *event) override;
     virtual void keyReleaseEvent(QKeyEvent *event) override;

@@ -8,6 +8,7 @@
 
 class QBasicTimer;
 class QTimerEvent;
+class Timer;
 
 class AbstractPainter;
 class AbstractNavigation;
@@ -60,5 +61,7 @@ protected:
     AbstractNavigation * m_navigation;
 
     QBasicTimer * m_timer;
+    Timer * m_frameTime;
+    float m_lastEvent;
     const GLFormat m_format;
 };

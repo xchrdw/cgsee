@@ -15,6 +15,7 @@
 
 #include <core/gpuquery.h>
 #include <core/glformat.h>
+#include "core/timer.h"
 
 
 Canvas::Canvas(
@@ -28,7 +29,9 @@ Canvas::Canvas(
 ,   m_navigation(nullptr)
 {
     m_timer = new QBasicTimer();
-    m_timer->start(format.vsync() ? 1000/60 : 1000/300, this); // 2000 Frames aren't usefull
+    m_timer->start(format.vsync() ? 1000/60 : 1000/300, this); // 2000 Frames aren't useful
+    m_frameTime = new Timer(true, true);
+    m_frameTime->start();
 
     setMinimumSize(1, 1);
 	
@@ -135,8 +138,11 @@ void Canvas::resizeGL(
 void Canvas::paintGL()
 {
     glError();  
+    float delta_t = m_frameTime->elapsed() / 1000000;
+    m_frameTime->reset();
+
     if(m_navigation)
-        m_navigation->update();
+        m_navigation->update(delta_t);
 
     if(m_painter)
         m_painter->paint();

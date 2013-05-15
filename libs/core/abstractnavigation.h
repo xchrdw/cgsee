@@ -30,7 +30,7 @@ public:
 
     //void assignCoordinateProvider(CoordinateProvider *provider);
 
-    virtual void update(); // called on every frame.
+    virtual void update(float delta_t); // called on every frame.
 
 
     // interaction mapping
