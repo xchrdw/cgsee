@@ -150,32 +150,35 @@ Camera * Viewer::camera()
     return m_camera;
 }
 
+    
+void Viewer::deactivateManipulators() {
+    m_ui->flightManipulatorAction->setChecked(false);
+    m_ui->fpsManipulatorAction->setChecked(false);
+    m_ui->trackballManipulatorAction->setChecked(false);
+}
 
 void Viewer::setFlightManipulator()
 {
     setNavigation(new FlightNavigation(m_camera));
+    deactivateManipulators();
     m_ui->flightManipulatorAction->setChecked(true);
-    m_ui->fpsManipulatorAction->setChecked(false);
-    m_ui->trackballManipulatorAction->setChecked(false);
     qDebug("Flight navigation, use WASD and arrow keys");
 }
 
 void Viewer::setTrackballManipulator()
 {
     setNavigation(new ArcballNavigation(m_camera));
-    m_ui->flightManipulatorAction->setChecked(false);
-    m_ui->fpsManipulatorAction->setChecked(false);
+    deactivateManipulators();
     m_ui->trackballManipulatorAction->setChecked(true);
     qDebug("Arcball navigation, use left and right mousebuttons");
 }
     
 void Viewer::setFpsManipulator()
 {
-        setNavigation(new FpsNavigation(m_camera));
-        m_ui->flightManipulatorAction->setChecked(false);
-        m_ui->fpsManipulatorAction->setChecked(true);
-        m_ui->trackballManipulatorAction->setChecked(false);
-        qDebug("FPS Navigation, use mouse and WASD");
+    setNavigation(new FpsNavigation(m_camera));
+    deactivateManipulators();
+    m_ui->fpsManipulatorAction->setChecked(true);
+    qDebug("FPS Navigation, use mouse and WASD");
 }
 
 
@@ -192,6 +195,9 @@ void Viewer::keyPressEvent(QKeyEvent * event)
         break;
     case Qt::Key_2:
         setTrackballManipulator();
+        break;    
+    case Qt::Key_3:
+        setFpsManipulator();
         break;
     case Qt::Key_R:
         navigation()->reset();

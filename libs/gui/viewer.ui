@@ -227,15 +227,15 @@
    </property>
   </action>
   <action name="fpsManipulatorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>FPS Manipulator</string>    
+    <string>FPS Manipulator</string>
    </property>
-    <property name="checkable">
-          <bool>false</bool>
-    </property>
   </action>
   <action name="specifyBenchmarkAction">
    <property name="enabled">

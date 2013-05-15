@@ -4,11 +4,15 @@
 //glm to rotate around axis
 #include "glm/gtx/rotate_vector.hpp"
 
+float speed = 0.004f;
+
+
 FpsNavigation::FpsNavigation(Camera * camera)
 : FlightNavigation(camera)
 , m_inGameMode(false)
 , m_lastMousePosition(glm::vec2(-1,-1))
 , m_pitchAngle(0.0f)
+, m_direction(0)
 {
     setFromMatrix(m_viewMatrix);
     m_pitchAngle= 180 - glm::degrees( std::acos(glm::dot( m_center, m_yView) / ( glm::length(m_center) * glm::length(m_yView))));
@@ -20,28 +24,45 @@ FpsNavigation::~FpsNavigation(void)
 }
 
 void FpsNavigation::keyPressEvent(QKeyEvent *event){
-    float speed = 0.02;
     switch (event->key()) {
         case Qt::Key_W:
-            forward(speed);
+            m_direction.y = 1;
             break;
         case Qt::Key_S:
-            forward(-speed);
+            m_direction.y = -1;
             break;
         case Qt::Key_A:
-            sideward(speed);
+            m_direction.x = 1;
             break;
         case Qt::Key_D:
-            sideward(-speed);
+            m_direction.x = -1;
             break;
-            
         default:
             break;
     }
 }
 
 void FpsNavigation::keyReleaseEvent(QKeyEvent *event){
-    
+    switch (event->key()) {
+    case Qt::Key_W:
+        if (m_direction.y == 1)
+            m_direction.y = 0;
+        break;
+    case Qt::Key_S:
+        if (m_direction.y == -1)
+            m_direction.y = 0;
+        break;
+    case Qt::Key_A:
+        if (m_direction.x == 1)
+            m_direction.x = 0;
+        break;
+    case Qt::Key_D:
+        if (m_direction.x == -1)
+            m_direction.x = 0;
+        break;
+    default:
+        break;
+    }
 }
 
 void FpsNavigation::mouseMoveEvent(QMouseEvent * event){
@@ -50,8 +71,8 @@ void FpsNavigation::mouseMoveEvent(QMouseEvent * event){
             float divX = event->x()-m_lastMousePosition.x;
             float divY = event->y()-m_lastMousePosition.y;
             
-            divX *= 0.3;
-            divY *= 0.3;
+            divX *= 0.3f;
+            divY *= 0.3f;
             pitchYaw(divX, divY);
         }
         m_lastMousePosition = glm::vec2(event->x(),event->y());
@@ -90,7 +111,10 @@ void FpsNavigation::forward(float speed){
 
 void FpsNavigation::update()
 {
-    // update on every frame if wasd is pressed to make smooth movements
+    if (m_direction.x || m_direction.y) {
+        forward(m_direction.y * speed);
+        sideward(m_direction.x * speed);
+    }
 }
 
 void FpsNavigation::sideward(float speed){

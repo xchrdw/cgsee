@@ -27,5 +27,7 @@ private:
     bool m_inGameMode;
     
     glm::vec2 m_lastMousePosition;
+    glm::vec2 m_direction;
+
     float m_pitchAngle;
 };
