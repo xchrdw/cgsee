@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <QMainWindow>
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -9,7 +11,6 @@
 
 #include <memory>
 
-#include <QMainWindow>
 
 #include <core/declspec.h>
 
