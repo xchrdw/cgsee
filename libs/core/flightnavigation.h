@@ -18,6 +18,8 @@ public:
     void setFovy(float fovy);
     float getFovy();
     
+    virtual void update(float delta_t) override;
+    
 protected:
     //Defines the view
     glm::vec3 m_eye;
@@ -49,8 +51,9 @@ protected:
     virtual void forward(float speed);
     
     void setFromMatrix(glm::mat4 view);
-
-    int m_timesKeyPressed;
+    
+    glm::vec2 m_direction;
+    glm::vec3 m_yprAngle;
 };
 
 #endif // flightnavigation_h

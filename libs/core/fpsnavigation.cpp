@@ -4,7 +4,7 @@
 //glm to rotate around axis
 #include "glm/gtx/rotate_vector.hpp"
 
-float speed = 0.003f;
+float fspeed = 0.003f;
 
 
 FpsNavigation::FpsNavigation(Camera * camera)
@@ -112,8 +112,8 @@ void FpsNavigation::forward(float speed){
 void FpsNavigation::update(float delta_t)
 {
     if (m_direction.x || m_direction.y) {
-        forward(m_direction.y * speed * delta_t);
-        sideward(m_direction.x * speed * delta_t);
+        forward(m_direction.y * fspeed * delta_t);
+        sideward(m_direction.x * fspeed * delta_t);
     }
 }
 

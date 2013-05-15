@@ -5,9 +5,13 @@
 //glm to rotate around axis
 #include "glm/gtx/rotate_vector.hpp"
 
+float speed = 0.003f;
+float angle = 0.05f;
+
 FlightNavigation::FlightNavigation(Camera * camera) 
     : AbstractNavigation(camera)
-    , m_timesKeyPressed(0)
+    , m_direction(0)
+    , m_yprAngle(0)
 {
     setFromMatrix(m_viewMatrix);
 }
@@ -18,36 +22,33 @@ FlightNavigation::~FlightNavigation(void)
 }
 
 void FlightNavigation::keyPressEvent(QKeyEvent *event){
-    m_timesKeyPressed++;
-    float angle = 0.5 + m_timesKeyPressed/10.0;
-    float speed = 0.05 + m_timesKeyPressed/50.0;
     switch (event->key()) {
         // Pitch, Yaw, roll
         case Qt::Key_W:
-            pitch(angle);
+            m_yprAngle.y = 1.0f;
             break;
         case Qt::Key_S:
-            pitch(-angle);
+            m_yprAngle.y = -1.0f;
             break;
         case Qt::Key_A:
-            yaw(-angle);
+            m_yprAngle.x = -1.0f;
             break;
         case Qt::Key_D:
-            yaw(angle);
+            m_yprAngle.x = 1.0f;
             break;
         case Qt::Key_Q:
-            roll(angle);
+            m_yprAngle.z = 1.0f;
             break;
         case Qt::Key_E:
-            roll(-angle);
+            m_yprAngle.z = -1.0f;
             break;
 
         //Move forward, backward
         case Qt::Key_Up:
-            forward(speed);
+            m_direction.y = 1.0f;
             break;
         case Qt::Key_Down:
-            forward(-speed);
+            m_direction.y = -1.0f;
             break;
             
         default:
@@ -57,12 +58,59 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
 }
 
 void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
-    m_timesKeyPressed = 0;
+    switch (event->key()) {
+            // Pitch, Yaw, roll
+        case Qt::Key_W:
+            if (m_yprAngle.y == 1.0f) {
+                m_yprAngle.y = 0.0f;
+            }
+            break;
+        case Qt::Key_S:
+            if (m_yprAngle.y == -1.0f) {
+                m_yprAngle.y = 0.0f;
+            }
+            break;
+        case Qt::Key_A:
+            if (m_yprAngle.x == -1.0f) {
+                m_yprAngle.x = 0.0f;
+            }
+            break;
+        case Qt::Key_D:
+            if (m_yprAngle.x == 1.0f) {
+                m_yprAngle.x = 0.0f;
+            }
+            break;
+        case Qt::Key_Q:
+            if (m_yprAngle.z == 1.0f) {
+                m_yprAngle.z = 0.0f;
+            }
+            break;
+        case Qt::Key_E:
+            if (m_yprAngle.z == -1.0f) {
+                m_yprAngle.z = 0.0f;
+            }
+            break;
+            
+            //Move forward, backward
+        case Qt::Key_Up:
+            if (m_direction.y == 1.0f) {
+                m_direction.y = 0.0f;
+            }
+            break;
+        case Qt::Key_Down:
+            if (m_direction.y == -1.0f) {
+                m_direction.y = 0.0f;
+            }
+            break;
+            
+        default:
+            break;
+            
+    }
 }
 
 void FlightNavigation::wheelEvent(QWheelEvent *event){
     setFovy(event->delta());
-
 }
 
 void FlightNavigation::setFromMatrix(glm::mat4 view){ 
@@ -160,6 +208,17 @@ void FlightNavigation::setFovy(float fovy){
 
 float FlightNavigation::getFovy(){
     return m_fovy;
+}
+
+void FlightNavigation::update(float delta_t){
+    if (m_direction.y) {
+        forward(m_direction.y * speed * delta_t);
+    }
+    if (m_yprAngle.x||m_yprAngle.y||m_yprAngle.z){
+        yaw(m_yprAngle.x * angle * delta_t);
+        pitch(m_yprAngle.y * angle * delta_t);
+        roll(m_yprAngle.z * angle * delta_t);
+    }
 }
 
 
