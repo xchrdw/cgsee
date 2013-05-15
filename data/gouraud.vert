@@ -3,10 +3,11 @@
 
 //partly from http://www.opengl.org/sdk/docs/tutorials/TyphoonLabs/Chapter_4.pdf
 
-in vec4 gl_FragCoord;
-out vec4 gl_FragColor;
+in vec3 a_vertex;
+in vec3 a_normal;
+out vec4 color;
 
-in vec3 normal;
+uniform mat4 transform;
 
 uniform float znear;
 uniform float zfar;
@@ -22,11 +23,12 @@ uniform vec4 lightambientglobal;
 
 void main()
 {
-	vec3 n = normalize(normal);
+	gl_Position = transform * vec4(a_vertex, 1.0);
+	vec3 n = normalize(a_normal);
 	n *= 0.5;
 	n += 0.5;
 
-	float z = gl_FragCoord.z; 
+	float z = gl_Position.z; 
 
 	// d = (2.0 * zfar * znear / (zfar + znear - (zfar - znear) * (2.0 * z- 1.0)));
 	// normalized to [0,1]
@@ -54,13 +56,13 @@ void main()
 
 	if(nxDir != 0.0)
 	{
-		vec3 cameraVector = normalize(cameraposition - gl_FragCoord.xyz);
+		vec3 cameraVector = normalize(cameraposition - gl_Position.xyz);
 		vec3 halfVector = normalize(lightdir + cameraVector);
 		float nxHalf = max(0.0,dot(n,halfVector));
 		float specularPower = pow(nxHalf, shininess);
 		specular = iSpecular * specularPower * attenuation;
 	}
 					//global ambient			//emission			//local ambient		//diffuse					//specular
-	gl_FragColor = lightambientglobal*material[0] + material[3] + iAmbient*material[0] + (diffuse * material[1]) + ( specular * material[2]);
+	color = lightambientglobal*material[0] + material[3] + iAmbient*material[0] + (diffuse * material[1]) + ( specular * material[2]);
 
 }

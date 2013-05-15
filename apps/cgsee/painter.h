@@ -47,6 +47,9 @@ protected:
 
     Program * m_normalz;
 	Program * m_flat;
+	Program * m_gouraud;
+	Program * m_phong;
+	Program * m_useProgram;
     FrameBufferObject * m_fboNormalz;
 
     Program * m_flush;

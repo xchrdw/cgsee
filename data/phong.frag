@@ -43,7 +43,7 @@ void main()
 
 	//light and camera -> uniforms
 	vec3 lightdir = lightdir;		// warum das auch immer nötig ist  
-	vec4 specular;				
+	vec4 specular=vec4(0.0);				
 
 	//calculate dist, etc
 	float dist = length(lightdir); 
@@ -57,10 +57,16 @@ void main()
 		vec3 cameraVector = normalize(cameraposition - gl_FragCoord.xyz);
 		vec3 halfVector = normalize(lightdir + cameraVector);
 		float nxHalf = max(0.0,dot(n,halfVector));
-		float specularPower = pow(nxHalf, shininess);
+		float specularPower = max(pow(nxHalf, shininess),0.0);
 		specular = iSpecular * specularPower * attenuation;
 	}
+	//if(nxDir != 0.0)
+	//{
 					//global ambient			//emission			//local ambient		//diffuse					//specular
 	gl_FragColor = lightambientglobal*material[0] + material[3] + iAmbient*material[0] + (diffuse * material[1]) + ( specular * material[2]);
-
+	//}
+	//else
+	//{
+	//	gl_FragColor=vec4(0.0,0.1,0.0,1.0);
+	//}
 }
