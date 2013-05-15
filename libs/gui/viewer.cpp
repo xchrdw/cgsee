@@ -9,8 +9,9 @@
 #include "viewer.h"
 #include "canvas.h"
 #include "abstractpainter.h"
-
-#include <core/fileassociatedshader.h>
+#include "core/abstractnavigation.h"
+#include "core/flightnavigation.h"
+#include "core/arcballnavigation.h"
 #include <core/glformat.h>
 
 
@@ -31,7 +32,7 @@ Viewer::Viewer(
 ,   m_qtCanvas(nullptr)
 {
     m_ui->setupUi(this);
-
+    
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings s;
 
@@ -129,7 +130,59 @@ AbstractPainter * Viewer::painter()
     return m_qtCanvas->painter();
 }
 
-void Viewer::on_reloadAllShadersAction_triggered()
+void Viewer::setNavigation(AbstractNavigation * navigation)
 {
-    FileAssociatedShader::reloadAll();
+    m_qtCanvas->setNavigation(navigation);
 }
+
+AbstractNavigation * Viewer::navigation() {
+    if(!m_qtCanvas)
+        return nullptr;
+    return m_qtCanvas->navigation();
+}
+
+void Viewer::setCamera(Camera * camera )
+{
+    m_camera = camera;
+}
+
+Camera * Viewer::camera()
+{
+    return m_camera;
+}
+
+void Viewer::keyPressEvent(QKeyEvent * event)
+{
+    m_qtCanvas->navigation()->keyPressEvent(event);
+
+    switch (event->key())
+    {
+    case Qt::Key_1:
+        setNavigation(new FlightNavigation(m_camera)); break;
+    case Qt::Key_2:
+        setNavigation(new ArcballNavigation(m_camera)); break;
+    default:
+        if (event->key() >= Qt::Key_F1 && event->key() <= Qt::Key_F12)
+        {
+            if(event->modifiers() == Qt::ControlModifier) {
+                navigation()->saveView(event->key() - Qt::Key_F1);
+            } else {
+                navigation()->loadView(event->key() - Qt::Key_F1);
+            }
+            
+        }
+        break;
+    }
+
+
+
+}
+
+void Viewer::keyReleaseEvent( QKeyEvent *event )
+{
+    m_qtCanvas->navigation()->keyReleaseEvent(event);
+}
+
+
+
+

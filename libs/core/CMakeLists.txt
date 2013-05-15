@@ -10,6 +10,10 @@ set(SOURCES
 
     aabb.h
     aabb.cpp
+    abstractnavigation.h
+    abstractnavigation.cpp
+    arcballnavigation.h
+    arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstracttimer.h
@@ -22,6 +26,8 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+    flightnavigation.h
+    flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
     framebufferobject.h

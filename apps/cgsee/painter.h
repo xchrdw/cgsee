@@ -16,7 +16,7 @@ class FrameBufferObject;
 class Painter : public AbstractPainter
 {
 public:
-    Painter();
+    Painter(Camera * camera);
     virtual ~Painter();
 
     virtual void paint();
@@ -24,6 +24,8 @@ public:
     virtual void resize(
         const int width
     ,   const int height);
+
+
 
 protected:
     virtual const bool initialize();
@@ -41,7 +43,6 @@ protected:
         const t_samplerByName & sampler);
 
 protected:
-    Camera * m_camera;
     Group * m_group;
     ScreenQuad * m_quad;
 

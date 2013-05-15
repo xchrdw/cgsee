@@ -14,17 +14,19 @@
 #include <core/objio.h>
 #include <core/program.h>
 #include <core/screenquad.h>
+#include "core/arcballnavigation.h"
+#include "core/flightnavigation.h"
 
 
-Painter::Painter()
-:   AbstractPainter()
+Painter::Painter(Camera * camera)
+:   AbstractPainter(camera)
 ,   m_group(nullptr)
-,   m_camera(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
 ,   m_quad(nullptr)
 {
+
 }
 
 Painter::~Painter()
@@ -57,17 +59,7 @@ const bool Painter::initialize()
     m_group->setTransform(transform);
 
     // Camera Setup
-
-    m_camera = new Camera();
-
-    m_camera->setFovy (45.0f);
-    m_camera->setZNear( 1.0f);
-    m_camera->setZFar (10.0f);
-
     m_camera->append(m_group);
-
-    m_camera->setView(glm::lookAt(
-        glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
     m_quad = new ScreenQuad();
 
