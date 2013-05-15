@@ -5,6 +5,7 @@
 
 #include <QListView>
 #include <QFileSystemModel>
+#include <QMenu>
 
 #include <core/declspec.h>
 
@@ -27,6 +28,7 @@ public:
 
 public slots:
 	void callSetRoot(const QModelIndex & index);
+	void userContextMenuRequested(const QPoint & point);
 
 protected:
 	void setRoot(QString rootPath);
