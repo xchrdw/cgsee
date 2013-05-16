@@ -110,7 +110,7 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
 }
 
 void FlightNavigation::wheelEvent(QWheelEvent *event){
-    setFovy(event->delta());
+   
 }
 
 void FlightNavigation::setFromMatrix(glm::mat4 view){ 
@@ -199,15 +199,6 @@ void FlightNavigation::forward(float speed){
     m_eye += step;
     updateView();
     updateAxis();
-}
-
-void FlightNavigation::setFovy(float fovy){
-    m_fovy += fovy;
-    m_fovy = glm::clamp(m_fovy, 0.0f, 180.0f);
-}
-
-float FlightNavigation::getFovy(){
-    return m_fovy;
 }
 
 void FlightNavigation::update(float delta_t){

@@ -15,9 +15,6 @@ public:
     virtual void wheelEvent(QWheelEvent *event) override;
     virtual void reset() override;
     
-    void setFovy(float fovy);
-    float getFovy();
-    
     virtual void update(float delta_t) override;
     
 protected:
@@ -34,8 +31,6 @@ protected:
     glm::vec3 m_zView;
     
     void updateAxis();
-    
-    float m_fovy;
     
     //Yaw, pitch, roll: http://upload.wikimedia.org/wikipedia/commons/7/7e/Rollpitchyawplain.png
     //Rotate center around y-axis
