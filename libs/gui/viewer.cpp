@@ -31,10 +31,10 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 
 ,   m_qtCanvas(nullptr)
-,   m_dockLeft(nullptr)
-,   m_dockBottom(nullptr)
 ,   m_fileNavigator(nullptr)
 ,   m_fileExplorer(nullptr)
+,   m_dockLeft(nullptr)
+,   m_dockBottom(nullptr)
 {
     m_ui->setupUi(this);
 
@@ -142,8 +142,6 @@ Viewer::~Viewer()
     delete m_qtCanvas;
     delete m_dockLeft;
     delete m_dockBottom;
-    delete m_fileNavigator;
-    delete m_fileExplorer;
 }
 
 void Viewer::setPainter(AbstractPainter * painter)
