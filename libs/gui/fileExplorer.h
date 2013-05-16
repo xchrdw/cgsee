@@ -26,13 +26,19 @@ public:
 	void setNavigator(FileNavigator * fileNavigator);
 	FileNavigator * navigator();
 
+	void loadFile(const QModelIndex & index);
+
 public slots:
 	void callSetRoot(const QModelIndex & index);
-	void userContextMenuRequested(const QPoint & point);
+	void showContextMenu(const QPoint & point);
+	void triggeredLoadFile(const bool & triggered);
 
 protected:
 	void setRoot(QString rootPath);
 
 	FileNavigator * m_navigator;
 	QFileSystemModel * m_model;
+	QMenu * m_menu;
+	
+	QModelIndex m_clickedFile;
 };

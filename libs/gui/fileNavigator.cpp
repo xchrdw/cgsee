@@ -11,7 +11,7 @@ FileNavigator::FileNavigator(
 	m_model = new QFileSystemModel;
 	this->setModel(m_model);
 
-	setFilter(QDir::NoDotDot | QDir::AllDirs);
+	setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
 	setRoot(QDir::currentPath());
 };
 
