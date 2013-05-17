@@ -8,13 +8,20 @@ FileExplorer::FileExplorer(
 	QObject * parent)
 
 :	m_navigator(nullptr)
-,	m_model(nullptr)
-,	m_menu(nullptr)
+,	m_model(new QFileSystemModel)
+,	m_menu(new QMenu)
 ,	m_clickedFile()
 {
-	m_model = new QFileSystemModel;
-	this->setModel(m_model);
-	this->setContextMenuPolicy(Qt::CustomContextMenu);
+	setModel(m_model);
+	setContextMenuPolicy(Qt::CustomContextMenu);
+
+	setFilter(QDir::NoDotAndDotDot | QDir::Files);
+	setRoot(QDir::homePath());
+
+	m_model->setNameFilters(nameFilters);
+	m_model->setNameFilterDisables(false);
+
+	m_menu->addAction(QString("Open"), this, SLOT(triggeredLoadFile(const bool)));
 
 	QObject::connect(
 		this, SIGNAL(customContextMenuRequested(const QPoint &)),
@@ -23,15 +30,6 @@ FileExplorer::FileExplorer(
 	QObject::connect(
         this, SIGNAL(activated(const QModelIndex)),
         this, SLOT(loadFile(const QModelIndex)));
-
-	setFilter(QDir::NoDotAndDotDot | QDir::Files);
-	setRoot(QDir::currentPath());
-
-	m_model->setNameFilters(nameFilters);
-	m_model->setNameFilterDisables(false);
-
-	m_menu = new QMenu;
-	m_menu->addAction(QString("Open"), this, SLOT(triggeredLoadFile(const bool)));
 };
 
 FileExplorer::~FileExplorer()
@@ -52,7 +50,7 @@ void FileExplorer::setNavigator(FileNavigator * fileNavigator)
 	m_navigator = fileNavigator;
 }
 
-void FileExplorer::setFilter(QDir::Filters filters)
+void FileExplorer::setFilter(const QDir::Filters & filters)
 {
 	m_model->setFilter(filters);
 }
@@ -91,4 +89,5 @@ void FileExplorer::loadFile(const QModelIndex & index)
 void FileExplorer::setRoot(QString rootPath)
 {
 	this->setRootIndex(m_model->setRootPath(rootPath));
+	// m_model->setRootPath(rootPath);
 }

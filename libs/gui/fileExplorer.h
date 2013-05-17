@@ -24,7 +24,7 @@ public:
 	FileNavigator * navigator();
 
 	void setNavigator(FileNavigator * fileNavigator);
-	void setFilter(QDir::Filters filters);
+	void setFilter(const QDir::Filters & filters);
 
 
 public slots:
@@ -40,6 +40,6 @@ protected:
 	FileNavigator * m_navigator;
 	QFileSystemModel * m_model;
 	QMenu * m_menu;
-	
+
 	QModelIndex m_clickedFile;
 };
