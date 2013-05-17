@@ -13,11 +13,18 @@ FileNavigator::FileNavigator(
 
 	setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
 	setRoot(QDir::currentPath());
+
+	this->setColumnHidden(1, true);
+	this->setColumnHidden(2, true);
+	this->setColumnHidden(3, true);
 };
 
+#include <iostream>
 void FileNavigator::setRoot(QString rootPath)
 {
-	this->setRootIndex(m_model->setRootPath(rootPath));
+	// this->setRootIndex(m_model->setRootPath(rootPath));
+	m_model->setRootPath(rootPath);
+	std::cout << rootPath.toStdString() << std::endl;
 }
 
 void FileNavigator::setFilter(QDir::Filters filters)

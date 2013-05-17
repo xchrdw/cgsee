@@ -21,17 +21,18 @@ public:
 	FileExplorer(QObject * parent = nullptr);
 	virtual ~FileExplorer();
 
-	void setFilter(QDir::Filters filters);
-
-	void setNavigator(FileNavigator * fileNavigator);
 	FileNavigator * navigator();
 
-	void loadFile(const QModelIndex & index);
+	void setNavigator(FileNavigator * fileNavigator);
+	void setFilter(QDir::Filters filters);
+
 
 public slots:
 	void callSetRoot(const QModelIndex & index);
+	void setClickedFile(const QModelIndex & index);
 	void showContextMenu(const QPoint & point);
 	void triggeredLoadFile(const bool & triggered);
+	void loadFile(const QModelIndex & index);
 
 protected:
 	void setRoot(QString rootPath);

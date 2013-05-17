@@ -20,6 +20,10 @@ FileExplorer::FileExplorer(
 		this, SIGNAL(customContextMenuRequested(const QPoint &)),
 		this, SLOT(showContextMenu(const QPoint &)));
 
+	QObject::connect(
+        this, SIGNAL(activated(const QModelIndex)),
+        this, SLOT(loadFile(const QModelIndex)));
+
 	setFilter(QDir::NoDotAndDotDot | QDir::Files);
 	setRoot(QDir::currentPath());
 
@@ -30,9 +34,22 @@ FileExplorer::FileExplorer(
 	m_menu->addAction(QString("Open"), this, SLOT(triggeredLoadFile(const bool)));
 };
 
-void FileExplorer::setRoot(QString rootPath)
+FileExplorer::~FileExplorer()
 {
-	this->setRootIndex(m_model->setRootPath(rootPath));
+	delete m_model;
+	delete m_menu;
+}
+
+
+FileNavigator * FileExplorer::navigator()
+{
+	return m_navigator;
+}
+
+
+void FileExplorer::setNavigator(FileNavigator * fileNavigator)
+{
+	m_navigator = fileNavigator;
 }
 
 void FileExplorer::setFilter(QDir::Filters filters)
@@ -40,15 +57,6 @@ void FileExplorer::setFilter(QDir::Filters filters)
 	m_model->setFilter(filters);
 }
 
-#include <iostream> // just for debug output
-void FileExplorer::loadFile(const QModelIndex & index)
-{
-	QString filePath = m_model->fileInfo(index).absoluteFilePath();
-	std::cout << filePath.toStdString() << std::endl;
-
-	// QString filePath2 = m_model->fileInfo(this->selectionModel()->selectedIndexes().first()).absolutePath();
-	// std::cout << filePath2.toStdString() << std::endl;
-}
 
 void FileExplorer::callSetRoot(const QModelIndex & index)
 {
@@ -56,11 +64,9 @@ void FileExplorer::callSetRoot(const QModelIndex & index)
 	this->setRoot(rootPath);
 }
 
-void FileExplorer::showContextMenu(const QPoint & point)
+void FileExplorer::setClickedFile(const QModelIndex & index)
 {
-	m_clickedFile = this->indexAt(point);
-	
-	m_menu->exec(this->mapToGlobal(point));
+	m_clickedFile = index;
 }
 
 void FileExplorer::triggeredLoadFile(const bool & triggered)
@@ -68,18 +74,21 @@ void FileExplorer::triggeredLoadFile(const bool & triggered)
 	this->loadFile(m_clickedFile);
 }
 
-FileExplorer::~FileExplorer()
+void FileExplorer::showContextMenu(const QPoint & point)
 {
-	delete m_model;
-	delete m_menu;
+	this->setClickedFile(this->indexAt(point));
+	m_menu->exec(this->mapToGlobal(point));
 }
 
-void FileExplorer::setNavigator(FileNavigator * fileNavigator)
+#include <iostream> // just for debug output
+void FileExplorer::loadFile(const QModelIndex & index)
 {
-	m_navigator = fileNavigator;
+	QString filePath = m_model->fileInfo(index).absoluteFilePath();
+	std::cout << filePath.toStdString() << std::endl;
 }
 
-FileNavigator * FileExplorer::navigator()
+
+void FileExplorer::setRoot(QString rootPath)
 {
-	return m_navigator;
+	this->setRootIndex(m_model->setRootPath(rootPath));
 }
