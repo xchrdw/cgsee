@@ -13,6 +13,8 @@ set(SOURCES
     abstractapplication.h
     abstractapplication.cpp
     abstractglparent.h
+    abstractmodelloader.cpp
+    abstractmodelloader.h
     abstractpainter.h
     abstractpainter.cpp
     abstracttimer.h
