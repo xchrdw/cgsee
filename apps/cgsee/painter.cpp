@@ -14,14 +14,20 @@
 #include <core/program.h>
 #include <core/screenquad.h>
 
+//for phong, flat and gouraud
 static const QString CAMERAPOSITION_UNIFORM   ("cameraposition");
 static const QString LIGHTDIR_UNIFORM   ("lightdir");
-static const QString LIGHTPOSITION_UNIFORM   ("lightposition");
+static const QString LIGHTDIR_UNIFORM2   ("lightdir2");
 static const QString ATTENUATION_UNIFORM   ("attCoeff");
+static const QString ATTENUATION_UNIFORM2   ("attCoeff2");
 static const QString LIGHTAMBIENTGLOBAL_UNIFORM   ("lightambientglobal");
 static const QString LIGHT_UNIFORM   ("light");
+static const QString LIGHT_UNIFORM2   ("light2");
 static const QString LIGHTSHININESS_UNIFORM   ("lightshininess");
 static const QString MATERIAL_UNIFORM   ("material");
+
+//for gooch
+static const QString LIGHTPOSITION_UNIFORM   ("lightposition");
 
 Painter::Painter()
 :   AbstractPainter()
@@ -31,6 +37,8 @@ Painter::Painter()
 ,   m_flat(nullptr)
 ,   m_gouraud(nullptr)
 ,   m_phong(nullptr)
+,   m_gooch(nullptr)
+,   m_useProgram(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
 ,   m_quad(nullptr)
@@ -45,13 +53,16 @@ Painter::~Painter()
     delete m_normalz;
 	delete m_flat;
 	delete m_gouraud;
+	delete m_phong;
+	delete m_gooch;
+	delete m_useProgram;
     delete m_fboNormalz;
     delete m_flush;    
 }
 
 const bool Painter::initialize()
 {
-    m_group = ObjIO::groupFromObjFile("data/suzanneVertNormals.obj");
+    m_group = ObjIO::groupFromObjFile("data/suzanneVN.obj");
     if(!m_group)
     {
         qWarning("Have you set the Working Directory?");
@@ -98,6 +109,8 @@ const bool Painter::initialize()
 		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flat.frag"));
 	m_flat->attach(
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/flat.vert"));
+	//m_flat->attach(
+	//	new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/flat.geo"));
 
 	//GOURAUD
 	
@@ -115,33 +128,58 @@ const bool Painter::initialize()
 	m_phong->attach(
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/phong.vert"));
 
+	//GOOCH
+	m_gooch = new Program();
+	m_gooch->attach(
+		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gooch.frag"));
+	m_gooch->attach(
+	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
+
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_flat;
+	m_useProgram = m_gooch;
 
-	m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
-	m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,-4.5,7.5));
-	m_useProgram->setUniform(ATTENUATION_UNIFORM, glm::vec3(0.02,0.2,0.0004));
-
-	glm::mat4 lightMat;
-	lightMat[0] = glm::vec4(1.0,1.0,1.0,1.0);	//ambient
-	lightMat[1] = glm::vec4(0.5,0.8,0.7,1.0);	//diffuse
-	lightMat[2] = glm::vec4(0.3,0.5,0.7,1.0);	//specular
-	lightMat[3] = glm::vec4(0,0,0,0);			//nichts?
-	m_useProgram->setUniform(LIGHT_UNIFORM, lightMat, false); 
+	if(m_useProgram != m_gooch)
+	{
+		m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
+		m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,4.5,7.5));
+		m_useProgram->setUniform(ATTENUATION_UNIFORM, glm::vec3(0.02,0.2,0.0004));
 	
-	float shin=1.4f;
-	m_useProgram->setUniform(LIGHTSHININESS_UNIFORM, shin);
+		m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,0.0,7.5));
+		m_useProgram->setUniform(ATTENUATION_UNIFORM2, glm::vec3(0.01,0.3,0.0004));
+
+		glm::mat4 lightMat;
+		lightMat[0] = glm::vec4(1.0,1.0,1.0,1.0);	//ambient
+		lightMat[1] = glm::vec4(0.9,0.8,0.7,1.0);	//diffuse
+		lightMat[2] = glm::vec4(0.3,0.5,0.7,1.0);	//specular
+		lightMat[3] = glm::vec4(0,0,0,0);			//nichts?
+		m_useProgram->setUniform(LIGHT_UNIFORM, lightMat, true); 
+
+		glm::mat4 lightMat2;
+		lightMat[0] = glm::vec4(0.7,0.2,0.9,1.0);	//ambient
+		lightMat[1] = glm::vec4(0.0,0.0,1.0,1.0);	//diffuse
+		lightMat[2] = glm::vec4(0.9,0.9,0.9,1.0);	//specular
+		lightMat[3] = glm::vec4(0,0,0,0);			//nichts?
 	
-	m_useProgram->setUniform(LIGHTAMBIENTGLOBAL_UNIFORM, glm::vec4(0.4));
+		m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, true); 
 
-	glm::mat4 materialCoeff;
-	materialCoeff[0] = glm::vec4(0.1,0.14,0.1,1.0);	//ambient
-	materialCoeff[1] = glm::vec4(0.0,0.8,1.0,1.0);	//diffuse
-	materialCoeff[2] = glm::vec4(0.8,0.4,0.7,1.0);	//specular
-	materialCoeff[3] = glm::vec4(0,0,0,0);			//emission
+		float shin=1.4f;
+		m_useProgram->setUniform(LIGHTSHININESS_UNIFORM, shin);
+	
+		m_useProgram->setUniform(LIGHTAMBIENTGLOBAL_UNIFORM, glm::vec4(0.4));
 
-	m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
+		glm::mat4 materialCoeff;
+		materialCoeff[0] = glm::vec4(0.1,0.14,0.1,1.0);	//ambient
+		materialCoeff[1] = glm::vec4(1.0,0.9,0.0,1.0);	//diffuse
+		materialCoeff[2] = glm::vec4(0.8,0.4,0.7,1.0);	//specular
+		materialCoeff[3] = glm::vec4(0,0,0,0);			//emission
 
+		m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
+	}
+
+	else
+	{
+		m_gooch->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(0.0,4.5,7.5));
+	}
 
     // Post Processing Shader
 
