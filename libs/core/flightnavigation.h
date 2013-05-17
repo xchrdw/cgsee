@@ -45,6 +45,7 @@ protected:
     
     //Move forward or backward (negative speed) to the center of the view
     virtual void forward(float speed);
+    virtual void sideward(float speed);
     
     void setFromMatrix(glm::mat4 view);
     
