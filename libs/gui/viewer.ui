@@ -53,6 +53,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="openFileDialogAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
@@ -175,6 +176,20 @@
    </property>
    <property name="menuRole">
     <enum>QAction::AboutRole</enum>
+   </property>
+  </action>
+  <action name="openFileDialogAction">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Open ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="quitAction">

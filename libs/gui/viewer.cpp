@@ -1,8 +1,3 @@
-// #include <QFileSystemModel>
-// #include <QTreeView>
-// #include <QListView>
-// #include <QDockWidget>
-
 #include <GL/glew.h>
 
 #include <cassert>
@@ -10,6 +5,7 @@
 #include <QOpenGLContext>
 #include <QSettings>
 #include <QDockWidget>
+#include <QFileDialog>
 
 #include "ui_viewer.h"
 
@@ -72,6 +68,10 @@ void Viewer::initializeNavigatorExplorer()
     QObject::connect(
         m_fileNavigator, SIGNAL(clicked(const QModelIndex)),
         m_fileExplorer, SLOT(callSetRoot(const QModelIndex)));
+
+    QObject::connect(
+        m_ui->openFileDialogAction, SIGNAL(changed()),
+        this, SLOT(on_openFileDialogAction_triggered()));
 }
 
 #ifdef WIN32
@@ -181,4 +181,9 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+}
+
+void Viewer::on_openFileDialogAction_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/captain", tr("Image Files (*.png *.jpg *.bmp)"));
 }

@@ -47,6 +47,8 @@ protected slots:
 
     void on_reloadAllShadersAction_triggered();
 
+    void on_openFileDialogAction_triggered();
+
 protected:
 
     void initializeNavigatorExplorer();
