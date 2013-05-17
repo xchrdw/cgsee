@@ -7,12 +7,12 @@
 #include <QBasicTimer>
 
 #include "canvas.h"
+#include "abstractpainter.h"
 #include "core/abstractnavigation.h"
 #include "core/flightnavigation.h"
 #include "core/arcballnavigation.h"
-#include "core/abstractpainter.h"
+#include "abstractpainter.h"
 
-#include <core/abstractpainter.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
 #include "core/timer.h"
@@ -23,13 +23,15 @@ Canvas::Canvas(
     QWidget * parent)
 
 :   QGLWidget(format.asQGLFormat(), parent)
-,   m_painter(nullptr)
-,   m_timer(nullptr)
 ,   m_format(format)
+,   m_timer(nullptr)
+,   m_painter(nullptr)
 ,   m_navigation(nullptr)
 {
     m_timer = new QBasicTimer();
-    //m_timer->start(format.vsync() ? 1000/60 : 0, this);
+    m_timer->start(format.vsync() ? 1000/60 : 1000/300, this); // 2000 Frames aren't useful
+    m_frameTime = new Timer(true, true);
+    m_frameTime->start();
 
     setMinimumSize(1, 1);
 	
@@ -85,10 +87,18 @@ void Canvas::initializeGL()
     glError();
 }
 
+void Canvas::updateViewport() const
+{
+    glViewport(0, 0, width(), height());
+    glError();
+}
+
 void Canvas::resizeGL(
     int width
 ,   int height)
 {
+    updateViewport();
+    
     if(m_painter)
         m_painter->resize(width, height);
     if(m_navigation)
@@ -128,6 +138,12 @@ void Canvas::resizeGL(
 void Canvas::paintGL()
 {
     glError();  
+    float delta_t = m_frameTime->elapsed() / 1000000;
+    m_frameTime->reset();
+
+    if(m_navigation)
+        m_navigation->update(delta_t);
+
     if(m_painter)
         m_painter->paint();
     else 
@@ -159,32 +175,6 @@ AbstractPainter * Canvas::painter()
     return m_painter;
 }
 
-const QImage Canvas::capture(
-    const bool alpha)
-{
-    // aspect is false, since this accesses the cameras projection matrix with same aspect...
-    return capture(size(), false, alpha);
-}
-
-#include <QSize>
-
-const QImage Canvas::capture(
-    const QSize & size
-,   const bool aspect
-,   const bool alpha)
-{
-    if(!m_painter)
-        return QImage();
-
-    return m_painter->capture(*this, size, aspect, alpha);
-}
-
-void Canvas::resize(int width, int height)
-{
-    QGLWidget::resize(width, height);
-}
-
-
 AbstractNavigation * Canvas::navigation()
 {
 	return m_navigation;
@@ -192,10 +182,8 @@ AbstractNavigation * Canvas::navigation()
 
 void Canvas::setNavigation( AbstractNavigation * navigation )
 {
-    if (m_navigation)
-        delete m_navigation;
+    // TODO delete old nav / shared_pointer
 	m_navigation = navigation;
-    m_navigation->setCanvas(this);
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )
@@ -217,4 +205,5 @@ void Canvas::wheelEvent(QWheelEvent * event)
 {
 	m_navigation->wheelEvent(event);
 }
+
 

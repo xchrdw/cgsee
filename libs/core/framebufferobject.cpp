@@ -15,8 +15,8 @@ FrameBufferObject::FrameBufferObject(
 ,   const bool   depth)
 
 :   m_fbo(-1)
-,   m_render(-1)
 ,   m_texture(-1)
+,   m_render(-1)
 
 ,   m_size(glm::ivec2(0))
 

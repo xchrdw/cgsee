@@ -21,5 +21,5 @@ public:
     virtual ~AbstractApplication();
 
     virtual const QString title() const;
-    virtual const GLFormat format() const;
+    virtual const GLFormat format() const;   
 };

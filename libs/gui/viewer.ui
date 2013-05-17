@@ -20,12 +20,12 @@
      <x>0</x>
      <y>0</y>
      <width>734</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="canvasMenu">
+   <widget class="QMenu" name="viewMenu">
     <property name="title">
-     <string>&amp;Canvas</string>
+     <string>&amp;View</string>
     </property>
     <widget class="QMenu" name="selectFrameBufferMenu">
      <property name="title">
@@ -35,7 +35,6 @@
      <addaction name="separator"/>
      <addaction name="showFrameBuffersAction"/>
     </widget>
-    <addaction name="reloadAllShadersAction"/>
     <addaction name="selectFrameBufferMenu"/>
     <addaction name="separator"/>
     <addaction name="togglePrintModeAction"/>
@@ -43,9 +42,6 @@
     <addaction name="separator"/>
     <addaction name="toggleFullScreenAction"/>
     <addaction name="specifyResolutionAction"/>
-    <addaction name="separator"/>
-    <addaction name="captureAsImageAction"/>
-    <addaction name="captureAsImageAdvancedAction"/>
     <addaction name="separator"/>
     <addaction name="loadPresentationAction"/>
    </widget>
@@ -101,7 +97,7 @@
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
    <addaction name="navigationMenu"/>
-   <addaction name="canvasMenu"/>
+   <addaction name="viewMenu"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -330,30 +326,6 @@
    </property>
    <property name="text">
     <string>&amp;Load Presentation ...</string>
-   </property>
-  </action>
-  <action name="captureAsImageAction">
-   <property name="text">
-    <string>Capture as &amp;Image</string>
-   </property>
-   <property name="shortcut">
-    <string>F10</string>
-   </property>
-  </action>
-  <action name="captureAsImageAdvancedAction">
-   <property name="text">
-    <string>Capture as Image &amp;Advanced ...</string>
-   </property>
-   <property name="shortcut">
-    <string>Shift+F10</string>
-   </property>
-  </action>
-  <action name="reloadAllShadersAction">
-   <property name="text">
-    <string>&amp;Reload All Shaders</string>
-   </property>
-   <property name="shortcut">
-    <string>F5</string>
    </property>
   </action>
  </widget>

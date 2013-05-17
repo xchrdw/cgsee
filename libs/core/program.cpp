@@ -63,8 +63,7 @@ const bool Program::use() const
         return true;
 
     glUseProgram(m_program);
-
-    return !glIsError();
+    return !glError();
 }
 
 const bool Program::release() const
@@ -72,7 +71,7 @@ const bool Program::release() const
     assert(isUsed());
 
     glUseProgram(0);
-    return !glIsError();
+    return !glError();
 }
 
 const bool Program::link() const
@@ -133,7 +132,7 @@ const bool Program::attach(Shader * shader)
     glAttachShader(m_program, shader->shader());
     m_dirty = true;
 
-    return !glIsError();
+    return !glError();
 }
 
 const bool Program::detach(Shader * shader)
@@ -144,7 +143,7 @@ const bool Program::detach(Shader * shader)
         return true;
 
     glDetachShader(m_program, shader->shader());
-    const bool result(glIsError());
+    const bool result(glError());
 
     m_dirty = true;
 

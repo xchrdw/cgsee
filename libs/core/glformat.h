@@ -118,10 +118,10 @@ protected:
 
     QStringList m_extensions;
 
-    unsigned int  m_redBufferSize;
-    unsigned int  m_greenBufferSize;
-    unsigned int  m_blueBufferSize;
     unsigned int  m_alphaBufferSize;
+    unsigned int  m_blueBufferSize;
+    unsigned int  m_greenBufferSize;
+    unsigned int  m_redBufferSize;
 
     unsigned int  m_depthBufferSize;
     unsigned int  m_stencilBufferSize;

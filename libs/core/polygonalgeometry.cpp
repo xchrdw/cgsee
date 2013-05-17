@@ -86,7 +86,7 @@ void PolygonalGeometry::retrieveNormals()
     assert(m_indices.size() % 3 == 0);
 
     unsigned int i0, i1, i2;
-    glm::vec3 a, b, n;
+    glm::vec3 v[3], a, b, n;
 
     // check size and resize if necassary
 

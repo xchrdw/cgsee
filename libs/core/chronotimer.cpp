@@ -6,9 +6,11 @@ ChronoTimer::ChronoTimer(
     const bool start,
     const bool auto_update)
 
-:   m_paused(true)
+:   m_t0(clock::now())
+
+,   m_paused(true)
 ,   m_auto(auto_update)
-,   m_t0(clock::now())
+
 ,   m_offset(0.0L)
 ,   m_elapsed(0.0L)
 {

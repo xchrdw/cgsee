@@ -53,13 +53,13 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
             
         default:
             break;
+
     }
-    startTimer();
 }
 
 void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
     switch (event->key()) {
-        // Pitch, Yaw, roll
+            // Pitch, Yaw, roll
         case Qt::Key_W:
             if (m_yprAngle.y == 1.0f) {
                 m_yprAngle.y = 0.0f;
@@ -91,7 +91,7 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
             }
             break;
             
-        //Move forward, backward
+            //Move forward, backward
         case Qt::Key_Up:
             if (m_direction.y == 1.0f) {
                 m_direction.y = 0.0f;
@@ -105,8 +105,8 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
             
         default:
             break;
+            
     }
-    stopTimer();
 }
 
 void FlightNavigation::wheelEvent(QWheelEvent *event){
@@ -140,7 +140,7 @@ void FlightNavigation::setFromMatrix(glm::mat4 view){
     float d3(modelViewT[2].w);
     
     // Get the intersection of these 3 planes
-    // (using math from RealTime Collision Detection by Christer Ericson)
+    // (uisng math from RealTime Collision Detection by Christer Ericson)
     glm::vec3 n2n3 = glm::cross(n2, n3);
     float denom = glm::dot(n1, n2n3);
     
@@ -150,6 +150,7 @@ void FlightNavigation::setFromMatrix(glm::mat4 view){
     m_center = m_eye + direction;
     
     updateView();
+    updateAxis();
 }
 
 void FlightNavigation::reset() {
@@ -157,7 +158,7 @@ void FlightNavigation::reset() {
     setFromMatrix(m_viewMatrix);
 }
 
-void FlightNavigation::onCameraChanged(){
+void FlightNavigation::updateAxis(){
     m_yView = m_up;
     m_zView = m_center - m_eye;
     m_xView = glm::cross(m_yView, m_zView);
@@ -173,6 +174,7 @@ void FlightNavigation::yaw(float angle){
     glm::vec3 diffLR = glm::rotate( m_zView, -angle, m_yView) - m_zView;
     m_center += diffLR;
     updateView();
+    updateAxis();
 }
 
 void FlightNavigation::pitch(float angle){
@@ -181,12 +183,14 @@ void FlightNavigation::pitch(float angle){
     m_center += diffCenter;
     m_up += diffUp;
     updateView();
+    updateAxis();
 }
 
 void FlightNavigation::roll(float angle){
     glm::vec3 diffRotZ = glm::rotate(m_yView, angle, m_zView) - m_yView;
     m_up += diffRotZ;
     updateView();
+    updateAxis();
 }
 
 void FlightNavigation::forward(float speed){
@@ -194,16 +198,17 @@ void FlightNavigation::forward(float speed){
     m_center += step;
     m_eye += step;
     updateView();
+    updateAxis();
 }
 
-void FlightNavigation::timerEvent(QTimerEvent* event){
+void FlightNavigation::update(float delta_t){
     if (m_direction.y) {
-        forward(m_direction.y * speed * TIMER_MS);
+        forward(m_direction.y * speed * delta_t);
     }
     if (m_yprAngle.x||m_yprAngle.y||m_yprAngle.z){
-        yaw(m_yprAngle.x * angle * TIMER_MS);
-        pitch(m_yprAngle.y * angle * TIMER_MS);
-        roll(m_yprAngle.z * angle * TIMER_MS);
+        yaw(m_yprAngle.x * angle * delta_t);
+        pitch(m_yprAngle.y * angle * delta_t);
+        roll(m_yprAngle.z * angle * delta_t);
     }
 }
 

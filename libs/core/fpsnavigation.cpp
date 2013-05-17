@@ -4,7 +4,7 @@
 //glm to rotate around axis
 #include "glm/gtx/rotate_vector.hpp"
 
-float fspeed = 0.002f;
+float fspeed = 0.003f;
 
 
 FpsNavigation::FpsNavigation(Camera * camera)
@@ -40,7 +40,6 @@ void FpsNavigation::keyPressEvent(QKeyEvent *event){
         default:
             break;
     }
-    startTimer();
 }
 
 void FpsNavigation::keyReleaseEvent(QKeyEvent *event){
@@ -64,7 +63,6 @@ void FpsNavigation::keyReleaseEvent(QKeyEvent *event){
     default:
         break;
     }
-    stopTimer();
 }
 
 void FpsNavigation::mouseMoveEvent(QMouseEvent * event){
@@ -108,19 +106,15 @@ void FpsNavigation::forward(float speed){
     m_eye.x += step.x;
     m_eye.z += step.z;
     updateView();
+    updateAxis();
 }
 
-void FpsNavigation::timerEvent(QTimerEvent* event)
+void FpsNavigation::update(float delta_t)
 {
-    if (m_direction.x && m_direction.y) {
-        forward(m_direction.y * fspeed * TIMER_MS / sqrt(2));
-        sideward(m_direction.x * fspeed * TIMER_MS / sqrt(2));
+    if (m_direction.x || m_direction.y) {
+        forward(m_direction.y * fspeed * delta_t);
+        sideward(m_direction.x * fspeed * delta_t);
     }
-    else if (m_direction.x || m_direction.y) {
-        forward(m_direction.y * fspeed * TIMER_MS);
-        sideward(m_direction.x * fspeed * TIMER_MS);
-    }
-    
 }
 
 void FpsNavigation::sideward(float speed){
@@ -130,6 +124,7 @@ void FpsNavigation::sideward(float speed){
     m_eye.x += direction.x;
     m_eye.z += direction.z;
     updateView();
+    updateAxis();
 }
 
 void FpsNavigation::pitch(float angle){
@@ -138,10 +133,12 @@ void FpsNavigation::pitch(float angle){
         glm::vec3 diffCenter = glm::rotate( m_center-m_eye, -angle, m_xView) - (m_center-m_eye);
         m_center += diffCenter;
         updateView();
+        updateAxis();
     }
 }
 
 void FpsNavigation::yaw(float angle){
     m_center += glm::rotate( m_zView, -angle, m_yView) - m_zView;
     updateView();
+    updateAxis();
 }
