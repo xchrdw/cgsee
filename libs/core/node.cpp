@@ -74,5 +74,5 @@ void Node::setReferenceFrame(const e_ReferenceFrame referenceFrame)
 
 Group * Node::asGroup()
 {
-	return nullptr;
+    return nullptr;
 }

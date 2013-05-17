@@ -31,7 +31,7 @@ set(DEFAULT_COMPILE_DEFS_RELEASE
 )
 
 set(MINGW_COMPILE_FLAGS
-	"-pthread -fno-rtti -fno-exceptions -pipe -fPIC"
+	"-pthread -fno-exceptions -pipe -fPIC"
 	# pthread       -> use pthread library
 	# no-rtti       -> disable c++ rtti
 	# no-exceptions -> disable exception handling
@@ -40,3 +40,7 @@ set(MINGW_COMPILE_FLAGS
 )
 
 set(DEFAULT_COMPILE_FLAGS ${MINGW_COMPILE_FLAGS})
+
+
+# Add platform specific libraries for linking
+set(EXTRA_LIBS "")

@@ -8,6 +8,7 @@ in vec3 a_normal;
 out vec4 color;
 
 uniform mat4 transform;
+uniform mat4 view;
 
 uniform float znear;
 uniform float zfar;
@@ -27,7 +28,8 @@ uniform vec4 lightambientglobal;
 void main()
 {
 	gl_Position = transform * vec4(a_vertex, 1.0);
-	vec3 n = normalize(a_normal);
+	vec4 a= normalize(view*vec4(a_normal,0.0));
+	vec3 n = a.xyz;
 	n *= 0.5;
 	n += 0.5;
 
@@ -81,17 +83,17 @@ void main()
 	for(int i=0; i<2; i++){
 		diffuse[i] = iDiffuse[i] * nxDir[i] * attenuation[i];}
 
-for(int i=0; i<2; i++)
-{	if(nxDir[i] != 0.0)
-	{
-		vec3 cameraVector = normalize(cameraposition - gl_Position.xyz);
-		vec3 halfVector = normalize(lightdirection[i] + cameraVector);
-		float nxHalf = max(0.0,dot(n,halfVector));
-		float specularPower = max(pow(nxHalf, shininess),0.0);
-		specular[i] = iSpecular[i] * specularPower * attenuation[i];
+	for(int i=0; i<2; i++)
+	{	if(nxDir[i] != 0.0)
+		{
+			vec3 cameraVector = normalize(cameraposition - gl_Position.xyz);
+			vec3 halfVector = normalize(lightdirection[i] + cameraVector);
+			float nxHalf = max(0.0,dot(n,halfVector));
+			float specularPower = max(pow(nxHalf, shininess),0.0);
+			specular[i] = iSpecular[i] * specularPower * attenuation[i];
+		}
 	}
-	}
-					//global ambient			//emission
+				//global ambient			//emission
 	color=lightambientglobal*material[0] + material[3];
 	for(int i=0; i<2;i++)
 	{

@@ -19,7 +19,7 @@ set(DEFAULT_COMPILE_DEFS_RELEASE
 
 
 set(WIN32_COMPILE_FLAGS
-	"/nologo /Zc:wchar_t /Zc:forScope /GF /GR /GS- /Zi /fp:precise /MP /wd4267"
+	"/nologo /Zc:wchar_t /Zc:forScope /GL /GF /GR /GS- /Zi /fp:precise /MP /wd4267"
 	# nologo       -> no logo
  	# Zc:wchar_t   -> treat wchar_t as built-in type: yes
  	# Zc:forScope  -> force conformance in for loop scope: Yes
@@ -77,9 +77,13 @@ set(DEFAULT_LINKER_FLAGS_DEBUG
 )
 
 set(DEFAULT_LINKER_FLAGS_RELEASE
-	"${WIN32_LINKER_FLAGS} /OPT:REF /OPT:ICF /LTCG /DELAY:UNLOAD"
+	"${WIN32_LINKER_FLAGS} /OPT:REF /LTCG /OPT:ICF /DELAY:UNLOAD"
 	# OPT:REF      -> references: eliminate unreferenced data
 	# OPT:ICF      -> enable comdat folding: remove redundant comdats
 	# LTCG         -> link time code generation: use link time code generation
 	# DELAY:UNLOAD -> delay loaded dll: support unload
 )
+
+
+# Add platform specific libraries for linking
+set(EXTRA_LIBS "")

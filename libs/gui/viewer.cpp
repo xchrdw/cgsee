@@ -1,4 +1,8 @@
 
+#include <GL/glew.h>
+
+#include <cassert>
+
 #include <QOpenGLContext>
 #include <QSettings>
 
@@ -6,8 +10,10 @@
 
 #include "viewer.h"
 #include "canvas.h"
-#include "abstractpainter.h"
+#include "canvasexporter.h"
 
+#include <core/abstractpainter.h>
+#include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 
 
@@ -40,6 +46,10 @@ Viewer::Viewer(
 const HGLRC Viewer::currentContextHandle()
 {
     return  wglGetCurrentContext();
+#elif __APPLE__
+void * Viewer::currentContextHandle()
+{
+    return nullptr;
 #else
 const GLXContext Viewer::currentContextHandle()
 {
@@ -49,6 +59,8 @@ const GLXContext Viewer::currentContextHandle()
 
 #ifdef WIN32
 const HGLRC Viewer::createQtContext(const GLFormat & format)
+#elif __APPLE__
+void * Viewer::createQtContext(const GLFormat & format)
 #else
 const GLXContext Viewer::createQtContext(const GLFormat & format)
 #endif
@@ -68,12 +80,17 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 
 #ifdef WIN32
     const HGLRC qtContextHandle = currentContextHandle();
+#elif __APPLE__
+    void * qtContextHandle = currentContextHandle();
 #else
     const GLXContext qtContextHandle = currentContextHandle();
 #endif
 
+    // NOTE: might work even if no context was returned. 
+    // This just double checks...
+
     if(nullptr == qtContextHandle)
-        qFatal("Acquiring QtGL-Context handle failed.");
+        qWarning("Acquiring QtGL-Context handle failed.");
 
     // canvas verifies the context itself.
 
@@ -113,4 +130,21 @@ AbstractPainter * Viewer::painter()
         return nullptr;
 
     return m_qtCanvas->painter();
+}
+
+void Viewer::on_captureAsImageAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this);
+}
+
+void Viewer::on_captureAsImageAdvancedAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this, true);
+}
+
+void Viewer::on_reloadAllShadersAction_triggered()
+{
+    FileAssociatedShader::reloadAll();
 }

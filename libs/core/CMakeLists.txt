@@ -12,7 +12,12 @@ set(SOURCES
     aabb.cpp
     abstractapplication.h
     abstractapplication.cpp
+    abstractglparent.h
+    abstractpainter.h
+    abstractpainter.cpp
     abstracttimer.h
+    autotimer.h
+    autotimer.cpp
     bufferobject.h
     bufferobject.cpp
     camera.h
@@ -66,6 +71,7 @@ qt5_use_modules(${target} Widgets OpenGL)
 target_link_libraries(${target}
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}
+    ${EXTRA_LIBS}
 )
 
 

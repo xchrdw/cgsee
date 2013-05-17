@@ -1,7 +1,7 @@
-
 #include "cgsee.h"
 #include "painter.h"
 
+#include <gui/canvas.h>
 #include <gui/viewer.h>
 
 
@@ -26,6 +26,9 @@ CGSee::CGSee(int & argc, char ** argv)
 
 CGSee::~CGSee()
 {
-    delete m_viewer;
+    // NOTE: painter must be destroyed before viewer, since viewer deletes context, 
+    // and painter deinitializes all opengl handles...
+
     delete m_painter;
+    delete m_viewer;
 }

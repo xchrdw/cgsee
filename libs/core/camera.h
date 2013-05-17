@@ -15,13 +15,13 @@ public:
     Camera(const QString & name = "unnamed");
     virtual ~Camera();
 
-	virtual Camera * asCamera();
+    virtual Camera * asCamera();
 
     virtual void draw(
-        Program * program
+        const Program & program
     ,   FrameBufferObject * target = nullptr);
     virtual void draw(
-        Program * program
+        const Program & program
     ,   const glm::mat4 & transform);
 
 

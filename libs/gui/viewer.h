@@ -23,6 +23,7 @@ class AbstractPainter;
 
 class CGSEE_API Viewer : public QMainWindow
 {
+    Q_OBJECT
 public:
     Viewer(
         QWidget * parent = nullptr
@@ -34,14 +35,21 @@ public:
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
+protected slots:
+    void on_captureAsImageAction_triggered();
+    void on_captureAsImageAdvancedAction_triggered();
+
+    void on_reloadAllShadersAction_triggered();
+
 protected:
 
 #ifdef WIN32
-    // Create canvas with a qt context (based on GLWidget).
     const HGLRC createQtContext(const GLFormat & format);
     static const HGLRC currentContextHandle();
+#elif __APPLE__
+    void * createQtContext(const GLFormat & format);
+    static void * currentContextHandle();
 #else
-    // Create canvas with a qt context (based on GLWidget).
     const GLXContext createQtContext(const GLFormat & format);
     static const GLXContext currentContextHandle();
 #endif

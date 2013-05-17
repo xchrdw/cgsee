@@ -6,11 +6,9 @@ ChronoTimer::ChronoTimer(
     const bool start,
     const bool auto_update)
 
-:   m_t0(clock::now())
-
-,   m_paused(true)
+:   m_paused(true)
 ,   m_auto(auto_update)
-
+,   m_t0(clock::now())
 ,   m_offset(0.0L)
 ,   m_elapsed(0.0L)
 {
@@ -30,7 +28,7 @@ void ChronoTimer::update() const
     m_t1 = m_paused ? m_tp : clock::now();
 
     const auto delta = m_t1 - m_t0;  
-    m_elapsed = seconds(delta).count() + m_offset;
+    m_elapsed = nano(delta).count() + m_offset;
 }
 
 const bool ChronoTimer::paused() const
@@ -44,7 +42,7 @@ void ChronoTimer::start()
         return;
 
     const time_point t2 = clock::now();
-    m_offset -= seconds(t2 - m_tp).count();
+    m_offset -= nano(t2 - m_tp).count();
 
     m_t1 = t2;
     m_paused = false;

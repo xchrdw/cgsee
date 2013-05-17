@@ -103,7 +103,7 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
         else if("g " == type)
             parseG (s, object);
     }
-	stream.close();
+    stream.close();
 
     Group * group = toGroup(objects);
     group->setName(filePath);
@@ -193,7 +193,6 @@ inline void ObjIO::parseF(
 
     group.foffs.push_back(static_cast<GLuint>(group.vis.size()));
 
-    GLuint offset(0);
     GLuint i;
 
     while(line >> i)
@@ -262,8 +261,8 @@ Group * ObjIO::toGroup(const t_objects & objects)
 {
     std::vector<Group *> groups;
 
-    t_objects::const_iterator io(objects.begin());
-    const t_objects::const_iterator ioEnd(objects.end());
+    t_objects::const_iterator io(objects.cbegin());
+    const t_objects::const_iterator ioEnd(objects.cend());
 
     for(; io != ioEnd; ++io)
     {
@@ -275,8 +274,8 @@ Group * ObjIO::toGroup(const t_objects & objects)
         if(!oobject.vis.empty())
             group->append(createPolygonalDrawable(oobject, oobject));
 
-        t_groups::const_iterator ig(oobject.groups.begin());
-        const t_groups::const_iterator igEnd(oobject.groups.end());
+        t_groups::const_iterator ig(oobject.groups.cbegin());
+        const t_groups::const_iterator igEnd(oobject.groups.cend());
 
         for(; ig != igEnd; ++ig)
         {
@@ -329,7 +328,7 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
     {
         // add vertex and its new index based on obj index
 
-		// TODO: make use of vertex reuse!
+        // TODO: make use of vertex reuse!
 
         geom->indices().push_back(i);
         geom->vertices().push_back(object.vs[group.vis[i]]);
@@ -340,8 +339,11 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
             geom->normals().push_back(object.vns[group.vnis[i]]);
     }
 
-	// TODO: support other modes here!
-	geom->setMode(GL_TRIANGLES);
+    // TODO: support other modes here!
+    geom->setMode(GL_TRIANGLES);
+
+    if(!usesNormalIndices)
+        geom->retrieveNormals();
 
     PolygonalDrawable * drawable(new PolygonalDrawable(object.qname()));
     drawable->setGeometry(geom);

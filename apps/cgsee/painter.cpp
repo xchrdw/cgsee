@@ -1,8 +1,9 @@
 
-//#include <glm/gtc/matrix_transform.hpp>
+
 
 #include "painter.h"
 
+#include <core/autotimer.h>
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
@@ -31,7 +32,7 @@ static const QString LIGHTPOSITION_UNIFORM   ("lightposition");
 Painter::Painter()
 :   AbstractPainter()
 ,   m_group(nullptr)
-,   m_camera(nullptr)
+,   m_quad(nullptr)
 ,   m_normalz(nullptr)
 ,   m_flat(nullptr)
 ,   m_gouraud(nullptr)
@@ -40,7 +41,7 @@ Painter::Painter()
 ,   m_useProgram(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
-,   m_quad(nullptr)
+,   m_camera(nullptr)
 {
 }
 
@@ -54,22 +55,26 @@ Painter::~Painter()
 	delete m_gouraud;
 	delete m_phong;
 	delete m_gooch;
-	delete m_useProgram;
     delete m_fboNormalz;
     delete m_flush;    
 }
 
+Camera * Painter::camera()
+{
+    return m_camera;
+}
+
 const bool Painter::initialize()
 {
-    m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
+    AutoTimer t("Initialization of Painter");
+
+    m_group = ObjIO::groupFromObjFile("data/suzanneVN.obj");
+
     if(!m_group)
     {
         qWarning("Have you set the Working Directory?");
         return false;
     }
-
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
 
     glm::mat4 transform(1.f);
 
@@ -93,7 +98,7 @@ const bool Painter::initialize()
         camPos , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
     m_quad = new ScreenQuad();
-	count=0;
+
     // G-Buffer Shader
 
 	//FLAT
@@ -135,28 +140,28 @@ const bool Painter::initialize()
 	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_normalz;
+	m_useProgram = m_gouraud;
 
 	if(m_useProgram != m_gooch)
 	{
 		m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
 		m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,4.5,7.5));
-		m_useProgram->setUniform(ATTENUATION_UNIFORM, glm::vec3(0.02,0.2,0.0004));
+		m_useProgram->setUniform(ATTENUATION_UNIFORM, glm::vec3(0.002,0.002,0.0004));
 	
 		m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,0.0,7.5));
-		m_useProgram->setUniform(ATTENUATION_UNIFORM2, glm::vec3(0.01,0.3,0.0004));
+		m_useProgram->setUniform(ATTENUATION_UNIFORM2, glm::vec3(0.002,0.002,0.0004));
 
 		glm::mat4 lightMat;
-		lightMat[0] = glm::vec4(1.0,1.0,1.0,1.0);	//ambient
-		lightMat[1] = glm::vec4(0.9,0.8,0.7,1.0);	//diffuse
+		lightMat[0] = glm::vec4(0.1,0.1,0.1,1.0);	//ambient
+		lightMat[1] = glm::vec4(0.7,0.7,0.0,0.0);	//diffuse
 		lightMat[2] = glm::vec4(0.3,0.5,0.7,1.0);	//specular
 		lightMat[3] = glm::vec4(0,0,0,0);			//nichts?
 		m_useProgram->setUniform(LIGHT_UNIFORM, lightMat, true); 
 
 		glm::mat4 lightMat2;
-		lightMat[0] = glm::vec4(0.7,0.2,0.9,1.0);	//ambient
-		lightMat[1] = glm::vec4(0.0,0.0,1.0,1.0);	//diffuse
-		lightMat[2] = glm::vec4(0.9,0.9,0.9,1.0);	//specular
+		lightMat[0] = glm::vec4(0.2,0.2,0.2,1.0);	//ambient
+		lightMat[1] = glm::vec4(0.7,0.0,0.0,1.0);	//diffuse
+		lightMat[2] = glm::vec4(0.2,0.1,0.5,1.0);	//specular
 		lightMat[3] = glm::vec4(0,0,0,0);			//nichts?
 	
 		m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, true); 
@@ -168,8 +173,8 @@ const bool Painter::initialize()
 
 		glm::mat4 materialCoeff;
 		materialCoeff[0] = glm::vec4(0.1,0.14,0.1,1.0);	//ambient
-		materialCoeff[1] = glm::vec4(1.0,0.9,0.0,1.0);	//diffuse
-		materialCoeff[2] = glm::vec4(0.8,0.4,0.7,1.0);	//specular
+		materialCoeff[1] = glm::vec4(1.0,0.9,1.0,1.0);	//diffuse
+		materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);	//specular
 		materialCoeff[3] = glm::vec4(0,0,0,0);			//emission
 
 		m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
@@ -191,7 +196,6 @@ const bool Painter::initialize()
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
-
     return true;
 }
 
@@ -200,18 +204,6 @@ void Painter::paint()
     AbstractPainter::paint();
 
 	t_samplerByName sampler;
-/*	count++;
-	if(count<400){
-		camPos=glm::vec3( (camPos.x-0.01f), camPos.y,camPos.z);}
-	else if(count<800){
-		camPos=glm::vec3( (camPos.x), camPos.y,camPos.z+0.01);}
-	else if(count<1200){
-		camPos=glm::vec3( (camPos.x+0.01), camPos.y,camPos.z);}
-	else if(count<1600){
-		camPos=glm::vec3( (camPos.x), camPos.y,camPos.z-0.01);}
-	else
-		count=0;*/
-
     m_camera->setView(glm::lookAt(
         camPos, glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
@@ -221,14 +213,15 @@ void Painter::paint()
     //m_camera->draw(m_normalz, m_fboNormalz);
 	//m_camera->draw(m_flat, m_fboNormalz);
 	//m_camera->draw(m_gouraud, m_fboNormalz);
-	m_camera->draw(m_useProgram, m_fboNormalz);
+	m_camera->draw(*m_useProgram, m_fboNormalz);
 
     sampler.clear();
 	sampler["source"] = m_fboNormalz;
 
-	bindSampler(sampler, m_flush);
+	bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
 	releaseSampler(sampler);
+
 }
 
 void Painter::resize(
@@ -240,8 +233,9 @@ void Painter::resize(
     m_camera->setViewport(width, height);
 
     m_fboNormalz->resize(width, height);
-	
+
 	postShaderRelinked();
+
 }
 
 void Painter::postShaderRelinked()
@@ -249,22 +243,24 @@ void Painter::postShaderRelinked()
 }
 
 void Painter::bindSampler(
-	const t_samplerByName & sampler
-,	Program * program)
+
+    const t_samplerByName & sampler
+,   const Program & program)
 {
-	t_samplerByName::const_iterator i(sampler.begin());
-	const t_samplerByName::const_iterator iEnd(sampler.end());
-	
-	for(glm::uint slot(0); i != iEnd; ++i, ++slot)
+    t_samplerByName::const_iterator i(sampler.cbegin());
+    const t_samplerByName::const_iterator iEnd(sampler.cend());
+
+    for(glm::uint slot(0); i != iEnd; ++i, ++slot)
         i.value()->bindTexture2D(program, i.key(), slot);
 }
 
 void Painter::releaseSampler(
-	const t_samplerByName & sampler)
+    const t_samplerByName & sampler)
 {
-	t_samplerByName::const_iterator i(sampler.begin());
-	const t_samplerByName::const_iterator iEnd(sampler.end());
+    t_samplerByName::const_iterator i(sampler.begin());
+    const t_samplerByName::const_iterator iEnd(sampler.cend());
 
-	for(; i != iEnd; ++i)
-		i.value()->releaseTexture2D();
+    for(; i != iEnd; ++i)
+        i.value()->releaseTexture2D();
+
 }

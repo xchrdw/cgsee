@@ -3,10 +3,13 @@ set(target gui)
 message(STATUS "lib ${target}")
 
 set(SOURCES
-    abstractpainter.h
-    abstractpainter.cpp
     canvas.h
     canvas.cpp
+    canvasexporter.h
+    canvasexporter.cpp
+    canvasexporter.ui
+    canvasexportconfig.h
+    canvasexportconfig.cpp
     viewer.h
     viewer.cpp
     viewer.ui

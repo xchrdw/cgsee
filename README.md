@@ -21,6 +21,8 @@ If you are contributing to this project, please keep the following notes in mind
 
 CGSee is actively developed on all major platforms (Windows, Mac, Linux).
 
+[Build Instructions - Wiki](https://github.com/cgcostume/cgsee/wiki/Build-Instructions)
+
 ### Dependencies
 
 The following dev-libraries and programs need to be provided for correct CMake configuration:
