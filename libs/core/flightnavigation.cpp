@@ -50,6 +50,12 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
         case Qt::Key_Down:
             m_direction.y = -1.0f;
             break;
+        case Qt::Key_Left:
+            m_direction.x = 1.0f;
+            break;
+        case Qt::Key_Right:
+            m_direction.x = -1.0f;
+            break;
             
         default:
             break;
@@ -100,6 +106,16 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
         case Qt::Key_Down:
             if (m_direction.y == -1.0f) {
                 m_direction.y = 0.0f;
+            }
+            break;
+        case Qt::Key_Left:
+            if (m_direction.x == 1.0f) {
+                m_direction.x = 0.0f;
+            }
+            break;
+        case Qt::Key_Right:
+            if (m_direction.x == -1.0f) {
+                m_direction.x = 0.0f;
             }
             break;
             
@@ -196,9 +212,17 @@ void FlightNavigation::forward(float speed){
     updateView();
 }
 
+void FlightNavigation::sideward(float speed){
+    glm::vec3 step = speed * m_xView;
+    m_center += step;
+    m_eye += step;
+    updateView();
+}
+
 void FlightNavigation::timerEvent(QTimerEvent* event){
-    if (m_direction.y) {
+    if (m_direction.y||m_direction.x) {
         forward(m_direction.y * speed * TIMER_MS);
+        sideward(m_direction.x * speed * TIMER_MS);
     }
     if (m_yprAngle.x||m_yprAngle.y||m_yprAngle.z){
         yaw(m_yprAngle.x * angle * TIMER_MS);

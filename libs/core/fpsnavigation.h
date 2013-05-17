@@ -21,11 +21,11 @@ protected:
 
 private:
     void pitchYaw(float pitchAngle, float yawAngle);
-    void sideward(float speed);
-    void forward(float speed);
+    virtual void sideward(float speed) override;
+    virtual void forward(float speed) override;
     
-    void pitch(float angle);
-    void yaw(float angle);
+    virtual void pitch(float angle) override;
+    virtual void yaw(float angle) override;
     
     bool m_inGameMode;
     
