@@ -4,7 +4,7 @@
 #include <QString>
 #include <QMap>
 
-#include <gui/abstractpainter.h>
+#include <core/abstractpainter.h>
 
 
 class Camera;
@@ -24,8 +24,6 @@ public:
     virtual void resize(
         const int width
     ,   const int height);
-
-
 
 protected:
     virtual const bool initialize();

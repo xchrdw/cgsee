@@ -193,7 +193,6 @@ inline void ObjIO::parseF(
 
     group.foffs.push_back(static_cast<GLuint>(group.vis.size()));
 
-    GLuint offset(0);
     GLuint i;
 
     while(line >> i)
