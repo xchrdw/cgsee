@@ -25,7 +25,6 @@ static const QString LIGHT_UNIFORM   ("light");
 static const QString LIGHT_UNIFORM2   ("light2");
 static const QString LIGHTSHININESS_UNIFORM   ("lightshininess");
 static const QString MATERIAL_UNIFORM   ("material");
-
 //for gooch
 static const QString LIGHTPOSITION_UNIFORM   ("lightposition");
 
@@ -62,7 +61,7 @@ Painter::~Painter()
 
 const bool Painter::initialize()
 {
-    m_group = ObjIO::groupFromObjFile("data/suzanneVN.obj");
+    m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
     if(!m_group)
     {
         qWarning("Have you set the Working Directory?");
@@ -136,7 +135,7 @@ const bool Painter::initialize()
 	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_gooch;
+	m_useProgram = m_normalz;
 
 	if(m_useProgram != m_gooch)
 	{
@@ -201,7 +200,7 @@ void Painter::paint()
     AbstractPainter::paint();
 
 	t_samplerByName sampler;
-	count++;
+/*	count++;
 	if(count<400){
 		camPos=glm::vec3( (camPos.x-0.01f), camPos.y,camPos.z);}
 	else if(count<800){
@@ -211,7 +210,7 @@ void Painter::paint()
 	else if(count<1600){
 		camPos=glm::vec3( (camPos.x), camPos.y,camPos.z-0.01);}
 	else
-		count=0;
+		count=0;*/
 
     m_camera->setView(glm::lookAt(
         camPos, glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
