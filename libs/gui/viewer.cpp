@@ -3,6 +3,10 @@
 // #include <QListView>
 // #include <QDockWidget>
 
+#include <GL/glew.h>
+
+#include <cassert>
+
 #include <QOpenGLContext>
 #include <QSettings>
 #include <QDockWidget>
@@ -11,8 +15,10 @@
 
 #include "viewer.h"
 #include "canvas.h"
-#include "abstractpainter.h"
+#include "canvasexporter.h"
 
+#include <core/abstractpainter.h>
+#include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 
 
@@ -158,4 +164,21 @@ AbstractPainter * Viewer::painter()
         return nullptr;
 
     return m_qtCanvas->painter();
+}
+
+void Viewer::on_captureAsImageAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this);
+}
+
+void Viewer::on_captureAsImageAdvancedAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this, true);
+}
+
+void Viewer::on_reloadAllShadersAction_triggered()
+{
+    FileAssociatedShader::reloadAll();
 }

@@ -3,10 +3,13 @@ set(target gui)
 message(STATUS "lib ${target}")
 
 set(SOURCES
-    abstractpainter.h
-    abstractpainter.cpp
     canvas.h
     canvas.cpp
+    canvasexporter.h
+    canvasexporter.cpp
+    canvasexporter.ui
+    canvasexportconfig.h
+    canvasexportconfig.cpp
     fileExplorer.h
     fileExplorer.cpp
     fileNavigator.h
@@ -41,7 +44,6 @@ qt5_use_modules(${target} Core OpenGL Gui Widgets)
 
 target_link_libraries(${target}
     ${OPENGL_LIBRARIES}
-    ${EXTRA_LIBS}
     core)
 
 set_target_properties(${target}

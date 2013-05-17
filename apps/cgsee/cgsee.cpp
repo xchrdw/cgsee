@@ -1,6 +1,7 @@
 #include "cgsee.h"
 #include "painter.h"
 
+#include <gui/canvas.h>
 #include <gui/viewer.h>
 
 
