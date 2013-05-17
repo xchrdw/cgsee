@@ -10,6 +10,7 @@ class AbstractNavigation;
 
 class CGSee : public AbstractApplication
 {
+    Q_OBJECT
 public:
     CGSee(int & argc, char ** argv);
     virtual ~CGSee();

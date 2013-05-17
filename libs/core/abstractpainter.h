@@ -7,8 +7,8 @@
 #include <core/glformat.h>
 
 class QKeyEvent;
-class QMouseEvent;
 class Camera;
+class AbstractGLParent;
 
 class CGSEE_API AbstractPainter
 {
@@ -19,11 +19,18 @@ public:
     // calls initialize if not initialized - so call this when subclassed
     virtual void paint();
 
+    const QImage capture(
+        AbstractGLParent & parent
+    ,   const QSize & size
+    ,   const bool aspect
+    ,   const bool alpha);
+
     virtual void resize(
         const int width
     ,   const int height);
 
-    
+    Camera * camera();
+
     /*virtual void keyPress(QKeyEvent * event);
     virtual void keyRelease(QKeyEvent * event);
     virtual void mouseMoveEvent (QMouseEvent * event);

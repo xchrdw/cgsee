@@ -66,11 +66,11 @@ void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
     if (m_arcball_on) {
         updateArcball();
     }
-    if (m_zoom_on) {
+    else if (m_zoom_on) {
         updateZoom();
     }
-    updateCamera();    
     m_mouse_last = m_mouse_cur;
+    updateCamera();    
 }
 
 void ArcballNavigation::mousePressEvent(QMouseEvent * event)
@@ -85,7 +85,7 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
     if (event->button() == Qt::LeftButton) {
         m_arcball_on = false;
     }
-    if (event->button() == Qt::RightButton) {
+    else if (event->button() == Qt::RightButton) {
         m_zoom_on = false;
     }
 }

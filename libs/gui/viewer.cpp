@@ -1,3 +1,7 @@
+#include <GL/glew.h>
+
+#include <cassert>
+
 #include <QOpenGLContext>
 #include <QSettings>
 
@@ -5,12 +9,16 @@
 
 #include "viewer.h"
 #include "canvas.h"
-#include "abstractpainter.h"
+#include "core/abstractpainter.h"
 #include "core/abstractnavigation.h"
 #include "core/flightnavigation.h"
 #include "core/fpsnavigation.h"
+#include "core/savedviews.h"
 #include "core/arcballnavigation.h"
+#include "canvasexporter.h"
 
+#include <core/abstractpainter.h>
+#include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 
 
@@ -129,6 +137,24 @@ AbstractPainter * Viewer::painter()
     return m_qtCanvas->painter();
 }
 
+
+void Viewer::on_captureAsImageAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this);
+}
+
+void Viewer::on_captureAsImageAdvancedAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this, true);
+}
+
+void Viewer::on_reloadAllShadersAction_triggered()
+{
+    FileAssociatedShader::reloadAll();
+}
+
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
     m_qtCanvas->setNavigation(navigation);
@@ -140,6 +166,17 @@ AbstractNavigation * Viewer::navigation() {
     return m_qtCanvas->navigation();
 }
 
+void Viewer::setSavedViews(SavedViews * savedViews)
+{
+    m_savedViews = savedViews;
+    m_savedViews->setCanvas(m_qtCanvas);
+}
+
+SavedViews * Viewer::savedViews() {
+    return m_savedViews;
+}
+
+
 void Viewer::setCamera(Camera * camera )
 {
     m_camera = camera;
@@ -149,7 +186,6 @@ Camera * Viewer::camera()
 {
     return m_camera;
 }
-
     
 void Viewer::deactivateManipulators() {
     m_ui->flightManipulatorAction->setChecked(false);
@@ -185,6 +221,10 @@ void Viewer::setFpsManipulator()
 
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
+    if(event->isAutoRepeat()) {
+        return;
+    }
+
     switch (event->key())
     {
     case Qt::Key_Escape:
@@ -207,13 +247,13 @@ void Viewer::keyPressEvent(QKeyEvent * event)
         if (Qt::Key_F1 <= event->key() && event->key() <= Qt::Key_F12)
         {
             if(event->modifiers() == Qt::ControlModifier) {
-                navigation()->saveView(event->key() - Qt::Key_F1);
+                savedViews()->saveView(event->key() - Qt::Key_F1);
             } else {
-                navigation()->loadView(event->key() - Qt::Key_F1);
+                savedViews()->loadView(event->key() - Qt::Key_F1);
             }
         }
         else {
-            m_qtCanvas->navigation()->keyPressEvent(event);
+            navigation()->keyPressEvent(event);
         }
         break;
     }
@@ -221,6 +261,9 @@ void Viewer::keyPressEvent(QKeyEvent * event)
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )
 {
+    if(event->isAutoRepeat()) {
+        return;
+    }
     m_qtCanvas->navigation()->keyReleaseEvent(event);
 }
 
@@ -235,4 +278,3 @@ void Viewer::on_trackballManipulatorAction_triggered(){
 void Viewer::on_fpsManipulatorAction_triggered(){
     setFpsManipulator();
 }
-

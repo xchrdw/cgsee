@@ -16,6 +16,9 @@ set(SOURCES
     arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
+    abstractglparent.h
+    abstractpainter.h
+    abstractpainter.cpp
     abstracttimer.h
     autotimer.h
     autotimer.cpp
@@ -53,6 +56,8 @@ set(SOURCES
     polygonalgeometry.cpp
     program.h
     program.cpp
+    savedviews.h
+    savedviews.cpp
     screenquad.h
     screenquad.cpp
     shader.h

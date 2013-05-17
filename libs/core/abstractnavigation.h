@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,13 +13,11 @@
 #include <QMouseEvent>
 #include <QBasicTimer>
 
-
 class Camera;
+class QWidget;
 
 class CGSEE_API AbstractNavigation : QObject {
     
-    // Q_OBJECT how does this work?
-
 public:
 
     AbstractNavigation(Camera *camera);
@@ -30,11 +27,7 @@ public:
 
     //void assignCoordinateProvider(CoordinateProvider *provider);
 
-    virtual void update(float delta_t); // called on every frame.
-
-
     // interaction mapping
-
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void keyReleaseEvent(QKeyEvent *event);
 
@@ -42,29 +35,33 @@ public:
     virtual void mousePressEvent(QMouseEvent * event);
     virtual void mouseReleaseEvent(QMouseEvent * event);
     virtual void mouseDoubleClickEvent(QMouseEvent * event);
-
     virtual void wheelEvent(QWheelEvent *event);
 
     virtual const glm::mat4 viewMatrix();
-    
-    void saveView(int viewnr);
-    void loadView(int viewnr);
-
-    void setViewPort(const int width, const int height);
 
     void updateCamera();
+    virtual void onCameraChanged();
+
+    void setCanvas(QWidget * canvas);
+    void setViewPort(const int width, const int height);
+
+protected:
+    virtual void timerEvent(QTimerEvent* event);
+    void startTimer();
+    void stopTimer();
+    bool isTimerRunning();
+
 
 protected:
     int m_width;
     int m_height;
     glm::mat4 m_viewMatrix;
-    
-    std::vector<glm::mat4> m_saved_views;
+
+    static const int TIMER_MS = 1000/60;
 
 private:
     Camera * m_camera;
-    void timerEvent(QTimerEvent* event);
-    QBasicTimer * m_timer;
-    glm::mat4 m_oldMatrix;
-    float m_animation;
+    QWidget * m_canvas;
+    QBasicTimer m_timer;
+    int m_timer_requests;
 };
