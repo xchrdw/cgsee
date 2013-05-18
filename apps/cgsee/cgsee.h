@@ -5,8 +5,6 @@
 
 class Viewer;
 class Painter;
-class Camera;
-class AbstractNavigation;
 
 class CGSee : public AbstractApplication
 {

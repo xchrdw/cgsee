@@ -112,6 +112,9 @@
    <property name="text">
     <string>Toggle &amp;Debug Mode</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="togglePrintModeAction">
    <property name="checkable">
@@ -123,6 +126,9 @@
    <property name="text">
     <string>Toggle &amp;Print Mode</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="toggleFullScreenAction">
    <property name="enabled">
@@ -130,6 +136,9 @@
    </property>
    <property name="text">
     <string>Toggle Full Screen</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="specifyResolutionAction">
@@ -139,6 +148,9 @@
    <property name="text">
     <string>Specify Resolution ...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="captureCameraPathAction">
    <property name="enabled">
@@ -146,6 +158,9 @@
    </property>
    <property name="text">
     <string>Capture Camera Path ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="aboutAction">
@@ -177,6 +192,9 @@
    <property name="text">
     <string>&amp;Drive Manipulator</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="playCameraPathAction">
    <property name="enabled">
@@ -185,13 +203,19 @@
    <property name="text">
     <string>&amp;Play Camera Path ...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="flightManipulatorAction">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>&amp;Flight Manipulator</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="terrainManipulatorAction">
@@ -201,13 +225,19 @@
    <property name="text">
     <string>&amp;Terrain Manipulator</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="trackballManipulatorAction">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Track&amp;ball Manipulator</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="treemapManipulatorAction">
@@ -217,6 +247,9 @@
    <property name="text">
     <string>3D Tree&amp;map Manipulator</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="fpsManipulatorAction">
    <property name="enabled">
@@ -224,6 +257,9 @@
    </property>
    <property name="text">
     <string>FPS Manipulator</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="specifyBenchmarkAction">
@@ -233,6 +269,9 @@
    <property name="text">
     <string>&amp;Specify Benchmark ...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="runBenchmarksAction">
    <property name="enabled">
@@ -241,6 +280,9 @@
    <property name="text">
     <string>&amp;Run Benchmarks ...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="manageConfigurationsAction">
    <property name="enabled">
@@ -248,6 +290,9 @@
    </property>
    <property name="text">
     <string>Manage &amp;Configurations ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="preferencesAction">
@@ -284,6 +329,9 @@
    <property name="text">
     <string>&amp;UFO Manipulator</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="selectVantagePointAction">
    <property name="enabled">
@@ -292,6 +340,9 @@
    <property name="text">
     <string>Select V&amp;antage Point ...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="createVantagePointAction">
    <property name="enabled">
@@ -299,6 +350,9 @@
    </property>
    <property name="text">
     <string>Create Vantage Point</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="toggleHpiLogoAction">

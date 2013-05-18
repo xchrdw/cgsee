@@ -10,7 +10,7 @@ class QBasicTimer;
 class QTimerEvent;
 
 class AbstractPainter;
-class AbstractNavigation;
+
 
 class CGSEE_API Canvas : public QGLWidget
 {
@@ -22,14 +22,6 @@ public:
 
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
-	void setNavigation( AbstractNavigation * navigation );
-	AbstractNavigation * navigation();
-
-    virtual void mouseMoveEvent ( QMouseEvent * event );
-    virtual void mousePressEvent ( QMouseEvent * event );
-    virtual void mouseReleaseEvent ( QMouseEvent * event );
-    
-    virtual void wheelEvent(QWheelEvent *event);
 
 protected:
     
@@ -57,7 +49,6 @@ protected:
 
 protected:
     AbstractPainter * m_painter;
-    AbstractNavigation * m_navigation;
 
     QBasicTimer * m_timer;
     const GLFormat m_format;

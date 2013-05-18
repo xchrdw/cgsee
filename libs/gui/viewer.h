@@ -20,8 +20,7 @@ class GLFormat;
 class Ui_Viewer;
 class Canvas;
 class AbstractPainter;
-class AbstractNavigation;
-class Camera;
+
 
 class CGSEE_API Viewer : public QMainWindow
 {
@@ -34,21 +33,11 @@ public:
 
     void initialize(const GLFormat & format);
 
-    void setNavigation(AbstractNavigation * navigation);
-    AbstractNavigation * navigation();
-
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
-    void setCamera(Camera * camera);
-    Camera * camera();
-
-
-    void keyPressEvent(QKeyEvent * event);
-    void keyReleaseEvent (QKeyEvent *event);
-
-protected:
-
+protected slots:
+    void on_reloadAllShadersAction_triggered();
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -65,5 +54,4 @@ protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
 
     Canvas * m_qtCanvas;
-    Camera * m_camera;
 };
