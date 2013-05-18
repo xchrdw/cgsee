@@ -3,14 +3,23 @@
 layout(triangles) in;
 layout(line_strip, max_vertices = 2) out;
 
-vec3 o_normal[3];
+in vec3 o_normal[3];
+
+out float relToPeak;
 
 void main(void) {
     for(int i = 0; i < gl_in.length(); i++) {
-        gl_Position = gl_in[i].gl_Position;
+        vec4 baseVertex, peakVertex;
+
+        baseVertex = gl_in[i].gl_Position;
+        peakVertex = baseVertex + vec4(normalize(o_normal[i]), 0.0)/5;
+
+        gl_Position = baseVertex;
+        relToPeak = 0.0;
         EmitVertex();
 
-        gl_Position = gl_in[i].gl_Position + vec4(normalize(o_normal[i])*3, 1.0);
+        gl_Position = peakVertex;
+        relToPeak = 1.0;
         EmitVertex();
 
         EndPrimitive();
