@@ -44,8 +44,8 @@ set(SOURCES
     mathmacros.h
     node.h
     node.cpp
-    objio.h
-    objio.cpp
+    objloader.h
+    objloader.cpp
     polygonaldrawable.h
     polygonaldrawable.cpp
     polygonalgeometry.h
@@ -60,7 +60,7 @@ set(SOURCES
     timer.cpp
 )
 
-source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$" 
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$"
     ${CGSEE_SOURCE_GROUP} ${SOURCES})
 
 # setup target

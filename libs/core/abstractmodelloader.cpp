@@ -49,13 +49,13 @@ QString AbstractModelLoader::allSaveableTypes() const
     return extensions.join(" ");
 }
 
-Group * AbstractModelLoader::importFromFile(const QString & filename) const
+Group * AbstractModelLoader::importFromFile(const QString & filePath) const
 {
     return nullptr;
 }
 
 bool AbstractModelLoader::exportToFile(const Group & group,
-                                       const QString & filename, const QString & extension) const
+    const QString & filePath, const QString & extension) const
 {
     return false;
 }

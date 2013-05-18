@@ -75,11 +75,9 @@ QStringList AssimpLoader::loadableExtensions() const
 
 Group * AssimpLoader::importFromFile(const QString & filePath) const
 {
-    Assimp::Importer importer;
-
     qDebug("Reading geometry with Assimp from \"%s\".", qPrintable(filePath));
 
-    const aiScene * scene = importer.ReadFile(filePath.toStdString(),
+    const aiScene * scene = m_importer->ReadFile(filePath.toStdString(),
                                               aiProcess_Triangulate);
 
     if (!scene) {
@@ -89,7 +87,10 @@ Group * AssimpLoader::importFromFile(const QString & filePath) const
 
     const QVector<PolygonalDrawable *> * drawables = parseMeshes(scene->mMeshes, scene->mNumMeshes);
     Group * group = parseNode(*scene, *drawables, *(scene->mRootNode));
+    
     delete drawables;
+    m_importer->FreeScene();
+    
     return group;
 }
 

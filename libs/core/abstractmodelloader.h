@@ -22,9 +22,9 @@ public:
     virtual QStringList saveableTypes() const;
     QString allSaveableTypes() const;
 
-    virtual Group * importFromFile(const QString & filename) const;
+    virtual Group * importFromFile(const QString & filePath) const;
     virtual bool exportToFile(const Group & group,
-        const QString & filename, const QString & extension) const;
+        const QString & filePath, const QString & extension) const;
 protected:
     virtual QStringList loadableExtensions() const;
     virtual QStringList saveableExtensions() const;

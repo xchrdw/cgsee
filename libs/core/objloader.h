@@ -6,17 +6,24 @@
 #include <QString>
 
 #include "declspec.h"
-
 #include "common.h"
+#include "abstractmodelloader.h"
 
 
 class Group;
 class PolygonalDrawable;
 
-class CGSEE_API ObjIO
+class CGSEE_API ObjLoader : public AbstractModelLoader
 {
 public:
-    static Group * groupFromObjFile(const QString & filePath);
+    ObjLoader();
+    virtual ~ObjLoader();
+
+    virtual QStringList loadableTypes() const;
+    virtual Group * importFromFile(const QString & filePath) const;
+
+protected:
+    virtual QStringList loadableExtensions() const;
 
 protected:
 
@@ -85,7 +92,7 @@ protected:
     ,   t_objects & objects);
     static void parseG(
         std::istringstream & line
-    ,   ObjObject & object); 
+    ,   ObjObject & object);
 
     static const e_FaceFormat parseFaceFormat(const std::istringstream & line);
 };
