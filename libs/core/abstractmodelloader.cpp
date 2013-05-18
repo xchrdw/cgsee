@@ -3,6 +3,14 @@
 #include "group.h"
 #include "abstractmodelloader.h"
 
+AbstractModelLoader::AbstractModelLoader()
+{
+}
+
+AbstractModelLoader::~AbstractModelLoader()
+{
+}
+
 bool AbstractModelLoader::canLoad(const QString & extension) const
 {
     return loadableExtensions().contains(extension);
@@ -11,6 +19,11 @@ bool AbstractModelLoader::canLoad(const QString & extension) const
 bool AbstractModelLoader::canSave(const QString & extension) const
 {
     return saveableExtensions().contains(extension);
+}
+
+QStringList AbstractModelLoader::loadableTypes() const
+{
+    return QStringList();
 }
 
 QString AbstractModelLoader::allLoadableTypes() const
@@ -22,6 +35,11 @@ QString AbstractModelLoader::allLoadableTypes() const
     return extensions.join(" ");
 }
 
+QStringList AbstractModelLoader::saveableTypes() const
+{
+    return QStringList();
+}
+
 QString AbstractModelLoader::allSaveableTypes() const
 {
     QStringList extensions = saveableExtensions();
@@ -31,26 +49,24 @@ QString AbstractModelLoader::allSaveableTypes() const
     return extensions.join(" ");
 }
 
-bool AbstractModelLoader::load(const QString & filename,
-        AbstractPainter & painter) const
+Group * AbstractModelLoader::importFromFile(const QString & filename) const
 {
-    Group * group = importFromFile(filename);
-    if(!group)
-        return false;
-
-    painter.assignGroup(group);
-    return true;
+    return nullptr;
 }
 
-bool AbstractModelLoader::save(const AbstractPainter & painter, 
-        const QString & filename, const QString & extension) const
+bool AbstractModelLoader::exportToFile(const Group & group,
+                                       const QString & filename, const QString & extension) const
 {
-    return exportToFile(painter.getGroup(), filename, extension);
+    return false;
 }
 
-bool AbstractModelLoader::save(const Group & group, 
-        const QString & filename, const QString & extension) const
+QStringList AbstractModelLoader::loadableExtensions() const
 {
-    return exportToFile(group, filename, extension);
+    return QStringList();
+}
+
+QStringList AbstractModelLoader::saveableExtensions() const
+{
+    return QStringList();
 }
 

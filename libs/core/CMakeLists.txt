@@ -18,8 +18,8 @@ set(SOURCES
     abstractpainter.h
     abstractpainter.cpp
     abstracttimer.h
-    assimpwrapper.h
-    assimpwrapper.cpp
+    assimploader.h
+    assimploader.cpp
     autotimer.h
     autotimer.cpp
     bufferobject.h

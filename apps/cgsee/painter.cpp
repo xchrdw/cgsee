@@ -1,5 +1,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <QDebug>
 
 #include "painter.h"
 
@@ -12,7 +13,7 @@
 #include <core/gpuquery.h>
 #include <core/group.h>
 #include <core/objio.h>
-#include <core/assimpwrapper.h>
+#include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
 
@@ -46,8 +47,11 @@ Camera * Painter::camera()
 const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
-
-    m_group = AssimpWrapper::groupFromFile("data/mario.dae");
+    
+    AssimpLoader loader;
+    
+    qDebug() << loader.canLoad("dae");
+    m_group = loader.importFromFile("data/mario.dae");
 
     if(!m_group)
     {
