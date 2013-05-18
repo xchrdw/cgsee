@@ -12,6 +12,7 @@
 #include "gpuquery.h"
 
 
+
 AbstractPainter::AbstractPainter(Camera * camera)
 :   m_camera(camera)
 ,   m_initialized(false)
@@ -107,6 +108,7 @@ const QImage AbstractPainter::capture(
 
     return frame.mirrored(false, true); // flip vertically
 }
+
 
 Camera * AbstractPainter::camera()
 {

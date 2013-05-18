@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include <QMainWindow>
-
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -10,6 +8,9 @@
 #endif
 
 #include <memory>
+
+#include <QMainWindow>
+
 #include <core/declspec.h>
 #include <glm/glm.hpp>
 
@@ -72,6 +73,7 @@ public slots:
     void on_actionLoad_3_triggered();
     void on_actionLoad_4_triggered();
     
+protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
 

@@ -24,7 +24,7 @@ public:
     virtual void resize(
         const int width
     ,   const int height);
-
+     
 protected:
     virtual const bool initialize();
 

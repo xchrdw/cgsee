@@ -1,6 +1,7 @@
 #include "cgsee.h"
 #include "painter.h"
 
+#include <gui/canvas.h>
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/arcballnavigation.h>
