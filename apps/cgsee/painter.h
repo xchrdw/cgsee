@@ -5,6 +5,7 @@
 #include <QMap>
 
 #include <gui/abstractpainter.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 class Camera;
@@ -49,4 +50,6 @@ protected:
     FrameBufferObject * m_fboNormalz;
 
     Program * m_flush;
+
+    glm::mat3 m_eyeRotate;
 };

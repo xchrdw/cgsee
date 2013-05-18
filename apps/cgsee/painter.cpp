@@ -41,7 +41,7 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    m_group = ObjIO::groupFromObjFile("data/teapot.obj");
+    m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
 
     if(!m_group)
     {
@@ -71,8 +71,9 @@ const bool Painter::initialize()
 
     m_quad = new ScreenQuad();
 
-    // G-Buffer Shader
+    m_eyeRotate = (glm::mat3)glm::rotate<float>(glm::mat4(), 0.0, glm::detail::tvec3<float>(0, 1, 0));
 
+    // G-Buffer Shader
     m_normalz = new Program();
     m_normalz->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normals.frag"));
@@ -109,6 +110,13 @@ void Painter::paint()
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
+
+    static glm::vec3 eye(0.f, 0.f,-2.f);
+
+    m_camera->setView(glm::lookAt(
+         m_eyeRotate * eye , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+
+    m_eyeRotate = (glm::mat3)glm::rotate<float>(glm::mat4(m_eyeRotate), 0.05, glm::vec3(0, 1, 0));
 }
 
 void Painter::resize(
