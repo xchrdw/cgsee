@@ -11,6 +11,8 @@
 
 #include <memory>
 #include <core/declspec.h>
+#include <glm/glm.hpp>
+
 
 class GLFormat;
 
@@ -18,7 +20,6 @@ class Ui_Viewer;
 class Canvas;
 class AbstractPainter;
 class AbstractNavigation;
-class SavedViews;
 class Camera;
 
 class CGSEE_API Viewer : public QMainWindow
@@ -34,9 +35,6 @@ public:
 
    void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
-
-    void setSavedViews(SavedViews * saved);
-    SavedViews * savedViews();
     
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
@@ -58,6 +56,22 @@ public slots:
     void on_trackballManipulatorAction_triggered();
     void on_fpsManipulatorAction_triggered();
 
+    void on_actionFrontView_triggered();
+    void on_actionLeftView_triggered();
+    void on_actionBackView_triggered();
+    void on_actionRightView_triggered();
+    void on_actionTopView_triggered();
+    void on_actionBottomView_triggered();
+
+    void on_actionSave_1_triggered();
+    void on_actionSave_2_triggered();
+    void on_actionSave_3_triggered();
+    void on_actionSave_4_triggered();
+    void on_actionLoad_1_triggered();
+    void on_actionLoad_2_triggered();
+    void on_actionLoad_3_triggered();
+    void on_actionLoad_4_triggered();
+    
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
 
@@ -80,5 +94,6 @@ protected:
 
     Canvas * m_qtCanvas;
     Camera * m_camera;
-    SavedViews * m_savedViews;
+    QVector<glm::mat4> m_saved_views;
+
 };

@@ -4,7 +4,6 @@
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/arcballnavigation.h>
-#include <core/savedviews.h>
 
 CGSee::CGSee(int & argc, char ** argv)
 :   AbstractApplication(argc, argv)
@@ -29,8 +28,6 @@ CGSee::CGSee(int & argc, char ** argv)
     navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
 
-    SavedViews * savedViews = new SavedViews(camera);
-    m_viewer->setSavedViews(savedViews);
     
     // Start
     m_viewer->show();

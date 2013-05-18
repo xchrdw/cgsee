@@ -12,6 +12,7 @@ AbstractNavigation::AbstractNavigation(Camera *camera)
     , m_canvas(0)
     , m_timer()
     , m_timer_requests(0)
+    , m_animation_active(false)
 {
     
 }
@@ -70,8 +71,10 @@ void AbstractNavigation::setCanvas( QWidget * canvas )
 }
 
 
-void AbstractNavigation::timerEvent( QTimerEvent* event ) { }
-
+/**
+* starts the timer. if it's called multiple times, you need 
+* to make the same number of stop calls to stop it.
+*/
 void AbstractNavigation::startTimer()
 {
     m_timer_requests++;
@@ -93,10 +96,49 @@ void AbstractNavigation::stopTimer()
     }
 }
 
+void AbstractNavigation::timerEvent( QTimerEvent* event ) {
+    if (m_animation_active) {
+        m_animation_progress += TIMER_MS/333.0f;
+        if (m_animation_progress > 1) {
+            m_animation_active = false;
+            stopTimer();
+            m_viewMatrix = m_newMatrix;
+            setFromMatrix(m_viewMatrix);
+            updateCamera();
+        } else {
+            m_viewMatrix = (1-m_animation_progress) * m_oldMatrix + m_animation_progress * m_newMatrix; // TODO replace with quaternion interpolation
+            updateCamera();
+        }
+    }
+    else {
+        onTimerEvent(); // notify super class
+    }
+}
+
+void AbstractNavigation::onTimerEvent() { }
+
+
 bool AbstractNavigation::isTimerRunning()
 {
     return m_timer.isActive();
 }
+
+void AbstractNavigation::loadView( glm::mat4 viewmatrix )
+{
+    m_oldMatrix = m_viewMatrix;
+    m_newMatrix = viewmatrix;
+    
+    m_animation_progress = 0;
+    m_animation_active = true;
+    
+
+    if(!isTimerRunning())
+        startTimer();
+}
+
+void AbstractNavigation::setFromMatrix( glm::mat4 view ) { }
+
+
 
 
 

@@ -42,14 +42,18 @@ public:
     void updateCamera();
     virtual void onCameraChanged();
 
+    void loadView(glm::mat4 viewmatrix);
+
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
 
 protected:
-    virtual void timerEvent(QTimerEvent* event);
     void startTimer();
     void stopTimer();
     bool isTimerRunning();
+
+    virtual void onTimerEvent();
+    virtual void setFromMatrix(glm::mat4 view);
 
 
 protected:
@@ -60,8 +64,15 @@ protected:
     static const int TIMER_MS = 1000/60;
 
 private:
+    void timerEvent(QTimerEvent* event);
+
     Camera * m_camera;
     QWidget * m_canvas;
     QBasicTimer m_timer;
     int m_timer_requests;
+
+    float m_animation_progress;
+    bool m_animation_active;
+    glm::mat4 m_oldMatrix;
+    glm::mat4 m_newMatrix;
 };

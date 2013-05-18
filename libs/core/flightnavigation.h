@@ -17,7 +17,7 @@ public:
     
     
 protected:
-    virtual void timerEvent(QTimerEvent* event) override;
+    virtual void onTimerEvent() override;
 
     //Defines the view
     glm::vec3 m_eye;
@@ -26,7 +26,7 @@ protected:
     
     void updateView();
     
-    //Coordinatesystem of the view
+    //Coordinate system of the view
     glm::vec3 m_xView;
     glm::vec3 m_yView;
     glm::vec3 m_zView;
@@ -47,7 +47,7 @@ protected:
     virtual void forward(float speed);
     virtual void sideward(float speed);
     
-    void setFromMatrix(glm::mat4 view);
+    virtual void setFromMatrix(glm::mat4 view) override;
     
     glm::vec2 m_direction;
     glm::vec3 m_yprAngle;

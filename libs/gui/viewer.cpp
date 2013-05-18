@@ -9,11 +9,11 @@
 
 #include "viewer.h"
 #include "canvas.h"
+//#include "core/camera.h"
 #include "core/abstractpainter.h"
 #include "core/abstractnavigation.h"
 #include "core/flightnavigation.h"
 #include "core/fpsnavigation.h"
-#include "core/savedviews.h"
 #include "core/arcballnavigation.h"
 #include "canvasexporter.h"
 
@@ -35,7 +35,7 @@ Viewer::Viewer(
 
 :   QMainWindow(parent, flags)
 ,   m_ui(new Ui_Viewer)
-
+,   m_saved_views(12)
 ,   m_qtCanvas(nullptr)
 {
     m_ui->setupUi(this);
@@ -45,6 +45,18 @@ Viewer::Viewer(
 
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
+
+    // TODO: load from settings
+    m_saved_views[0] = glm::lookAt(glm::vec3(0.f, 0.f,-2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    m_saved_views[1] = glm::lookAt(glm::vec3(2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    m_saved_views[2] = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    m_saved_views[3] = glm::lookAt(glm::vec3(-2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    m_saved_views[4] = glm::lookAt(glm::vec3(0.f, 2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    m_saved_views[5] = glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    for (int i = 6; i < m_saved_views.size(); i++)
+    {
+        m_saved_views[i] = m_saved_views[0];
+    }
 };
 
 #ifdef WIN32
@@ -166,17 +178,6 @@ AbstractNavigation * Viewer::navigation() {
     return m_qtCanvas->navigation();
 }
 
-void Viewer::setSavedViews(SavedViews * savedViews)
-{
-    m_savedViews = savedViews;
-    m_savedViews->setCanvas(m_qtCanvas);
-}
-
-SavedViews * Viewer::savedViews() {
-    return m_savedViews;
-}
-
-
 void Viewer::setCamera(Camera * camera )
 {
     m_camera = camera;
@@ -206,7 +207,7 @@ void Viewer::setTrackballManipulator()
     setNavigation(new ArcballNavigation(m_camera));
     deactivateManipulators();
     m_ui->trackballManipulatorAction->setChecked(true);
-    qDebug("Arcball navigation, use left and right mousebuttons");
+    qDebug("Arcball navigation, use left and right mouse buttons");
 }
     
 void Viewer::setFpsManipulator()
@@ -227,29 +228,18 @@ void Viewer::keyPressEvent(QKeyEvent * event)
 
     switch (event->key())
     {
-    case Qt::Key_Escape:
-        close();
-        break;
-    case Qt::Key_1:
-        setFlightManipulator();
-        break;
-    case Qt::Key_2:
-        setTrackballManipulator();
-        break;    
-    case Qt::Key_3:
-        setFpsManipulator();
-        break;
     case Qt::Key_R:
         navigation()->reset();
         break;
 
     default:
-        if (Qt::Key_F1 <= event->key() && event->key() <= Qt::Key_F12)
+        if (Qt::Key_F6 <= event->key() && event->key() <= Qt::Key_F12)
         {
+            int num = event->key() - Qt::Key_F1;
             if(event->modifiers() == Qt::ControlModifier) {
-                savedViews()->saveView(event->key() - Qt::Key_F1);
+                //m_saved_views[num] = camera()->view(); needs to have #include "core/camera.h fixed
             } else {
-                savedViews()->loadView(event->key() - Qt::Key_F1);
+                navigation()->loadView(m_saved_views[num]);
             }
         }
         else {
@@ -264,17 +254,73 @@ void Viewer::keyReleaseEvent( QKeyEvent *event )
     if(event->isAutoRepeat()) {
         return;
     }
-    m_qtCanvas->navigation()->keyReleaseEvent(event);
+    if (Qt::Key_F1 <= event->key() && event->key() <= Qt::Key_F12) {
+        // change animations
+    } else {
+        m_qtCanvas->navigation()->keyReleaseEvent(event);
+    }
 }
 
-void Viewer::on_flightManipulatorAction_triggered(){
+void Viewer::on_flightManipulatorAction_triggered() {
     setFlightManipulator();
 }
     
-void Viewer::on_trackballManipulatorAction_triggered(){
+void Viewer::on_trackballManipulatorAction_triggered() {
     setTrackballManipulator();
 }
     
-void Viewer::on_fpsManipulatorAction_triggered(){
+void Viewer::on_fpsManipulatorAction_triggered() {
     setFpsManipulator();
+}
+
+
+
+void Viewer::on_actionFrontView_triggered() {
+    navigation()->loadView(m_saved_views[0]);
+}
+void Viewer::on_actionLeftView_triggered() {
+    navigation()->loadView(m_saved_views[1]);
+}
+void Viewer::on_actionBackView_triggered() {
+    navigation()->loadView(m_saved_views[2]);
+}
+void Viewer::on_actionRightView_triggered() {
+    navigation()->loadView(m_saved_views[3]);
+}
+void Viewer::on_actionTopView_triggered() {
+    navigation()->loadView(m_saved_views[4]);
+}
+void Viewer::on_actionBottomView_triggered() {
+    navigation()->loadView(m_saved_views[5]);
+}
+
+
+void Viewer::on_actionLoad_1_triggered() {
+    navigation()->loadView(m_saved_views[6]);
+}
+
+void Viewer::on_actionLoad_2_triggered() {
+    navigation()->loadView(m_saved_views[7]);
+}
+
+void Viewer::on_actionLoad_3_triggered() {
+    navigation()->loadView(m_saved_views[8]);
+}
+
+void Viewer::on_actionLoad_4_triggered() {
+    navigation()->loadView(m_saved_views[9]);
+}
+
+
+void Viewer::on_actionSave_1_triggered() {
+    //m_saved_views[6] = camera->view(); needs #include "core/camera.h" fixed
+}
+void Viewer::on_actionSave_2_triggered() {
+    //m_saved_views[7] = camera->view();
+}
+void Viewer::on_actionSave_3_triggered() {
+    //m_saved_views[8] = camera->view();
+}
+void Viewer::on_actionSave_4_triggered() {
+    //m_saved_views[9] = camera->view();
 }

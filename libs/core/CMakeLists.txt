@@ -56,8 +56,6 @@ set(SOURCES
     polygonalgeometry.cpp
     program.h
     program.cpp
-    savedviews.h
-    savedviews.cpp
     screenquad.h
     screenquad.cpp
     shader.h

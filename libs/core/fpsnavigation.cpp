@@ -75,7 +75,7 @@ void FpsNavigation::mouseMoveEvent(QMouseEvent * event){
             
             divX *= 0.3f;
             divY *= 0.3f;
-            pitchYaw(divX, divY);
+            pitchYaw(-divY, divX);
         }
         m_lastMousePosition = glm::vec2(event->x(),event->y());
     }
@@ -110,7 +110,7 @@ void FpsNavigation::forward(float speed){
     updateView();
 }
 
-void FpsNavigation::timerEvent(QTimerEvent* event)
+void FpsNavigation::onTimerEvent()
 {
     if (m_direction.x && m_direction.y) {
         forward(m_direction.y * fspeed * TIMER_MS / sqrt(2));

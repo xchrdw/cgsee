@@ -16,7 +16,7 @@ public:
     virtual void wheelEvent(QWheelEvent *event) override;
     
 protected:
-    virtual void timerEvent(QTimerEvent* event) override;
+    virtual void onTimerEvent() override;
 
 
 private:
