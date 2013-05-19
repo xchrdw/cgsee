@@ -34,30 +34,6 @@ namespace
 }
 
 
-glm::mat4 string2mat(QString s) {
-    glm::mat4 mat;
-    QStringList list = s.split(';');
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            mat[j][i] = list.at(j + 4*i).toFloat();
-        }
-    }
-
-    return mat;
-}
-
-QString mat2string(glm::mat4 mat) {
-    QString s("");
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            s += QString::number(mat[j][i]);
-            s += ';';
-        }
-    }
-    return s;
-}
-
-
 Viewer::Viewer(
     QWidget  * parent,
     Qt::WindowFlags flags)
@@ -209,48 +185,18 @@ Camera * Viewer::camera()
 {
     return m_camera;
 }
-    
-
-
 
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
-    if(event->isAutoRepeat()) {
-        return;
-    }
-
-    switch (event->key())
-    {
-    case Qt::Key_R:
-        navigation()->reset();
-        break;
-
-    default:
-        if (Qt::Key_F6 <= event->key() && event->key() <= Qt::Key_F12)
-        {
-            int num = event->key() - Qt::Key_F1;
-            if(event->modifiers() == Qt::ControlModifier) {
-                //m_saved_views[num] = camera()->view(); needs to have #include "core/camera.h fixed
-            } else {
-                navigation()->loadView(m_saved_views[num]);
-            }
-        }
-        else {
-            navigation()->keyPressEvent(event);
-        }
-        break;
+    if(!event->isAutoRepeat()) {
+        navigation()->keyPressEvent(event);
     }
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )
 {
-    if(event->isAutoRepeat()) {
-        return;
-    }
-    if (Qt::Key_F1 <= event->key() && event->key() <= Qt::Key_F12) {
-        // change animations
-    } else {
-        m_qtCanvas->navigation()->keyReleaseEvent(event);
+    if(!event->isAutoRepeat()) {
+        navigation()->keyReleaseEvent(event);
     }
 }
 
@@ -275,11 +221,40 @@ void Viewer::on_fpsManipulatorAction_triggered() {
     qDebug("FPS Navigation, use mouse and WASD");
 }
 
+void Viewer::uncheckManipulatorActions() {
+    m_ui->flightManipulatorAction->setChecked(false);
+    m_ui->fpsManipulatorAction->setChecked(false);
+    m_ui->trackballManipulatorAction->setChecked(false);
+}
 
-void Viewer::restoreViews( QSettings &s )
-{
+// helper to restore mat4
+glm::mat4 string2mat(QString s) {
+    glm::mat4 mat;
+    QStringList list = s.split(';');
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            mat[j][i] = list.at(j + 4*i).toFloat();
+        }
+    }
+
+    return mat;
+}
+
+// helper to save mat4
+QString mat2string(glm::mat4 mat) {
+    QString s("");
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            s += QString::number(mat[j][i]);
+            s += ';';
+        }
+    }
+    return s;
+}
+
+void Viewer::restoreViews( QSettings &s ) {
     s.beginGroup(SETTINGS_SAVED_VIEWS);
-    glm::mat4 default_view = glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, -1.f));
+    glm::mat4 default_view = glm::lookAt(glm::vec3(0.f, 0.f, -2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
     for (int i = 0; i < m_saved_views.size(); i++)
     {
         QString name = "view_" + QString::number(i+1);
@@ -294,11 +269,16 @@ void Viewer::restoreViews( QSettings &s )
     s.endGroup();
 }
 
+void Viewer::saveView(int i) {
+    m_saved_views[i] = navigation()->viewMatrix();
+    QSettings s;
+    s.beginGroup(SETTINGS_SAVED_VIEWS);
+    s.setValue("view_" + QString::number(i+1), mat2string(navigation()->viewMatrix()));
+    s.endGroup();
+}
 
-void Viewer::uncheckManipulatorActions() {
-    m_ui->flightManipulatorAction->setChecked(false);
-    m_ui->fpsManipulatorAction->setChecked(false);
-    m_ui->trackballManipulatorAction->setChecked(false);
+void Viewer::loadView(int i) {
+    navigation()->loadView(m_saved_views[i]);
 }
 
 
@@ -320,50 +300,18 @@ void Viewer::on_actionTopView_triggered() {
 void Viewer::on_actionBottomView_triggered() {
     navigation()->loadView(glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, -1.f)));
 }
-
-
-void Viewer::on_actionLoad_1_triggered() {
-    navigation()->loadView(m_saved_views[0]);
-}
-
-void Viewer::on_actionLoad_2_triggered() {
-    navigation()->loadView(m_saved_views[1]);
-}
-
-void Viewer::on_actionLoad_3_triggered() {
-    navigation()->loadView(m_saved_views[2]);
-}
-
-void Viewer::on_actionLoad_4_triggered() {
-    navigation()->loadView(m_saved_views[3]);
+void Viewer::on_actionTopRightView_triggered() {
+    navigation()->loadView(glm::lookAt(glm::vec3(1.15f, 1.15f, -1.15f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
 }
 
 
-void Viewer::on_actionSave_1_triggered() {
-    m_saved_views[0] = navigation()->viewMatrix();
-    QSettings s;
-    s.beginGroup(SETTINGS_SAVED_VIEWS);
-    s.setValue("view_1", mat2string(navigation()->viewMatrix()));
-    s.endGroup();
-}
-void Viewer::on_actionSave_2_triggered() {
-    m_saved_views[1] = navigation()->viewMatrix();
-    QSettings s;
-    s.beginGroup(SETTINGS_SAVED_VIEWS);
-    s.setValue("view_2", mat2string(navigation()->viewMatrix()));
-    s.endGroup();
-}
-void Viewer::on_actionSave_3_triggered() {
-    m_saved_views[2] = navigation()->viewMatrix();
-    QSettings s;
-    s.beginGroup(SETTINGS_SAVED_VIEWS);
-    s.setValue("view_3", mat2string(navigation()->viewMatrix()));
-    s.endGroup();
-}
-void Viewer::on_actionSave_4_triggered() {
-    m_saved_views[3] = navigation()->viewMatrix();
-    QSettings s;
-    s.beginGroup(SETTINGS_SAVED_VIEWS);
-    s.setValue("view_4", mat2string(navigation()->viewMatrix()));
-    s.endGroup();
-}
+void Viewer::on_actionLoad_1_triggered() { loadView(0); }
+void Viewer::on_actionLoad_2_triggered() { loadView(1); }
+void Viewer::on_actionLoad_3_triggered() { loadView(2); }
+void Viewer::on_actionLoad_4_triggered() { loadView(3); }
+
+void Viewer::on_actionSave_1_triggered() { saveView(0); }
+void Viewer::on_actionSave_2_triggered() { saveView(1); }
+void Viewer::on_actionSave_3_triggered() { saveView(2); }
+void Viewer::on_actionSave_4_triggered() { saveView(3); }
+

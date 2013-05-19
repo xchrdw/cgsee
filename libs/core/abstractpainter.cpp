@@ -13,9 +13,8 @@
 
 
 
-AbstractPainter::AbstractPainter(Camera * camera)
-:   m_camera(camera)
-,   m_initialized(false)
+AbstractPainter::AbstractPainter()
+:   m_initialized(false)
 {
 }
  
@@ -109,8 +108,3 @@ const QImage AbstractPainter::capture(
     return frame.mirrored(false, true); // flip vertically
 }
 
-
-Camera * AbstractPainter::camera()
-{
-    return m_camera;
-}

@@ -67,8 +67,11 @@ public slots:
     void on_actionRightView_triggered();
     void on_actionTopView_triggered();
     void on_actionBottomView_triggered();
+    void on_actionTopRightView_triggered();
 
     void on_actionSave_1_triggered();
+
+    
     void on_actionSave_2_triggered();
     void on_actionSave_3_triggered();
     void on_actionSave_4_triggered();
@@ -76,7 +79,7 @@ public slots:
     void on_actionLoad_2_triggered();
     void on_actionLoad_3_triggered();
     void on_actionLoad_4_triggered();
-    
+
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
@@ -94,6 +97,10 @@ protected:
     const GLXContext createQtContext(const GLFormat & format);
     static const GLXContext currentContextHandle();
 #endif
+
+    void saveView(int i);
+    void loadView(int i);
+
 
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;

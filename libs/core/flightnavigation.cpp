@@ -5,6 +5,7 @@
 //glm to rotate around axis
 #include "glm/gtx/rotate_vector.hpp"
 
+
 float speed = 0.003f;
 float angle = 0.05f;
 
@@ -58,7 +59,7 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
             break;
             
         default:
-            break;
+            return; // prevent startTimer
     }
     startTimer();
 }
@@ -120,7 +121,7 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
             break;
             
         default:
-            break;
+            return; // prevent stopTimer
     }
     stopTimer();
 }

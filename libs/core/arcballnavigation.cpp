@@ -91,9 +91,6 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
     }
 }
 
-void ArcballNavigation::wheelEvent(QWheelEvent * event)
-{
-    qDebug("%i", event->delta());
-}
+
 
 

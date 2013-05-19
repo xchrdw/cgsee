@@ -13,7 +13,7 @@ class AbstractGLParent;
 class CGSEE_API AbstractPainter
 {
 public:
-    AbstractPainter(Camera * camera);
+    AbstractPainter(void);
     virtual ~AbstractPainter();
 
     // calls initialize if not initialized - so call this when subclassed
@@ -32,9 +32,8 @@ public:
 
 protected:
     virtual const bool initialize() = 0;
-    virtual Camera * camera();
+    virtual Camera * camera() = 0;
 
 protected:
     bool m_initialized;
-    Camera * m_camera;
 };

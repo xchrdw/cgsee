@@ -14,6 +14,7 @@
 class Camera;
 class QWidget;
 
+
 class CGSEE_API AbstractNavigation : QObject {
     
 public:
@@ -36,10 +37,6 @@ public:
     virtual void wheelEvent(QWheelEvent *event);
 
     virtual const glm::mat4 viewMatrix();
-
-    void updateCamera();
-    virtual void onCameraChanged();
-
     void loadView(glm::mat4 viewmatrix);
 
     void setCanvas(QWidget * canvas);
@@ -53,6 +50,8 @@ protected:
     virtual void onTimerEvent();
     virtual void setFromMatrix(glm::mat4 view);
 
+    void updateCamera();
+    virtual void onCameraChanged();
 
 protected:
     int m_width;

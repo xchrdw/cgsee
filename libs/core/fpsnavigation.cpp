@@ -38,7 +38,7 @@ void FpsNavigation::keyPressEvent(QKeyEvent *event){
             m_direction.x = -1;
             break;
         default:
-            break;
+            return; // prevent startTimer
     }
     startTimer();
 }
@@ -62,7 +62,7 @@ void FpsNavigation::keyReleaseEvent(QKeyEvent *event){
             m_direction.x = 0;
         break;
     default:
-        break;
+        return; // prevent stopTimer
     }
     stopTimer();
 }
