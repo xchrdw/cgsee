@@ -38,8 +38,8 @@ void ArcballNavigation::updateArcball()
  */
 glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v) {
   // normalize mouse coordinates to [-1:1]
-  glm::vec3 P = glm::vec3(1.0 * v.x/m_width * 2 - 1.0,
-                          1.0 * v.y/m_height * 2 - 1.0,
+  glm::vec3 P = glm::vec3(v.x/m_width * 2.0 - 1.0,
+                          v.y/m_height * 2.0 - 1.0,
                           0);
   P.y = -P.y;
   float P_squared = P.x * P.x + P.y * P.y;

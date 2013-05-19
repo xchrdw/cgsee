@@ -134,12 +134,8 @@ void AbstractNavigation::loadView( glm::mat4 new_viewmatrix )
     m_oldRotation = glm::quat_cast(m_viewMatrix);
     m_newRotation = glm::quat_cast(new_viewmatrix);
 
-    m_oldPos = glm::vec3(m_viewMatrix[3][0],
-                         m_viewMatrix[3][1],
-                         m_viewMatrix[3][2]);
-    m_newPos = glm::vec3(new_viewmatrix[3][0],
-                         new_viewmatrix[3][1],
-                         new_viewmatrix[3][2]);
+    m_oldPos = m_viewMatrix[3].xyz;
+    m_newPos = new_viewmatrix[3].xyz;
 
     
     m_animation_progress = 0;
