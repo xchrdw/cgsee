@@ -16,6 +16,7 @@
 
 
 class GLFormat;
+class QSettings;
 
 class Ui_Viewer;
 class Canvas;
@@ -30,6 +31,9 @@ public:
     Viewer(
         QWidget * parent = nullptr
     ,   Qt::WindowFlags flags = nullptr);
+
+    void restoreViews( QSettings &s );
+
     virtual ~Viewer();
 
     void initialize(const GLFormat & format);

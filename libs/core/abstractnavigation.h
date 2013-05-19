@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-
-#include <glm/glm.hpp>
 
 #include "declspec.h"
 
@@ -11,6 +8,7 @@
 #include <QWheelEvent>
 #include <QMouseEvent>
 #include <QBasicTimer>
+#include <glm/glm.hpp>
 #include "glm/gtc/quaternion.hpp"
 
 class Camera;

@@ -5,12 +5,12 @@
 
 #include <QOpenGLContext>
 #include <QSettings>
+#include <QTextStream>
 
 #include "ui_viewer.h"
 
 #include "viewer.h"
 #include "canvas.h"
-//#include "core/camera.h"
 #include "core/abstractpainter.h"
 #include "core/abstractnavigation.h"
 #include "core/flightnavigation.h"
@@ -23,12 +23,38 @@
 #include <core/glformat.h>
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 namespace 
 {
     const QString SETTINGS_GEOMETRY ("Geometry");
     const QString SETTINGS_STATE    ("State");
+    const QString SETTINGS_SAVED_VIEWS    ("SavedViews");
+}
+
+
+glm::mat4 string2mat(QString s) {
+    glm::mat4 mat;
+    QStringList list = s.split(';');
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            mat[j][i] = list.at(j + 4*i).toFloat();
+        }
+    }
+
+    return mat;
+}
+
+QString mat2string(glm::mat4 mat) {
+    QString s("");
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            s += QString::number(mat[j][i]);
+            s += ';';
+        }
+    }
+    return s;
 }
 
 
@@ -38,7 +64,7 @@ Viewer::Viewer(
 
 :   QMainWindow(parent, flags)
 ,   m_ui(new Ui_Viewer)
-,   m_saved_views(12)
+,   m_saved_views(4)
 ,   m_qtCanvas(nullptr)
 {
     m_ui->setupUi(this);
@@ -49,18 +75,11 @@ Viewer::Viewer(
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
 
-    // TODO: load from settings
-    m_saved_views[0] = glm::lookAt(glm::vec3(0.f, 0.f,-2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
-    m_saved_views[1] = glm::lookAt(glm::vec3(2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
-    m_saved_views[2] = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
-    m_saved_views[3] = glm::lookAt(glm::vec3(-2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
-    m_saved_views[4] = glm::lookAt(glm::vec3(0.f, 2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, 1.f));
-    m_saved_views[5] = glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, 1.f));
-    for (int i = 6; i < m_saved_views.size(); i++)
-    {
-        m_saved_views[i] = m_saved_views[0];
-    }
+    restoreViews(s);
+
+
 };
+
 
 #ifdef WIN32
 const HGLRC Viewer::currentContextHandle()
@@ -256,6 +275,26 @@ void Viewer::on_fpsManipulatorAction_triggered() {
     qDebug("FPS Navigation, use mouse and WASD");
 }
 
+
+void Viewer::restoreViews( QSettings &s )
+{
+    s.beginGroup(SETTINGS_SAVED_VIEWS);
+    glm::mat4 default_view = glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, -1.f));
+    for (int i = 0; i < m_saved_views.size(); i++)
+    {
+        QString name = "view_" + QString::number(i+1);
+        QString str = s.value(name, "").value<QString>();
+        if (str.size() > 0) {
+            m_saved_views[i] = string2mat(str);
+        } else {
+            m_saved_views[i] = default_view;
+        }
+
+    }
+    s.endGroup();
+}
+
+
 void Viewer::uncheckManipulatorActions() {
     m_ui->flightManipulatorAction->setChecked(false);
     m_ui->fpsManipulatorAction->setChecked(false);
@@ -264,51 +303,67 @@ void Viewer::uncheckManipulatorActions() {
 
 
 void Viewer::on_actionFrontView_triggered() {
-    navigation()->loadView(m_saved_views[0]);
+    navigation()->loadView(glm::lookAt(glm::vec3(0.f, 0.f,-2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
 }
 void Viewer::on_actionLeftView_triggered() {
-    navigation()->loadView(m_saved_views[1]);
+    navigation()->loadView(glm::lookAt(glm::vec3(2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
 }
 void Viewer::on_actionBackView_triggered() {
-    navigation()->loadView(m_saved_views[2]);
+    navigation()->loadView(glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
 }
 void Viewer::on_actionRightView_triggered() {
-    navigation()->loadView(m_saved_views[3]);
+    navigation()->loadView(glm::lookAt(glm::vec3(-2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
 }
 void Viewer::on_actionTopView_triggered() {
-    navigation()->loadView(m_saved_views[4]);
+    navigation()->loadView(glm::lookAt(glm::vec3(0.f, 2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, 1.f)));
 }
 void Viewer::on_actionBottomView_triggered() {
-    navigation()->loadView(m_saved_views[5]);
+    navigation()->loadView(glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, -1.f)));
 }
 
 
 void Viewer::on_actionLoad_1_triggered() {
-    navigation()->loadView(m_saved_views[6]);
+    navigation()->loadView(m_saved_views[0]);
 }
 
 void Viewer::on_actionLoad_2_triggered() {
-    navigation()->loadView(m_saved_views[7]);
+    navigation()->loadView(m_saved_views[1]);
 }
 
 void Viewer::on_actionLoad_3_triggered() {
-    navigation()->loadView(m_saved_views[8]);
+    navigation()->loadView(m_saved_views[2]);
 }
 
 void Viewer::on_actionLoad_4_triggered() {
-    navigation()->loadView(m_saved_views[9]);
+    navigation()->loadView(m_saved_views[3]);
 }
 
 
 void Viewer::on_actionSave_1_triggered() {
-    //m_saved_views[6] = camera->view(); needs #include "core/camera.h" fixed
+    m_saved_views[0] = navigation()->viewMatrix();
+    QSettings s;
+    s.beginGroup(SETTINGS_SAVED_VIEWS);
+    s.setValue("view_1", mat2string(navigation()->viewMatrix()));
+    s.endGroup();
 }
 void Viewer::on_actionSave_2_triggered() {
-    //m_saved_views[7] = camera->view();
+    m_saved_views[1] = navigation()->viewMatrix();
+    QSettings s;
+    s.beginGroup(SETTINGS_SAVED_VIEWS);
+    s.setValue("view_2", mat2string(navigation()->viewMatrix()));
+    s.endGroup();
 }
 void Viewer::on_actionSave_3_triggered() {
-    //m_saved_views[8] = camera->view();
+    m_saved_views[2] = navigation()->viewMatrix();
+    QSettings s;
+    s.beginGroup(SETTINGS_SAVED_VIEWS);
+    s.setValue("view_3", mat2string(navigation()->viewMatrix()));
+    s.endGroup();
 }
 void Viewer::on_actionSave_4_triggered() {
-    //m_saved_views[9] = camera->view();
+    m_saved_views[3] = navigation()->viewMatrix();
+    QSettings s;
+    s.beginGroup(SETTINGS_SAVED_VIEWS);
+    s.setValue("view_4", mat2string(navigation()->viewMatrix()));
+    s.endGroup();
 }
