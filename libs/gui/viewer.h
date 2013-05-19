@@ -49,7 +49,7 @@ public:
     void setFlightManipulator();
     void setTrackballManipulator();
     void setFpsManipulator();
-    void deactivateManipulators();
+    void uncheckManipulatorActions();
 
 
 public slots:

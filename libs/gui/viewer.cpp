@@ -22,6 +22,8 @@
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 
 namespace 
 {
@@ -52,8 +54,8 @@ Viewer::Viewer(
     m_saved_views[1] = glm::lookAt(glm::vec3(2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
     m_saved_views[2] = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
     m_saved_views[3] = glm::lookAt(glm::vec3(-2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
-    m_saved_views[4] = glm::lookAt(glm::vec3(0.f, 2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
-    m_saved_views[5] = glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    m_saved_views[4] = glm::lookAt(glm::vec3(0.f, 2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, 1.f));
+    m_saved_views[5] = glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, 1.f));
     for (int i = 6; i < m_saved_views.size(); i++)
     {
         m_saved_views[i] = m_saved_views[0];
@@ -189,35 +191,6 @@ Camera * Viewer::camera()
     return m_camera;
 }
     
-void Viewer::deactivateManipulators() {
-    m_ui->flightManipulatorAction->setChecked(false);
-    m_ui->fpsManipulatorAction->setChecked(false);
-    m_ui->trackballManipulatorAction->setChecked(false);
-}
-
-void Viewer::setFlightManipulator()
-{
-    setNavigation(new FlightNavigation(m_camera));
-    deactivateManipulators();
-    m_ui->flightManipulatorAction->setChecked(true);
-    qDebug("Flight navigation, use WASD and arrow keys");
-}
-
-void Viewer::setTrackballManipulator()
-{
-    setNavigation(new ArcballNavigation(m_camera));
-    deactivateManipulators();
-    m_ui->trackballManipulatorAction->setChecked(true);
-    qDebug("Arcball navigation, use left and right mouse buttons");
-}
-    
-void Viewer::setFpsManipulator()
-{
-    setNavigation(new FpsNavigation(m_camera));
-    deactivateManipulators();
-    m_ui->fpsManipulatorAction->setChecked(true);
-    qDebug("FPS Navigation, use mouse and WASD");
-}
 
 
 
@@ -263,17 +236,31 @@ void Viewer::keyReleaseEvent( QKeyEvent *event )
 }
 
 void Viewer::on_flightManipulatorAction_triggered() {
-    setFlightManipulator();
+    setNavigation(new FlightNavigation(m_camera));
+    uncheckManipulatorActions();
+    m_ui->flightManipulatorAction->setChecked(true);
+    qDebug("Flight navigation, use WASD and arrow keys");
 }
     
 void Viewer::on_trackballManipulatorAction_triggered() {
-    setTrackballManipulator();
+    setNavigation(new ArcballNavigation(m_camera));
+    uncheckManipulatorActions();
+    m_ui->trackballManipulatorAction->setChecked(true);
+    qDebug("Arcball navigation, use left and right mouse buttons");
 }
     
 void Viewer::on_fpsManipulatorAction_triggered() {
-    setFpsManipulator();
+    setNavigation(new FpsNavigation(m_camera));
+    uncheckManipulatorActions();
+    m_ui->fpsManipulatorAction->setChecked(true);
+    qDebug("FPS Navigation, use mouse and WASD");
 }
 
+void Viewer::uncheckManipulatorActions() {
+    m_ui->flightManipulatorAction->setChecked(false);
+    m_ui->fpsManipulatorAction->setChecked(false);
+    m_ui->trackballManipulatorAction->setChecked(false);
+}
 
 
 void Viewer::on_actionFrontView_triggered() {

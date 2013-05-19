@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "declspec.h"
 
@@ -12,6 +11,7 @@
 #include <QWheelEvent>
 #include <QMouseEvent>
 #include <QBasicTimer>
+#include "glm/gtc/quaternion.hpp"
 
 class Camera;
 class QWidget;
@@ -73,6 +73,8 @@ private:
 
     float m_animation_progress;
     bool m_animation_active;
-    glm::mat4 m_oldMatrix;
-    glm::mat4 m_newMatrix;
+    glm::vec3 m_oldPos;
+    glm::vec3 m_newPos;
+    glm::quat m_oldRotation;
+    glm::quat m_newRotation;
 };

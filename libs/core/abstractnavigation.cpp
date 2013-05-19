@@ -1,7 +1,10 @@
+
 #include "abstractnavigation.h"
 #include "camera.h"
+#include <glm/gtc/matrix_transform.hpp>
 #include <QGLWidget>
-
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/transform.hpp"
 
 
 AbstractNavigation::AbstractNavigation(Camera *camera) 
@@ -102,11 +105,13 @@ void AbstractNavigation::timerEvent( QTimerEvent* event ) {
         if (m_animation_progress > 1) {
             m_animation_active = false;
             stopTimer();
-            m_viewMatrix = m_newMatrix;
+            m_viewMatrix = glm::translate(m_newPos) * glm::mat4_cast(m_newRotation);
             setFromMatrix(m_viewMatrix);
             updateCamera();
         } else {
-            m_viewMatrix = (1-m_animation_progress) * m_oldMatrix + m_animation_progress * m_newMatrix; // TODO replace with quaternion interpolation
+            glm::mat4 translation = glm::translate(glm::mix(m_oldPos, m_newPos, m_animation_progress));
+            glm::mat4 rotation = glm::mat4_cast(glm::slerp(m_oldRotation, m_newRotation, m_animation_progress));
+            m_viewMatrix = translation * rotation;
             updateCamera();
         }
     }
@@ -123,10 +128,18 @@ bool AbstractNavigation::isTimerRunning()
     return m_timer.isActive();
 }
 
-void AbstractNavigation::loadView( glm::mat4 viewmatrix )
+void AbstractNavigation::loadView( glm::mat4 new_viewmatrix )
 {
-    m_oldMatrix = m_viewMatrix;
-    m_newMatrix = viewmatrix;
+    m_oldRotation = glm::quat_cast(m_viewMatrix);
+    m_newRotation = glm::quat_cast(new_viewmatrix);
+
+    m_oldPos = glm::vec3(m_viewMatrix[3][0],
+                         m_viewMatrix[3][1],
+                         m_viewMatrix[3][2]);
+    m_newPos = glm::vec3(new_viewmatrix[3][0],
+                         new_viewmatrix[3][1],
+                         new_viewmatrix[3][2]);
+
     
     m_animation_progress = 0;
     m_animation_active = true;
