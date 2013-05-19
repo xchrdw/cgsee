@@ -103,15 +103,16 @@ void AbstractNavigation::stopTimer()
 void AbstractNavigation::timerEvent( QTimerEvent* event ) {
     if (m_animation_active) {
         m_animation_progress += TIMER_MS/333.0f;
-        if (m_animation_progress > 1) {
+        if (m_animation_progress >= 1) {
             m_animation_active = false;
             stopTimer();
             m_viewMatrix = glm::translate(m_newPos) * glm::mat4_cast(m_newRotation);
             setFromMatrix(m_viewMatrix);
             updateCamera();
         } else {
-            glm::mat4 translation = glm::translate(glm::mix(m_oldPos, m_newPos, m_animation_progress));
-            glm::mat4 rotation = glm::mat4_cast(glm::slerp(m_oldRotation, m_newRotation, m_animation_progress));
+            float step = glm::smoothstep(0.f,1.f,m_animation_progress);
+            glm::mat4 translation = glm::translate(glm::mix(m_oldPos, m_newPos, step));
+            glm::mat4 rotation = glm::mat4_cast(glm::slerp(m_oldRotation, m_newRotation, step));
             m_viewMatrix = translation * rotation;
             updateCamera();
         }
