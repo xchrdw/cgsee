@@ -3,27 +3,26 @@
 
 #include <cassert>
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <QOpenGLContext>
 #include <QSettings>
 #include <QTextStream>
 
 #include "ui_viewer.h"
-
 #include "viewer.h"
 #include "canvas.h"
-#include "core/abstractpainter.h"
-#include "core/abstractnavigation.h"
-#include "core/flightnavigation.h"
-#include "core/fpsnavigation.h"
-#include "core/arcballnavigation.h"
 #include "canvasexporter.h"
+
+#include <core/abstractnavigation.h>
+#include <core/flightnavigation.h>
+#include <core/fpsnavigation.h>
+#include <core/arcballnavigation.h>
 
 #include <core/abstractpainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 
 namespace 
@@ -227,6 +226,7 @@ void Viewer::uncheckManipulatorActions() {
     m_ui->trackballManipulatorAction->setChecked(false);
 }
 
+
 // helper to restore mat4
 glm::mat4 string2mat(QString s) {
     glm::mat4 mat;
@@ -236,7 +236,6 @@ glm::mat4 string2mat(QString s) {
             mat[j][i] = list.at(j + 4*i).toFloat();
         }
     }
-
     return mat;
 }
 

@@ -1,8 +1,8 @@
+//glm to rotate around axis
+#include <glm/gtx/rotate_vector.hpp>
+
 #include "fpsnavigation.h"
 #include "camera.h"
-
-//glm to rotate around axis
-#include "glm/gtx/rotate_vector.hpp"
 
 float fspeed = 0.002f;
 

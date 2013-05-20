@@ -1,7 +1,6 @@
-#include "abstractnavigation.h"
+#pragma once
 
-#ifndef flightnavigation_h
-#define flightnavigation_h
+#include "abstractnavigation.h"
 
 class CGSEE_API FlightNavigation : public AbstractNavigation
 {
@@ -53,4 +52,3 @@ protected:
     glm::vec3 m_yprAngle;
 };
 
-#endif // flightnavigation_h

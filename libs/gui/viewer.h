@@ -11,8 +11,9 @@
 
 #include <QMainWindow>
 
-#include <core/declspec.h>
 #include <glm/glm.hpp>
+
+#include <core/declspec.h>
 
 
 class GLFormat;
@@ -27,6 +28,7 @@ class Camera;
 class CGSEE_API Viewer : public QMainWindow
 {
     Q_OBJECT
+
 public:
     Viewer(
         QWidget * parent = nullptr
@@ -69,9 +71,7 @@ public slots:
     void on_actionBottomView_triggered();
     void on_actionTopRightView_triggered();
 
-    void on_actionSave_1_triggered();
-
-    
+    void on_actionSave_1_triggered();   
     void on_actionSave_2_triggered();
     void on_actionSave_3_triggered();
     void on_actionSave_4_triggered();

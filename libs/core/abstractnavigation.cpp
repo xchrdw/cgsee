@@ -1,11 +1,12 @@
 
-#include "abstractnavigation.h"
-#include "camera.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <QGLWidget>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include "glm/gtc/quaternion.hpp"
-#include "glm/gtx/transform.hpp"
+#include "abstractnavigation.h"
+#include "camera.h"
 
 
 AbstractNavigation::AbstractNavigation(Camera *camera) 
@@ -148,9 +149,3 @@ void AbstractNavigation::loadView( glm::mat4 new_viewmatrix )
 }
 
 void AbstractNavigation::setFromMatrix( glm::mat4 view ) { }
-
-
-
-
-
-

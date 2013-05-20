@@ -1,3 +1,5 @@
+#pragma once
+
 #include "flightnavigation.h"
 
 class CGSEE_API FpsNavigation : public FlightNavigation

@@ -1,7 +1,7 @@
 #pragma once
 
-
-#include "declspec.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include <QObject>
 #include <QKeyEvent>
@@ -9,12 +9,10 @@
 #include <QMouseEvent>
 #include <QBasicTimer>
 
-#include <glm/glm.hpp>
-#include "glm/gtc/quaternion.hpp"
+#include "declspec.h"
 
 class Camera;
 class QWidget;
-
 
 class CGSEE_API AbstractNavigation : QObject {
     
