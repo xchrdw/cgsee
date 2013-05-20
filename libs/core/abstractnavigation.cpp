@@ -1,5 +1,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -11,7 +12,7 @@
 
 AbstractNavigation::AbstractNavigation(Camera *camera) 
     : m_camera(camera)
-    , m_viewMatrix(camera->view())
+    , m_viewmatrix(camera->view())
     , m_width(camera->viewport().x)
     , m_height(camera->viewport().y)
     , m_canvas(0)
@@ -30,13 +31,13 @@ AbstractNavigation::~AbstractNavigation(void)
 
 const glm::mat4 AbstractNavigation::viewMatrix()
 {
-    return m_viewMatrix;
+    return m_viewmatrix;
 }
 
 
 void AbstractNavigation::updateCamera()
 {
-    m_camera->setView(m_viewMatrix);
+    m_camera->setView(m_viewmatrix);
     if(m_canvas)
         m_canvas->repaint();
     onCameraChanged();
@@ -48,14 +49,14 @@ void AbstractNavigation::onCameraChanged() { }
 
 void AbstractNavigation::reset()
 {
-    m_viewMatrix = glm::lookAt(
+    m_viewmatrix = glm::lookAt(
         glm::vec3( 0.f, 0.f,-2.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
     updateCamera();
 }
 
 
-void AbstractNavigation::keyPressEvent( QKeyEvent *event ) { }
-void AbstractNavigation::keyReleaseEvent( QKeyEvent *event ) { }
+void AbstractNavigation::keyPressEvent(QKeyEvent *event) { }
+void AbstractNavigation::keyReleaseEvent(QKeyEvent *event) { }
 
 void AbstractNavigation::mouseMoveEvent(QMouseEvent * event) { }
 void AbstractNavigation::mousePressEvent(QMouseEvent * event) { }
@@ -70,7 +71,7 @@ void AbstractNavigation::setViewPort( const int width, const int height )
     m_height = height;
 }
 
-void AbstractNavigation::setCanvas( QWidget * canvas )
+void AbstractNavigation::setCanvas(QWidget * canvas)
 {
     m_canvas = canvas;
 }
@@ -101,20 +102,20 @@ void AbstractNavigation::stopTimer()
     }
 }
 
-void AbstractNavigation::timerEvent( QTimerEvent* event ) {
+void AbstractNavigation::timerEvent(QTimerEvent* event) {
     if (m_animation_active) {
         m_animation_progress += TIMER_MS/333.0f;
         if (m_animation_progress >= 1) {
             m_animation_active = false;
             stopTimer();
-            m_viewMatrix = glm::translate(m_newPos) * glm::mat4_cast(m_newRotation);
-            setFromMatrix(m_viewMatrix);
+            m_viewmatrix = glm::translate(m_new_pos) * glm::mat4_cast(m_new_rotation);
+            setFromMatrix(m_viewmatrix);
             updateCamera();
         } else {
-            float step = glm::smoothstep(0.f,1.f,m_animation_progress);
-            glm::mat4 translation = glm::translate(glm::mix(m_oldPos, m_newPos, step));
-            glm::mat4 rotation = glm::mat4_cast(glm::slerp(m_oldRotation, m_newRotation, step));
-            m_viewMatrix = translation * rotation;
+            float step = glm::smoothstep(0.f, 1.f, m_animation_progress);
+            glm::mat4 translation = glm::translate(glm::mix(m_old_pos, m_new_pos, step));
+            glm::mat4 rotation = glm::mat4_cast(glm::slerp(m_old_rotation, m_new_rotation, step));
+            m_viewmatrix = translation * rotation;
             updateCamera();
         }
     }
@@ -129,23 +130,21 @@ void AbstractNavigation::onTimerEvent() { }
 bool AbstractNavigation::isTimerRunning()
 {
     return m_timer.isActive();
-}
+}                          
+                           
+void AbstractNavigation::loadView(glm::mat4 new_viewmatrix)
+{                          
+    m_old_rotation = glm::quat_cast(m_viewmatrix);
+    m_new_rotation = glm::quat_cast(new_viewmatrix);
 
-void AbstractNavigation::loadView( glm::mat4 new_viewmatrix )
-{
-    m_oldRotation = glm::quat_cast(m_viewMatrix);
-    m_newRotation = glm::quat_cast(new_viewmatrix);
-
-    m_oldPos = m_viewMatrix[3].xyz;
-    m_newPos = new_viewmatrix[3].xyz;
-
+    m_old_pos = glm::column(m_viewmatrix, 3).xyz;
+    m_new_pos = glm::column(new_viewmatrix, 3).xyz;
     
     m_animation_progress = 0;
     m_animation_active = true;
     
-
     if(!isTimerRunning())
         startTimer();
 }
 
-void AbstractNavigation::setFromMatrix( glm::mat4 view ) { }
+void AbstractNavigation::setFromMatrix(glm::mat4 view) { }

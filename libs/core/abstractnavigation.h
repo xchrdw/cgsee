@@ -55,7 +55,7 @@ protected:
 protected:
     int m_width;
     int m_height;
-    glm::mat4 m_viewMatrix;
+    glm::mat4 m_viewmatrix;
 
     static const int TIMER_MS = 1000/60;
 
@@ -69,8 +69,8 @@ private:
 
     float m_animation_progress;
     bool m_animation_active;
-    glm::vec3 m_oldPos;
-    glm::vec3 m_newPos;
-    glm::quat m_oldRotation;
-    glm::quat m_newRotation;
+    glm::vec3 m_old_pos;
+    glm::vec3 m_new_pos;
+    glm::quat m_old_rotation;
+    glm::quat m_new_rotation;
 };

@@ -1,5 +1,4 @@
-
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include "arcballnavigation.h"
 #include "camera.h"
@@ -23,12 +22,12 @@ void ArcballNavigation::updateArcball()
     glm::vec3 va = getArcballVector(m_mouse_last);
     glm::vec3 vb = getArcballVector(m_mouse_cur);
 
-    float angle = acos(std::min(1.0f, glm::dot(va, vb)));
+    float angle = glm::acos(std::min(1.0f, glm::dot(va, vb)));
     glm::vec3 axis_in_camera_coord = glm::cross(va, vb);
 
-    glm::mat3 camera2world = glm::mat3(glm::inverse(m_viewMatrix));
+    glm::mat3 camera2world = glm::mat3(glm::inverse(m_viewmatrix));
     glm::vec3 axis_in_world_coord = camera2world * axis_in_camera_coord;
-    m_viewMatrix = m_viewMatrix * glm::rotate(glm::mat4(), glm::degrees(angle), axis_in_world_coord);
+    m_viewmatrix = m_viewmatrix * glm::rotate(glm::degrees(angle), axis_in_world_coord);
 }
 
 /**
@@ -45,21 +44,21 @@ glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v) {
                           0);
   P.y = -P.y;
   float P_squared = P.x * P.x + P.y * P.y;
-  if (P_squared <= 1*1) // P is inside ball
-      // calculate height in ball, small P_squared means P is near center -> high z value
-      P.z = sqrt(1*1 - P_squared); 
-  else
+    if (P_squared <= 1*1) {  // P is inside ball
+        P.z = sqrt(1*1 - P_squared); // calculate height in ball, small P_squared means P is near center -> high z value
+    } else {
       P = glm::normalize(P);  // nearest point to the ball
+    }
   return P;
 }
 
 void ArcballNavigation::updateZoom()
 {
     float delta = (m_mouse_cur - m_mouse_last).y / m_height; // normalized height difference
-    glm::vec3 zoom_in_camera = glm::vec3(0, 0, -delta*5) * glm::mat3(m_viewMatrix) ; // TODO relative to z-buffer
+    glm::vec3 zoom_in_camera = glm::vec3(0, 0, -delta*5) * glm::mat3(m_viewmatrix) ; // TODO relative to z-buffer
     
     glm::mat4 translate = glm::translate(glm::mat4(), zoom_in_camera);
-    m_viewMatrix = m_viewMatrix * translate;
+    m_viewmatrix = m_viewmatrix * translate;
 }
 
 

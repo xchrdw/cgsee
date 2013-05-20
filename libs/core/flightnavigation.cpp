@@ -13,7 +13,7 @@ FlightNavigation::FlightNavigation(Camera * camera)
     , m_direction(0)
     , m_yprAngle(0)
 {
-    setFromMatrix(m_viewMatrix);
+    setFromMatrix(m_viewmatrix);
 }
 
 FlightNavigation::~FlightNavigation(void)
@@ -76,13 +76,13 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
                 m_yprAngle.y = 0.0f;
             }
             break;
-        case Qt::Key_A:
-            if (m_yprAngle.x == -1.0f) {
+        case Qt::Key_D:
+            if (m_yprAngle.x == 1.0f) {
                 m_yprAngle.x = 0.0f;
             }
             break;
-        case Qt::Key_D:
-            if (m_yprAngle.x == 1.0f) {
+        case Qt::Key_A:
+            if (m_yprAngle.x == -1.0f) {
                 m_yprAngle.x = 0.0f;
             }
             break;
@@ -170,7 +170,7 @@ void FlightNavigation::setFromMatrix(glm::mat4 view){
 
 void FlightNavigation::reset() {
     AbstractNavigation::reset();
-    setFromMatrix(m_viewMatrix);
+    setFromMatrix(m_viewmatrix);
 }
 
 void FlightNavigation::onCameraChanged(){
@@ -180,7 +180,7 @@ void FlightNavigation::onCameraChanged(){
 }
 
 void FlightNavigation::updateView(){
-    m_viewMatrix =  glm::lookAt(m_eye, m_center, m_up);
+    m_viewmatrix =  glm::lookAt(m_eye, m_center, m_up);
     updateCamera();
 }
 
