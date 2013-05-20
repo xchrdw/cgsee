@@ -1,17 +1,15 @@
 #pragma once
 
-#include <stdio.h>
-
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include "declspec.h"
+#include <glm/gtc/quaternion.hpp>
 
 #include <QObject>
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QMouseEvent>
 #include <QBasicTimer>
+
+#include "declspec.h"
 
 class Camera;
 class QWidget;
@@ -38,19 +36,21 @@ public:
     virtual void wheelEvent(QWheelEvent *event);
 
     virtual const glm::mat4 viewMatrix();
-
-    void updateCamera();
-    virtual void onCameraChanged();
+    void loadView(glm::mat4 viewmatrix);
 
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
 
 protected:
-    virtual void timerEvent(QTimerEvent* event);
     void startTimer();
     void stopTimer();
     bool isTimerRunning();
 
+    virtual void onTimerEvent();
+    virtual void setFromMatrix(glm::mat4 view);
+
+    void updateCamera();
+    virtual void onCameraChanged();
 
 protected:
     int m_width;
@@ -60,8 +60,17 @@ protected:
     static const int TIMER_MS = 1000/60;
 
 private:
+    void timerEvent(QTimerEvent* event);
+
     Camera * m_camera;
     QWidget * m_canvas;
     QBasicTimer m_timer;
     int m_timer_requests;
+
+    float m_animation_progress;
+    bool m_animation_active;
+    glm::vec3 m_oldPos;
+    glm::vec3 m_newPos;
+    glm::quat m_oldRotation;
+    glm::quat m_newRotation;
 };

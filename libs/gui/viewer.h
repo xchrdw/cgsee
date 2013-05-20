@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include <QMainWindow>
-
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -10,33 +8,40 @@
 #endif
 
 #include <memory>
+
+#include <QMainWindow>
+
+#include <glm/glm.hpp>
+
 #include <core/declspec.h>
 
+
 class GLFormat;
+class QSettings;
 
 class Ui_Viewer;
 class Canvas;
 class AbstractPainter;
 class AbstractNavigation;
-class SavedViews;
 class Camera;
 
 class CGSEE_API Viewer : public QMainWindow
 {
     Q_OBJECT
+
 public:
     Viewer(
         QWidget * parent = nullptr
     ,   Qt::WindowFlags flags = nullptr);
+
+    void restoreViews( QSettings &s );
+
     virtual ~Viewer();
 
     void initialize(const GLFormat & format);
 
    void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
-
-    void setSavedViews(SavedViews * saved);
-    SavedViews * savedViews();
     
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
@@ -50,7 +55,7 @@ public:
     void setFlightManipulator();
     void setTrackballManipulator();
     void setFpsManipulator();
-    void deactivateManipulators();
+    void uncheckManipulatorActions();
 
 
 public slots:
@@ -58,6 +63,24 @@ public slots:
     void on_trackballManipulatorAction_triggered();
     void on_fpsManipulatorAction_triggered();
 
+    void on_actionFrontView_triggered();
+    void on_actionLeftView_triggered();
+    void on_actionBackView_triggered();
+    void on_actionRightView_triggered();
+    void on_actionTopView_triggered();
+    void on_actionBottomView_triggered();
+    void on_actionTopRightView_triggered();
+
+    void on_actionSave_1_triggered();   
+    void on_actionSave_2_triggered();
+    void on_actionSave_3_triggered();
+    void on_actionSave_4_triggered();
+    void on_actionLoad_1_triggered();
+    void on_actionLoad_2_triggered();
+    void on_actionLoad_3_triggered();
+    void on_actionLoad_4_triggered();
+
+protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
 
@@ -75,10 +98,15 @@ protected:
     static const GLXContext currentContextHandle();
 #endif
 
+    void saveView(int i);
+    void loadView(int i);
+
+
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
 
     Canvas * m_qtCanvas;
     Camera * m_camera;
-    SavedViews * m_savedViews;
+    QVector<glm::mat4> m_saved_views;
+
 };

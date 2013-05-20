@@ -24,9 +24,10 @@ public:
     virtual void resize(
         const int width
     ,   const int height);
-
+     
 protected:
-    virtual const bool initialize();
+    virtual const bool initialize() override;
+    virtual Camera * camera() override;
 
 protected:
     void postShaderRelinked();
@@ -39,7 +40,7 @@ protected:
 
     static void releaseSampler(
         const t_samplerByName & sampler);
-
+   
 protected:
     Group * m_group;
     ScreenQuad * m_quad;
@@ -48,4 +49,6 @@ protected:
     FrameBufferObject * m_fboNormalz;
 
     Program * m_flush;
+
+    Camera * m_camera;
 };

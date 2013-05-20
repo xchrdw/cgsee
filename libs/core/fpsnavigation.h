@@ -1,3 +1,5 @@
+#pragma once
+
 #include "flightnavigation.h"
 
 class CGSEE_API FpsNavigation : public FlightNavigation
@@ -16,7 +18,7 @@ public:
     virtual void wheelEvent(QWheelEvent *event) override;
     
 protected:
-    virtual void timerEvent(QTimerEvent* event) override;
+    virtual void onTimerEvent() override;
 
 
 private:

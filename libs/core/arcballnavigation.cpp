@@ -1,3 +1,6 @@
+
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "arcballnavigation.h"
 #include "camera.h"
 
@@ -37,8 +40,8 @@ void ArcballNavigation::updateArcball()
  */
 glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v) {
   // normalize mouse coordinates to [-1:1]
-  glm::vec3 P = glm::vec3(1.0 * v.x/m_width * 2 - 1.0,
-                          1.0 * v.y/m_height * 2 - 1.0,
+  glm::vec3 P = glm::vec3(v.x/m_width * 2.0 - 1.0,
+                          v.y/m_height * 2.0 - 1.0,
                           0);
   P.y = -P.y;
   float P_squared = P.x * P.x + P.y * P.y;
@@ -63,14 +66,16 @@ void ArcballNavigation::updateZoom()
 void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 {
     m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
-    if (m_arcball_on) {
-        updateArcball();
+    if (m_mouse_cur != m_mouse_last) {
+        if (m_arcball_on) {
+            updateArcball();
+        }
+        else if (m_zoom_on) {
+            updateZoom();
+        }
+        m_mouse_last = m_mouse_cur;
+        updateCamera();
     }
-    else if (m_zoom_on) {
-        updateZoom();
-    }
-    m_mouse_last = m_mouse_cur;
-    updateCamera();    
 }
 
 void ArcballNavigation::mousePressEvent(QMouseEvent * event)
@@ -90,9 +95,6 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
     }
 }
 
-void ArcballNavigation::wheelEvent(QWheelEvent * event)
-{
-    qDebug("%i", event->delta());
-}
+
 
 

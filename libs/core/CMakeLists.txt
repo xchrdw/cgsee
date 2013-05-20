@@ -56,8 +56,6 @@ set(SOURCES
     polygonalgeometry.cpp
     program.h
     program.cpp
-    savedviews.h
-    savedviews.cpp
     screenquad.h
     screenquad.cpp
     shader.h
@@ -97,3 +95,4 @@ set_target_properties(${target}
     DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
 
 add_definitions("-DCGSEE_EXPORTS")
+add_definitions("-DGLM_SWIZZLE")

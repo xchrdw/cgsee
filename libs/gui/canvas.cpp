@@ -12,7 +12,6 @@
 #include "core/arcballnavigation.h"
 #include "core/abstractpainter.h"
 
-#include <core/abstractpainter.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
 #include "core/timer.h"

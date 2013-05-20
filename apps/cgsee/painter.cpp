@@ -19,12 +19,13 @@
 
 
 Painter::Painter(Camera * camera)
-:   AbstractPainter(camera)
+:   AbstractPainter()
 ,   m_group(nullptr)
 ,   m_quad(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
+,   m_camera(camera)
 {
 
 }
@@ -74,10 +75,10 @@ const bool Painter::initialize()
     // Post Processing Shader
 
     m_flush = new Program();
-	m_flush->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
-	m_flush->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
+    m_flush->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
+    m_flush->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
@@ -137,4 +138,9 @@ void Painter::releaseSampler(
 
     for(; i != iEnd; ++i)
         i.value()->releaseTexture2D();
+}
+
+Camera * Painter::camera()
+{
+    return m_camera;
 }

@@ -1,8 +1,8 @@
+//glm to rotate around axis
+#include <glm/gtx/rotate_vector.hpp>
+
 #include "fpsnavigation.h"
 #include "camera.h"
-
-//glm to rotate around axis
-#include "glm/gtx/rotate_vector.hpp"
 
 float fspeed = 0.002f;
 
@@ -38,7 +38,7 @@ void FpsNavigation::keyPressEvent(QKeyEvent *event){
             m_direction.x = -1;
             break;
         default:
-            break;
+            return; // prevent startTimer
     }
     startTimer();
 }
@@ -62,7 +62,7 @@ void FpsNavigation::keyReleaseEvent(QKeyEvent *event){
             m_direction.x = 0;
         break;
     default:
-        break;
+        return; // prevent stopTimer
     }
     stopTimer();
 }
@@ -75,7 +75,7 @@ void FpsNavigation::mouseMoveEvent(QMouseEvent * event){
             
             divX *= 0.3f;
             divY *= 0.3f;
-            pitchYaw(divX, divY);
+            pitchYaw(-divY, divX);
         }
         m_lastMousePosition = glm::vec2(event->x(),event->y());
     }
@@ -110,7 +110,7 @@ void FpsNavigation::forward(float speed){
     updateView();
 }
 
-void FpsNavigation::timerEvent(QTimerEvent* event)
+void FpsNavigation::onTimerEvent()
 {
     if (m_direction.x && m_direction.y) {
         forward(m_direction.y * fspeed * TIMER_MS / sqrt(2));

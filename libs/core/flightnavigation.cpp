@@ -1,9 +1,9 @@
+//glm to rotate around axis
+#include <glm/gtx/rotate_vector.hpp>
 
 #include "flightnavigation.h"
 #include "camera.h"
 
-//glm to rotate around axis
-#include "glm/gtx/rotate_vector.hpp"
 
 float speed = 0.003f;
 float angle = 0.05f;
@@ -58,7 +58,7 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
             break;
             
         default:
-            break;
+            return; // prevent startTimer
     }
     startTimer();
 }
@@ -120,7 +120,7 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
             break;
             
         default:
-            break;
+            return; // prevent stopTimer
     }
     stopTimer();
 }
@@ -219,7 +219,7 @@ void FlightNavigation::sideward(float speed){
     updateView();
 }
 
-void FlightNavigation::timerEvent(QTimerEvent* event){
+void FlightNavigation::onTimerEvent(){
     if (m_direction.y||m_direction.x) {
         forward(m_direction.y * speed * TIMER_MS);
         sideward(m_direction.x * speed * TIMER_MS);
