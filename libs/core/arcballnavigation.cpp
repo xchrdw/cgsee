@@ -64,14 +64,16 @@ void ArcballNavigation::updateZoom()
 void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 {
     m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
-    if (m_arcball_on) {
-        updateArcball();
+    if (m_mouse_cur != m_mouse_last) {
+        if (m_arcball_on) {
+            updateArcball();
+        }
+        else if (m_zoom_on) {
+            updateZoom();
+        }
+        m_mouse_last = m_mouse_cur;
+        updateCamera();
     }
-    else if (m_zoom_on) {
-        updateZoom();
-    }
-    m_mouse_last = m_mouse_cur;
-    updateCamera();    
 }
 
 void ArcballNavigation::mousePressEvent(QMouseEvent * event)
