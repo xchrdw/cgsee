@@ -220,13 +220,17 @@ void FlightNavigation::sideward(float speed){
 }
 
 void FlightNavigation::onTimerEvent(){
-    if (m_direction.y||m_direction.x) {
-        forward(m_direction.y * speed * TIMER_MS);
+    if (m_direction.y && m_direction.x) {
+        forward(m_direction.y * speed * TIMER_MS /sqrt(2.0));
+        sideward(m_direction.x * speed * TIMER_MS /sqrt(2.0));
+    }
+    else if (m_direction.y||m_direction.x) {
+        forward(m_direction.y * speed * TIMER_MS );
         sideward(m_direction.x * speed * TIMER_MS);
     }
     if (m_yprAngle.x||m_yprAngle.y||m_yprAngle.z){
-        yaw(m_yprAngle.x * angle * TIMER_MS);
         pitch(m_yprAngle.y * angle * TIMER_MS);
+        yaw(m_yprAngle.x * angle * TIMER_MS);
         roll(m_yprAngle.z * angle * TIMER_MS);
     }
 }
