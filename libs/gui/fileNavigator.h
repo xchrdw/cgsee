@@ -4,11 +4,12 @@
 
 
 #include <QTreeView>
-#include <QFileSystemModel>
+#include <QDir>
 
 #include <core/declspec.h>
 
 
+class QFileSystemModel;
 class FileExplorer;
 
 

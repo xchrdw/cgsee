@@ -1,4 +1,6 @@
 
+#include <QFileSystemModel>
+
 #include "fileNavigator.h"
 
 

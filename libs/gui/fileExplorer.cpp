@@ -1,4 +1,7 @@
 
+#include <QFileSystemModel>
+#include <QMenu>
+
 #include "fileExplorer.h"
 
 

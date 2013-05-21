@@ -4,11 +4,13 @@
 
 
 #include <QListView>
-#include <QFileSystemModel>
-#include <QMenu>
+#include <QDir>
 
 #include <core/declspec.h>
 
+
+class QFileSystemModel;
+class QMenu;
 
 class FileNavigator;
 
