@@ -7,6 +7,7 @@
 #include "polygonalgeometry.h"
 #include "program.h"
 #include "vertexcacheoptimizer.h"
+#include "vertexreuse.h"
 
 
 static const QString TRANSFORM_UNIFORM ("transform");
@@ -71,6 +72,8 @@ void PolygonalDrawable::initialize(const Program & program)
     glBindVertexArray(m_vao);                                                                  
     glError();
 
+    // Apply vertex deduplication
+    VertexReuse::reuseVertices(m_geometry->vertices(), m_geometry->normals(), m_geometry->texcs(), m_geometry->indices());
     // Apply Vertex Cache Optimization
     VertexCacheOptimizer::applyOptimization(m_geometry->indices(), m_geometry->vertices().size());
 
