@@ -51,7 +51,7 @@ QString DataBlockRegistry::registerNewData(QString proposedName, t_DataBlockP da
     return realName;
 }
 
-t_DataBlockP DataBlockRegistry::getDataBlockByName(QString name)
+t_DataBlockP DataBlockRegistry::getDataBlockByName(QString name) const
 {
     return m_dataMap[name];
 }

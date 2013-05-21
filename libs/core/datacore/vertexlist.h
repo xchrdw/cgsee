@@ -20,6 +20,7 @@ typedef struct AttributeDescriptor
     std::shared_ptr<AbstractInPlaceTypeFunctions> factory;
     type_info const* typeInfo;
     unsigned int typeId;
+    bool used;
 } t_AttrDesc;
 
 struct CGSEE_API AttributeSpec
@@ -89,7 +90,7 @@ public:
     RetType * getVertexAttribute(int index, const QString &attrName);
 
     template <class T>
-    void injectVertexAttributes(int startIndex
+    void foreachVertexAttribute(int startIndex
         ,   int endIndex
         ,   const QString &attrName
         ,   std::function<bool(int)> select // can be null
@@ -102,6 +103,10 @@ public:
         ,   std::function<void (int, T&)> setter);
 
     void createNewVertices(unsigned int amount);
+
+    unsigned int size() const;
+    bool isEmpty() const;
+    bool isAttributeUsed(QString attrName) const;
 
     friend class AttributeStorage;
     friend class DataBlock;
@@ -117,6 +122,48 @@ protected:
 };
 
 typedef VertexList::t_StandardPointer t_VertexListP;
+
+class CGSEE_API VertexIndexList : public DataBlock
+{
+    Q_OBJECT
+public:
+    typedef unsigned int t_indexType;
+
+    void setVertexList(t_VertexListP associatedList);
+    QVector<t_indexType> const& getIndices() const;
+    void setSingleIndex(unsigned int pos, t_indexType const vindex);
+    void setMultipleIndices(unsigned int start, unsigned int end, std::function<t_indexType(unsigned int)> initFunc);
+    
+    // Calls the same function from VertexList
+    template <class T>
+    void foreachVertexAttribute(int startIndex
+        ,   int endIndex
+        ,   const QString &attrName
+        ,   std::function<bool(int)> select // can be null
+        ,   std::function<void(int, const T&)> inject);
+
+    template <class T>
+    void foreachTriangle(int startIndex
+        ,   int endIndex
+        ,   const QString &attrName
+        ,   std::function<void(int, const T&, const T&, const T&)> func) const;
+
+    unsigned int size() const;
+    bool isEmpty() const;
+    
+    friend class AttributeStorage;
+    friend class DataBlock;
+
+protected slots:
+    void onVertexListUpdated();
+    void onVertexListDestroyed();
+protected:
+    VertexIndexList(QObject* parent = nullptr);
+
+    t_VertexListP m_associatedList;
+    QVector<unsigned int> m_indices;
+};
+
 
 #include "vertexlist_impl.inl"
 

@@ -245,6 +245,7 @@ void VertexList::initialize(const QList<AttributeSpec> &attrTypes)
         }
 
         newAttribute.typeName = attrSpec.attrType;
+        newAttribute.used = false;
         m_attrLayout.insert(attrSpec.attrName, newAttribute);
         currentLoc += newAttribute.size;
     }
@@ -267,4 +268,81 @@ const t_AttrMap& VertexList::getAttrMap()
 t_VertexListP VertexList::createClone()
 {
     return new VertexList(*this);
+}
+
+unsigned int VertexList::size() const
+{
+    return m_vertices.size();
+}
+
+bool VertexList::isEmpty() const
+{
+    return m_vertices.isEmpty();
+}
+
+bool VertexList::isAttributeUsed(QString attrName) const
+{
+    if (m_attrLayout.contains(attrName))
+        return m_attrLayout[attrName].used;
+
+    return false;
+}
+
+VertexIndexList::VertexIndexList(QObject* parent)
+{
+    if (parent)
+    {
+        VertexList* myList = qobject_cast<VertexList*>(parent);
+        if (myList)
+            setVertexList(myList);
+    }
+}
+
+void VertexIndexList::setVertexList(t_VertexListP associatedList)
+{
+    if (associatedList)
+    {
+        connect(associatedList, "updated(QObject*)", "onVertexListUpdated()");
+        connect(associatedList, "destroyed(QObject*)", "onVertexListDestroyed()");
+    }
+}
+
+QVector<VertexIndexList::t_indexType> const& VertexIndexList::getIndices() const
+{
+    return m_indices;
+}
+
+void VertexIndexList::setSingleIndex(unsigned int pos, VertexIndexList::t_indexType const vindex)
+{
+    if (m_indices.size() <= pos)
+        m_indices.resize(pos + 1);
+    m_indices[pos] = vindex;
+}
+
+void VertexIndexList::setMultipleIndices(unsigned int start, unsigned int end, std::function<t_indexType(unsigned int)> initFunc)
+{
+    for (int i = start; i < end; ++i)
+    {
+        m_indices[i] = initFunc(i);
+    }
+}
+
+void VertexIndexList::onVertexListUpdated()
+{
+
+}
+
+void VertexIndexList::onVertexListDestroyed()
+{
+    m_associatedList = nullptr;
+}
+
+unsigned int VertexIndexList::size() const
+{
+    return m_indices.size();
+}
+
+bool VertexIndexList::isEmpty() const
+{
+    return m_indices.isEmpty();
 }

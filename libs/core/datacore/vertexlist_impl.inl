@@ -35,12 +35,12 @@ RetType * VertexList::getVertexAttribute(int index, const QString &attrName)
 
     if (m_attrLayout.contains(attrName) == false)
         return nullptr;
-
+    m_attrLayout[attrName].used = true;
     return m_vertices[index].getData<RetType>(m_attrLayout[attrName]);
 }
 
 template <class T>
-void VertexList::injectVertexAttributes(int startIdx, int endIdx, const QString &attrName, std::function<bool(int)> select, std::function<void (int, const T&)> inject)
+void VertexList::foreachVertexAttribute(int startIdx, int endIdx, const QString &attrName, std::function<bool(int)> select, std::function<void (int, const T&)> inject)
 {
     if (!m_initialized)
         return;
@@ -52,7 +52,7 @@ void VertexList::injectVertexAttributes(int startIdx, int endIdx, const QString 
     {
         if ((!select) || select(i))
         {
-            T const* temp = m_vertices[index].getData<T>(m_attrLayout[attrName]);
+            T const* temp = m_vertices[i].getData<T>(m_attrLayout[attrName]);
             assert(temp != nullptr);
             inject(i, *temp);
         }
@@ -66,6 +66,7 @@ void VertexList::setVertexAttributes(int startIndex, int endIndex, const QString
         return;
 
     assert(m_attrLayout.contains(attrName));
+    m_attrLayout[attrName].used = true;
     if (m_vertices.size() < endIndex)
     {
         createNewVertices(endIndex - m_vertices.size());
@@ -73,8 +74,40 @@ void VertexList::setVertexAttributes(int startIndex, int endIndex, const QString
 
     for (int i = startIndex; i < endIndex; ++i)
     {
-        T * temp = m_vertices[index].getData<T>(m_attrLayout[attrName]);
+        T * temp = m_vertices[i].getData<T>(m_attrLayout[attrName]);
         assert (temp != nullptr);
         setter(i, *temp);
+    }
+}
+
+template <class T>
+void VertexIndexList::foreachVertexAttribute(int startIdx, int endIdx, const QString &attrName, std::function<bool(int)> select, std::function<void (int, const T&)> inject)
+{
+    assert(m_associatedList);
+
+    for(int i = startIdx; i < endIdx; ++i)
+    {
+        if ((!select) || select(i))
+        {
+            T* temp = m_associatedList->getVertexAttribute<T>(m_indices[i], attrName);
+            if (temp)
+                inject(i, *temp);
+        }
+    }
+}
+
+template <class T>
+void VertexIndexList::foreachTriangle(int startIndex, int endIndex, const QString &attrName, std::function<void(int, const T&, const T&, const T&)> func) const
+{
+    assert(m_associatedList);
+    assert((endIndex - startIndex) % 3 == 0);
+    assert(endIndex <= m_indices.size());
+    for (int idx = startIndex; idx < endIndex; idx += 3)
+    {
+        const T * par1 = m_associatedList->getVertexAttribute<T>(m_indices[idx], attrName);
+        const T * par2 = m_associatedList->getVertexAttribute<T>(m_indices[idx+1], attrName);
+        const T * par3 = m_associatedList->getVertexAttribute<T>(m_indices[idx+2], attrName);
+        if (par1 && par2 && par3)
+            func(idx, *par1, *par2, *par3);
     }
 }

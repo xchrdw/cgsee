@@ -65,10 +65,10 @@ public:
     // choose an unique name on its own; 
     // returns the name under which the object has been saved
     QString registerNewData(QString proposedName, t_DataBlockP data);
-    t_DataBlockP getDataBlockByName(QString itemName);
+    t_DataBlockP getDataBlockByName(QString itemName) const;
 
 signals:
-    void dataBlockAdded(QObject *dataBlock);
+    void dataBlockAdded(QObject* dataBlock);
 
 public slots:
     // Notifies about destruction of a DataItem.
