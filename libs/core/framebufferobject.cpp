@@ -80,8 +80,8 @@ void FrameBufferObject::bind() const
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glError();
 
-    GLenum buffers[2] = {GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT};
-    glDrawBuffers(2, buffers);
+    GLenum buffers[3] = {GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT};
+    glDrawBuffers(3, buffers);
     glError();
 }
 
