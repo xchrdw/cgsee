@@ -9,7 +9,7 @@ namespace
     {
         unsigned int size;
         std::shared_ptr<AbstractInPlaceTypeFunctions> factory;
-        const type_info *typeInfo;
+        const std::type_info *typeInfo;
     };
 
     QMap<QString, TypeSpec> g_registeredTypes;

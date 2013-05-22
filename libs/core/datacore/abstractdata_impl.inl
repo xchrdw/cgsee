@@ -1,7 +1,7 @@
 #pragma once
 
 template <class DataBlockSubclass>
-static typename DataBlockSubclass::t_StandardPointer
+typename DataBlockSubclass::t_StandardPointer
     DataBlock::createDataBlockWithName(QString& name, DataBlockRegistry &registry, QObject* parent)
 {
     typedef typename DataBlockSubclass::t_StandardPointer t_RetType;
@@ -15,7 +15,7 @@ static typename DataBlockSubclass::t_StandardPointer
 }
 
 template <class DataBlockSubclass>
-static typename DataBlockSubclass::t_StandardPointer
+typename DataBlockSubclass::t_StandardPointer
     DataBlock::createDataBlockWithName(QString const &name, DataBlockRegistry &registry, QObject* parent)
 {
     typedef typename DataBlockSubclass::t_StandardPointer t_RetType;

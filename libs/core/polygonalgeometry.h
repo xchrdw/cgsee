@@ -8,7 +8,7 @@
 
 #include "node.h"
 #include "common.h"
-#include "datacore\vertexlist.h"
+#include "datacore/vertexlist.h"
 
 class CGSEE_API PolygonalGeometry : public Node
 {

@@ -22,7 +22,6 @@ void DataCoreTest::initTestCase()
     QVERIFY(vertexList);
     QVERIFY(vertexList->objectName() == "vertex");
     QVERIFY(registry.getDataBlockByName("vertex") == vertexList);
-    qDebug(tr("%1").arg((int)this).toLocal8Bit());
 
     initVertexList();
 }

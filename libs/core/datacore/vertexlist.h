@@ -20,7 +20,7 @@ typedef struct AttributeDescriptor
     unsigned int size;
     QString typeName;
     std::shared_ptr<AbstractInPlaceTypeFunctions> factory;
-    type_info const* typeInfo;
+    std::type_info const* typeInfo;
     unsigned int typeId;
     bool used;
 } t_AttrDesc;
