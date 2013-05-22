@@ -109,6 +109,7 @@ public:
     unsigned int size() const;
     bool isEmpty() const;
     bool isAttributeUsed(QString attrName) const;
+    void resize(unsigned int);
 
     friend class AttributeStorage;
     friend class DataBlock;
@@ -153,6 +154,7 @@ public:
 
     unsigned int size() const;
     bool isEmpty() const;
+    void resize(unsigned int);
     
     friend class AttributeStorage;
     friend class DataBlock;

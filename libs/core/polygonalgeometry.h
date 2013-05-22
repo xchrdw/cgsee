@@ -32,6 +32,8 @@ public:
     //t_uints & indices();
     void setIndex(int i, unsigned int data);
 
+    void resize(unsigned int size);
+
     virtual void draw(
         const Program & program
     ,   const glm::mat4 & transform);

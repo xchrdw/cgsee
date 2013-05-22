@@ -323,6 +323,7 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
     PolygonalGeometry * geom(new PolygonalGeometry(object.qname() + " geometry"));
 
     const GLuint size(static_cast<GLuint>(group.vis.size()));
+    geom->resize(size);
 
     for(GLuint i = 0; i < size; ++i)
     {

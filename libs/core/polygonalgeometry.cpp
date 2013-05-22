@@ -199,3 +199,14 @@ void PolygonalGeometry::draw(
 ,   const glm::mat4 & transform)
 {
 }
+
+void PolygonalGeometry::resize(unsigned int size)
+{
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
+    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
+    assert(myVList);
+    assert(inds);
+
+    myVList->resize(size);
+    inds->resize(size);
+}

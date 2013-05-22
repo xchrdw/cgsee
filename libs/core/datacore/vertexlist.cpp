@@ -203,6 +203,11 @@ unsigned int VertexList::size() const
     return m_vertices.size();
 }
 
+void VertexList::resize(unsigned int s)
+{
+    m_vertices.reserve(s);
+}
+
 bool VertexList::isEmpty() const
 {
     return m_vertices.isEmpty();
@@ -273,6 +278,11 @@ unsigned int VertexIndexList::size() const
 bool VertexIndexList::isEmpty() const
 {
     return m_indices.isEmpty();
+}
+
+void VertexIndexList::resize(unsigned int s)
+{
+    m_indices.reserve(s);
 }
 
 t_VertexIndexListP VertexIndexList::createClone()
