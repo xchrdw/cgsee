@@ -19,11 +19,11 @@
 Painter::Painter()
 :   AbstractPainter()
 ,   m_group(nullptr)
-,   m_camera(nullptr)
+,   m_quad(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
-,   m_quad(nullptr)
+,   m_camera(nullptr)
 {
 }
 
@@ -35,6 +35,11 @@ Painter::~Painter()
     delete m_normalz;
     delete m_fboNormalz;
     delete m_flush;    
+}
+
+Camera * Painter::camera()
+{
+    return m_camera;
 }
 
 const bool Painter::initialize()

@@ -12,6 +12,10 @@ set(SOURCES
     aabb.cpp
     abstractapplication.h
     abstractapplication.cpp
+    abstractglparent.h
+    abstractpainter.h
+    abstractpainter.cpp
+
     datacore/abstractdata.h
     datacore/abstractdata.cpp
     datacore/vertexlist.h
