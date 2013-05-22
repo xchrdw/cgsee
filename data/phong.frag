@@ -12,20 +12,18 @@ uniform float znear;
 uniform float zfar;
 
 uniform vec3 cameraposition;
+
 uniform vec3 lightdir;
 uniform vec3 lightdir2;
-uniform vec3 attCoeff;
-uniform vec3 attCoeff2;
-
 uniform mat4 light;
 uniform mat4 light2;
-uniform mat4 material;
-uniform float lightshininess;
 uniform vec4 lightambientglobal;
+
+uniform mat4 material;
 
 void main()
 {
-	vec3 n = normalize(normal);
+	vec3 n = normal;
 	n *= 0.5;
 	n += 0.5;
 
@@ -48,7 +46,9 @@ void main()
 	vec4 iSpecular[2];
 	iSpecular[0]=light[2];
 	iSpecular[1]=light2[2];
-	float shininess = lightshininess;
+	float shininess[2];
+	shininess[0]= light[3].w;
+	shininess[1]= light2[3].w;
 
 	//light and camera -> uniforms
 	//vec3 lightdir = lightdir;		// warum das auch immer nötig ist  
@@ -64,8 +64,8 @@ void main()
 	dist[0] = length(lightdir);
 	dist[1] = length(lightdir2); 
 	vec3 att[2];
-	att[0]=attCoeff;
-	att[1]=attCoeff2;
+	att[0]=light[3].xyz;
+	att[1]=light2[3].xyz;
 	float attenuation[2];
 	float nxDir[2];
 
@@ -79,15 +79,15 @@ void main()
 	for(int i=0; i<2; i++){
 		diffuse[i] = iDiffuse[i] * nxDir[i] * attenuation[i];}
 
-for(int i=0; i<2; i++)
-{	if(nxDir[i] != 0.0)
-	{
-		vec3 cameraVector = normalize(cameraposition - gl_FragCoord.xyz);
-		vec3 halfVector = normalize(lightdirection[i] + cameraVector);
-		float nxHalf = max(0.0,dot(n,halfVector));
-		float specularPower = max(pow(nxHalf, shininess),0.0);
-		specular[i] = iSpecular[i] * specularPower * attenuation[i];
-	}
+	for(int i=0; i<2; i++)
+	{	if(nxDir[i] != 0.0)
+		{
+			vec3 cameraVector = normalize(cameraposition - gl_FragCoord.xyz);
+			vec3 halfVector = normalize(lightdirection[i] + cameraVector);
+			float nxHalf = max(0.0,dot(n,halfVector));
+			float specularPower = max(pow(nxHalf, shininess[i]),0.0);
+			specular[i] = iSpecular[i] * specularPower * attenuation[i];
+		}
 	}
 					//global ambient			//emission
 	vec4 color=lightambientglobal*material[0] + material[3];

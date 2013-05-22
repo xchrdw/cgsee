@@ -19,12 +19,9 @@
 static const QString CAMERAPOSITION_UNIFORM   ("cameraposition");
 static const QString LIGHTDIR_UNIFORM   ("lightdir");
 static const QString LIGHTDIR_UNIFORM2   ("lightdir2");
-static const QString ATTENUATION_UNIFORM   ("attCoeff");
-static const QString ATTENUATION_UNIFORM2   ("attCoeff2");
 static const QString LIGHTAMBIENTGLOBAL_UNIFORM   ("lightambientglobal");
 static const QString LIGHT_UNIFORM   ("light");
 static const QString LIGHT_UNIFORM2   ("light2");
-static const QString LIGHTSHININESS_UNIFORM   ("lightshininess");
 static const QString MATERIAL_UNIFORM   ("material");
 //for gooch
 static const QString LIGHTPOSITION_UNIFORM   ("lightposition");
@@ -145,35 +142,29 @@ const bool Painter::initialize()
 	if(m_useProgram != m_gooch)
 	{
 		m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
-		m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,4.5,7.5));
-		m_useProgram->setUniform(ATTENUATION_UNIFORM, glm::vec3(0.002,0.002,0.0004));
-	
-		m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,0.0,7.5));
-		m_useProgram->setUniform(ATTENUATION_UNIFORM2, glm::vec3(0.002,0.002,0.0004));
+		m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
+		m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(-5.0,-10.0,-15.5));
+        
+		m_useProgram->setUniform(LIGHTAMBIENTGLOBAL_UNIFORM, glm::vec4(0.0));
 
 		glm::mat4 lightMat;
-		lightMat[0] = glm::vec4(0.1,0.1,0.1,1.0);	//ambient
-		lightMat[1] = glm::vec4(0.7,0.7,0.0,0.0);	//diffuse
-		lightMat[2] = glm::vec4(0.3,0.5,0.7,1.0);	//specular
-		lightMat[3] = glm::vec4(0,0,0,0);			//nichts?
-		m_useProgram->setUniform(LIGHT_UNIFORM, lightMat, true); 
+		lightMat[0] = glm::vec4(0.0,0.0,0.0,1.0);	//ambient
+		lightMat[1] = glm::vec4(0.2,0.2,0.2,1.0);	//diffuse
+		lightMat[2] = glm::vec4(0.0,0.0,0.8,1.0);	//specular
+		lightMat[3] = glm::vec4(0.002,0.002,0.0004,1.4);	//attenuation1, attenuation2, attenuation3, shininess
+		m_useProgram->setUniform(LIGHT_UNIFORM, lightMat, false); 
 
 		glm::mat4 lightMat2;
-		lightMat[0] = glm::vec4(0.2,0.2,0.2,1.0);	//ambient
-		lightMat[1] = glm::vec4(0.7,0.0,0.0,1.0);	//diffuse
-		lightMat[2] = glm::vec4(0.2,0.1,0.5,1.0);	//specular
-		lightMat[3] = glm::vec4(0,0,0,0);			//nichts?
+		lightMat2[0] = glm::vec4(0.0,0.0,0.0,1.0);	//ambient
+		lightMat2[1] = glm::vec4(0.0,0.0,0.0,1.0);	//diffuse
+		lightMat2[2] = glm::vec4(0.8,0.0,0.0,1.0);	//specular
+		lightMat2[3] = glm::vec4(0.002,0.002,0.0004,1.4);	//attenuation1, attenuation2, attenuation3, shininess
 	
-		m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, true); 
-
-		float shin=1.4f;
-		m_useProgram->setUniform(LIGHTSHININESS_UNIFORM, shin);
-	
-		m_useProgram->setUniform(LIGHTAMBIENTGLOBAL_UNIFORM, glm::vec4(0.4));
+		m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, false); 
 
 		glm::mat4 materialCoeff;
-		materialCoeff[0] = glm::vec4(0.1,0.14,0.1,1.0);	//ambient
-		materialCoeff[1] = glm::vec4(1.0,0.9,1.0,1.0);	//diffuse
+		materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);	//ambient
+		materialCoeff[1] = glm::vec4(1.0,1.0,1.0,1.0);	//diffuse
 		materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);	//specular
 		materialCoeff[3] = glm::vec4(0,0,0,0);			//emission
 

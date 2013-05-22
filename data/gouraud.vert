@@ -28,8 +28,8 @@ uniform vec4 lightambientglobal;
 void main()
 {
 	gl_Position = transform * vec4(a_vertex, 1.0);
-	vec4 a= normalize(view*vec4(a_normal,0.0));
-	vec3 n = a.xyz;
+	vec4 temp= normalize(view*vec4(a_normal,0.0));
+	vec3 n = temp.xyz;
 	n *= 0.5;
 	n += 0.5;
 
@@ -52,7 +52,9 @@ void main()
 	vec4 iSpecular[2];
 	iSpecular[0]=light[2];
 	iSpecular[1]=light2[2];
-	float shininess = lightshininess;
+	float shininess[2];
+	shininess[0]= light[3].w;
+	shininess[1]= light2[3].w;
 
 	//light and camera -> uniforms
 	//vec3 lightdir = lightdir;		// warum das auch immer nötig ist  
@@ -68,8 +70,8 @@ void main()
 	dist[0] = length(lightdir);
 	dist[1] = length(lightdir2); 
 	vec3 att[2];
-	att[0]=attCoeff;
-	att[1]=attCoeff2;
+	att[0]=light[3].xyz;
+	att[1]=light2[3].xyz;
 	float attenuation[2];
 	float nxDir[2];
 
@@ -89,7 +91,7 @@ void main()
 			vec3 cameraVector = normalize(cameraposition - gl_Position.xyz);
 			vec3 halfVector = normalize(lightdirection[i] + cameraVector);
 			float nxHalf = max(0.0,dot(n,halfVector));
-			float specularPower = max(pow(nxHalf, shininess),0.0);
+			float specularPower = max(pow(nxHalf, shininess[i]),0.0);
 			specular[i] = iSpecular[i] * specularPower * attenuation[i];
 		}
 	}
@@ -100,5 +102,4 @@ void main()
 							//local ambient			//diffuse					//specular
 		color += color + iAmbient[i]*material[0] + attenuation[i]*(diffuse[i] * material[1] + specular[i] * material[2]);
 	}
-
 }
