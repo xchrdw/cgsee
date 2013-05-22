@@ -23,169 +23,97 @@ AttributeSpec::AttributeSpec(const QString &name, const QString &type):
 }
 
 AttributeStorage::AttributeStorage():
-    m_storage(nullptr)
-,   m_storageSize(0)
-,   m_destroyed(false)
-,   m_useCount(new unsigned int(1))
+    m_initialized(false)
 {
 }
 
 AttributeStorage::AttributeStorage(const AttributeStorage& rhs):
-    m_storage(rhs.m_storage)
-,   m_storageSize(rhs.m_storageSize)
-,   m_destroyed(rhs.m_destroyed)
+    m_owner(rhs.m_owner)
+,   m_initialized(rhs.m_initialized)    
 {
-    if (!m_destroyed && m_storage != nullptr)
+    if (rhs.m_initialized)
     {
-        m_useCount = rhs.m_useCount;
-        ++(*m_useCount);
-    }
-    else // m_destroyed || m_storage == nullptr
-    {
-        m_useCount = new unsigned int(1);
+        copyStorage(rhs.m_storage);
     }
 }
 
 AttributeStorage::AttributeStorage(AttributeStorage &&rhs):
-    m_storage(rhs.m_storage)
-,   m_storageSize(rhs.m_storageSize)
-,   m_destroyed(rhs.m_destroyed)
-,   m_useCount(rhs.m_useCount)
+    m_owner(rhs.m_owner)
+,   m_initialized(rhs.m_initialized) 
 {
-    rhs.m_storage = nullptr;
-    rhs.m_storageSize = 0;
-    rhs.m_destroyed = true;
-    rhs.m_useCount = nullptr;
+    if(m_initialized)
+        copyStorage(rhs.m_storage);
 }
 
 AttributeStorage::AttributeStorage(VertexList &owner):
-    m_storage(nullptr)
-,   m_storageSize(0)
-,   m_destroyed(false)
-,   m_useCount(new unsigned int(1))
-,   m_owner(&owner)
+    m_owner(&owner)
+,   m_initialized(false)
 {
     initialize(owner);
 }
 
 AttributeStorage::~AttributeStorage()
 {
-    if (m_useCount)
+    if (m_owner)
     {
-        assert(*m_useCount > 0);
-        if (--(*m_useCount) == 0)
-        {    
-            if (m_storage && !m_destroyed)
-            {
-                if (m_owner)
-                {
-                    runDestructors(m_owner->getAttrMap());
-                    assert(m_destroyed);
-                }
-                else
-                    //something bad has happened
-                    qWarning(QObject::tr("Destroying Attribute storage with objects in it intact. Potential leak. In %1, line %2")
-                        .arg(__FILE__)
-                        .arg(__LINE__)
-                        .toLocal8Bit());
-            }
-
-            delete [] m_storage;
-            delete m_useCount;
-        }
-        else
-        {
-            // storage is still in use
-        }
+        runDestructors(m_owner->getAttrMap());
     }
     else
-    {
-        assert (!m_storage || m_destroyed);
-        delete [] m_storage;
-    }
+        //something bad has happened
+        qWarning(QObject::tr("Destroying Attribute storage with objects in it intact. Potential leak. In %1, line %2")
+            .arg(__FILE__)
+            .arg(__LINE__)
+            .toLocal8Bit());
 }
 
 const AttributeStorage & AttributeStorage::operator=(const AttributeStorage &rhs)
 {
     if (this == &rhs) // NOTE: perhaps not needed, but it is in some cases
         return *this;
-
-    m_storage = rhs.m_storage;
-    m_storageSize = rhs.m_storageSize;
-    m_destroyed = rhs.m_destroyed;
-
-    if (!m_destroyed && m_storage != nullptr)
-    {
-        m_useCount = rhs.m_useCount;
-        ++(*m_useCount);
-    }
-    else // m_destroyed || m_storage == nullptr
-    {
-        m_useCount = new unsigned int(1);
-    }
-
+    m_initialized = rhs.m_initialized;
+    if (m_initialized)
+        copyStorage(rhs.m_storage);
     return *this;
 }
 
 void AttributeStorage::initialize(VertexList &owner)
 {
-    assert(m_storage == nullptr);
-    assert(!m_destroyed);
-    assert(m_useCount && *m_useCount == 1);
-
-    delete [] m_storage;
+    if (m_initialized) return;
     unsigned int memoryNeeded = 0;
     const t_AttrMap &attrMap = owner.getAttrMap();
 
     for (const t_AttrDesc &attr: attrMap)
         memoryNeeded = qMax(memoryNeeded, attr.size + attr.location);
 
-    m_storage = new unsigned char[memoryNeeded];
-    assert(m_storage != nullptr);
-    m_storageSize = memoryNeeded;
+    if (memoryNeeded > StaticAttributeStorageSize)
+        qFatal("Not enough memory to store vertex attributes. Change StaticAttributeStoregeSize constant in vertexlist.h");
 
     for (const t_AttrDesc &attr: attrMap)
     {
-        attr.factory->construct(m_storage + attr.location);
+        if (attr.size + attr.location <= StaticAttributeStorageSize)
+            attr.factory->construct(m_storage + attr.location);
     }
+    m_initialized = true;
 }
 
 void AttributeStorage::runDestructors(const t_AttrMap &attrMap)
 {
-    if (m_destroyed)
-        return;
-
-    if (m_useCount && *m_useCount > 1)
+    if (m_initialized)
     {
-        --(*m_useCount);
-        m_useCount = nullptr;
-        m_storage = nullptr;
+        for (const t_AttrDesc & attr: attrMap)
+            if (attr.size + attr.location <= StaticAttributeStorageSize)
+                attr.factory->destruct(m_storage + attr.location);
     }
-    else for (const t_AttrDesc & attr: attrMap)
-        attr.factory->destruct(m_storage + attr.location);
-
-    m_destroyed = true;
 }
 
-void AttributeStorage::copyStorage()
+void AttributeStorage::copyStorage(t_StorageType const& otherStorage)
 {
-    assert (m_useCount && *m_useCount > 0);
-    if (*m_useCount == 1) 
-    {
-        return;
-    }
-
-    t_StorageType newStorage = new unsigned char [m_storageSize];
-
     // TODO: differentiate between trivially copyable and not types
     // memcpy(newStorage, m_storage, m_storageSize); // for trivially copyable types
     assert(m_owner);
     for (const t_AttrDesc & attrD: m_owner->getAttrMap())
-        attrD.factory->copyTo(m_storage + attrD.location, newStorage + attrD.location);
-
-    --(*m_useCount);
-    m_useCount = new unsigned int(1);
-    m_storage = newStorage;
+        if (attrD.size + attrD.location <= StaticAttributeStorageSize)
+            attrD.factory->copyTo(otherStorage + attrD.location, m_storage + attrD.location);
 }
 
 VertexList::VertexList(QObject* parent):

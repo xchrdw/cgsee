@@ -23,7 +23,7 @@ void QtTypeFunctions::construct(void * place) const
 void QtTypeFunctions::destruct(void * place) const
 {
     assert(m_typeId != 0);
-    QMetaType::destroy(m_typeId, place);
+    QMetaType::destruct(m_typeId, place);
 }
 
 void QtTypeFunctions::copyTo(const void * from, void * to) const

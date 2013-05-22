@@ -11,6 +11,8 @@
 
 #include "registertypeshere.h"
 
+const int StaticAttributeStorageSize = 48;
+
 // describes layout of vertex attributes in a storage.
 typedef struct AttributeDescriptor
 {
@@ -40,7 +42,7 @@ class VertexList;
 class CGSEE_API AttributeStorage final
 {
 public:
-    typedef unsigned char * t_StorageType;
+    typedef unsigned char t_StorageType[StaticAttributeStorageSize];
 
     AttributeStorage();
     AttributeStorage(AttributeStorage &&rhs);
@@ -67,13 +69,13 @@ public:
     RetType* getData(const t_AttrDesc &loc); 
 protected:
     t_StorageType m_storage;
-    unsigned int m_storageSize;
-    bool m_destroyed;
+    //unsigned int m_storageSize;
+    bool m_initialized;
 
-    mutable unsigned int * m_useCount;
+    //mutable unsigned int * m_useCount;
     QPointer<VertexList> m_owner;
 
-    void copyStorage();
+    void copyStorage(t_StorageType const& otherStorage);
 };
 
 class CGSEE_API VertexList: public DataBlock

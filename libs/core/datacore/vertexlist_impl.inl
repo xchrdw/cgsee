@@ -3,11 +3,9 @@
 template <class RetType>
 RetType * AttributeStorage::getData(const t_AttrDesc & loc)
 {
-    if (m_destroyed)
+    if (loc.size + loc.location > StaticAttributeStorageSize)
         return nullptr;
-
-    copyStorage();
-    AttributeStorage::t_StorageType resultPtr = m_storage + loc.location;
+    unsigned char* resultPtr = m_storage + loc.location;
     if (nullptr == loc.typeInfo)
     {
         if (loc.typeId == qMetaTypeId<RetType>())
