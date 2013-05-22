@@ -1,5 +1,5 @@
-
-set GLEW_HOME=D:\libs\3rdparty\x64
-set QT_DIR=C:\Qt\5.0.2_x64_vs2010
-
-set PATH=%PATH%;%GLEW_HOME%\bin;%QT_DIR%\qtbase\bin;
+set GLEW_HOME=<REPLACE>
+set QT_DIR=<REPLACE>
+set GLM_HOME=<REPLACE>
+set QT_QPA_PLATFORM_PLUGIN_PATH=%QT_DIR%/plugins/platforms
+set PATH=%GLEW_HOME%/bin;%QT_DIR%/bin;%PATH%;

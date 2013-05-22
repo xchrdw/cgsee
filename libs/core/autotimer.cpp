@@ -12,9 +12,9 @@ const QByteArray AutoTimer::m_units("num ");
 
 
 AutoTimer::AutoTimer(const QString & info)
-:   m_index(++m_numActiveInstances)
+:   m_info(info)
+,   m_index(++m_numActiveInstances)
 ,   m_timer(new Timer(false))
-,   m_info(info)
 {
     m_timer->start();
 }
