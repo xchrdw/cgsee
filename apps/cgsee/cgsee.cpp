@@ -2,6 +2,7 @@
 #include "painter.h"
 #include "deferredpainter.h"
 
+#include <gui/canvas.h>
 #include <gui/viewer.h>
 
 

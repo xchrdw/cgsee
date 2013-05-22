@@ -1,4 +1,8 @@
 
+#include <GL/glew.h>
+
+#include <cassert>
+
 #include <QOpenGLContext>
 #include <QSettings>
 
@@ -6,8 +10,10 @@
 
 #include "viewer.h"
 #include "canvas.h"
-#include "abstractpainter.h"
+#include "canvasexporter.h"
 
+#include <core/abstractpainter.h>
+#include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 
 
@@ -62,7 +68,7 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
 
-    QGLContext * qContext(m_qtCanvas->context());
+    QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
 
     if(!qContext)
         qFatal("Creating QtGL-Context failed.");
@@ -124,4 +130,21 @@ AbstractPainter * Viewer::painter()
         return nullptr;
 
     return m_qtCanvas->painter();
+}
+
+void Viewer::on_captureAsImageAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this);
+}
+
+void Viewer::on_captureAsImageAdvancedAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this, true);
+}
+
+void Viewer::on_reloadAllShadersAction_triggered()
+{
+    FileAssociatedShader::reloadAll();
 }
