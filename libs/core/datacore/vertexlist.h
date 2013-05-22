@@ -128,6 +128,7 @@ class CGSEE_API VertexIndexList : public DataBlock
     Q_OBJECT
 public:
     typedef unsigned int t_indexType;
+    typedef VertexIndexList * t_StandardPointer;
 
     void setVertexList(t_VertexListP associatedList);
     QVector<t_indexType> const& getIndices() const;
@@ -164,6 +165,7 @@ protected:
     QVector<unsigned int> m_indices;
 };
 
+typedef VertexIndexList::t_StandardPointer t_VertexIndexListP;
 
 #include "vertexlist_impl.inl"
 

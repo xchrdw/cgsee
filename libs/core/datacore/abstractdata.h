@@ -57,7 +57,7 @@ class CGSEE_API DataBlockRegistry: public QObject
 {
     Q_OBJECT
 public:
-    DataBlockRegistry(const QString &objName, QObject * parent = nullptr); 
+    DataBlockRegistry(const QString &objName = QString(), QObject * parent = nullptr); 
     virtual ~DataBlockRegistry();
 
     // This Method registers the new data item using the name given; 
