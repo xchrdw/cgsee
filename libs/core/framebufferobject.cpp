@@ -18,7 +18,6 @@ FrameBufferObject::FrameBufferObject(
 
 :   m_fbo(-1)
 ,   m_render(-1)
-,   m_texture(-1)
 
 ,   m_size(glm::ivec2(0))
 
@@ -163,13 +162,7 @@ void FrameBufferObject::initialize() const
         glBindRenderbuffer(GL_RENDERBUFFER, m_render);
         glError();
 
-        if(!m_multisampling)
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
-        else {
-            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, m_samples, GL_DEPTH_COMPONENT32, m_size.x, m_size.y);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
-        }
-
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
         glError();
     }
 
@@ -212,7 +205,6 @@ void FrameBufferObject::resize() const
              glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_size.x, m_size.y);
         else
              glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, m_samples, GL_DEPTH_COMPONENT32, m_size.x, m_size.y);
-            //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_size.x, m_size.y);
 
         glError();
         glBindRenderbuffer(GL_RENDERBUFFER, 0);

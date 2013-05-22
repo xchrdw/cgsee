@@ -43,6 +43,11 @@ DeferredPainter::~DeferredPainter()
     delete m_flush;    
 }
 
+Camera * DeferredPainter::camera()
+{
+    return m_camera;
+}
+
 const bool DeferredPainter::initialize()
 {
     AutoTimer t("Initialization of Painter");
@@ -124,12 +129,6 @@ const bool DeferredPainter::initialize()
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true, true, 16);
 
-    /*
-    m_flush->setUniform("g_normalDepth", 0);
-    m_flush->setUniform("h_edges", 1);
-    m_flush->setUniform("h_unsharpMaskingDepthBuffer", 2);
-    */
-
     return true;
 }
 
@@ -143,7 +142,7 @@ void DeferredPainter::paint()
     m_camera->draw(*m_normalz, m_fboNormalz);
     releaseSampler(sampler);
 
-    // 3. pass: edge enhancement
+    // 2. pass: edge enhancement
     sampler.clear();
     sampler["g_normalDepth"] = m_fboNormalz;
 
@@ -151,7 +150,7 @@ void DeferredPainter::paint()
     m_quad->draw(*m_edgeEnhancement, m_fboEdges);
     releaseSampler(sampler);
 
-    // 4. pass: unsharp masking the depth buffer
+    // 3. pass: unsharp masking the depth buffer
     sampler.clear();
     sampler["g_normalDepth"] = m_fboNormalz;
 
@@ -160,14 +159,6 @@ void DeferredPainter::paint()
     releaseSampler(sampler);
 
     // 4. pass: combine
-    /*
-    sampler.clear();
-    sampler["g_normalDepth"] = m_fboNormalz;
-    sampler["edges"] = m_fboEdges;
-    sampler["unsharpMaskingDepthBuffer"] = m_fboUnsharpMaskingDepthBuffer;
-
-    bindSampler(sampler, *m_flush);
-    */
 
     sampler.clear();
     sampler["g_normalDepth"] = m_fboNormalz;

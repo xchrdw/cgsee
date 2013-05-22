@@ -12,7 +12,7 @@ void main()
 {
 	vec3 n = normalize(v_normal);
 	n *= 0.5;
-	n += 0.5;
+	n += 0.5; // n in [0,1]
 
 	float z = gl_FragCoord.z; 
 

@@ -4,7 +4,7 @@
 #include <QString>
 #include <QMap>
 
-#include <gui/abstractpainter.h>
+#include <core/abstractpainter.h>
 
 
 class Camera;
@@ -27,6 +27,7 @@ public:
 
 protected:
     virtual const bool initialize();
+    virtual Camera * camera();
 
 protected:
     void postShaderRelinked();

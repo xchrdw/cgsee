@@ -53,11 +53,6 @@ void main (void) {
 
     d = d / NUM_SAMPLES;
 
-	//d = edgeDetectID() * d;
-	//d = vec3(dot(d, vec3(0.3, 0.59, 0.11)));
-    //fragcolor = vec4(vec3(min(vec3(0.8), d.x)/vec3(0.8)), 1.0);
-		
-	//fragcolor = texture2DMS(g_normalDepth, gl_FragCoord.xy) * vec4(vec3(d.z), 1.0);
     fragcolor = vec4(vec3(d.z), 1.0);
 	
     return;
