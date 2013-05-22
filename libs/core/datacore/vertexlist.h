@@ -160,6 +160,7 @@ protected slots:
     void onVertexListDestroyed();
 protected:
     VertexIndexList(QObject* parent = nullptr);
+    virtual t_StandardPointer createClone() override;
 
     t_VertexListP m_associatedList;
     QVector<unsigned int> m_indices;

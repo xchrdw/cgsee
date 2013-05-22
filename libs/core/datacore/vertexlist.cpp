@@ -302,8 +302,8 @@ void VertexIndexList::setVertexList(t_VertexListP associatedList)
 {
     if (associatedList)
     {
-        connect(associatedList, "updated(QObject*)", "onVertexListUpdated()");
-        connect(associatedList, "destroyed(QObject*)", "onVertexListDestroyed()");
+        connect(associatedList, SIGNAL(updated(QObject*)), SLOT(onVertexListUpdated()));
+        connect(associatedList, SIGNAL(destroyed(QObject*)), SLOT(onVertexListDestroyed()));
     }
 }
 
@@ -345,4 +345,9 @@ unsigned int VertexIndexList::size() const
 bool VertexIndexList::isEmpty() const
 {
     return m_indices.isEmpty();
+}
+
+t_VertexIndexListP VertexIndexList::createClone()
+{
+    return new VertexIndexList(*this);
 }
