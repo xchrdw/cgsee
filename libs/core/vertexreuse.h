@@ -5,6 +5,6 @@
 class VertexReuse
 {
 public:
-    static void reuseVertices(t_vec3s& m_vertices, t_vec3s& m_normals, t_vec2s& m_texcs, t_uints& m_indices);
+    static void reuseVertices(t_vec3s& vertices, t_vec3s& normals, t_vec2s& texcs, t_uints& indices);
 };
 
