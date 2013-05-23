@@ -110,8 +110,8 @@ const bool Painter::initialize()
 		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flat.frag"));
 	m_flat->attach(
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/flat.vert"));
-	//m_flat->attach(
-	//	new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/flat.geo"));
+	m_flat->attach(
+		new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/flat.geo"));
 
 	//GOURAUD
 	
@@ -127,6 +127,8 @@ const bool Painter::initialize()
 	m_phong->attach(
 		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phong.frag"));
 	m_phong->attach(
+		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phongLighting.shad"));
+	m_phong->attach(
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/phong.vert"));
 
 	//GOOCH
@@ -137,7 +139,7 @@ const bool Painter::initialize()
 	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_gouraud;
+	m_useProgram = m_flat;
 
 	if(m_useProgram != m_gooch)
 	{

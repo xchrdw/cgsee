@@ -21,6 +21,8 @@ uniform vec4 lightambientglobal;
 
 uniform mat4 material;
 
+vec4 phongLighting(vec3 n, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, mat4 light, mat4 light2, vec4 lightambientglobal, mat4 material);
+
 void main()
 {
 	vec3 n = normal;
@@ -35,7 +37,7 @@ void main()
 
 	// simplyfied with wolfram alpha
 	z = - znear * z / (zfar * z - zfar - znear * z);
-
+	/*
 	//light uniforms
 	vec4 iAmbient[2];
 	iAmbient[0] = light[0];
@@ -96,6 +98,6 @@ void main()
 							//local ambient			//diffuse					//specular
 		color += color + iAmbient[i]*material[0] + attenuation[i]*(diffuse[i] * material[1] + specular[i] * material[2]);
 	}
-
-	gl_FragColor=color;
+	*/
+	gl_FragColor=phongLighting(n, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);//color;
 }
