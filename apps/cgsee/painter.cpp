@@ -139,13 +139,13 @@ const bool Painter::initialize()
 	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_flat;
+	m_useProgram = m_gooch;
 
 	if(m_useProgram != m_gooch)
 	{
 		m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
 		m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
-		m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(-5.0,-10.0,-15.5));
+		m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,-8.0,7.5));
         
 		m_useProgram->setUniform(LIGHTAMBIENTGLOBAL_UNIFORM, glm::vec4(0.0));
 
@@ -158,7 +158,7 @@ const bool Painter::initialize()
 
 		glm::mat4 lightMat2;
 		lightMat2[0] = glm::vec4(0.0,0.0,0.0,1.0);	//ambient
-		lightMat2[1] = glm::vec4(0.0,0.0,0.0,1.0);	//diffuse
+		lightMat2[1] = glm::vec4(0.1,0.1,0.1,1.0);	//diffuse
 		lightMat2[2] = glm::vec4(0.8,0.0,0.0,1.0);	//specular
 		lightMat2[3] = glm::vec4(0.002,0.002,0.0004,1.4);	//attenuation1, attenuation2, attenuation3, shininess
 	
@@ -175,7 +175,7 @@ const bool Painter::initialize()
 
 	else
 	{
-		m_gooch->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(0.0,4.5,7.5));
+		m_gooch->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(5.0,-4.5,-2.5));
 	}
 
     // Post Processing Shader
