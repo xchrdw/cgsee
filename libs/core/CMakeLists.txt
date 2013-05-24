@@ -55,10 +55,11 @@ set(SOURCES
     objio.cpp
     polygonaldrawable.h
     polygonaldrawable.cpp
-    polygonalgeometry.h
-    polygonalgeometry.cpp
+    geometrydata.h
+    geometrydata.cpp
     program.h
     program.cpp
+    scenegraph.cpp
     screenquad.h
     screenquad.cpp
     shader.h

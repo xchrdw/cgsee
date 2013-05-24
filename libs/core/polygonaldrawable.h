@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <GL/glew.h>
 
 #include <glm/glm.hpp>
@@ -8,11 +10,11 @@
 #include <QVector>
 
 #include "declspec.h"
-
 #include "node.h"
 
 
-class PolygonalGeometry;
+class GeometryData;
+class DataBlockRegistry;
 class BufferObject;
 class Program;
 
@@ -20,32 +22,30 @@ class Program;
 class CGSEE_API PolygonalDrawable : public Node
 {
 public:
-    PolygonalDrawable(const QString & name = "unnamed");
+    PolygonalDrawable( DataBlockRegistry & registry, const QString & name );
     virtual ~PolygonalDrawable();
 
-    void setGeometry(PolygonalGeometry * geometry);
-    PolygonalGeometry * geometry();
+    void setGeometry( std::shared_ptr<GeometryData> geometry );
+    std::shared_ptr<GeometryData> geometry();
 
-    virtual void draw(
-        const Program & program
-    ,   const glm::mat4 & transform);
+    void setMode( const GLenum mode ) { m_mode = mode; }
+    inline const GLenum mode() const { return m_mode; }
 
-    virtual const AxisAlignedBoundingBox boundingBox() const;
+    virtual const AxisAlignedBoundingBox boundingBox() const override;
+    
+    virtual void draw( const Program & program, const glm::mat4 & transform ) override;
 
 protected:
-
-    const glm::mat4 & transform() const;
-
     void initialize(const Program & program);
     void deleteBuffers();
-
-    virtual void invalidateBoundingBox();
+    virtual void invalidateBoundingBox() override;
 
 protected:
     GLuint m_vao;
 
-    PolygonalGeometry * m_geometry;
-
+    std::shared_ptr<GeometryData> m_geometry;
+    GLenum  m_mode;
+    
     typedef QVector<BufferObject *> t_bufferObjects;
     t_bufferObjects m_elementArrayBOs;
 

@@ -6,9 +6,9 @@
 
 #include <core/abstractpainter.h>
 
-
 class Camera;
-class Group;
+class DataBlockRegistry;
+class SceneGraph;
 class ScreenQuad;
 class Program;
 class FrameBufferObject;
@@ -42,7 +42,8 @@ protected:
         const t_samplerByName & sampler);
 
 protected:
-    Group * m_group;
+    DataBlockRegistry * m_registry;
+    SceneGraph * m_scene;
     ScreenQuad * m_quad;
 
     Program * m_normalz;

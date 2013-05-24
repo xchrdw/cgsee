@@ -1,109 +1,76 @@
+
+#include <memory>
+
 #include <GL/glew.h>
 
 #include "polygonaldrawable.h"
 
 #include "aabb.h"
 #include "bufferobject.h"
-#include "polygonalgeometry.h"
+#include "geometrydata.h"
+#include "datacore/abstractdata.h"
 #include "program.h"
 
 
 static const QString TRANSFORM_UNIFORM ("transform");
 
 
-PolygonalDrawable::PolygonalDrawable(const QString & name)
-:   Node(name)
-,   m_vao(-1)
-,   m_geometry(nullptr)
+PolygonalDrawable::PolygonalDrawable( DataBlockRegistry & registry, const QString & name )
+:   Node( name )
+,   m_vao( -1 )
+,   m_geometry( new GeometryData( registry ) )
+,   m_mode( GL_TRIANGLES )
 {
 }
 
 PolygonalDrawable::~PolygonalDrawable()
 {
-    setGeometry(nullptr);
     deleteBuffers();
 }
 
-const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
+void PolygonalDrawable::setGeometry( std::shared_ptr<GeometryData> geometry )
 {
-    if(!m_geometry)
-        return AxisAlignedBoundingBox();
-
-    return m_geometry->boundingBox();
-}
-
-void PolygonalDrawable::setGeometry(PolygonalGeometry * geometry)
-{
-    if(m_geometry)
+    if (m_geometry != nullptr)
     {
-        m_geometry->parents().remove(this);
-        if(m_geometry->parents().empty())
-            delete m_geometry;
-
+//         m_geometry->parents().remove(this);
+//         if(m_geometry->parents().empty())
+//             delete m_geometry;
+// 
+//         deleteBuffers();
+//         
         deleteBuffers();
     }
 
     m_geometry = geometry;
 
-    if(m_geometry)
-        m_geometry->parents().insert(this);
+//     if(m_geometry)
+//         m_geometry->parents().insert(this);
 }
 
-PolygonalGeometry * PolygonalDrawable::geometry()
+std::shared_ptr<GeometryData> PolygonalDrawable::geometry()
 {
     return m_geometry;
+}
+
+const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
+{
+    if(m_aabb.valid())
+        return m_aabb;
+
+    if(m_geometry == nullptr)
+        return AxisAlignedBoundingBox();
+
+    // TODO: Hier muss was effizienteres her!
+    for( const auto pos : m_geometry->vertices() ){
+        m_aabb.extend( pos );
+    }
+
+    return m_aabb;
 }
 
 void PolygonalDrawable::invalidateBoundingBox()
 {
     return Node::invalidateBoundingBox();
-}
-
-void PolygonalDrawable::initialize(const Program & program)
-{
-    assert(m_geometry);
-
-    deleteBuffers();
-
-    glGenVertexArrays(1, &m_vao);
-    glError();
-    glBindVertexArray(m_vao);                                                                  
-    glError();
-
-    // setup element array buffers
-
-    BufferObject * indexBO(new BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));
-    indexBO->data<GLuint>(m_geometry->indices(), GL_UNSIGNED_INT, 1);
-
-    m_elementArrayBOs.push_back(indexBO);
-
-    // setup array buffers
-
-	BufferObject * vertexBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
-	vertexBO->data<glm::vec3>(m_geometry->vertices(), GL_FLOAT, 3);
-    
-    m_arrayBOsByAttribute["a_vertex"] = vertexBO;
-
-    // TODO: the geometry should provide this information.
-
-    if(!m_geometry->normals().isEmpty())
-    {
-	    BufferObject * normalBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
-	    normalBO->data<glm::vec3>(m_geometry->normals(), GL_FLOAT, 3);
-
-        m_arrayBOsByAttribute["a_normal"] = normalBO;
-    }
-
-    // bind all buffers to their attributes
-
-    t_bufferObjectsByAttribute::const_iterator i(m_arrayBOsByAttribute.begin());
-    const t_bufferObjectsByAttribute::const_iterator iEnd(m_arrayBOsByAttribute.end());
-
-    for(; i != iEnd; ++i)
-        i.value()->bind(program.attributeLocation(i.key()));
-
-    glBindVertexArray(0);
-    glError();
 }
 
 void PolygonalDrawable::draw(
@@ -130,7 +97,7 @@ void PolygonalDrawable::draw(
     glCullFace(GL_BACK);
 
     for(; e != eEnd; ++e)
-        (*e)->draw(m_geometry->mode());
+        (*e)->draw( mode() );
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -139,6 +106,53 @@ void PolygonalDrawable::draw(
     glError();
 
     program.release();
+}
+
+void PolygonalDrawable::initialize(const Program & program)
+{
+    assert(m_geometry);
+
+    deleteBuffers();
+
+    glGenVertexArrays(1, &m_vao);
+    glError();
+    glBindVertexArray(m_vao);                                                                  
+    glError();
+
+    // setup element array buffers
+
+    BufferObject * indexBO(new BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));
+    indexBO->data<GLuint>(m_geometry->indices(), GL_UNSIGNED_INT, 1);
+
+    m_elementArrayBOs.push_back(indexBO);
+
+    // setup array buffers
+
+    BufferObject * vertexBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
+    vertexBO->data<glm::vec3>(m_geometry->vertices(), GL_FLOAT, 3);
+    
+    m_arrayBOsByAttribute["a_vertex"] = vertexBO;
+
+    // TODO: the geometry should provide this information.
+
+    if(!m_geometry->normals().isEmpty())
+    {
+        BufferObject * normalBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
+        normalBO->data<glm::vec3>(m_geometry->normals(), GL_FLOAT, 3);
+
+        m_arrayBOsByAttribute["a_normal"] = normalBO;
+    }
+
+    // bind all buffers to their attributes
+
+    t_bufferObjectsByAttribute::const_iterator i(m_arrayBOsByAttribute.begin());
+    const t_bufferObjectsByAttribute::const_iterator iEnd(m_arrayBOsByAttribute.end());
+
+    for(; i != iEnd; ++i)
+        i.value()->bind(program.attributeLocation(i.key()));
+
+    glBindVertexArray(0);
+    glError();
 }
 
 void PolygonalDrawable::deleteBuffers()

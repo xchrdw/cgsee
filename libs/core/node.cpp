@@ -3,9 +3,9 @@
 
 
 Node::Node(const QString & name)
-:   m_name(name)
-,   m_rf(RF_Relative)
-,   m_transform(glm::mat4(1))
+: m_switch( true )
+, m_rf(RF_Relative)
+, m_transform(glm::mat4(1))
 {
 }
 
@@ -13,35 +13,17 @@ Node::~Node()
 {
 }
 
-const QString Node::name() const
-{
-    return m_name;
-}
-
-void Node::setName(const QString & name)
-{
-    m_name = name;
-}
-
-const Node::t_parents & Node::parents() const
-{
-    return m_parents;
-}
-
-Node::t_parents & Node::parents()
-{
-    return m_parents;
-}
-
 void Node::invalidateBoundingBox()
 {
     m_aabb.invalidate();
 
-    t_parents::const_iterator i(m_parents.begin());
-    const t_parents::const_iterator iEnd(m_parents.end());
+//     t_parents::const_iterator i(m_parents.begin());
+//     const t_parents::const_iterator iEnd(m_parents.end());
 
-    for(; i != iEnd; ++i)
-        (*i)->invalidateBoundingBox();
+    if (parent() != nullptr)
+        dynamic_cast<Node *>(parent())->invalidateBoundingBox();
+//     for(; i != iEnd; ++i)
+//         (*i)->invalidateBoundingBox();
 }
 
 const glm::mat4 & Node::transform() const

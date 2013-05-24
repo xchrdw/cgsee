@@ -10,7 +10,8 @@
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
-#include <core/group.h>
+#include <core/datacore/abstractdata.h>
+#include <core/scenegraph.h>
 #include <core/objio.h>
 #include <core/program.h>
 #include <core/screenquad.h>
@@ -18,7 +19,8 @@
 
 Painter::Painter()
 :   AbstractPainter()
-,   m_group(nullptr)
+,   m_registry( nullptr )
+,   m_scene(nullptr)
 ,   m_quad(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboNormalz(nullptr)
@@ -29,12 +31,13 @@ Painter::Painter()
 
 Painter::~Painter()
 {
-    delete m_group;
+    delete m_scene;
+    delete m_registry;
     delete m_quad;
 
     delete m_normalz;
     delete m_fboNormalz;
-    delete m_flush;    
+    delete m_flush;  
 }
 
 Camera * Painter::camera()
@@ -46,20 +49,23 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
+    m_registry = new DataBlockRegistry();
+    m_scene = new SceneGraph( *m_registry );
 
-    if(!m_group)
+    ObjIO::groupFromObjFile( "data/suzanne.obj", *m_scene, m_scene->root() );
+
+    if(m_scene->root().children().empty())
     {
         qWarning("Have you set the Working Directory?");
         return false;
     }
-
+    
     glm::mat4 transform(1.f);
 
     transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
     transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
 
-    m_group->setTransform(transform);
+    m_scene->root().setTransform(transform);
 
     // Camera Setup
 
@@ -69,7 +75,7 @@ const bool Painter::initialize()
     m_camera->setZNear( 1.0f);
     m_camera->setZFar (10.0f);
 
-    m_camera->append(m_group);
+    m_camera->append( &(m_scene->root()) );
 
     m_camera->setView(glm::lookAt(
         glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));

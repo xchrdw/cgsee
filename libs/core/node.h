@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QObject>
 #include <QString>
 #include <QSet>
 #include <QList>
@@ -12,12 +13,9 @@
 class Program;
 class Group;
 
-class CGSEE_API Node
+class CGSEE_API Node : public QObject
 {
 public:
-    typedef QList<Node *> t_nodes;
-    typedef QSet<Node *> t_parents;
-
     enum e_ReferenceFrame
     {
         RF_Relative
@@ -25,23 +23,18 @@ public:
     };
 
 public:
-    Node(const QString & name = "unnamed");
+    Node( const QString & name );
     virtual ~Node();
 
-    virtual void draw(
-        const Program & program
-    ,   const glm::mat4 & transform) = 0;
-
-    const QString name() const;
-    void setName(const QString & name);
-
-    const t_parents & parents() const;
-    t_parents & parents();
-
+    virtual void draw( const Program & program, const glm::mat4 & transform ) = 0;
+    
+    void switchOn() { m_switch = true; }
+    void switchOff() { m_switch = false; }
+    inline bool isOn() { return m_switch; }
+    
     virtual const AxisAlignedBoundingBox boundingBox() const = 0;
 
     // transform
-
     const glm::mat4 & transform() const;
     void setTransform(const glm::mat4 & transform);
 
@@ -55,10 +48,7 @@ protected:
     virtual void invalidateBoundingBox();
 
 protected:
-    QString m_name;
-
-    t_parents m_parents;
-
+    bool m_switch;
     e_ReferenceFrame m_rf;
     glm::mat4 m_transform;
 

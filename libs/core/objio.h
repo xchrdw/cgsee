@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <sstream>
+#include <memory>
 
 #include <QString>
 
@@ -10,13 +11,15 @@
 #include "common.h"
 
 
+class SceneGraph;
 class Group;
 class PolygonalDrawable;
+class GeometryData;
 
 class CGSEE_API ObjIO
 {
 public:
-    static Group * groupFromObjFile(const QString & filePath);
+    static void groupFromObjFile(const QString & filePath, SceneGraph & scene, Group & parent);
 
 protected:
 
@@ -63,9 +66,10 @@ protected:
 
 
 protected:
-    static Group * toGroup(const t_objects & objects);
-    static PolygonalDrawable * createPolygonalDrawable(
-        const ObjObject & object
+    static void addToScene( const t_objects & objects, SceneGraph & scene, Group & parent );
+    static std::shared_ptr<GeometryData> createGeometry(
+        PolygonalDrawable & drawable
+    ,   const ObjObject & object
     ,   const ObjGroup & group);
 
     static void parseV(

@@ -11,10 +11,15 @@
 
 #include "objio.h"
 
+#include "scenegraph.h"
 #include "group.h"
 #include "polygonaldrawable.h"
-#include "polygonalgeometry.h"
+#include "geometrydata.h"
 
+
+// TODO: kann wieder weg.
+#include "scenegraph.h"
+#include "datacore/vertexlist.h"
 
 using namespace std;
 
@@ -39,15 +44,16 @@ ObjIO::ObjObject::~ObjObject()
     groups.clear();
 }
 
-Group * ObjIO::groupFromObjFile(const QString & filePath)
+void ObjIO::groupFromObjFile( const QString & filePath, SceneGraph & scene, Group & parent )
 {
     // http://en.wikipedia.org/wiki/Wavefront_.obj_file
     // http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Load_OBJ
 
+   
     if(!QFile::exists(filePath))
     {
         qDebug("Reading geometry failed: \"%s\" does not exist.", qPrintable(filePath));
-        return nullptr;
+        return;
     }
 
     qDebug("Reading geometry from \"%s\".", qPrintable(filePath));
@@ -58,7 +64,7 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
     if(!stream)
     {
         qCritical("Read from \"%s\" failed.", path.c_str());
-        return nullptr;
+        return;
     }
 
     t_objects objects;
@@ -105,10 +111,7 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
     }
     stream.close();
 
-    Group * group = toGroup(objects);
-    group->setName(filePath);
-
-    return group;
+    addToScene( objects, scene, parent );
 }
 
 inline void ObjIO::parseV(
@@ -257,52 +260,28 @@ inline void ObjIO::parseG(
     object.groups.push_back(group);
 }
 
-Group * ObjIO::toGroup(const t_objects & objects)
+void ObjIO::addToScene( const t_objects & objects, SceneGraph & scene, Group & parent )
 {
-    std::vector<Group *> groups;
-
-    t_objects::const_iterator io(objects.cbegin());
-    const t_objects::const_iterator ioEnd(objects.cend());
-
-    for(; io != ioEnd; ++io)
+    for( const auto oobject : objects )
     {
-        const ObjObject & oobject(**io);
+        Group * group = scene.createGroup( &parent, oobject->qname() );
 
-        Group * group(new Group(oobject.qname()));
-        groups.push_back(group);
+        if(!oobject->vis.empty()){
+            PolygonalDrawable * drawable = scene.createPolygonalDrawable( group, oobject->qname() );
+            createGeometry( *drawable, *oobject, *oobject );
+        }
 
-        if(!oobject.vis.empty())
-            group->append(createPolygonalDrawable(oobject, oobject));
-
-        t_groups::const_iterator ig(oobject.groups.cbegin());
-        const t_groups::const_iterator igEnd(oobject.groups.cend());
-
-        for(; ig != igEnd; ++ig)
+        for( const auto ogroup : oobject->groups )
         {
-            const ObjGroup & ogroup(**ig);
-
-            assert(!ogroup.vis.empty());
-            group->append(createPolygonalDrawable(oobject, ogroup));
+            assert(!ogroup->vis.empty());
+            PolygonalDrawable * drawable = scene.createPolygonalDrawable( group, oobject->qname() );
+            createGeometry( *drawable, *oobject, *ogroup );
         }
     }
-
-    // wrap group if required and return
-
-    if(groups.empty())
-        return new Group;
-
-    if(groups.size() == 1)
-        return groups[0];
-
-    Group * group(new Group);
-
-    for(int i = 0; i < groups.size(); ++i)
-        group->append(groups[i]);
-
-    return group;
 }
 
-PolygonalDrawable * ObjIO::createPolygonalDrawable(
+std::shared_ptr<GeometryData> ObjIO::createGeometry(
+    PolygonalDrawable & drawable,
     const ObjObject & object
 ,   const ObjGroup & group)
 {
@@ -320,9 +299,9 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
     const bool usesTexCoordIndices(!group.vtis.empty());
     const bool usesNormalIndices(!group.vnis.empty());
 
-    PolygonalGeometry * geom(new PolygonalGeometry(object.qname() + " geometry"));
-
-    const GLuint size(static_cast<GLuint>(group.vis.size()));
+    std::shared_ptr<GeometryData> geom = drawable.geometry();
+    
+    const GLuint size = static_cast<GLuint>( group.vis.size() );
     geom->resize(size);
 
     for(GLuint i = 0; i < size; ++i)
@@ -335,21 +314,16 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
         geom->setVertex(i, object.vs[group.vis[i]]);
 
         if(usesTexCoordIndices)
-            //geom->texcs().push_back(object.vts[group.vtis[i]]);
-            geom->setTexC(i, object.vts[group.vtis[i]]);
+            geom->setTexC( i, object.vts[group.vtis[i]] );
         if(usesNormalIndices)
-            //geom->normals().push_back(object.vns[group.vnis[i]]);
-            geom->setNormal(i, object.vns[group.vnis[i]]);
+            geom->setNormal( i, object.vns[group.vnis[i]] );
     }
 
     // TODO: support other modes here!
-    geom->setMode(GL_TRIANGLES);
+    drawable.setMode( GL_TRIANGLES );
 
     if(!usesNormalIndices)
         geom->retrieveNormals();
 
-    PolygonalDrawable * drawable(new PolygonalDrawable(object.qname()));
-    drawable->setGeometry(geom);
-
-    return drawable;
+    return geom;
 }

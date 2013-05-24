@@ -1,18 +1,14 @@
 
-#include "polygonalgeometry.h"
-
+#include "geometrydata.h"
 #include "aabb.h"
 
-
-PolygonalGeometry::PolygonalGeometry(const QString & name)
-:   Node(name)
-,   m_registry("MyRegistry")
-,   m_mode(GL_TRIANGLES)
+GeometryData::GeometryData( DataBlockRegistry & registry )
+:   m_registry( registry )
 {
-    m_vertListName = "VERTICES";
-    m_indicesName = "INDICES";
-    t_VertexListP temp = DataBlock::createDataBlockWithName<VertexList>(m_vertListName, m_registry);
-    DataBlock::createDataBlockWithName<VertexIndexList>(m_indicesName, m_registry, temp);
+    m_vertListHandle = "VERTICES";
+    m_indicesHandle = "INDICES";
+    t_VertexListP temp = DataBlock::createDataBlockWithName<VertexList>(m_vertListHandle, m_registry);
+    DataBlock::createDataBlockWithName<VertexIndexList>(m_indicesHandle, m_registry, temp);
 
     QList<AttributeSpec> attrSpec;
     attrSpec.append(AttributeSpec("position", "glm::vec3"));
@@ -21,24 +17,14 @@ PolygonalGeometry::PolygonalGeometry(const QString & name)
     temp->initialize(attrSpec);
 }
 
-PolygonalGeometry::~PolygonalGeometry()
+GeometryData::~GeometryData()
 {
 }
 
-const GLenum PolygonalGeometry::mode() const
-{
-    return m_mode;
-}
-
-void PolygonalGeometry::setMode(const GLenum mode)
-{
-    m_mode = mode;
-}
-
-t_vec3s PolygonalGeometry::vertices() const
+t_vec3s GeometryData::vertices() const
 {
     t_vec3s temp;
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListHandle));
     assert(myVList);
     temp.resize(myVList->size());
     myVList->foreachVertexAttribute<glm::vec3>(0, myVList->size(), "position", nullptr,
@@ -55,17 +41,17 @@ t_vec3s PolygonalGeometry::vertices() const
 //    return m_vertices;
 //}
 
-void PolygonalGeometry::setVertex(int i, const glm::vec3& data)
+void GeometryData::setVertex(int i, const glm::vec3& data)
 {
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListHandle));
     assert(myVList);
     *(myVList->getVertexAttribute<glm::vec3>(i, "position")) = data;
 }
 
-t_vec3s PolygonalGeometry::normals() const
+t_vec3s GeometryData::normals() const
 {
     t_vec3s temp;
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListHandle));
     assert(myVList);
     temp.resize(myVList->size());
     myVList->foreachVertexAttribute<glm::vec3>(0, myVList->size(), "normal", nullptr,
@@ -81,17 +67,17 @@ t_vec3s PolygonalGeometry::normals() const
 //    return m_normals;
 //}
 
-void PolygonalGeometry::setNormal(int i, const glm::vec3& data)
+void GeometryData::setNormal(int i, const glm::vec3& data)
 {
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListHandle));
     assert(myVList);
     *(myVList->getVertexAttribute<glm::vec3>(i, "normal")) = data;
 }
 
-t_vec2s PolygonalGeometry::texcs() const
+t_vec2s GeometryData::texcs() const
 {
     t_vec2s temp;
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListHandle));
     assert(myVList);
     temp.resize(myVList->size());
     myVList->foreachVertexAttribute<glm::vec2>(0, myVList->size(), "texcoord", nullptr,
@@ -105,16 +91,16 @@ t_vec2s PolygonalGeometry::texcs() const
 //{
 //    return m_texcs;
 //}
-void PolygonalGeometry::setTexC(int i, const glm::vec2& data)
+void GeometryData::setTexC(int i, const glm::vec2& data)
 {
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListHandle));
     assert(myVList);
     *(myVList->getVertexAttribute<glm::vec2>(i, "texcoord")) = data;
 }
 
-t_uints PolygonalGeometry::indices() const
+t_uints GeometryData::indices() const
 {
-    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
+    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesHandle));
     assert(inds);
     return inds->getIndices();
 }
@@ -124,40 +110,24 @@ t_uints PolygonalGeometry::indices() const
 //    return m_indices;
 //}
 
-void PolygonalGeometry::setIndex(int i, unsigned int data)
+void GeometryData::setIndex(int i, unsigned int data)
 {
-    VertexIndexList * inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
+    VertexIndexList * inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesHandle));
     assert(inds);
     inds->setSingleIndex(i, data);
 }
 
-const AxisAlignedBoundingBox PolygonalGeometry::boundingBox() const
+void GeometryData::retrieveNormals()
 {
-    if(m_aabb.valid())
-        return m_aabb;
-
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
-    assert(myVList);
-    myVList->foreachVertexAttribute<glm::vec3>(0, myVList->size(), "position", nullptr,
-        [&](int i, const glm::vec3 & pos)
-        {
-            m_aabb.extend(pos);
-        });
-
-    return m_aabb;
-}
-
-void PolygonalGeometry::retrieveNormals()
-{
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
-    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListHandle));
+    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesHandle));
     assert(myVList);
     assert(inds);
     if(! myVList->isAttributeUsed("position"))
         return;
 
     if(myVList->isAttributeUsed("normal"))
-        qDebug("Normals of %s will be replaced.", qPrintable(name()));
+        qDebug("Normals will be replaced.");
 
     inds->foreachTriangle<glm::vec3>(0, inds->size(), "position", 
         [&](int i, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3)
@@ -194,16 +164,10 @@ void PolygonalGeometry::retrieveNormals()
     //}
 }
 
-void PolygonalGeometry::draw(
-    const Program & program
-,   const glm::mat4 & transform)
+void GeometryData::resize(unsigned int size)
 {
-}
-
-void PolygonalGeometry::resize(unsigned int size)
-{
-    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
-    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
+    t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListHandle));
+    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesHandle));
     assert(myVList);
     assert(inds);
 

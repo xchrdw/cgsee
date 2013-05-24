@@ -10,7 +10,7 @@ class Program;
 class CGSEE_API Group : public Node
 {
 public:
-    Group(const QString & name = "unnamed");
+    Group( const QString & name );
     virtual ~Group();
 
     virtual Group * asGroup();
@@ -22,42 +22,35 @@ public:
 
     // child handling
 
-    const bool contains(Node * node) const;
+    // TODO: Nach Node verschieben.
+    const bool contains( QObject * node ) const;
 
-    void prepend(Group * group);
-    void prepend(PolygonalDrawable * drawable);
-
-    void append(Group * group);
-    void append(PolygonalDrawable * drawable);
-
-    void insert(
-        const t_nodes::iterator & before
-    ,   Group * group);
-    void insert(
-        const t_nodes::iterator & before
-    ,   PolygonalDrawable * drawable);
-
-
-    // both removals delete the node if parents are empty
-    void removeFirst();
-    void removeLast ();
-
-    const void remove(
-        Node * node
-    ,   const bool deleteIfParentsEmpty = true);
-
-    const t_nodes & children() const;
-
+    void append( Node * group );
+    void remove( Node * node );
+    
     virtual const AxisAlignedBoundingBox boundingBox() const;
+    
+//     void prepend(Group * group);
+//     void prepend(PolygonalDrawable * drawable);
+//     
+//     void insert(
+//         const t_nodes::iterator & before
+//     ,   Group * group);
+//     void insert(
+//         const t_nodes::iterator & before
+//     ,   PolygonalDrawable * drawable);
+//
+//     both removals delete the node if parents are empty
+//     void removeFirst();
+//     void removeLast ();
+// 
+//     const t_nodes & children() const;
+//     t_nodes & children();
 
 protected:
-    void prepend(Node * node);
-    void append(Node * node);
-
-    void insert(
-        const t_nodes::iterator & before
-    ,   Node * node);
-
-protected:
-    t_nodes m_children;
+    void append( QObject * node );
+    void remove( QObject * node );
+    
+//     void prepend(Node * node);
+//     void insert( const t_nodes::iterator & before, Node * node );
 };
