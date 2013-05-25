@@ -40,6 +40,7 @@ protected slots:
     void on_captureAsImageAdvancedAction_triggered();
 
     void on_reloadAllShadersAction_triggered();
+    void on_phongShadingAction_triggered();
 
 protected:
 

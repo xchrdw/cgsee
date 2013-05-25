@@ -148,3 +148,9 @@ void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
 }
+
+void Viewer::on_phongShadingAction_triggered()
+{
+    assert(m_qtCanvas);
+    CanvasExporter::save(*m_qtCanvas, this, true);
+}

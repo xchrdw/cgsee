@@ -100,4 +100,5 @@ void main()
 							//local ambient			//diffuse					//specular
 		color += color + iAmbient[i]*material[0] + attenuation[i]*(diffuse[i] * material[1] + specular[i] * material[2]);
 	}
+
 }
