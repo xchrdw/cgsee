@@ -28,10 +28,8 @@ uniform vec4 lightambientglobal;
 void main()
 {
 	gl_Position = transform * vec4(a_vertex, 1.0);
-	vec4 temp= normalize(view*vec4(a_normal,0.0));
-	vec3 n = temp.xyz;
-	n *= 0.5;
-	n += 0.5;
+	vec3 n = normalize(a_normal);
+	vec3 position = vec3(view * vec4(a_vertex, 1.0));
 
 	float z = gl_Position.z; 
 
@@ -88,7 +86,7 @@ void main()
 	for(int i=0; i<2; i++)
 	{	if(nxDir[i] != 0.0)
 		{
-			vec3 cameraVector = normalize(cameraposition - gl_Position.xyz);
+			vec3 cameraVector = normalize(cameraposition - position);
 			vec3 halfVector = normalize(lightdirection[i] + cameraVector);
 			float nxHalf = max(0.0,dot(n,halfVector));
 			float specularPower = max(pow(nxHalf, shininess[i]),0.0);

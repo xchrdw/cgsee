@@ -7,6 +7,7 @@ in vec4 gl_FragCoord;
 out vec4 gl_FragColor;
 
 in vec3 normal;
+in vec3 position;
 
 uniform float znear;
 uniform float zfar;
@@ -24,8 +25,6 @@ uniform mat4 material;
 void main()
 {
 	vec3 n = normal;
-	n *= 0.5;
-	n += 0.5;
 
 	float z = gl_FragCoord.z; 
 
@@ -82,7 +81,7 @@ void main()
 	for(int i=0; i<2; i++)
 	{	if(nxDir[i] != 0.0)
 		{
-			vec3 cameraVector = normalize(cameraposition - gl_FragCoord.xyz);
+			vec3 cameraVector = normalize(cameraposition - position);
 			vec3 halfVector = normalize(lightdirection[i] + cameraVector);
 			float nxHalf = max(0.0,dot(n,halfVector));
 			float specularPower = max(pow(nxHalf, shininess[i]),0.0);
