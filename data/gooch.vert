@@ -11,7 +11,6 @@
 //updated code to newer glsl version
 
 
-uniform vec3 lightposition; // (0.0, 10.0, 4.0)
 uniform mat4 transform;
 uniform mat4 view;
 
@@ -22,7 +21,6 @@ out vec3 normal;
 void main()
 {
 	gl_Position = transform * vec4(a_vertex, 1.0);
-	//vec4 ecPos = vec3(transform * a_vertex);
 	normal=a_normal;
 
 }

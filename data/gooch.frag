@@ -18,6 +18,7 @@ uniform float DiffuseWarm; // 0.45
 uniform float DiffuseCool; // 0.45 
 */
 
+uniform mat4 transform;
 uniform mat4 view;
 uniform vec3 lightposition; // (0.0, 10.0, 4.0)
 
@@ -32,6 +33,7 @@ void main()
 	vec4 temp= normalize(view*vec4(normal,0.0));
 	vec3 tnorm = temp.xyz;
 
+	vec4 temp2=(transform*gl_FragCoord);
 	vec3 lightVec = normalize(lightposition - gl_FragCoord.xyz);
 	vec3 ReflectVec = normalize(reflect(-lightVec, tnorm));
 	vec3 ViewVec = normalize(-gl_FragCoord.xyz);

@@ -90,7 +90,7 @@ const bool Painter::initialize()
 
     m_camera->append(m_group);
 
-	camPos=glm::vec3( 1.8f, 0.5f,-2.f);
+	camPos=glm::vec3( -2.0f, 0.0f,-2.f);
     m_camera->setView(glm::lookAt(
         camPos , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
@@ -139,7 +139,7 @@ const bool Painter::initialize()
 	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_gooch;
+	m_useProgram = m_phong;
 
 	if(m_useProgram != m_gooch)
 	{
@@ -175,7 +175,7 @@ const bool Painter::initialize()
 
 	else
 	{
-		m_gooch->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(5.0,-4.5,-2.5));
+		m_gooch->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(-2.0,0.0,-2.0));
 	}
 
     // Post Processing Shader
@@ -197,8 +197,8 @@ void Painter::paint()
     AbstractPainter::paint();
 
 	t_samplerByName sampler;
-    m_camera->setView(glm::lookAt(
-        camPos, glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+ //   m_camera->setView(glm::lookAt(
+     //   camPos, glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
 
 	// Normals and Depth to RGBA
