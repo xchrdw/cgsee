@@ -1,6 +1,6 @@
 #version 330
 
-vec4 phongLighting(vec3 n, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, mat4 light, mat4 light2, vec4 lightambientglobal, mat4 material)
+vec4 phongLighting(vec3 n, vec3 v_pos, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, mat4 light, mat4 light2, vec4 lightambientglobal, mat4 material)
 {
 		//light uniforms
 	vec4 iAmbient[2];
@@ -48,7 +48,7 @@ vec4 phongLighting(vec3 n, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, m
 	for(int i=0; i<2; i++)
 	{	if(nxDir[i] != 0.0)
 		{
-			vec3 cameraVector = normalize(cameraposition - gl_FragCoord.xyz);
+			vec3 cameraVector = normalize(cameraposition - v_pos);
 			vec3 halfVector = normalize(lightdirection[i] + cameraVector);
 			float nxHalf = max(0.0,dot(n,halfVector));
 			float specularPower = max(pow(nxHalf, shininess[i]),0.0);

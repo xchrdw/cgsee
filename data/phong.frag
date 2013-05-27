@@ -7,6 +7,7 @@ in vec4 gl_FragCoord;
 out vec4 gl_FragColor;
 
 in vec3 normal;
+in vec3 position;
 
 uniform float znear;
 uniform float zfar;
@@ -21,13 +22,11 @@ uniform vec4 lightambientglobal;
 
 uniform mat4 material;
 
-vec4 phongLighting(vec3 n, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, mat4 light, mat4 light2, vec4 lightambientglobal, mat4 material);
+vec4 phongLighting(vec3 n, vec3 v_pos, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, mat4 light, mat4 light2, vec4 lightambientglobal, mat4 material);
 
 void main()
 {
 	vec3 n = normal;
-	n *= 0.5;
-	n += 0.5;
 
 	float z = gl_FragCoord.z; 
 
@@ -84,7 +83,7 @@ void main()
 	for(int i=0; i<2; i++)
 	{	if(nxDir[i] != 0.0)
 		{
-			vec3 cameraVector = normalize(cameraposition - gl_FragCoord.xyz);
+			vec3 cameraVector = normalize(cameraposition - position);
 			vec3 halfVector = normalize(lightdirection[i] + cameraVector);
 			float nxHalf = max(0.0,dot(n,halfVector));
 			float specularPower = max(pow(nxHalf, shininess[i]),0.0);
@@ -99,5 +98,5 @@ void main()
 		color += color + iAmbient[i]*material[0] + attenuation[i]*(diffuse[i] * material[1] + specular[i] * material[2]);
 	}
 	*/
-	gl_FragColor=phongLighting(n, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);//color;
+	gl_FragColor=phongLighting(n, position, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);//color;
 }
