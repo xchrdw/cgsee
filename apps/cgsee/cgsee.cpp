@@ -1,6 +1,7 @@
 #include "cgsee.h"
 #include "painter.h"
 
+#include <core/assimploader.h>
 #include <gui/canvas.h>
 #include <gui/viewer.h>
 
@@ -17,12 +18,16 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setWindowTitle(title());
     m_viewer->initialize(format());
 
-    m_painter = new Painter();
+    AssimpLoader loader;
+    
+    m_painter = new Painter(loader.importFromFile("data/mario.dae"));
     m_viewer->setPainter(m_painter);
 
     // Start
 
     m_viewer->show();
+    
+    m_painter->assignScene(loader.importFromFile("data/suzanne.obj"));
 }
 
 CGSee::~CGSee()
