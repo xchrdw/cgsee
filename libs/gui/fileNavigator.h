@@ -4,11 +4,12 @@
 
 
 #include <QTreeView>
-#include <QFileSystemModel>
+#include <QDir>
 
 #include <core/declspec.h>
 
 
+class QFileSystemModel;
 class FileExplorer;
 
 
@@ -20,13 +21,13 @@ public:
 	FileNavigator(QObject * parent = nullptr);
 	virtual ~FileNavigator();
 
-	void setFilter(QDir::Filters filters);
-
-	void setExplorer(FileExplorer * fileExplorer);
 	FileExplorer * explorer();
 
+	void setFilter(const QDir::Filters & filters);
+	void setExplorer(FileExplorer * fileExplorer);
+
 protected:
-	void setRoot(QString rootPath);
+	void setRoot(const QString & rootPath);
 
 	FileExplorer * m_explorer;
 	QFileSystemModel * m_model;

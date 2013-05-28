@@ -1,21 +1,17 @@
-// #include <QFileSystemModel>
-// #include <QTreeView>
-// #include <QListView>
-// #include <QDockWidget>
-
 #include <GL/glew.h>
 
 #include <cassert>
 
 #include <QOpenGLContext>
 #include <QSettings>
-#include <QDockWidget>
+#include <QFileDialog>
 
 #include "ui_viewer.h"
 
 #include "viewer.h"
 #include "canvas.h"
 #include "canvasexporter.h"
+#include "navigationHandler.h"
 
 #include <core/abstractpainter.h>
 #include <core/fileassociatedshader.h>
@@ -37,10 +33,7 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 
 ,   m_qtCanvas(nullptr)
-,   m_fileNavigator(nullptr)
-,   m_fileExplorer(nullptr)
-,   m_dockLeft(nullptr)
-,   m_dockBottom(nullptr)
+,   m_navigationHandler(nullptr)
 {
     m_ui->setupUi(this);
 
@@ -50,29 +43,12 @@ Viewer::Viewer(
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
 
-    initializeNavigatorExplorer();
-};
-
-void Viewer::initializeNavigatorExplorer()
-{
-    m_dockLeft = new QDockWidget(tr("Navigator"));
-    m_fileNavigator = new FileNavigator(m_dockLeft);
-    m_dockLeft->setWidget(m_fileNavigator);
-
-    m_dockBottom = new QDockWidget(tr("Explorer"));
-    m_fileExplorer = new FileExplorer(m_dockBottom);
-    m_dockBottom->setWidget(m_fileExplorer);
-
-    m_fileNavigator->setExplorer(m_fileExplorer);
-    m_fileExplorer->setNavigator(m_fileNavigator);
-
-    this->addDockWidget(Qt::LeftDockWidgetArea, m_dockLeft);
-    this->addDockWidget(Qt::BottomDockWidgetArea, m_dockBottom);
+    m_navigationHandler = new NavigationHandler(this);
 
     QObject::connect(
-        m_fileNavigator, SIGNAL(clicked(const QModelIndex)),
-        m_fileExplorer, SLOT(callSetRoot(const QModelIndex)));
-}
+        m_ui->openFileDialogAction, SIGNAL(changed()),
+        this, SLOT(on_openFileDialogAction_triggered()));
+};
 
 #ifdef WIN32
 const HGLRC Viewer::currentContextHandle()
@@ -146,8 +122,7 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_STATE, saveState());
 
     delete m_qtCanvas;
-    delete m_dockLeft;
-    delete m_dockBottom;
+    delete m_navigationHandler;
 }
 
 void Viewer::setPainter(AbstractPainter * painter)
@@ -181,4 +156,9 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+}
+
+void Viewer::on_openFileDialogAction_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/captain", tr("Image Files (*.png *.jpg *.bmp)"));
 }

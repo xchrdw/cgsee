@@ -1,9 +1,6 @@
 
 #pragma once
 
-#include <gui/fileNavigator.h>
-#include <gui/fileExplorer.h>
-
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -23,8 +20,7 @@ class GLFormat;
 class Ui_Viewer;
 class Canvas;
 class AbstractPainter;
-class FileNavigator;
-class FileExplorer;
+class NavigationHandler;
 
 
 class CGSEE_API Viewer : public QMainWindow
@@ -47,9 +43,9 @@ protected slots:
 
     void on_reloadAllShadersAction_triggered();
 
-protected:
+    void on_openFileDialogAction_triggered();
 
-    void initializeNavigatorExplorer();
+protected:
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -66,8 +62,5 @@ protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
 
     Canvas * m_qtCanvas;
-    FileNavigator * m_fileNavigator;
-    FileExplorer * m_fileExplorer;
-    QDockWidget * m_dockLeft;
-    QDockWidget * m_dockBottom;
+    NavigationHandler * m_navigationHandler;
 };
