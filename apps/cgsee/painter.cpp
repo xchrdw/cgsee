@@ -1,5 +1,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <QDebug>
 
 #include "painter.h"
 
@@ -11,7 +12,8 @@
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
 #include <core/group.h>
-#include <core/objio.h>
+#include <core/objloader.h>
+#include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
 
@@ -34,7 +36,7 @@ Painter::~Painter()
 
     delete m_normalz;
     delete m_fboNormalz;
-    delete m_flush;    
+    delete m_flush;
 }
 
 Camera * Painter::camera()
@@ -46,7 +48,10 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    m_group = ObjIO::groupFromObjFile("data/suzanne.obj");
+    ObjLoader loader;
+
+    qDebug() << loader.canLoad("obj");
+    m_group = loader.importFromFile("data/teapot.obj");
 
     if(!m_group)
     {
@@ -56,8 +61,10 @@ const bool Painter::initialize()
 
     glm::mat4 transform(1.f);
 
-    transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
+    transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
     transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
+    transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
+    transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
 
     m_group->setTransform(transform);
 
@@ -72,7 +79,7 @@ const bool Painter::initialize()
     m_camera->append(m_group);
 
     m_camera->setView(glm::lookAt(
-        glm::vec3( 0.f, 0.f,-2.f), glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+        glm::vec3( 0.f, 1.5f, -2.f), glm::vec3( 0.f, 0.7f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
     m_quad = new ScreenQuad();
 
@@ -119,11 +126,11 @@ void Painter::resize(
 ,   const int height)
 {
     AbstractPainter::resize(width, height);
-    
+
     m_camera->setViewport(width, height);
 
     m_fboNormalz->resize(width, height);
-    
+
     postShaderRelinked();
 }
 

@@ -13,9 +13,13 @@ set(SOURCES
     abstractapplication.h
     abstractapplication.cpp
     abstractglparent.h
+    abstractmodelloader.cpp
+    abstractmodelloader.h
     abstractpainter.h
     abstractpainter.cpp
     abstracttimer.h
+    assimploader.h
+    assimploader.cpp
     autotimer.h
     autotimer.cpp
     bufferobject.h
@@ -40,8 +44,8 @@ set(SOURCES
     mathmacros.h
     node.h
     node.cpp
-    objio.h
-    objio.cpp
+    objloader.h
+    objloader.cpp
     polygonaldrawable.h
     polygonaldrawable.cpp
     polygonalgeometry.h
@@ -56,7 +60,7 @@ set(SOURCES
     timer.cpp
 )
 
-source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$" 
+source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$"
     ${CGSEE_SOURCE_GROUP} ${SOURCES})
 
 # setup target
@@ -69,6 +73,7 @@ add_library(${target} SHARED ${HEADERS} ${SOURCES})
 qt5_use_modules(${target} Widgets OpenGL)
 
 target_link_libraries(${target}
+    ${ASSIMP_LIBRARY}
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}
     ${EXTRA_LIBS}
