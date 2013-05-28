@@ -13,6 +13,7 @@ class QDockWidget;
 
 class FileNavigator;
 class FileExplorer;
+class AbstractModelLoader;
 
 
 class CGSEE_API NavigationHandler : public QObject
@@ -23,6 +24,11 @@ public:
     NavigationHandler(QMainWindow * parent = nullptr);
     virtual ~NavigationHandler();
 
+
+public slots:
+    void triggeredLoadFile(const bool & triggered);
+    void loadFile(const QModelIndex & index);
+
 protected:
     QMainWindow * m_viewer;
 
@@ -31,4 +37,5 @@ protected:
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
+    AbstractModelLoader * m_loader;
 };

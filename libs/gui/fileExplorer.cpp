@@ -24,15 +24,9 @@ FileExplorer::FileExplorer(
 	m_model->setNameFilters(nameFilters);
 	m_model->setNameFilterDisables(false);
 
-	m_menu->addAction(QString("Open"), this, SLOT(triggeredLoadFile(const bool)));
-
 	QObject::connect(
 		this, SIGNAL(customContextMenuRequested(const QPoint &)),
 		this, SLOT(showContextMenu(const QPoint &)));
-
-	QObject::connect(
-        this, SIGNAL(activated(const QModelIndex)),
-        this, SLOT(loadFile(const QModelIndex)));
 };
 
 FileExplorer::~FileExplorer()
@@ -45,6 +39,21 @@ FileExplorer::~FileExplorer()
 FileNavigator * FileExplorer::navigator()
 {
 	return m_navigator;
+}
+
+QFileSystemModel * FileExplorer::model()
+{
+	return m_model;
+}
+
+QMenu * FileExplorer::menu()
+{
+	return m_menu;
+}
+
+QModelIndex FileExplorer::clickedFile()
+{
+	return m_clickedFile;
 }
 
 
@@ -70,22 +79,10 @@ void FileExplorer::setClickedFile(const QModelIndex & index)
 	m_clickedFile = index;
 }
 
-void FileExplorer::triggeredLoadFile(const bool & triggered)
-{
-	this->loadFile(m_clickedFile);
-}
-
 void FileExplorer::showContextMenu(const QPoint & point)
 {
 	this->setClickedFile(this->indexAt(point));
 	m_menu->exec(this->mapToGlobal(point));
-}
-
-#include <iostream> // just for debug output
-void FileExplorer::loadFile(const QModelIndex & index)
-{
-	QString filePath = m_model->fileInfo(index).absoluteFilePath();
-	std::cout << filePath.toStdString() << std::endl;
 }
 
 

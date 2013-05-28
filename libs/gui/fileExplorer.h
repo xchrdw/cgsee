@@ -24,6 +24,9 @@ public:
 	virtual ~FileExplorer();
 
 	FileNavigator * navigator();
+	QFileSystemModel * model();
+	QMenu * menu();
+	QModelIndex clickedFile();
 
 	void setNavigator(FileNavigator * fileNavigator);
 	void setFilter(const QDir::Filters & filters);
@@ -33,8 +36,6 @@ public slots:
 	void callSetRoot(const QModelIndex & index);
 	void setClickedFile(const QModelIndex & index);
 	void showContextMenu(const QPoint & point);
-	void triggeredLoadFile(const bool & triggered);
-	void loadFile(const QModelIndex & index);
 
 protected:
 	void setRoot(QString rootPath);
