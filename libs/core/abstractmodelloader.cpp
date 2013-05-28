@@ -26,13 +26,13 @@ QStringList AbstractModelLoader::loadableTypes() const
     return QStringList();
 }
 
-QString AbstractModelLoader::allLoadableTypes() const
+QStringList AbstractModelLoader::allLoadableTypes() const
 {
     QStringList extensions = loadableExtensions();
     for (int i = 0; i < extensions.length(); ++i) {
         extensions[i].prepend("*.");
     }
-    return extensions.join(" ");
+    return extensions;
 }
 
 QStringList AbstractModelLoader::saveableTypes() const
@@ -40,13 +40,13 @@ QStringList AbstractModelLoader::saveableTypes() const
     return QStringList();
 }
 
-QString AbstractModelLoader::allSaveableTypes() const
+QStringList AbstractModelLoader::allSaveableTypes() const
 {
     QStringList extensions = saveableExtensions();
     for (int i = 0; i < extensions.length(); ++i) {
         extensions[i].prepend("*.");
     }
-    return extensions.join(" ");
+    return extensions;
 }
 
 Group * AbstractModelLoader::importFromFile(const QString & filePath) const
