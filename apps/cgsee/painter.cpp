@@ -19,8 +19,17 @@
 
 
 Painter::Painter()
-:   AbstractPainter()
-,   m_group(nullptr)
+:   AbstractScenePainter()
+,   m_quad(nullptr)
+,   m_normalz(nullptr)
+,   m_fboNormalz(nullptr)
+,   m_flush(nullptr)
+,   m_camera(nullptr)
+{
+}
+
+Painter::Painter(Group * scene)
+:   AbstractScenePainter(scene)
 ,   m_quad(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboNormalz(nullptr)
@@ -31,7 +40,6 @@ Painter::Painter()
 
 Painter::~Painter()
 {
-    delete m_group;
     delete m_quad;
 
     delete m_normalz;
@@ -48,40 +56,31 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    ObjLoader loader;
-
-    qDebug() << loader.canLoad("obj");
-    m_group = loader.importFromFile("data/teapot.obj");
-
-    if(!m_group)
-    {
-        qWarning("Have you set the Working Directory?");
-        return false;
-    }
-
-    glm::mat4 transform(1.f);
-
-    transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
-    transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
-    transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
-    transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
-
-    m_group->setTransform(transform);
-
     // Camera Setup
-
+    
     m_camera = new Camera();
-
+    
     m_camera->setFovy (45.0f);
     m_camera->setZNear( 1.0f);
     m_camera->setZFar (10.0f);
-
-    m_camera->append(m_group);
-
+    
     m_camera->setView(glm::lookAt(
-        glm::vec3( 0.f, 1.5f, -2.f), glm::vec3( 0.f, 0.7f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
-
+        glm::vec3( 0.f, 1.5f, -2.f), glm::vec3( 0.f, 0.7f, 0.f), glm::vec3( 0.f, 1.f, 0.f))
+    );
+    
     m_quad = new ScreenQuad();
+    
+    if (m_scene) {
+        glm::mat4 transform(1.f);
+        
+        transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
+        transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
+        transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
+        transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
+        
+        m_scene->setTransform(transform);
+        m_camera->append(m_scene);
+    }
 
     // G-Buffer Shader
 

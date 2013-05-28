@@ -17,6 +17,8 @@ set(SOURCES
     abstractmodelloader.h
     abstractpainter.h
     abstractpainter.cpp
+    abstractscenepainter.h
+    abstractscenepainter.cpp
     abstracttimer.h
     assimploader.h
     assimploader.cpp
