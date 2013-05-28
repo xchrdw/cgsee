@@ -23,7 +23,6 @@ FileNavigator::FileNavigator(
 void FileNavigator::setRoot(const QString & rootPath)
 {
 	this->setRootIndex(m_model->setRootPath(rootPath));
-	// m_model->setRootPath(rootPath);
 }
 
 void FileNavigator::setFilter(const QDir::Filters & filters)

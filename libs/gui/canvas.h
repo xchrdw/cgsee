@@ -10,7 +10,7 @@
 class QBasicTimer;
 class QTimerEvent;
 
-class AbstractPainter;
+class AbstractScenePainter;
 
 
 class CGSEE_API Canvas : public QGLWidget, public AbstractGLParent
@@ -21,8 +21,8 @@ public:
         QWidget * parent = nullptr);
     virtual ~Canvas();
 
-    void setPainter(AbstractPainter * painter);
-    AbstractPainter * painter();
+    void setPainter(AbstractScenePainter * painter);
+    AbstractScenePainter * painter();
 
     const QImage capture(
         const bool alpha = false);
@@ -56,7 +56,7 @@ protected:
     void timerEvent(QTimerEvent *event);
 
 protected:
-    AbstractPainter * m_painter;
+    AbstractScenePainter * m_painter;
 
     QBasicTimer * m_timer;
     const GLFormat m_format;

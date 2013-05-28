@@ -89,5 +89,4 @@ void FileExplorer::showContextMenu(const QPoint & point)
 void FileExplorer::setRoot(QString rootPath)
 {
 	this->setRootIndex(m_model->setRootPath(rootPath));
-	// m_model->setRootPath(rootPath);
 }

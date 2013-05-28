@@ -19,7 +19,7 @@ class GLFormat;
 
 class Ui_Viewer;
 class Canvas;
-class AbstractPainter;
+class AbstractScenePainter;
 class NavigationHandler;
 
 
@@ -34,8 +34,8 @@ public:
 
     void initialize(const GLFormat & format);
 
-    void setPainter(AbstractPainter * painter);
-    AbstractPainter * painter();
+    void setPainter(AbstractScenePainter * painter);
+    AbstractScenePainter * painter();
 
 protected slots:
     void on_captureAsImageAction_triggered();

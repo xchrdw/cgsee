@@ -8,11 +8,11 @@
 #include <core/declspec.h>
 
 
-class QMainWindow;
 class QDockWidget;
 
 class FileNavigator;
 class FileExplorer;
+class Viewer;
 class AbstractModelLoader;
 
 
@@ -21,7 +21,7 @@ class CGSEE_API NavigationHandler : public QObject
     Q_OBJECT
 
 public:
-    NavigationHandler(QMainWindow * parent = nullptr);
+    NavigationHandler(Viewer * parent = nullptr);
     virtual ~NavigationHandler();
 
 
@@ -30,7 +30,7 @@ public slots:
     void loadFile(const QModelIndex & index);
 
 protected:
-    QMainWindow * m_viewer;
+    Viewer * m_viewer;
 
     QDockWidget * m_dockLeft;
     QDockWidget * m_dockBottom;

@@ -1,20 +1,21 @@
 
-#include <QMainWindow>
 #include <QFileSystemModel>
 #include <QDockWidget>
 #include <QMenu>
 
 #include "fileNavigator.h"
 #include "fileExplorer.h"
+#include "viewer.h"
 
 #include "navigationHandler.h"
 
 #include <core/group.h>
 #include <core/assimploader.h>
+#include <core/abstractscenepainter.h>
 
 
 NavigationHandler::NavigationHandler(
-    QMainWindow * parent)
+    Viewer * parent)
 
 :   m_viewer(parent)
 ,   m_dockLeft(new QDockWidget(tr("Navigator")))
@@ -28,6 +29,8 @@ NavigationHandler::NavigationHandler(
 
     m_viewer->addDockWidget(Qt::LeftDockWidgetArea, m_dockLeft);
     m_viewer->addDockWidget(Qt::BottomDockWidgetArea, m_dockBottom);
+
+    m_explorer->model()->setNameFilters(m_loader->allLoadableTypes());
 
     m_explorer->menu()->addAction(QString("Open"), this, SLOT(triggeredLoadFile(const bool)));
 
@@ -53,10 +56,9 @@ void NavigationHandler::triggeredLoadFile(const bool & triggered)
     this->loadFile(m_explorer->clickedFile());
 }
 
-#include <iostream> // just for debug output
 void NavigationHandler::loadFile(const QModelIndex & index)
 {
     QString filePath = m_explorer->model()->fileInfo(index).absoluteFilePath();
-    // std::cout << filePath.toStdString() << std::endl;
-    Group * importGroup = m_loader->importFromFile(filePath);
+    Group * scene = m_loader->importFromFile(filePath);
+    m_viewer->painter()->assignScene(scene);
 }

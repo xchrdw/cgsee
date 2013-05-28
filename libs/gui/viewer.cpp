@@ -13,7 +13,7 @@
 #include "canvasexporter.h"
 #include "navigationHandler.h"
 
-#include <core/abstractpainter.h>
+#include <core/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 
@@ -125,7 +125,7 @@ Viewer::~Viewer()
     delete m_navigationHandler;
 }
 
-void Viewer::setPainter(AbstractPainter * painter)
+void Viewer::setPainter(AbstractScenePainter * painter)
 {
     if(!m_qtCanvas)
         return;
@@ -133,7 +133,7 @@ void Viewer::setPainter(AbstractPainter * painter)
     m_qtCanvas->setPainter(painter);
 }
 
-AbstractPainter * Viewer::painter()
+AbstractScenePainter * Viewer::painter()
 {
     if(!m_qtCanvas)
         return nullptr;
