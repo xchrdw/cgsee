@@ -1,5 +1,6 @@
 //glm to rotate around axis
 #include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtc/matrix_access.hpp>
 
 #include "flightnavigation.h"
 #include "camera.h"
@@ -132,14 +133,14 @@ void FlightNavigation::wheelEvent(QWheelEvent *event){
 void FlightNavigation::setFromMatrix(glm::mat4 view){ 
     
     //Extract Up Vector and Viewing direction from viewmatrix
-    m_up.x = view[0][1];
-    m_up.y = view[1][1];
-    m_up.z = view[2][1];
+//    m_up.x = view[0][1];
+//    m_up.y = view[1][1];
+//    m_up.z = view[2][1];
     
-    glm::vec3 direction;
-    direction.x = - view [0][2];
-    direction.y = - view [1][2];
-    direction.z = - view [2][2];
+    m_up = glm::column(view, 1).xyz;
+    
+    glm::vec3 direction = glm::column(view, 2).xyz;
+    direction = -direction;
     
     //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
     

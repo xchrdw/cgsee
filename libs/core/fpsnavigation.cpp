@@ -102,11 +102,9 @@ void FpsNavigation::pitchYaw(float pitchAngle, float yawAngle){
 }
 
 void FpsNavigation::forward(float speed){
-    glm::vec3 step = (m_zView * speed);
-    m_center.x += step.x;
-    m_center.z += step.z;
-    m_eye.x += step.x;
-    m_eye.z += step.z;
+    glm::vec3 direction = (m_zView * speed);
+    m_center.xz += direction.xz;
+    m_eye.xz += direction.xz;
     updateView();
 }
 
@@ -125,10 +123,8 @@ void FpsNavigation::onTimerEvent()
 
 void FpsNavigation::sideward(float speed){
     glm::vec3 direction = (m_xView * speed);
-    m_center.x += direction.x;
-    m_center.z += direction.z;
-    m_eye.x += direction.x;
-    m_eye.z += direction.z;
+    m_center.xz += direction.xz;
+    m_eye.xz += direction.xz;
     updateView();
 }
 
@@ -141,7 +137,4 @@ void FpsNavigation::pitch(float angle){
     }
 }
 
-void FpsNavigation::yaw(float angle){
-    m_center += glm::rotate( m_zView, -angle, m_yView) - m_zView;
-    updateView();
-}
+

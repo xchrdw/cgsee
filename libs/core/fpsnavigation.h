@@ -27,7 +27,6 @@ private:
     virtual void forward(float speed) override;
     
     virtual void pitch(float angle) override;
-    virtual void yaw(float angle) override;
     
     bool m_inGameMode;
     
