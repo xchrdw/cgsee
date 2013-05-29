@@ -10,8 +10,7 @@ static const QStringList nameFilters = (QStringList() << "*.obj" << "*.txt");
 FileExplorer::FileExplorer(
 	QObject * parent)
 
-:	m_navigator(nullptr)
-,	m_model(new QFileSystemModel)
+:	m_model(new QFileSystemModel)
 ,	m_menu(new QMenu)
 ,	m_clickedFile()
 {
@@ -36,11 +35,6 @@ FileExplorer::~FileExplorer()
 }
 
 
-FileNavigator * FileExplorer::navigator()
-{
-	return m_navigator;
-}
-
 QFileSystemModel * FileExplorer::model()
 {
 	return m_model;
@@ -56,11 +50,6 @@ QModelIndex FileExplorer::clickedFile()
 	return m_clickedFile;
 }
 
-
-void FileExplorer::setNavigator(FileNavigator * fileNavigator)
-{
-	m_navigator = fileNavigator;
-}
 
 void FileExplorer::setFilter(const QDir::Filters & filters)
 {

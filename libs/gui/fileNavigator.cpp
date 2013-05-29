@@ -7,8 +7,7 @@
 FileNavigator::FileNavigator(
 	QObject * parent)
 
-:	m_explorer(nullptr)
-,	m_model(new QFileSystemModel)
+:	m_model(new QFileSystemModel)
 {
 	this->setModel(m_model);
 
@@ -33,14 +32,4 @@ void FileNavigator::setFilter(const QDir::Filters & filters)
 FileNavigator::~FileNavigator()
 {
 	delete m_model;
-}
-
-void FileNavigator::setExplorer(FileExplorer * fileExplorer)
-{
-	m_explorer = fileExplorer;
-}
-
-FileExplorer * FileNavigator::explorer()
-{
-	return m_explorer;
 }
