@@ -23,7 +23,6 @@ static const QString LIGHTAMBIENTGLOBAL_UNIFORM   ("lightambientglobal");
 static const QString LIGHT_UNIFORM   ("light");
 static const QString LIGHT_UNIFORM2   ("light2");
 static const QString MATERIAL_UNIFORM   ("material");
-//for gooch
 static const QString LIGHTPOSITION_UNIFORM   ("lightposition");
 
 Painter::Painter()
@@ -98,16 +97,19 @@ const bool Painter::initialize()
 
     // G-Buffer Shader
 
-	//FLAT
+	//NORMALZ
 	m_normalz = new Program();
 	m_normalz->attach(
 		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
 	m_normalz->attach(
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
+    //FLAT
 	m_flat = new Program();
 	m_flat->attach(
 		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flat.frag"));
+	m_flat->attach(
+		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phongLighting.shad"));
 	m_flat->attach(
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/flat.vert"));
 	m_flat->attach(
@@ -120,6 +122,8 @@ const bool Painter::initialize()
 		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gouraud.frag"));
 	m_gouraud->attach(
 		new FileAssociatedShader(GL_VERTEX_SHADER, "data/gouraud.vert"));
+	m_gouraud->attach(
+		new FileAssociatedShader(GL_VERTEX_SHADER, "data/phongLighting.shad"));
 
 	//PHONG
 
@@ -139,7 +143,7 @@ const bool Painter::initialize()
 	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_phong;
+	m_useProgram = m_gooch;
 
 	if(m_useProgram != m_gooch)
 	{
@@ -175,7 +179,7 @@ const bool Painter::initialize()
 
 	else
 	{
-		m_gooch->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(-2.0,0.0,-2.0));
+		m_gooch->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(-2.0,0.0,2.0));
 	}
 
     // Post Processing Shader

@@ -9,11 +9,12 @@ uniform mat4 view;
 uniform float znear;
 uniform float zfar;
 
-out vec3 normal;
+out vec3 _normal;
+out vec3 position;
 
 void main(void) 
 {
-	//vec4 temp= normalize(view*vec4(a_normal,0.0));
-	//normal=temp.xyz;
+	_normal = normalize(a_normal);
 	gl_Position = transform * vec4(a_vertex, 1.0);
+	position = vec3(view * vec4(a_vertex, 1.0));
 }

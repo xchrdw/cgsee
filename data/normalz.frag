@@ -16,6 +16,7 @@ void main()
 	vec3 n = temp.xyz;
 	n *= 0.5;
 	n += 0.5;
+	n=normalize(v_normal);
 
 	float z = gl_FragCoord.z; 
 

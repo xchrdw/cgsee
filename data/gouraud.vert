@@ -25,80 +25,14 @@ uniform mat4 material;
 uniform float lightshininess;
 uniform vec4 lightambientglobal;
 
+vec4 phongLighting(vec3 n, vec3 v_pos, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, mat4 light, mat4 light2, vec4 lightambientglobal, mat4 material);
+
 void main()
 {
 	gl_Position = transform * vec4(a_vertex, 1.0);
 	vec3 n = normalize(a_normal);
 	vec3 position = vec3(view * vec4(a_vertex, 1.0));
 
-	float z = gl_Position.z; 
-
-	// d = (2.0 * zfar * znear / (zfar + znear - (zfar - znear) * (2.0 * z- 1.0)));
-	// normalized to [0,1]
-	// d = (d - znear) / (zfar - znear);
-
-	// simplyfied with wolfram alpha
-	z = - znear * z / (zfar * z - zfar - znear * z);
-
-	//light uniforms
-	vec4 iAmbient[2];
-	iAmbient[0] = light[0];
-	iAmbient[1] = light2[0];
-	vec4 iDiffuse[2];
-	iDiffuse[0] = light[1];
-	iDiffuse[1] = light2[1];
-	vec4 iSpecular[2];
-	iSpecular[0]=light[2];
-	iSpecular[1]=light2[2];
-	float shininess[2];
-	shininess[0]= light[3].w;
-	shininess[1]= light2[3].w;
-
-	//light and camera -> uniforms
-	//vec3 lightdir = lightdir;		// warum das auch immer nötig ist  
-	vec4 specular[2];
-	for(int i=0; i<2; i++){
-		specular[i]=vec4(0.0);}
-
-	//calculate dist, etc
-	vec3 lightdirection[2];
-	lightdirection[0]=lightdir;
-	lightdirection[1]=lightdir2;
-	float dist[2];
-	dist[0] = length(lightdir);
-	dist[1] = length(lightdir2); 
-	vec3 att[2];
-	att[0]=light[3].xyz;
-	att[1]=light2[3].xyz;
-	float attenuation[2];
-	float nxDir[2];
-
-	for(int i=0; i<2; i++)
-	{
-		 attenuation[i]= min(1/(att[i].x+att[i].y*dist[i]+att[i].z*dist[i]*dist[i]),1);
-		lightdirection[i] = normalize(lightdirection[i]);
-		nxDir[i] = max(0.0,dot(n,lightdirection[i]));
-	}
-	vec4 diffuse[2];
-	for(int i=0; i<2; i++){
-		diffuse[i] = iDiffuse[i] * nxDir[i] * attenuation[i];}
-
-	for(int i=0; i<2; i++)
-	{	if(nxDir[i] != 0.0)
-		{
-			vec3 cameraVector = normalize(cameraposition - position);
-			vec3 halfVector = normalize(lightdirection[i] + cameraVector);
-			float nxHalf = max(0.0,dot(n,halfVector));
-			float specularPower = max(pow(nxHalf, shininess[i]),0.0);
-			specular[i] = iSpecular[i] * specularPower * attenuation[i];
-		}
-	}
-				//global ambient			//emission
-	color=lightambientglobal*material[0] + material[3];
-	for(int i=0; i<2;i++)
-	{
-							//local ambient			//diffuse					//specular
-		color += color + iAmbient[i]*material[0] + attenuation[i]*(diffuse[i] * material[1] + specular[i] * material[2]);
-	}
+	color=phongLighting(n, position, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);
 
 }

@@ -26,17 +26,18 @@ uniform vec3 lightposition; // (0.0, 10.0, 4.0)
 //in vec3 ReflectVec;
 //in vec3 ViewVec;
 in vec3 normal;
+in vec3 position;
+
+
 out vec4 gl_FragColor;
 
 void main()
 {
-	vec4 temp= normalize(view*vec4(normal,0.0));
-	vec3 tnorm = temp.xyz;
+	vec3 tnorm = normal;
 
-	vec4 temp2=(transform*gl_FragCoord);
-	vec3 lightVec = normalize(lightposition - gl_FragCoord.xyz);
+	vec3 lightVec = normalize(lightposition - position);
 	vec3 ReflectVec = normalize(reflect(-lightVec, tnorm));
-	vec3 ViewVec = normalize(-gl_FragCoord.xyz);
+	vec3 ViewVec = normalize(-position);
 	float NdotL = (dot(lightVec, tnorm) + 1.0) * 0.5;
 	
 	vec3 SurfaceColor=vec3(0.75, 0.75, 0.75);
