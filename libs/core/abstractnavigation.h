@@ -56,6 +56,7 @@ protected:
     int m_width;
     int m_height;
     glm::mat4 m_viewmatrix;
+    float m_fovy;
 
     static const int TIMER_MS = 1000/60;
 

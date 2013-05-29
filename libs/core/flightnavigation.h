@@ -11,7 +11,6 @@ public:
     virtual void keyPressEvent(QKeyEvent *event) override;
     virtual void keyReleaseEvent(QKeyEvent *event) override;
     
-    virtual void wheelEvent(QWheelEvent *event) override;
     virtual void reset() override;
     
     

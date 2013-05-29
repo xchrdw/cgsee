@@ -12,6 +12,7 @@
 
 AbstractNavigation::AbstractNavigation(Camera *camera) 
     : m_camera(camera)
+    , m_fovy(camera->fovy())
     , m_viewmatrix(camera->view())
     , m_width(camera->viewport().x)
     , m_height(camera->viewport().y)
@@ -37,6 +38,7 @@ const glm::mat4 AbstractNavigation::viewMatrix()
 
 void AbstractNavigation::updateCamera()
 {
+    m_camera->setFovy(m_fovy);
     m_camera->setView(m_viewmatrix);
     if(m_canvas)
         m_canvas->repaint();
@@ -62,7 +64,12 @@ void AbstractNavigation::mouseMoveEvent(QMouseEvent * event) { }
 void AbstractNavigation::mousePressEvent(QMouseEvent * event) { }
 void AbstractNavigation::mouseReleaseEvent(QMouseEvent * event) { }
 void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) { }
-void AbstractNavigation::wheelEvent(QWheelEvent *event) { }
+
+void AbstractNavigation::wheelEvent(QWheelEvent *event) {
+    m_fovy += (event->delta() * 0.1); //sensitivity
+    m_fovy = glm::clamp(m_fovy, 0.0f, 180.0f);
+    updateCamera();
+}
 
 
 void AbstractNavigation::setViewPort( const int width, const int height )
@@ -148,3 +155,4 @@ void AbstractNavigation::loadView(glm::mat4 new_viewmatrix)
 }
 
 void AbstractNavigation::setFromMatrix(glm::mat4 view) { }
+

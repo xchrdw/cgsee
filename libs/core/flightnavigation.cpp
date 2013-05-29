@@ -126,17 +126,11 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
     stopTimer();
 }
 
-void FlightNavigation::wheelEvent(QWheelEvent *event){
-   
-}
 
 void FlightNavigation::setFromMatrix(glm::mat4 view){ 
     
     //Extract Up Vector and Viewing direction from viewmatrix
-//    m_up.x = view[0][1];
-//    m_up.y = view[1][1];
-//    m_up.z = view[2][1];
-    
+
     m_up = glm::column(view, 1).xyz;
     
     glm::vec3 direction = glm::column(view, 2).xyz;

@@ -93,9 +93,6 @@ void FpsNavigation::mouseReleaseEvent(QMouseEvent * event){
 }
 
 
-void FpsNavigation::wheelEvent(QWheelEvent *event){
-    
-}
 void FpsNavigation::pitchYaw(float pitchAngle, float yawAngle){
     pitch(pitchAngle);
     yaw(yawAngle);
