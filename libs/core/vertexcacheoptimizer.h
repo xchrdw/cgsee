@@ -5,7 +5,7 @@
 class VertexCacheOptimizer
 {
 public:
-	static void applyOptimization(t_uints &stuff, const int numVertices);
+	static void applyOptimization(t_uints &indices, const int numVertices);
 
 protected:
     struct Vertex {

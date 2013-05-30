@@ -1,4 +1,6 @@
 #include <vector>
+#include <iostream>
+
 #include "vertexcacheoptimizer.h"
 
 namespace 
@@ -23,13 +25,11 @@ void VertexCacheOptimizer::initLists(t_uints &indices, std::vector<Vertex> &vert
         ++vertices[index].numTriangles;
         ++vertices[index].numTrianglesToDo;
     }
-    
     for (auto it = indices.cbegin(); it != indices.cend(); ++it) {
-        uint currentTriangleIndex = (it - indices.cbegin())/3;
+        uint currentTriangleIndex = (it - indices.cbegin()) / 3;
         vertices[*it].triangles.push_back( currentTriangleIndex );
         triangles[currentTriangleIndex].vertices.push_back(*it);
     }
-
 }
 
 void VertexCacheOptimizer::initScores(std::vector<Vertex> &vertices, std::vector<Triangle> &triangles)
@@ -144,16 +144,22 @@ int VertexCacheOptimizer::findGreatestTriangle(std::vector<Triangle> &triangles)
 {
     float greatestTriangleScore(-1.0);
     int greatestTriangleIndex(-1);
-    for (auto it = triangles.cbegin(); it != triangles.cend(); ++it) {
-        if (it->addedToDrawList)
+    int maxIndex = triangles.size()-1;
+    for (int i = 0; i != maxIndex; ++i) {
+        if (triangles[i].addedToDrawList)
             continue;
-        if (it->score > greatestTriangleScore) {
-            greatestTriangleIndex = it-triangles.cbegin();
-            greatestTriangleScore = it->score;
+        if (triangles[i].score > greatestTriangleScore) {
+            greatestTriangleIndex = i;
+            greatestTriangleScore = triangles[i].score;
         }
     }
     return greatestTriangleIndex;
 }
+
+typedef int VertexIndexType;
+VertexIndexType* reorderForsyth(const VertexIndexType* indices,
+                                int nTriangles,
+                                int nVertices);
 
 void VertexCacheOptimizer::applyOptimization(t_uints &indices, const int numVertices)
 {
@@ -178,7 +184,8 @@ void VertexCacheOptimizer::applyOptimization(t_uints &indices, const int numVert
         updateCacheAndFindGreatestTriangle(vertices, triangles, greatestTriangleIndex, cache);
 
         //if no greatestTriangle was found, iterate over all triangles
-        if (greatestTriangleIndex == -1)
+        if (greatestTriangleIndex == -1) {
             greatestTriangleIndex = findGreatestTriangle(triangles);
+        }
     }
 }

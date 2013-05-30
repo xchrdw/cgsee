@@ -3,7 +3,6 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
-#include <iostream>
 
 #include "vertexreuse.h"
 
@@ -20,11 +19,11 @@ struct VertexData
 };
 
 
-bool operator==(const VertexData &vL, const VertexData &vR)
+bool operator==(const VertexData& vL, const VertexData& vR)
 {
-    return (vL.vertex==vR.vertex)
-        && (vL.normal==vR.normal)
-        && (vL.texCoord==vR.texCoord);
+    return (vL.vertex == vR.vertex)
+        && (vL.normal == vR.normal)
+        && (vL.texCoord == vR.texCoord);
 }
 
 template<class T> class VertexHash;
@@ -32,7 +31,7 @@ template<class T> class VertexHash;
 template<>
 class VertexHash<VertexData> {
 public:
-    size_t operator()(const VertexData &v) const 
+    size_t operator()(const VertexData& v) const 
     {
         size_t hashValues[] = {
             std::hash<float>()(v.vertex[0]),
@@ -57,7 +56,6 @@ typedef std::unordered_map<VertexData, int, VertexHash<VertexData>> VertexMap;
 
 void VertexReuse::reuseVertices(t_vec3s& vertices, t_vec3s& normals, t_vec2s& texcs, t_uints& indices)
 {
-    std::cout << "Hallo: " << vertices.size() << std::endl;
     bool normalsUsed = true;
     bool texcsUsed = true;
     // fill all unused input vectors with 0 values.
@@ -85,13 +83,10 @@ void VertexReuse::reuseVertices(t_vec3s& vertices, t_vec3s& normals, t_vec2s& te
         indexMapping.push_back(pair.first->second);
         if (pair.second)
             vertexData.push_back(vd);
-
     }
 
-    
     // build output arrays with optimized data
     // clean up arrays that are not used
-
     vertices.resize(vertexData.size());
     for (int i = 0; i < vertexData.size(); ++i) {
         vertices[i] = vertexData[i].vertex;
@@ -120,7 +115,4 @@ void VertexReuse::reuseVertices(t_vec3s& vertices, t_vec3s& normals, t_vec2s& te
     {
         indices[i] = indexMapping[indices[i]];
     }
-
-    std::cout << "Optimized: " << vertices.size() << std::endl;
-
 }
