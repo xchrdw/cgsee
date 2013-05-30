@@ -6,25 +6,11 @@
 //
 // Copyright (c) 2002-2005 3Dlabs Inc. Ltd.
 //
-// See 3Dlabs-License.txt for license information
-//
-//updated code to newer glsl version
-
-/*
-uniform vec3 SurfaceColor; // (0.75, 0.75, 0.75)
-uniform vec3 WarmColor; // (0.6, 0.6, 0.0)
-uniform vec3 CoolColor; // (0.0, 0.0, 0.6)
-uniform float DiffuseWarm; // 0.45
-uniform float DiffuseCool; // 0.45 
-*/
 
 uniform mat4 transform;
 uniform mat4 view;
-uniform vec3 lightposition; // (0.0, 10.0, 4.0)
+uniform vec3 lightposition;
 
-//in float NdotL;
-//in vec3 ReflectVec;
-//in vec3 ViewVec;
 in vec3 normal;
 in vec3 position;
 

@@ -6,9 +6,6 @@ in vec3 a_normal;
 uniform mat4 transform;
 uniform mat4 view;
 
-uniform float znear;
-uniform float zfar;
-
 out vec3 normal;
 out vec3 position;
 

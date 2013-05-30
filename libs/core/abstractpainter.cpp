@@ -44,6 +44,10 @@ void AbstractPainter::resize(
         qFatal("Painter initialization failed.");
 }
 
+void AbstractPainter::setShading(char shader)
+{
+}
+
 void AbstractPainter::keyPress(QKeyEvent * event)
 {
 }

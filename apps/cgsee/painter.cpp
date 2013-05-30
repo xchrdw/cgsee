@@ -143,9 +143,26 @@ const bool Painter::initialize()
 	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
 	//set UNIFORMS for seleced shader
-	m_useProgram = m_gooch;
+	m_useProgram = m_flat;
+    setUniforms();
 
-	if(m_useProgram != m_gooch)
+    // Post Processing Shader
+
+    m_flush = new Program();
+	m_flush->attach(
+		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
+	m_flush->attach(
+		new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
+
+    m_fboNormalz = new FrameBufferObject(
+        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+
+    return true;
+}
+
+void Painter::setUniforms()
+{
+    if(m_useProgram != m_gooch)
 	{
 		m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
 		m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
@@ -179,21 +196,8 @@ const bool Painter::initialize()
 
 	else
 	{
-		m_gooch->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(-2.0,0.0,2.0));
+		m_useProgram->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(-2.0,0.0,2.0));
 	}
-
-    // Post Processing Shader
-
-    m_flush = new Program();
-	m_flush->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
-	m_flush->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
-
-    m_fboNormalz = new FrameBufferObject(
-        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-
-    return true;
 }
 
 void Painter::paint()
@@ -201,15 +205,7 @@ void Painter::paint()
     AbstractPainter::paint();
 
 	t_samplerByName sampler;
- //   m_camera->setView(glm::lookAt(
-     //   camPos, glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
-
-	// Normals and Depth to RGBA
-
-    //m_camera->draw(m_normalz, m_fboNormalz);
-	//m_camera->draw(m_flat, m_fboNormalz);
-	//m_camera->draw(m_gouraud, m_fboNormalz);
 	m_camera->draw(*m_useProgram, m_fboNormalz);
 
     sampler.clear();
@@ -221,7 +217,7 @@ void Painter::paint()
 
 }
 
-void Painter::resize(
+void Painter::resize(  //probably never called anywhere?
     const int width
 ,   const int height)
 {
@@ -233,6 +229,20 @@ void Painter::resize(
 
 	postShaderRelinked();
 
+}
+
+void Painter::setShading(char shader)
+{
+    switch(shader)
+    {
+        case 'p': m_useProgram = m_phong; std::printf("\nPhong Shading\n"); break;
+        case 'g': m_useProgram = m_gouraud; std::printf("\nGouraud Shading\n"); break;
+        case 'f': m_useProgram = m_flat; std::printf("\nFlat Shading\n"); break;
+        case 'o': m_useProgram = m_gooch; std::printf("\nGooch Shading\n\n"); break;
+
+    }
+    setUniforms();
+    //repaint missing
 }
 
 void Painter::postShaderRelinked()

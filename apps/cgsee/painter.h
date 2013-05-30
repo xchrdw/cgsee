@@ -23,6 +23,8 @@ public:
 
     virtual void paint();
 
+    virtual void setShading(char shader);
+
     virtual void resize(
         const int width
     ,   const int height);
@@ -33,6 +35,7 @@ protected:
 
 protected:
     void postShaderRelinked();
+    void setUniforms();
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 

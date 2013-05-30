@@ -8,7 +8,7 @@ in vec3 _normal[];
 
 void main(void) {
 
-	normal=normalize( (_normal[0]+_normal[1]+ _normal[2]) /3);
+	normal=normalize( (_normal[0] + _normal[1] + _normal[2])/3 );
 
 	gl_Position=gl_in[0].gl_Position;
 	EmitVertex();

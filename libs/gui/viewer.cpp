@@ -151,6 +151,20 @@ void Viewer::on_reloadAllShadersAction_triggered()
 
 void Viewer::on_phongShadingAction_triggered()
 {
-    assert(m_qtCanvas);
-    CanvasExporter::save(*m_qtCanvas, this, true);
+    (m_qtCanvas->painter())->setShading('p');
+}
+
+void Viewer::on_gouraudShadingAction_triggered()
+{
+    (m_qtCanvas->painter())->setShading('g');
+}
+
+void Viewer::on_flatShadingAction_triggered()
+{
+    (m_qtCanvas->painter())->setShading('f');
+}
+
+void Viewer::on_goochShadingAction_triggered()
+{
+    (m_qtCanvas->painter())->setShading('o');
 }

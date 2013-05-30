@@ -6,10 +6,6 @@
 //
 // Copyright (c) 2002-2005 3Dlabs Inc. Ltd.
 //
-// See 3Dlabs-License.txt for license information
-//
-//updated code to newer glsl version
-
 
 uniform mat4 transform;
 uniform mat4 view;
