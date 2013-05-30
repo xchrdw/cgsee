@@ -102,7 +102,7 @@ void PolygonalGeometry::retrieveNormals()
         a = glm::normalize(m_vertices[i2] - m_vertices[i0]);
         b = glm::normalize(m_vertices[i1] - m_vertices[i0]);
 
-        n = glm::cross(a, b);
+        n = glm::normalize(glm::cross(a, b));
 
         m_normals[i0] = n;
         m_normals[i1] = n;
