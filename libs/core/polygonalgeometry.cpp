@@ -150,7 +150,7 @@ const AxisAlignedBoundingBox PolygonalGeometry::boundingBox() const
 void PolygonalGeometry::retrieveNormals()
 {
     t_VertexListP myVList = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
-    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
+    t_VertexIndexListP inds = qobject_cast<t_VertexIndexListP>(m_registry.getDataBlockByName(m_indicesName));
     assert(myVList);
     assert(inds);
     if(! myVList->isAttributeUsed("position"))
