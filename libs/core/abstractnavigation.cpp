@@ -9,8 +9,10 @@
 #include "abstractnavigation.h"
 #include "camera.h"
 
+static const float DURATION = 333.f;
 
-AbstractNavigation::AbstractNavigation(Camera *camera) 
+
+AbstractNavigation::AbstractNavigation(Camera * camera) 
     : m_camera(camera)
     , m_fovy(camera->fovy())
     , m_viewmatrix(camera->view())
@@ -104,19 +106,18 @@ void AbstractNavigation::startTimer()
 void AbstractNavigation::stopTimer()
 {
     assert(m_timer_requests > 0);
-    m_timer_requests = m_timer_requests-1;
+    m_timer_requests = m_timer_requests - 1;
 
     if(m_timer_requests == 0) {
         m_timer.stop();
     }
 }
 
-const float DURATION = 333.0f;
 
 void AbstractNavigation::timerEvent(QTimerEvent * event)
 {
     if (m_animation_active) {
-        m_animation_progress += TIMER_MS/DURATION;
+        m_animation_progress += TIMER_MS / DURATION;
         if (m_animation_progress < 1.f) {
             updateTransition();
         } else {

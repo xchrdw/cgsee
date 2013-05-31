@@ -55,10 +55,10 @@ protected:
 protected:
     int m_width;
     int m_height;
-    glm::mat4 m_viewmatrix;
     float m_fovy;
+    glm::mat4 m_viewmatrix;
 
-    static const int TIMER_MS = 1000/60;
+    static const int TIMER_MS = 1000 / 60;
 
 private:
     void timerEvent(QTimerEvent * event);

@@ -39,21 +39,19 @@ void ArcballNavigation::updateArcball()
  */
 glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v)
 {
-  // normalize mouse coordinates to [-1:1]
-  glm::vec3 P = glm::vec3(v.x/m_width * 2.0 - 1.0,
-                          v.y/m_height * 2.0 - 1.0,
-                          0);
-  P.y = -P.y;
-  float P_squared = P.x * P.x + P.y * P.y;
-    if (P_squared <= 1*1
-        // P is inside ball
-        P.z = sqrt(1*1 - P_squared); // calculate height in ball, small P_squared means P is near center -> high z value
+    // normalize mouse coordinates to [-1:1]
+    glm::vec3 P = glm::vec3(v.x/m_width * 2.0 - 1.0,
+                            v.y/m_height * 2.0 - 1.0,
+                            0);
+    P.y = -P.y;
+    float P_squared = P.x * P.x + P.y * P.y;
+    if (P_squared <= 1*1) {                     // P is inside ball
+        P.z = sqrt(1*1 - P_squared);            // calculate height in ball
     } else {
-      P = glm::normalize(P);  // nearest point to the ball
+        P = glm::normalize(P);                  // nearest point to the ball
     }
-  return P;
+    return P;
 }
-
 
 void ArcballNavigation::updatePanning()
 {
@@ -61,7 +59,6 @@ void ArcballNavigation::updatePanning()
     glm::mat4 translate = glm::translate(glm::vec3(delta.x/500, -delta.y/500, 0));
     m_viewmatrix = translate * m_viewmatrix;
 }
-
 
 void ArcballNavigation::updateZoom()
 {
@@ -101,8 +98,9 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
 {
     if (event->button() == Qt::LeftButton) {
         m_arcball_on = false;
-    }
-    else if (event->button() == Qt::RightButton) {
+    } else if (event->button() == Qt::RightButton) {
+        m_panning_on = false;
+    } else if (event->button() == Qt::MiddleButton) {
         m_zoom_on = false;
     }
 }
