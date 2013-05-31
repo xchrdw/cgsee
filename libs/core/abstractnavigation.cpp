@@ -105,8 +105,7 @@ void AbstractNavigation::startTimer()
 */
 void AbstractNavigation::stopTimer()
 {
-    assert(m_timer_requests > 0);
-    m_timer_requests = m_timer_requests - 1;
+    m_timer_requests = glm::max(0, m_timer_requests-1);
 
     if(m_timer_requests == 0) {
         m_timer.stop();
