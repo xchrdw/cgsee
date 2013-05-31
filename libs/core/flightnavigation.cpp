@@ -130,10 +130,14 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
 void FlightNavigation::setFromMatrix(const glm::mat4 & view){ 
     
     //Extract Up Vector and Viewing direction from viewmatrix
+    m_up.x = view[0][1];
+    m_up.y = view[1][1];
+    m_up.z = view[2][1];
     
-    m_up = glm::vec3(view[0][1],view[1][1],view[2][1]);
-    
-    glm::vec3 lookat = glm::vec3(view[0][2],view[1][2],view[2][2]);
+    glm::vec3 lookat;
+    lookat.x = - view [0][2];
+    lookat.y = - view [1][2];
+    lookat.z = - view [2][2];
     
     //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
     
@@ -150,16 +154,14 @@ void FlightNavigation::setFromMatrix(const glm::mat4 & view){
     float d3(modelViewT[2].w);
     
     // Get the intersection of these 3 planes
+    // (using math from RealTime Collision Detection by Christer Ericson)
     glm::vec3 n2n3 = glm::cross(n2, n3);
-    glm::vec3 n3n1 = glm::cross(n3, n1);
-    glm::vec3 n1n2 = glm::cross(n1, n2);
-    
-    glm::vec3 top = (n2n3 * d1) + (n3n1 * d2) + (n1n2 * d3);
     float denom = glm::dot(n1, n2n3);
     
-    m_eye = top / -denom;
+    m_eye = (n2n3 * d1) + glm::cross(n1, (d3*n2) - (d2*n3));
+    m_eye /= -denom;
     
-    m_center =  - m_eye - lookat;
+    m_center = m_eye + lookat;
     
     updateView();
 }
