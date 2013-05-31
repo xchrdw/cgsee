@@ -12,12 +12,12 @@ public:
     virtual void mousePressEvent(QMouseEvent * event) override;
     virtual void mouseReleaseEvent(QMouseEvent * event) override;
 
-
 private: 
-    void updateArcball(); 
     glm::vec3 getArcballVector(glm::vec2 v);
+    void updateArcball(); 
     void updateZoom();
     void updatePanning();
+
 private:
     glm::vec2 m_mouse_last;
     glm::vec2 m_mouse_cur;

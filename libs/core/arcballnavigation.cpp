@@ -45,7 +45,8 @@ glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v)
                           0);
   P.y = -P.y;
   float P_squared = P.x * P.x + P.y * P.y;
-    if (P_squared <= 1*1) {  // P is inside ball
+    if (P_squared <= 1*1
+        // P is inside ball
         P.z = sqrt(1*1 - P_squared); // calculate height in ball, small P_squared means P is near center -> high z value
     } else {
       P = glm::normalize(P);  // nearest point to the ball
@@ -75,14 +76,12 @@ void ArcballNavigation::updateZoom()
 void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 {
     m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
-    if (m_mouse_cur != m_mouse_last) {
+    if (m_mouse_cur != m_mouse_last) { // avoid div/0
         if (m_arcball_on) {
             updateArcball();
-        }
-        else if (m_panning_on) {
+        } else if (m_panning_on) {
             updatePanning();
-        }
-        else if (m_zoom_on) {
+        } else if (m_zoom_on) {
             updateZoom();
         }
         m_mouse_last = m_mouse_cur;

@@ -30,7 +30,7 @@ AbstractNavigation::~AbstractNavigation()
 }
 
 
-const glm::mat4 AbstractNavigation::viewMatrix()
+const glm::mat4 & AbstractNavigation::viewMatrix()
 {
     return m_viewmatrix;
 }
@@ -65,7 +65,7 @@ void AbstractNavigation::mousePressEvent(QMouseEvent * event) { }
 void AbstractNavigation::mouseReleaseEvent(QMouseEvent * event) { }
 void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) { }
 
-void AbstractNavigation::wheelEvent(QWheelEvent *event)
+void AbstractNavigation::wheelEvent(QWheelEvent * event)
 {
     m_fovy += (event->delta() * 0.1); //sensitivity
     m_fovy = glm::clamp(m_fovy, 0.0f, 180.0f);
@@ -99,40 +99,51 @@ void AbstractNavigation::startTimer()
 
 /**
 * counts how often the timer was requested and only 
-* stop if all requests were stopped
+* stop if all requests were stopped.
 */
 void AbstractNavigation::stopTimer()
 {
-    m_timer_requests = glm::max(0, m_timer_requests-1);
+    assert(m_timer_requests > 0);
+    m_timer_requests = m_timer_requests-1;
 
     if(m_timer_requests == 0) {
         m_timer.stop();
     }
 }
 
-const int DURATION = 333.0f;
+const float DURATION = 333.0f;
 
-void AbstractNavigation::timerEvent(QTimerEvent* event)
+void AbstractNavigation::timerEvent(QTimerEvent * event)
 {
     if (m_animation_active) {
         m_animation_progress += TIMER_MS/DURATION;
-        if (m_animation_progress >= 1) {
-            m_animation_active = false;
-            stopTimer();
-            m_viewmatrix = glm::translate(m_new_pos) * glm::mat4_cast(m_new_rotation);
-            setFromMatrix(m_viewmatrix);
-            updateCamera();
+        if (m_animation_progress < 1.f) {
+            updateTransition();
         } else {
-            float step = glm::smoothstep(0.f, 1.f, m_animation_progress);
-            glm::mat4 translation = glm::translate(glm::mix(m_old_pos, m_new_pos, step));
-            glm::mat4 rotation = glm::mat4_cast(glm::slerp(m_old_rotation, m_new_rotation, step));
-            m_viewmatrix = translation * rotation;
-            updateCamera();
+            finishTransition();
         }
     }
     else {
-        onTimerEvent(); // notify super class
+        onTimerEvent(); // handled by super class
     }
+}
+
+void AbstractNavigation::updateTransition()
+{
+    float step = glm::smoothstep(0.f, 1.f, m_animation_progress);
+    glm::mat4 translation = glm::translate(glm::mix(m_old_pos, m_new_pos, step));
+    glm::mat4 rotation = glm::mat4_cast(glm::slerp(m_old_rotation, m_new_rotation, step));
+    m_viewmatrix = translation * rotation;
+    updateCamera();
+}
+
+void AbstractNavigation::finishTransition()
+{
+    m_animation_active = false;
+    stopTimer();
+    m_viewmatrix = glm::translate(m_new_pos) * glm::mat4_cast(m_new_rotation);
+    setFromMatrix(m_viewmatrix); 
+    updateCamera();
 }
 
 void AbstractNavigation::onTimerEvent() { }
@@ -143,7 +154,7 @@ bool AbstractNavigation::isTimerRunning()
     return m_timer.isActive();
 }                          
                            
-void AbstractNavigation::loadView(glm::mat4 new_viewmatrix)
+void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix)
 {                          
     m_old_rotation = glm::quat_cast(m_viewmatrix);
     m_new_rotation = glm::quat_cast(new_viewmatrix);
@@ -154,9 +165,13 @@ void AbstractNavigation::loadView(glm::mat4 new_viewmatrix)
     m_animation_progress = 0;
     m_animation_active = true;
     
-    if(!isTimerRunning())
+    if(!isTimerRunning()) {
         startTimer();
+    }
 }
 
-void AbstractNavigation::setFromMatrix(glm::mat4 view) { }
+void AbstractNavigation::setFromMatrix(const glm::mat4 & view) 
+{
+    m_viewmatrix = view;
+}
 

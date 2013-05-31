@@ -45,7 +45,7 @@ protected:
     virtual void forward(float speed);
     virtual void sideward(float speed);
     
-    virtual void setFromMatrix(glm::mat4 view) override;
+    virtual void setFromMatrix(const glm::mat4 & view) override;
     
     glm::vec2 m_direction;
     glm::vec3 m_yprAngle;

@@ -26,8 +26,8 @@ public:
     //void assignCoordinateProvider(CoordinateProvider *provider);
 
     // interaction mapping
-    virtual void keyPressEvent(QKeyEvent *event);
-    virtual void keyReleaseEvent(QKeyEvent *event);
+    virtual void keyPressEvent(QKeyEvent * event);
+    virtual void keyReleaseEvent(QKeyEvent * event);
 
     virtual void mouseMoveEvent(QMouseEvent * event);
     virtual void mousePressEvent(QMouseEvent * event);
@@ -35,8 +35,8 @@ public:
     virtual void mouseDoubleClickEvent(QMouseEvent * event);
     virtual void wheelEvent(QWheelEvent *event);
 
-    virtual const glm::mat4 viewMatrix();
-    void loadView(glm::mat4 viewmatrix);
+    virtual const glm::mat4 & viewMatrix();
+    void loadView(const glm::mat4 & viewmatrix);
 
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
@@ -45,12 +45,12 @@ protected:
     void startTimer();
     void stopTimer();
     bool isTimerRunning();
-
     virtual void onTimerEvent();
-    virtual void setFromMatrix(glm::mat4 view);
+
+    virtual void setFromMatrix(const glm::mat4 & view);
 
     void updateCamera();
-    virtual void onCameraChanged();
+    virtual void onCameraChanged(); // override to get notified for camera changes
 
 protected:
     int m_width;
@@ -61,7 +61,10 @@ protected:
     static const int TIMER_MS = 1000/60;
 
 private:
-    void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent * event);
+
+    void finishTransition();
+    void updateTransition();
 
     Camera * m_camera;
     QWidget * m_canvas;

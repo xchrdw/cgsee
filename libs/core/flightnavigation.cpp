@@ -127,7 +127,7 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
 }
 
 
-void FlightNavigation::setFromMatrix(glm::mat4 view){ 
+void FlightNavigation::setFromMatrix(const glm::mat4 & view){ 
     
     //Extract Up Vector and Viewing direction from viewmatrix
 
