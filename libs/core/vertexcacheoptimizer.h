@@ -5,7 +5,7 @@
 class VertexCacheOptimizer
 {
 public:
-	static void applyOptimization(t_uints &indices, const int numVertices);
+	static void applyOptimization(t_uints &indices, const uint numVertices);
 
 protected:
     struct Vertex {
@@ -17,9 +17,9 @@ protected:
 
         int cachePosition;
         float score;
-        int numTriangles;
-        int numTrianglesToDo;
-        std::vector<uint> triangles;
+        uint numTriangles;
+        uint numTrianglesToDo;
+        std::vector<int> triangles;
     };
 
     struct Triangle {
@@ -32,12 +32,12 @@ protected:
         std::vector<uint>vertices;
     };
 
-    static void initLists(t_uints &indices, std::vector<Vertex> &vertices, std::vector<Triangle> &triangles);
+    static void initLists(const t_uints &indices, std::vector<Vertex> &vertices, std::vector<Triangle> &triangles);
     static void initScores(std::vector<Vertex> &vertices, std::vector<Triangle> &triangles);
+    static float calculateVertexScore(const Vertex &vertex);
     static void addGreatestTriangle(t_uints &indices, std::vector<Vertex> &vertices, std::vector<Triangle> &triangles, int &greatestTriangleIndex);
-    static void pushVerticesToStack(std::vector<Vertex> &vertices, std::vector<Triangle> &triangles, int &greatestTriangleIndex, std::vector<int> &cache);
+    static void pushVerticesToStack(std::vector<Vertex> &vertices, const std::vector<Triangle> &triangles, const int greatestTriangleIndex, std::vector<int> &cache);
     static void updateCacheAndFindGreatestTriangle(std::vector<Vertex> &vertices, std::vector<Triangle> &triangles, int &greatestTriangleIndex, std::vector<int> &cache);
-    static int findGreatestTriangle(std::vector<Triangle> &triangles);
-    static float calculateVertexScore(Vertex &vertex);
+    static int findGreatestTriangle(const std::vector<Triangle> &triangles);
 };
 
