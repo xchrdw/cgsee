@@ -23,9 +23,9 @@ Canvas::Canvas(
 
 :   QGLWidget(format.asQGLFormat(), parent)
 ,   m_painter(nullptr)
+,   m_navigation(nullptr)
 ,   m_timer(nullptr)
 ,   m_format(format)
-,   m_navigation(nullptr)
 {
     m_timer = new QBasicTimer();
     //m_timer->start(format.vsync() ? 1000/60 : 0, this);
