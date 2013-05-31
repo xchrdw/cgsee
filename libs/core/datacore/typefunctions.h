@@ -1,5 +1,3 @@
-#ifndef DATACORE_TYPEFUNCTIONS_H
-#define DATACORE_TYPEFUNCTIONS_H
 #pragma once
 
 struct AbstractInPlaceTypeFunctions
@@ -40,5 +38,3 @@ public:
 protected:
     int m_typeId;
 };
-
-#endif //DATACORE_TYPEFUNCTIONS_H

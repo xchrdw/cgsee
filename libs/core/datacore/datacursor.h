@@ -1,5 +1,3 @@
-#ifndef DATACORE_DATACURSOR_H
-#define DATACORE_DATACURSOR_H
 #pragma once
 
 // TODO
@@ -29,5 +27,3 @@ public:
 // class CommandView
 // class CommandRemove
 // class CommandDestroy
-
-#endif // DATACORE_DATACURSOR_H

@@ -1,5 +1,3 @@
-#ifndef VERTEXLIST_H
-#define VERTEXLIST_H
 #pragma once
 
 #include <typeinfo>
@@ -173,5 +171,3 @@ protected:
 typedef VertexIndexList::t_StandardPointer t_VertexIndexListP;
 
 #include "vertexlist_impl.inl"
-
-#endif

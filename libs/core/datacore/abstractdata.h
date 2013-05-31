@@ -1,6 +1,4 @@
-﻿#ifndef DATAINTERFACE_H
-#define DATAINTERFACE_H
-#pragma once
+﻿#pragma once
 
 #include <QtCore>
 
@@ -80,5 +78,3 @@ protected:
 };
 
 #include "abstractdata_impl.inl"
-
-#endif //DATAINTERFACE_H

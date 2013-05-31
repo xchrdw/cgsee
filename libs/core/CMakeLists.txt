@@ -20,7 +20,6 @@ set(SOURCES
     datacore/abstractdata.cpp
     datacore/vertexlist.h
     datacore/vertexlist.cpp
-    datacore/datacursor.h
     datacore/typefunctions.h
     datacore/typefunctions.cpp
     datacore/registertypeshere.h

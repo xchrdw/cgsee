@@ -247,14 +247,14 @@ QVector<VertexIndexList::t_indexType> const& VertexIndexList::getIndices() const
 
 void VertexIndexList::setSingleIndex(unsigned int pos, VertexIndexList::t_indexType const vindex)
 {
-    if (m_indices.size() <= pos)
+    if (static_cast<unsigned int>(m_indices.size()) <= pos)
         m_indices.resize(pos + 1);
     m_indices[pos] = vindex;
 }
 
 void VertexIndexList::setMultipleIndices(unsigned int start, unsigned int end, std::function<t_indexType(unsigned int)> initFunc)
 {
-    for (int i = start; i < end; ++i)
+    for (unsigned int i = start; i < end; ++i)
     {
         m_indices[i] = initFunc(i);
     }
