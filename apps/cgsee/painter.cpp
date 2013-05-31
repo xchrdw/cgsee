@@ -47,10 +47,10 @@ Painter::~Painter()
     delete m_quad;
 
     delete m_normalz;
-	delete m_flat;
-	delete m_gouraud;
-	delete m_phong;
-	delete m_gooch;
+    delete m_flat;
+    delete m_gouraud;
+    delete m_phong;
+    delete m_gooch;
     delete m_fboNormalz;
     delete m_flush;    
 }
@@ -89,7 +89,7 @@ const bool Painter::initialize()
 
     m_camera->append(m_group);
 
-	camPos=glm::vec3( -2.0f, 0.0f,-2.f);
+    camPos=glm::vec3( -2.0f, 0.0f,-2.f);
     m_camera->setView(glm::lookAt(
         camPos , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
@@ -97,62 +97,62 @@ const bool Painter::initialize()
 
     // G-Buffer Shader
 
-	//NORMALZ
-	m_normalz = new Program();
-	m_normalz->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
-	m_normalz->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
+    //NORMALZ
+    m_normalz = new Program();
+    m_normalz->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
+    m_normalz->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
+
+    FileAssociatedShader *phongLighting = new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phongLighting.frag");
 
     //FLAT
-	m_flat = new Program();
-	m_flat->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flat.frag"));
-	m_flat->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phongLighting.shad"));
-	m_flat->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/flat.vert"));
-	m_flat->attach(
-		new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/flat.geo"));
+    m_flat = new Program();
+    m_flat->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flat.frag"));
+    m_flat->attach(phongLighting);
+    m_flat->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/flat.vert"));
+    m_flat->attach(
+        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/flat.geo"));
 
-	//GOURAUD
-	
-	m_gouraud = new Program();
-	m_gouraud->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gouraud.frag"));
-	m_gouraud->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/gouraud.vert"));
-	m_gouraud->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/phongLighting.shad"));
+    //GOURAUD
+    
+    m_gouraud = new Program();
+    m_gouraud->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gouraud.frag"));
+    m_gouraud->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/gouraud.vert"));
+    m_gouraud->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/phongLighting.vert"));
 
-	//PHONG
+    //PHONG
 
-	m_phong = new Program();
-	m_phong->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phong.frag"));
-	m_phong->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phongLighting.shad"));
-	m_phong->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/phong.vert"));
+    m_phong = new Program();
+    m_phong->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phong.frag"));
+    m_phong->attach(phongLighting);
+    m_phong->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/phong.vert"));
 
-	//GOOCH
-	m_gooch = new Program();
-	m_gooch->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gooch.frag"));
-	m_gooch->attach(
-	 	new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
+    //GOOCH
+    m_gooch = new Program();
+    m_gooch->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gooch.frag"));
+    m_gooch->attach(
+         new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
-	//set UNIFORMS for seleced shader
-	m_useProgram = m_flat;
+    //set UNIFORMS for seleced shader
+    m_useProgram = m_flat;
     setUniforms();
 
     // Post Processing Shader
 
     m_flush = new Program();
-	m_flush->attach(
-		new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
-	m_flush->attach(
-		new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
+    m_flush->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
+    m_flush->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
@@ -163,57 +163,57 @@ const bool Painter::initialize()
 void Painter::setUniforms()
 {
     if(m_useProgram != m_gooch)
-	{
-		m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
-		m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
-		m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,-8.0,7.5));
+    {
+        m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
+        m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
+        m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,-8.0,7.5));
         
-		m_useProgram->setUniform(LIGHTAMBIENTGLOBAL_UNIFORM, glm::vec4(0.0));
+        m_useProgram->setUniform(LIGHTAMBIENTGLOBAL_UNIFORM, glm::vec4(0.0));
 
-		glm::mat4 lightMat;
-		lightMat[0] = glm::vec4(0.0,0.0,0.0,1.0);	//ambient
-		lightMat[1] = glm::vec4(0.2,0.2,0.2,1.0);	//diffuse
-		lightMat[2] = glm::vec4(0.0,0.0,0.8,1.0);	//specular
-		lightMat[3] = glm::vec4(0.002,0.002,0.0004,1.4);	//attenuation1, attenuation2, attenuation3, shininess
-		m_useProgram->setUniform(LIGHT_UNIFORM, lightMat, false); 
+        glm::mat4 lightMat;
+        lightMat[0] = glm::vec4(0.0,0.0,0.0,1.0);    //ambient
+        lightMat[1] = glm::vec4(0.2,0.2,0.2,1.0);    //diffuse
+        lightMat[2] = glm::vec4(0.0,0.0,0.8,1.0);    //specular
+        lightMat[3] = glm::vec4(0.002,0.002,0.0004,1.4);    //attenuation1, attenuation2, attenuation3, shininess
+        m_useProgram->setUniform(LIGHT_UNIFORM, lightMat, false); 
 
-		glm::mat4 lightMat2;
-		lightMat2[0] = glm::vec4(0.0,0.0,0.0,1.0);	//ambient
-		lightMat2[1] = glm::vec4(0.1,0.1,0.1,1.0);	//diffuse
-		lightMat2[2] = glm::vec4(0.8,0.0,0.0,1.0);	//specular
-		lightMat2[3] = glm::vec4(0.002,0.002,0.0004,1.4);	//attenuation1, attenuation2, attenuation3, shininess
-	
-		m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, false); 
+        glm::mat4 lightMat2;
+        lightMat2[0] = glm::vec4(0.0,0.0,0.0,1.0);    //ambient
+        lightMat2[1] = glm::vec4(0.1,0.1,0.1,1.0);    //diffuse
+        lightMat2[2] = glm::vec4(0.8,0.0,0.0,1.0);    //specular
+        lightMat2[3] = glm::vec4(0.002,0.002,0.0004,1.4);    //attenuation1, attenuation2, attenuation3, shininess
+    
+        m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, false); 
 
-		glm::mat4 materialCoeff;
-		materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);	//ambient
-		materialCoeff[1] = glm::vec4(1.0,1.0,1.0,1.0);	//diffuse
-		materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);	//specular
-		materialCoeff[3] = glm::vec4(0,0,0,0);			//emission
+        glm::mat4 materialCoeff;
+        materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);    //ambient
+        materialCoeff[1] = glm::vec4(1.0,1.0,1.0,1.0);    //diffuse
+        materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);    //specular
+        materialCoeff[3] = glm::vec4(0,0,0,0);            //emission
 
-		m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
-	}
+        m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
+    }
 
-	else
-	{
-		m_useProgram->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(-2.0,0.0,2.0));
-	}
+    else
+    {
+        m_useProgram->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(-2.0,0.0,2.0));
+    }
 }
 
 void Painter::paint()
 {
     AbstractPainter::paint();
 
-	t_samplerByName sampler;
+    t_samplerByName sampler;
 
-	m_camera->draw(*m_useProgram, m_fboNormalz);
+    m_camera->draw(*m_useProgram, m_fboNormalz);
 
     sampler.clear();
-	sampler["source"] = m_fboNormalz;
+    sampler["source"] = m_fboNormalz;
 
-	bindSampler(sampler, *m_flush);
+    bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
-	releaseSampler(sampler);
+    releaseSampler(sampler);
 
 }
 
@@ -227,7 +227,7 @@ void Painter::resize(  //probably never called anywhere?
 
     m_fboNormalz->resize(width, height);
 
-	postShaderRelinked();
+    postShaderRelinked();
 
 }
 

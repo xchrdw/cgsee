@@ -19,7 +19,7 @@ public:
     // calls initialize if not initialized - so call this when subclassed
     virtual void paint();
 
-    virtual void setShading(char shader);
+    virtual void setShading(char shader) = 0;
 
     const QImage capture(
         AbstractGLParent & parent

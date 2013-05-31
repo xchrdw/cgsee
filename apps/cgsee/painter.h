@@ -50,16 +50,16 @@ protected:
     Group * m_group;
     ScreenQuad * m_quad;
 
-	Program * m_normalz;
-	Program * m_flat;
-	Program * m_gouraud;
-	Program * m_phong;
-	Program * m_gooch;
-	Program * m_useProgram;
+    Program * m_normalz;
+    Program * m_flat;
+    Program * m_gouraud;
+    Program * m_phong;
+    Program * m_gooch;
+    Program * m_useProgram;
     FrameBufferObject * m_fboNormalz;
-	
-	glm::vec3 camPos;
-	
+    
+    glm::vec3 camPos;
+    
     Program * m_flush;
     Camera * m_camera;
 };

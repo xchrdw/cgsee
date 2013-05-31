@@ -1,4 +1,4 @@
-#version 330
+#version 150 core
 
 
 //partly from http://www.opengl.org/sdk/docs/tutorials/TyphoonLabs/Chapter_4.pdf
