@@ -17,7 +17,7 @@ FlightNavigation::FlightNavigation(Camera * camera)
     setFromMatrix(m_viewmatrix);
 }
 
-FlightNavigation::~FlightNavigation(void)
+FlightNavigation::~FlightNavigation()
 {
     
 }

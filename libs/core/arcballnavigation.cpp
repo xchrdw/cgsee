@@ -12,7 +12,7 @@ ArcballNavigation::ArcballNavigation(Camera * camera)
 {
 }
 
-ArcballNavigation::~ArcballNavigation(void)
+ArcballNavigation::~ArcballNavigation()
 {
 }
 
@@ -37,7 +37,8 @@ void ArcballNavigation::updateArcball()
  * sphere, return the nearest point on the virtual ball surface.
  * source: http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Arcball
  */
-glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v) {
+glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v)
+{
   // normalize mouse coordinates to [-1:1]
   glm::vec3 P = glm::vec3(v.x/m_width * 2.0 - 1.0,
                           v.y/m_height * 2.0 - 1.0,
@@ -51,6 +52,15 @@ glm::vec3 ArcballNavigation::getArcballVector(glm::vec2 v) {
     }
   return P;
 }
+
+
+void ArcballNavigation::updatePanning()
+{
+    glm::vec2 delta = (m_mouse_cur - m_mouse_last);
+    glm::mat4 translate = glm::translate(glm::vec3(delta.x/500, -delta.y/500, 0));
+    m_viewmatrix = translate * m_viewmatrix;
+}
+
 
 void ArcballNavigation::updateZoom()
 {
@@ -69,6 +79,9 @@ void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
         if (m_arcball_on) {
             updateArcball();
         }
+        else if (m_panning_on) {
+            updatePanning();
+        }
         else if (m_zoom_on) {
             updateZoom();
         }
@@ -80,7 +93,8 @@ void ArcballNavigation::mouseMoveEvent(QMouseEvent * event)
 void ArcballNavigation::mousePressEvent(QMouseEvent * event)
 {
     m_arcball_on = event->button() == Qt::LeftButton;
-    m_zoom_on = event->button() == Qt::RightButton;
+    m_panning_on = event->button() == Qt::RightButton;
+    m_zoom_on = event->button() == Qt::MiddleButton;
     m_mouse_last = m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
 }
 
@@ -93,7 +107,4 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
         m_zoom_on = false;
     }
 }
-
-
-
 

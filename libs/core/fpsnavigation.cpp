@@ -18,7 +18,7 @@ FpsNavigation::FpsNavigation(Camera * camera)
     m_pitchAngle= 180 - glm::degrees( std::acos(glm::dot( m_center, m_yView) / ( glm::length(m_center) * glm::length(m_yView))));
 }
 
-FpsNavigation::~FpsNavigation(void)
+FpsNavigation::~FpsNavigation()
 {
     
 }

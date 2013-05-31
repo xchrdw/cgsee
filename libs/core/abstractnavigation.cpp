@@ -25,7 +25,7 @@ AbstractNavigation::AbstractNavigation(Camera *camera)
 }
 
 
-AbstractNavigation::~AbstractNavigation(void) 
+AbstractNavigation::~AbstractNavigation() 
 {
 }
 
@@ -65,7 +65,8 @@ void AbstractNavigation::mousePressEvent(QMouseEvent * event) { }
 void AbstractNavigation::mouseReleaseEvent(QMouseEvent * event) { }
 void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) { }
 
-void AbstractNavigation::wheelEvent(QWheelEvent *event) {
+void AbstractNavigation::wheelEvent(QWheelEvent *event)
+{
     m_fovy += (event->delta() * 0.1); //sensitivity
     m_fovy = glm::clamp(m_fovy, 0.0f, 180.0f);
     updateCamera();
@@ -109,9 +110,12 @@ void AbstractNavigation::stopTimer()
     }
 }
 
-void AbstractNavigation::timerEvent(QTimerEvent* event) {
+const int DURATION = 333.0f;
+
+void AbstractNavigation::timerEvent(QTimerEvent* event)
+{
     if (m_animation_active) {
-        m_animation_progress += TIMER_MS/333.0f;
+        m_animation_progress += TIMER_MS/DURATION;
         if (m_animation_progress >= 1) {
             m_animation_active = false;
             stopTimer();

@@ -6,7 +6,7 @@ class CGSEE_API FlightNavigation : public AbstractNavigation
 {
 public:
     FlightNavigation(Camera * camera);
-    ~FlightNavigation(void);
+    ~FlightNavigation();
     
     virtual void keyPressEvent(QKeyEvent *event) override;
     virtual void keyReleaseEvent(QKeyEvent *event) override;
