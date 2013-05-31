@@ -5,7 +5,7 @@
 #include "fileExplorer.h"
 
 
-static const QStringList nameFilters = (QStringList() << "*.obj" << "*.txt");
+static const QStringList nameFilters = (QStringList() << "");
 
 FileExplorer::FileExplorer(
 	QObject * parent)
