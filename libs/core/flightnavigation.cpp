@@ -131,7 +131,7 @@ void FlightNavigation::setFromMatrix(const glm::mat4 & view){
     
     //Extract Up Vector and Viewing direction from viewmatrix
     
-    m_up = glm::vec3(view[0][1],view[1][1],view[1][2]);
+    m_up = glm::vec3(view[0][1],view[1][1],view[2][1]);
     
     glm::vec3 lookat = glm::vec3(view[0][2],view[1][2],view[2][2]);
     
