@@ -170,6 +170,8 @@ void Viewer::on_openFileDialogAction_triggered()
     Group * scene = loader.importFromFile(fileName);
     if (!scene)
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + fileName);
-    else
+    else {
         this->painter()->assignScene(scene);
+        this->m_qtCanvas->update();
+    }
 }
