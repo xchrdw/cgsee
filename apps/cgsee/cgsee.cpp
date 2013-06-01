@@ -20,14 +20,13 @@ CGSee::CGSee(int & argc, char ** argv)
 
     AssimpLoader loader;
     
-    m_painter = new Painter(loader.importFromFile("data/mario.dae"));
+    m_painter = new Painter();
+    // m_painter->assignScene(loader.importFromFile("data/mario.dae"));
     m_viewer->setPainter(m_painter);
 
     // Start
 
     m_viewer->show();
-    
-    m_painter->assignScene(loader.importFromFile("data/suzanne.obj"));
 }
 
 CGSee::~CGSee()
