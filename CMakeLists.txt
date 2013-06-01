@@ -101,8 +101,8 @@ include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLM_INCLUDE_PATH}
     ${GLEW_INCLUDE_PATH}
-    ${CMAKE_SOURCE_DIR}/libs
     ${ASSIMP_INCLUDE_PATH})
+    ${CMAKE_SOURCE_DIR}/libs
 
 set(CGSEE_LIB_FOLDER "CGSee Libs")
 set(CGSEE_APP_FOLDER "CGsee Apps")
