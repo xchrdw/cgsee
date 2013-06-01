@@ -5,6 +5,7 @@
 #include <QOpenGLContext>
 #include <QSettings>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "ui_viewer.h"
 
@@ -16,6 +17,7 @@
 #include <core/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
+#include <core/assimploader.h>
 
 
 namespace 
@@ -160,5 +162,11 @@ void Viewer::on_reloadAllShadersAction_triggered()
 
 void Viewer::on_openFileDialogAction_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Image Files (*.png *.jpg *.bmp)"));
+    AssimpLoader loader;
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), loader.loadableTypes().join(";;"));
+    Group * scene = loader.importFromFile(fileName);
+    if (!scene)
+        QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + fileName);
+    else
+        this->painter()->assignScene(scene);
 }
