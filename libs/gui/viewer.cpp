@@ -164,6 +164,9 @@ void Viewer::on_openFileDialogAction_triggered()
 {
     AssimpLoader loader;
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), loader.loadableTypes().join(";;"));
+    if (fileName.isEmpty())
+        return;
+    
     Group * scene = loader.importFromFile(fileName);
     if (!scene)
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + fileName);
