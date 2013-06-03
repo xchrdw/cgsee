@@ -7,10 +7,8 @@ IF(X64 AND NOT APPLE)
 
     FIND_PATH(ASSIMP_INCLUDE_PATH assimp/Importer.hpp
         ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0-win64/include
-        # $ENV{TMR_HOME}/../3rdparty/glew-1.9.0-win64/include
         $ENV{ASSIMP_DIR}/include
         $ENV{ASSIMP_HOME}/include
-        # $ENV{PROGRAMFILES}/GLEW/include
         /usr/include
         /usr/local/include
         /sw/include
@@ -21,7 +19,6 @@ IF(X64 AND NOT APPLE)
         NAMES assimp
         PATHS
         ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0-win64/lib
-        # $ENV{TMR_HOME}/../3rdparty/glew-1.9.0-win64/lib
         $ENV{ASSIMP_DIR}/lib
         $ENV{ASSIMP_HOME}/lib
         /usr/lib64
@@ -34,10 +31,8 @@ ELSE()
     
     FIND_PATH( ASSIMP_INCLUDE_PATH assimp/Importer.hpp
         ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0/include
-        # $ENV{TMR_HOME}/../3rdparty/glew-1.7.0/include
         $ENV{ASSIMP_DIR}/include
         $ENV{ASSIMP_HOME}/include
-        # $ENV{PROGRAMFILES}/GLEW/include
         /usr/include
         /usr/local/include
         /sw/include
@@ -48,7 +43,6 @@ ELSE()
         NAMES assimp
         PATHS
         ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0/lib
-        # $ENV{TMR_HOME}/../3rdparty/glew-1.7.0/lib
         $ENV{ASSIMP_DIR}/lib
         $ENV{ASSIMP_HOME}/lib
         /usr/lib
