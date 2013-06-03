@@ -30,10 +30,10 @@ protected:
     
 protected:
     Group * parseNode(const aiScene & scene,
-        const QVector<PolygonalDrawable *> &drawables, const aiNode & node) const;
+        const QList<PolygonalDrawable *> &drawables, const aiNode & node) const;
 
-    const QVector<PolygonalDrawable *> * parseMeshes(
-        aiMesh ** meshes, const unsigned int numMeshes) const;
+    void parseMeshes(aiMesh ** meshes,
+        const unsigned int numMeshes, QList<PolygonalDrawable *> & drawables) const;
 
     PolygonalDrawable * parseMesh(const aiMesh & mesh) const;
     

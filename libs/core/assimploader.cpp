@@ -28,7 +28,7 @@ QStringList AssimpLoader::loadableTypes() const
         "AutoCAD DXF (*.dxf)",
         "IFC-STEP, Industry Foundation Classes (*.ifc)",
         "Neutral File Format (*.nff)",
-        "Sense8 WorldToolkit (*.nff)",
+        "Sense8 WorldToolkit (*.wtk)",
         "Valve Model (*.smd *.vta)",
         "Quake I (*.mdl)",
         "Quake II (*.md2)",
@@ -85,17 +85,19 @@ Group * AssimpLoader::importFromFile(const QString & filePath) const
         return nullptr;
     }
 
-    const QVector<PolygonalDrawable *> * drawables = parseMeshes(scene->mMeshes, scene->mNumMeshes);
-    Group * group = parseNode(*scene, *drawables, *(scene->mRootNode));
+    QList<PolygonalDrawable *> drawables;
+    drawables.reserve(scene->mNumMeshes);
+    this->parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables);
     
-    delete drawables;
+    Group * group = parseNode(*scene, drawables, *(scene->mRootNode));
+    
     m_importer->FreeScene();
     
     return group;
 }
 
 Group * AssimpLoader::parseNode(const aiScene & scene,
-    const QVector<PolygonalDrawable *> &drawables, const aiNode & node) const
+    const QList<PolygonalDrawable *> &drawables, const aiNode & node) const
 {
     Group * group = new Group(node.mName.C_Str());
 
@@ -117,14 +119,11 @@ Group * AssimpLoader::parseNode(const aiScene & scene,
     return group;
 }
 
-const QVector<PolygonalDrawable *> * AssimpLoader::parseMeshes(
-    aiMesh ** meshes, const unsigned int numMeshes) const
+void AssimpLoader::parseMeshes(aiMesh **meshes,
+    const unsigned int numMeshes, QList<PolygonalDrawable *> &drawables) const
 {
-    QVector<PolygonalDrawable *> * drawables = new QVector<PolygonalDrawable *>(numMeshes);
     for (int i = 0; i < numMeshes; i++)
-        drawables->insert(i, parseMesh(*meshes[i]));
-
-    return drawables;
+        drawables.insert(i, parseMesh(*meshes[i]));
 }
 
 PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
