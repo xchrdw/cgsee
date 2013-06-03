@@ -173,6 +173,7 @@ int VertexCacheOptimizer::findGreatestTriangle(const std::vector<Triangle> &tria
 
 void VertexCacheOptimizer::applyOptimization(t_uints &indices, const uint numVertices)
 {
+    int scanPos = 0;
     std::vector<Vertex> vertices(numVertices);
     std::vector<Triangle> triangles(indices.size() / 3);
     std::vector<int> cache(MAX_SIZE_VERTEX_CACHE + 3, -1);
@@ -199,7 +200,12 @@ void VertexCacheOptimizer::applyOptimization(t_uints &indices, const uint numVer
 
         //if no greatestTriangle was found, iterate over all triangles
         if (greatestTriangleIndex == -1) {
-            greatestTriangleIndex = findGreatestTriangle(triangles);
+            for (;scanPos < triangles.size(); scanPos++) {
+                if (!triangles[scanPos].addedToDrawList) {
+                    greatestTriangleIndex = scanPos;
+                    break;
+                }
+            }
         }
     }
 }
