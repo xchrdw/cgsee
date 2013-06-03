@@ -13,7 +13,9 @@ protected:
             cachePosition(-1),
             numTriangles(0),
             numTrianglesToDo(0)
-        {}
+        {
+            triangles.reserve(10);
+        }
 
         int cachePosition;
         float score;
@@ -25,13 +27,16 @@ protected:
     struct Triangle {
         Triangle() : 
             addedToDrawList(false)
-        {}
+        {
+            vertices.reserve(3);
+        }
 
         bool addedToDrawList;
         float score;
         std::vector<uint>vertices;
     };
 
+    static void initScoreTables();
     static void initLists(const t_uints &indices, std::vector<Vertex> &vertices, std::vector<Triangle> &triangles);
     static void initScores(std::vector<Vertex> &vertices, std::vector<Triangle> &triangles);
     static float calculateVertexScore(const Vertex &vertex);
