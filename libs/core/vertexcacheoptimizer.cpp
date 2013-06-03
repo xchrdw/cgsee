@@ -9,13 +9,29 @@ namespace
     const float VALENCE_BOOST_SCALE = 2.0f;
     const float VALENCE_BOOST_POWER = 0.5f;
     const unsigned MAX_SIZE_VERTEX_CACHE = 32;
+    const unsigned VALENCE_BOOST_TABLE_SIZE = 32;
     const float SCALER = 1.0f / (MAX_SIZE_VERTEX_CACHE - 3);
+    float cacheScores[MAX_SIZE_VERTEX_CACHE];
+    float valenceScores[VALENCE_BOOST_TABLE_SIZE];
 }
 
 
 inline void swap(int& a, int& b)
 {
     a ^= b ^= a ^= b;
+}
+
+void VertexCacheOptimizer::initScoreTables() {
+    for (uint i = 0; i < VALENCE_BOOST_TABLE_SIZE; ++i) {
+        valenceScores[i] =  powf(i, -VALENCE_BOOST_POWER) * VALENCE_BOOST_SCALE;
+    }
+
+    cacheScores[0] = cacheScores[1] = cacheScores[2] = LAST_TRI_SCORE;
+    for (int i = 3; i < MAX_SIZE_VERTEX_CACHE; ++i) {
+        float score = 1.0f - (i - 3) * SCALER;
+        score = powf(score, CACHE_DECAY_POWER);
+        cacheScores[i] = score;
+    }
 }
 
 void VertexCacheOptimizer::initLists(const t_uints &indices, std::vector<Vertex> &vertices, std::vector<Triangle> &triangles)
@@ -52,18 +68,13 @@ float VertexCacheOptimizer::calculateVertexScore(const Vertex &vertex) {
         return -1.0f;
 
     float score(0.0f);
-    if (vertex.cachePosition >= 0) {
-        if (vertex.cachePosition < 3)
-            score = LAST_TRI_SCORE;
-        else {
-            score = 1.0f - (vertex.cachePosition - 3) * SCALER;
-            score = powf(score, CACHE_DECAY_POWER);
-        }
-    }
+    if (vertex.cachePosition >= 0)
+        score = cacheScores[vertex.cachePosition];
 
-    float valenceBoost = powf(vertex.numTrianglesToDo, -VALENCE_BOOST_POWER);
-
-    score += VALENCE_BOOST_SCALE * valenceBoost;
+    if (vertex.numTrianglesToDo < VALENCE_BOOST_TABLE_SIZE)
+        score += valenceScores[vertex.numTrianglesToDo];
+    else 
+        score += powf(vertex.numTrianglesToDo, -VALENCE_BOOST_POWER) * VALENCE_BOOST_SCALE;
 
     return score;
 }
@@ -98,9 +109,8 @@ void VertexCacheOptimizer::pushVerticesToStack(std::vector<Vertex> &vertices, co
         uint currentVertexIndex = triangles[greatestTriangleIndex].vertices[vertexIndex];
         int cachePosition = vertices[currentVertexIndex].cachePosition;
         //if we add a new element to the cache we need to move all elements in it
-        if (cachePosition == -1) {
+        if (cachePosition == -1)
             cachePosition = MAX_SIZE_VERTEX_CACHE + 3 - 1;
-        }
         //move all elements from index 1 to cachePosition
         for (int i = cachePosition; i > 0; --i)   {
             cache[i] = cache[i - 1];
@@ -109,7 +119,7 @@ void VertexCacheOptimizer::pushVerticesToStack(std::vector<Vertex> &vertices, co
         }
         //move the new element to the top of the cache
         cache[0] = currentVertexIndex;
-        vertices[cache[0]].cachePosition = 0;
+        vertices[currentVertexIndex].cachePosition = 0;
     }
 }
 
@@ -124,12 +134,13 @@ void VertexCacheOptimizer::updateCacheAndFindGreatestTriangle(std::vector<Vertex
         if (cache[v] == -1)
             break;
         Vertex& currentVertex = vertices[cache[v]];
-        const float oldScore = currentVertex.score;
         //remove overhang
         if(v >= MAX_SIZE_VERTEX_CACHE) {
             currentVertex.cachePosition = -1;
             cache[v] = -1;
         }
+
+        const float oldScore = currentVertex.score;
         currentVertex.score = calculateVertexScore(currentVertex);
         //update the scores of this vertices triangles
         for (uint t = 0; t < currentVertex.numTrianglesToDo; ++t)  {
@@ -165,6 +176,8 @@ void VertexCacheOptimizer::applyOptimization(t_uints &indices, const uint numVer
     std::vector<Vertex> vertices(numVertices);
     std::vector<Triangle> triangles(indices.size() / 3);
     std::vector<int> cache(MAX_SIZE_VERTEX_CACHE + 3, -1);
+
+    initScoreTables();
 
     initLists(indices, vertices, triangles);
 
