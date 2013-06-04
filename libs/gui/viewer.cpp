@@ -1,4 +1,6 @@
 
+#include <GL/glew.h>
+
 #include <QOpenGLContext>
 #include <QSettings>
 
@@ -8,6 +10,7 @@
 #include "canvas.h"
 #include "abstractpainter.h"
 
+#include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 
 
@@ -124,4 +127,9 @@ AbstractPainter * Viewer::painter()
         return nullptr;
 
     return m_qtCanvas->painter();
+}
+
+void Viewer::on_reloadAllShadersAction_triggered()
+{
+    FileAssociatedShader::reloadAll();
 }
