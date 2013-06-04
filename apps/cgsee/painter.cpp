@@ -110,13 +110,6 @@ void Painter::paint()
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
-
-    static glm::vec3 eye(0.f, 0.f,-2.f);
-
-    m_camera->setView(glm::lookAt(
-         m_eyeRotate * eye , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
-
-    m_eyeRotate = (glm::mat3)glm::rotate<float>(glm::mat4(m_eyeRotate), 0.05, glm::vec3(0, 1, 0));
 }
 
 void Painter::resize(
