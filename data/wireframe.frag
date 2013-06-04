@@ -1,4 +1,4 @@
-#version 150
+#version 150 core
 
 in float edge_dist[3];
 
