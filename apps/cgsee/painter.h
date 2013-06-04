@@ -4,7 +4,7 @@
 #include <QString>
 #include <QMap>
 
-#include <gui/abstractpainter.h>
+#include <core/abstractpainter.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 
@@ -25,9 +25,10 @@ public:
     virtual void resize(
         const int width
     ,   const int height);
-
+     
 protected:
     virtual const bool initialize();
+    virtual Camera * camera();
 
 protected:
     void postShaderRelinked();
@@ -42,7 +43,6 @@ protected:
         const t_samplerByName & sampler);
 
 protected:
-    Camera * m_camera;
     Group * m_group;
     ScreenQuad * m_quad;
 
@@ -50,6 +50,6 @@ protected:
     FrameBufferObject * m_fboNormalz;
 
     Program * m_flush;
-
+    Camera * m_camera;
     glm::mat3 m_eyeRotate;
 };
