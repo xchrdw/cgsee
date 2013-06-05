@@ -24,6 +24,10 @@ FileExplorer::FileExplorer(
 	QObject::connect(
 		this, SIGNAL(customContextMenuRequested(const QPoint &)),
 		this, SLOT(showContextMenu(const QPoint &)));
+
+	QObject::connect(
+        this, SIGNAL(activated(const QModelIndex &)),
+        this, SLOT(emitActivatedItem(const QModelIndex &)));
 };
 
 FileExplorer::~FileExplorer()
@@ -55,11 +59,11 @@ void FileExplorer::setFilter(const QDir::Filters & filters)
 }
 
 
-void FileExplorer::callSetRoot(const QModelIndex & index)
-{
-	QString rootPath = m_model->fileInfo(index).absoluteFilePath();
-	this->setRoot(rootPath);
-}
+// void FileExplorer::callSetRoot(const QModelIndex & index)
+// {
+// 	QString rootPath = m_model->fileInfo(index).absoluteFilePath();
+// 	this->setRoot(rootPath);
+// }
 
 void FileExplorer::setClickedFile(const QModelIndex & index)
 {
@@ -70,6 +74,18 @@ void FileExplorer::showContextMenu(const QPoint & point)
 {
 	this->setClickedFile(this->indexAt(point));
 	m_menu->exec(this->mapToGlobal(point));
+}
+
+void FileExplorer::emitActivatedItem(const QModelIndex & index)
+{
+	QString path = m_model->fileInfo(index).absoluteFilePath();
+
+	if (m_model->fileInfo(index).isDir())
+	{
+		setRoot(path);
+	} else {
+		emit activatedItem(path);
+	}
 }
 
 

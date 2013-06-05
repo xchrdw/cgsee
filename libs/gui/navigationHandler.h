@@ -27,10 +27,9 @@ public:
 
 public slots:
     void triggeredLoadFile(const bool & triggered);
-    void activatedItem(const QModelIndex & index);
+    void loadFile(const QString & path);
 
 protected:
-    void loadFile(const QModelIndex & index);
 
     Viewer * m_viewer;
 

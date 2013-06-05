@@ -17,6 +17,10 @@ FileNavigator::FileNavigator(
 	this->setColumnHidden(1, true);
 	this->setColumnHidden(2, true);
 	this->setColumnHidden(3, true);
+
+	QObject::connect(
+        this, SIGNAL(clicked(const QModelIndex &)),
+        this, SLOT(emitClickedDirectory(const QModelIndex &)));
 };
 
 void FileNavigator::setRoot(const QString & rootPath)
@@ -32,4 +36,10 @@ void FileNavigator::setFilter(const QDir::Filters & filters)
 FileNavigator::~FileNavigator()
 {
 	delete m_model;
+}
+
+void FileNavigator::emitClickedDirectory(const QModelIndex & index)
+{
+	QString path = m_model->fileInfo(index).absoluteFilePath();
+	emit clickedDirectory(path);
 }

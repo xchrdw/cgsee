@@ -27,15 +27,17 @@ public:
 
 	void setFilter(const QDir::Filters & filters);
 
+signals:
+	void activatedItem(const QString & path);
 
 public slots:
-	void callSetRoot(const QModelIndex & index);
+	// void callSetRoot(const QModelIndex & index);
+	void emitActivatedItem(const QModelIndex & index);
 	void setClickedFile(const QModelIndex & index);
 	void showContextMenu(const QPoint & point);
-
-protected:
 	void setRoot(QString rootPath);
 
+protected:
 	QFileSystemModel * m_model;
 	QMenu * m_menu;
 

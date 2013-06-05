@@ -34,13 +34,14 @@ NavigationHandler::NavigationHandler(
 
     m_explorer->menu()->addAction(QString("Open"), this, SLOT(triggeredLoadFile(const bool)));
 
+    
     QObject::connect(
-        m_navigator, SIGNAL(clicked(const QModelIndex)),
-        m_explorer, SLOT(callSetRoot(const QModelIndex)));
+        m_navigator, SIGNAL(clickedDirectory(const QString &)),
+        m_explorer, SLOT(setRoot(const QString &)));
 
     QObject::connect(
-        m_explorer, SIGNAL(activated(const QModelIndex)),
-        this, SLOT(activatedItem(const QModelIndex)));
+        m_explorer, SIGNAL(activatedItem(const QString &)),
+        this, SLOT(loadFile(const QString &)));
 }
 
 NavigationHandler::~NavigationHandler()
@@ -53,22 +54,11 @@ NavigationHandler::~NavigationHandler()
 
 void NavigationHandler::triggeredLoadFile(const bool & triggered)
 {
-    this->activatedItem(m_explorer->clickedFile());
+    // this->activatedItem(m_explorer->clickedFile());
 }
 
-void NavigationHandler::activatedItem(const QModelIndex & index)
+void NavigationHandler::loadFile(const QString & path)
 {
-    if (m_explorer->model()->fileInfo(index).isDir())
-    {
-        m_explorer->callSetRoot(index);
-    } else {
-        loadFile(index);
-    }
-}
-
-void NavigationHandler::loadFile(const QModelIndex & index)
-{
-    QString filePath = m_explorer->model()->fileInfo(index).absoluteFilePath();
-    Group * scene = m_loader->importFromFile(filePath);
+    Group * scene = m_loader->importFromFile(path);
     m_viewer->painter()->assignScene(scene);
 }

@@ -23,6 +23,12 @@ public:
 
 	void setFilter(const QDir::Filters & filters);
 
+signals:
+	void clickedDirectory(const QString & path);
+
+public slots:
+	void emitClickedDirectory(const QModelIndex & index);
+
 protected:
 	void setRoot(const QString & rootPath);
 
