@@ -1,10 +1,12 @@
-
 #pragma once
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <QString>
 #include <QMap>
 
 #include <core/abstractpainter.h>
+
 
 
 class Camera;
@@ -21,16 +23,19 @@ public:
 
     virtual void paint();
 
+    virtual void setShading(char shader);
+
     virtual void resize(
         const int width
     ,   const int height);
-     
+
 protected:
     virtual const bool initialize();
     virtual Camera * camera();
 
 protected:
     void postShaderRelinked();
+    void setUniforms();
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 
@@ -46,7 +51,17 @@ protected:
     ScreenQuad * m_quad;
 
     Program * m_normalz;
+    Program * m_wireframe;
+    Program * m_primitiveWireframe;
+    Program * m_solidWireframe;
+    Program * m_flat;
+    Program * m_gouraud;
+    Program * m_phong;
+    Program * m_gooch;
+    Program * m_useProgram;
     FrameBufferObject * m_fboNormalz;
+
+    glm::vec3 camPos;
 
     Program * m_flush;
     Camera * m_camera;

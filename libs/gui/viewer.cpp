@@ -148,3 +148,23 @@ void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
 }
+
+void Viewer::on_phongShadingAction_triggered()
+{
+    (m_qtCanvas->painter())->setShading('p');
+}
+
+void Viewer::on_gouraudShadingAction_triggered()
+{
+    (m_qtCanvas->painter())->setShading('g');
+}
+
+void Viewer::on_flatShadingAction_triggered()
+{
+    (m_qtCanvas->painter())->setShading('f');
+}
+
+void Viewer::on_goochShadingAction_triggered()
+{
+    (m_qtCanvas->painter())->setShading('o');
+}

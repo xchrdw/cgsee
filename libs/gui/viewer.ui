@@ -98,10 +98,21 @@
     <addaction name="separator"/>
     <addaction name="preferencesAction"/>
    </widget>
+   <widget class="QMenu" name="shadingMenu">
+    <property name="title">
+     <string>&amp;Shading</string>
+    </property>
+    <addaction name="flatShadingAction"/>
+    <addaction name="gouraudShadingAction"/>
+    <addaction name="phongShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="goochShadingAction"/>
+   </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
+   <addaction name="shadingMenu"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -396,6 +407,41 @@
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="phongShadingAction">
+   <property name="text">
+    <string>&amp;Phong Shading</string>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F12</string>
+   </property>
+  </action>
+  <action name="flatShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Flat Shading</string>
+   </property>
+  </action> 
+  <action name="gouraudShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Gouraud Shading</string>
+   </property>
+  </action>
+  <action name="goochShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>G&amp;ooch Shading</string>
    </property>
   </action>
  </widget>
