@@ -22,6 +22,9 @@ set(SOURCES
     datacore/attributeiterator_impl.inl
     datacore/vertexlist.h
     datacore/vertexlist.cpp
+    datacore/vertexindexlist.h
+    datacore/vertexindexlist.cpp
+    datacore/vertexindexlist_impl.inl
     datacore/typefunctions.h
     datacore/typefunctions.cpp
     datacore/registertypeshere.h
