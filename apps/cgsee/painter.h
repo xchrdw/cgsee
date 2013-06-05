@@ -6,7 +6,6 @@
 #include <QMap>
 
 #include <core/abstractpainter.h>
-#include <glm/gtc/matrix_transform.hpp>
 
 
 
