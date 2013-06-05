@@ -9,7 +9,10 @@
 
 #include "registertypeshere.h"
 
-const int StaticAttributeStorageSize = 48;
+/// Determines how much memory (in bytes) will be used for attributes of a 
+/// vertex. 
+/// == sizeof(AttributeStorage)
+const int StaticAttributeStorageSize = 64;
 
 // describes layout of vertex attributes in a storage.
 typedef struct AttributeDescriptor
@@ -36,7 +39,7 @@ class VertexList;
 
 // A vertex (and everything really) can be described by its attributes.
 // This class provides a storage for them, but it doesn't memorize the right layout.
-// Which is not needed anyway, as most of the times many vertecies have same attribute types.
+// Which is not needed anyway, as most of the times many vertices have same attribute types.
 class CGSEE_API AttributeStorage final
 {
 public:
@@ -65,22 +68,41 @@ public:
     // when something is wrong
     template <class RetType>
     RetType* getData(const t_AttrDesc &loc); 
+
+    template <class RetType>
+    RetType* getDataUnchecked(const t_AttrDesc &loc);
+
+    template <class RetType>
+    bool checkDataType(const t_AttrDesc &loc);
 protected:
     t_StorageType m_storage;
     //unsigned int m_storageSize;
-    bool m_initialized;
+    //bool m_initialized;
 
     //mutable unsigned int * m_useCount;
     QPointer<VertexList> m_owner;
 
     void copyStorage(t_StorageType const& otherStorage);
 };
+template <typename T> class AttributeIterator;
 
 class CGSEE_API VertexList: public DataBlock
 {
     Q_OBJECT
 public:
     typedef VertexList * t_StandardPointer;
+
+    template <typename T>
+    struct const_iterator
+    {
+        typedef AttributeIterator<const T> type;
+    };
+
+    template <typename T>
+    struct iterator
+    {
+        typedef AttributeIterator<T> type;
+    };
 
     ~VertexList();
 
@@ -102,6 +124,18 @@ public:
         ,   const QString &attrName
         ,   std::function<void (int, T&)> setter);
 
+    template <class T>
+    typename iterator<T>::type begin(const QString &attrName);
+
+    template <class T>
+    typename const_iterator<T>::type begin(const QString &attrName) const;
+
+    template <class T>
+    typename iterator<T>::type end(const QString &attrName);
+
+    template <class T>
+    typename const_iterator<T>::type end(const QString &attrName) const;
+
     void createNewVertices(unsigned int amount);
 
     unsigned int size() const;
@@ -111,6 +145,7 @@ public:
 
     friend class AttributeStorage;
     friend class DataBlock;
+    template <typename T> friend class AttributeIterator; 
 protected:
     explicit VertexList(QObject* parent = nullptr);
 
@@ -134,7 +169,8 @@ public:
     void setVertexList(t_VertexListP associatedList);
     QVector<t_indexType> const& getIndices() const;
     void setSingleIndex(unsigned int pos, t_indexType const vindex);
-    void setMultipleIndices(unsigned int start, unsigned int end, std::function<t_indexType(unsigned int)> initFunc);
+    void setMultipleIndices(unsigned int start, unsigned int end
+        ,   std::function<t_indexType(unsigned int)> initFunc);
     
     // Calls the same function from VertexList
     template <class T>
@@ -171,3 +207,4 @@ protected:
 typedef VertexIndexList::t_StandardPointer t_VertexIndexListP;
 
 #include "vertexlist_impl.inl"
+#include "attributeiterator.h"

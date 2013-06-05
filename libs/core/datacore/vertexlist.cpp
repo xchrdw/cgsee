@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <cassert>
 
 #include "typefunctions.h"
 #include "vertexlist.h"
@@ -22,32 +22,25 @@ AttributeSpec::AttributeSpec(const QString &name, const QString &type):
     
 }
 
-AttributeStorage::AttributeStorage():
-    m_initialized(false)
+AttributeStorage::AttributeStorage()
 {
+
 }
 
 AttributeStorage::AttributeStorage(const AttributeStorage& rhs):
     m_owner(rhs.m_owner)
-,   m_initialized(rhs.m_initialized)    
 {
-    if (rhs.m_initialized)
-    {
-        copyStorage(rhs.m_storage);
-    }
+    copyStorage(rhs.m_storage);
 }
 
 AttributeStorage::AttributeStorage(AttributeStorage &&rhs):
     m_owner(rhs.m_owner)
-,   m_initialized(rhs.m_initialized) 
 {
-    if(m_initialized)
-        copyStorage(rhs.m_storage);
+    copyStorage(rhs.m_storage);
 }
 
 AttributeStorage::AttributeStorage(VertexList &owner):
     m_owner(&owner)
-,   m_initialized(false)
 {
     initialize(owner);
 }
@@ -55,30 +48,20 @@ AttributeStorage::AttributeStorage(VertexList &owner):
 AttributeStorage::~AttributeStorage()
 {
     if (m_owner)
-    {
         runDestructors(m_owner->getAttrMap());
-    }
-    else
-        //something bad has happened
-        qWarning(QObject::tr("Destroying Attribute storage with objects in it intact. Potential leak. In %1, line %2")
-            .arg(__FILE__)
-            .arg(__LINE__)
-            .toLocal8Bit());
 }
 
 const AttributeStorage & AttributeStorage::operator=(const AttributeStorage &rhs)
 {
     if (this == &rhs) // NOTE: perhaps not needed, but it is in some cases
         return *this;
-    m_initialized = rhs.m_initialized;
-    if (m_initialized)
-        copyStorage(rhs.m_storage);
+    m_owner = rhs.m_owner;
+    copyStorage(rhs.m_storage);
     return *this;
 }
 
 void AttributeStorage::initialize(VertexList &owner)
 {
-    if (m_initialized) return;
     unsigned int memoryNeeded = 0;
     const t_AttrMap &attrMap = owner.getAttrMap();
 
@@ -93,17 +76,14 @@ void AttributeStorage::initialize(VertexList &owner)
         if (attr.size + attr.location <= StaticAttributeStorageSize)
             attr.factory->construct(m_storage + attr.location);
     }
-    m_initialized = true;
 }
 
 void AttributeStorage::runDestructors(const t_AttrMap &attrMap)
 {
-    if (m_initialized)
-    {
-        for (const t_AttrDesc & attr: attrMap)
-            if (attr.size + attr.location <= StaticAttributeStorageSize)
-                attr.factory->destruct(m_storage + attr.location);
-    }
+    for (const t_AttrDesc & attr: attrMap)
+        if (attr.size + attr.location <= StaticAttributeStorageSize)
+            attr.factory->destruct(m_storage + attr.location);
+    m_owner = nullptr;
 }
 
 void AttributeStorage::copyStorage(t_StorageType const& otherStorage)
@@ -128,7 +108,9 @@ VertexList::~VertexList()
     if (m_initialized)
     {
         for (AttributeStorage &stor: m_vertices)
+        {
             stor.runDestructors(m_attrLayout);
+        }
     }
 }
 

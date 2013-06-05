@@ -18,6 +18,8 @@ set(SOURCES
 
     datacore/abstractdata.h
     datacore/abstractdata.cpp
+    datacore/attributeiterator.h
+    datacore/attributeiterator_impl.inl
     datacore/vertexlist.h
     datacore/vertexlist.cpp
     datacore/typefunctions.h

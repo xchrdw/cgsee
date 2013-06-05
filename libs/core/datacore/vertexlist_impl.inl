@@ -3,21 +3,39 @@
 template <class RetType>
 RetType * AttributeStorage::getData(const t_AttrDesc & loc)
 {
-    if (loc.size + loc.location > StaticAttributeStorageSize)
-        return nullptr;
     unsigned char* resultPtr = m_storage + loc.location;
+    if (checkDataType<RetType>(loc))
+        return reinterpret_cast<RetType*> (resultPtr);
+
+    return nullptr;
+}
+
+template <class RetType>
+RetType * AttributeStorage::getDataUnchecked(const t_AttrDesc & loc)
+{
+    unsigned char* resultPtr = m_storage + loc.location;
+
+    return reinterpret_cast<RetType*> (resultPtr);
+}
+
+template <class RetType>
+bool AttributeStorage::checkDataType(const t_AttrDesc & loc)
+{
+    if (loc.size + loc.location > StaticAttributeStorageSize)
+        return false;
     if (nullptr == loc.typeInfo)
     {
         if (loc.typeId == qMetaTypeId<RetType>())
-            return reinterpret_cast<RetType*> (resultPtr);
+            return true;
         else
-            return nullptr;
+            return false;
     }
 
+    unsigned char* resultPtr = m_storage + loc.location;
     if (typeid(resultPtr) != *loc.typeInfo)
-        return nullptr;
+        return false;
 
-    return reinterpret_cast<RetType*> (resultPtr);
+    return true;
 }
 
 template <class RetType>
@@ -76,6 +94,50 @@ void VertexList::setVertexAttributes(int startIndex, int endIndex, const QString
         assert (temp != nullptr);
         setter(i, *temp);
     }
+}
+
+template <class T>
+typename VertexList::const_iterator<T>::type 
+    VertexList::end( const QString &attrName ) const
+{
+    typedef typename VertexList::const_iterator<T>::type return_type;
+
+    return return_type();
+}
+
+template <class T>
+typename VertexList::iterator<T>::type 
+    VertexList::end( const QString &attrName )
+{
+    typedef typename VertexList::iterator<T>::type return_type;
+
+    return return_type();
+}
+
+template <class T>
+typename VertexList::const_iterator<T>::type 
+    VertexList::begin( const QString &attrName ) const
+{
+    typedef typename VertexList::const_iterator<T>::type return_type;
+
+    assert(m_attrLayout.contains(attrName));
+    return_type iter;
+    iter._initialize(this, 0, m_attrLayout[attrName]);
+
+    return iter;
+}
+
+template <class T>
+typename VertexList::iterator<T>::type 
+    VertexList::begin( const QString &attrName )
+{
+    typedef typename VertexList::iterator<T>::type return_type;
+
+    assert(m_attrLayout.contains(attrName));
+    return_type iter;
+    iter._initialize(this, 0, m_attrLayout[attrName]);
+
+    return iter;
 }
 
 template <class T>
