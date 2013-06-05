@@ -133,7 +133,7 @@ const bool Painter::initialize()
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe.frag"));
     m_wireframe->attach(m_wireframeShader);
 
-    //Primtive Wireframe
+    //Primitive Wireframe
     m_primitiveWireframe = new Program();
     m_primitiveWireframe->attach(
         new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/primitiveWireframe.geo"));
@@ -189,8 +189,8 @@ const bool Painter::initialize()
     m_gooch->attach(
          new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
-    //set UNIFORMS for seleced shader
-    m_useProgram = m_primitiveWireframe;
+    //set UNIFORMS for selected shader
+    m_useProgram = m_flat;
     setUniforms();
 
     // Post Processing Shader
