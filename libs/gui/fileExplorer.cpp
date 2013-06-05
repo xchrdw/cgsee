@@ -5,7 +5,6 @@
 #include "fileExplorer.h"
 
 
-static const QStringList nameFilters = (QStringList() << "");
 
 FileExplorer::FileExplorer(
 	QObject * parent)
@@ -20,7 +19,6 @@ FileExplorer::FileExplorer(
 	setFilter(QDir::NoDotAndDotDot | QDir::Files);
 	setRoot(QDir::homePath());
 
-	m_model->setNameFilters(nameFilters);
 	m_model->setNameFilterDisables(false);
 
 	QObject::connect(
