@@ -27,9 +27,11 @@ public:
 
 public slots:
     void triggeredLoadFile(const bool & triggered);
-    void loadFile(const QModelIndex & index);
+    void activatedItem(const QModelIndex & index);
 
 protected:
+    void loadFile(const QModelIndex & index);
+
     Viewer * m_viewer;
 
     QDockWidget * m_dockLeft;

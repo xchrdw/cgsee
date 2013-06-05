@@ -40,7 +40,7 @@ NavigationHandler::NavigationHandler(
 
     QObject::connect(
         m_explorer, SIGNAL(activated(const QModelIndex)),
-        this, SLOT(loadFile(const QModelIndex)));
+        this, SLOT(activatedItem(const QModelIndex)));
 }
 
 NavigationHandler::~NavigationHandler()
@@ -53,7 +53,17 @@ NavigationHandler::~NavigationHandler()
 
 void NavigationHandler::triggeredLoadFile(const bool & triggered)
 {
-    this->loadFile(m_explorer->clickedFile());
+    this->activatedItem(m_explorer->clickedFile());
+}
+
+void NavigationHandler::activatedItem(const QModelIndex & index)
+{
+    if (m_explorer->model()->fileInfo(index).isDir())
+    {
+        m_explorer->callSetRoot(index);
+    } else {
+        loadFile(index);
+    }
 }
 
 void NavigationHandler::loadFile(const QModelIndex & index)
