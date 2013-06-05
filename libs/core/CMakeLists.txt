@@ -16,8 +16,8 @@ set(SOURCES
     abstractpainter.h
     abstractpainter.cpp
 
-    datacore/abstractdata.h
-    datacore/abstractdata.cpp
+    datacore/datablock.h
+    datacore/datablock.cpp
     datacore/attributeiterator.h
     datacore/attributeiterator_impl.inl
     datacore/vertexlist.h
@@ -26,7 +26,7 @@ set(SOURCES
     datacore/typefunctions.cpp
     datacore/registertypeshere.h
     datacore/vertexlist_impl.inl
-    datacore/abstractdata_impl.inl
+    datacore/datablock_impl.inl
     abstracttimer.h
     autotimer.h
     autotimer.cpp
