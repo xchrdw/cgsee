@@ -16,7 +16,7 @@ FileExplorer::FileExplorer(
 	setModel(m_model);
 	setContextMenuPolicy(Qt::CustomContextMenu);
 
-	setFilter(QDir::NoDotAndDotDot | QDir::Files);
+	setFilter(QDir::NoDot | QDir::Files | QDir::AllDirs);
 	setRoot("");
 
 	m_model->setNameFilterDisables(false);
