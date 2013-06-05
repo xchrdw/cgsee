@@ -47,6 +47,7 @@ protected slots:
     void on_wireframeShadingAction_triggered();
     void on_solidWireframeShadingAction_triggered();
     void on_primitiveWireframeShadingAction_triggered();
+    void on_normalsAction_triggered();
 
 protected:
 

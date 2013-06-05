@@ -14,7 +14,7 @@ void main()
 	n *= 0.5;
 	n += 0.5;
 
-	float z = gl_FragCoord.z; 
+	float z = gl_FragCoord.z;
 
 	// d = (2.0 * zfar * znear / (zfar + znear - (zfar - znear) * (2.0 * z- 1.0)));
 	// normalized to [0,1]

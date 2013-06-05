@@ -123,33 +123,34 @@ const bool Painter::initialize()
     m_normalz->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
-    FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
-    FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
+
+    FileAssociatedShader *wireframeVert = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
+    FileAssociatedShader *wireframeGeo = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
 
     //Wireframe
     m_wireframe = new Program();
-    m_wireframe->attach(m_wireframeShaderGEO);
+    m_wireframe->attach(wireframeGeo);
     m_wireframe->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe.frag"));
-    m_wireframe->attach(m_wireframeShader);
+    m_wireframe->attach(wireframeVert);
 
     //Primtive Wireframe
     m_primitiveWireframe = new Program();
-    m_primitiveWireframe->attach(
-        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/primitiveWireframe.geo"));
+//    m_primitiveWireframe->attach(
+//        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/primitiveWireframe.geo"));
     m_primitiveWireframe->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/primitiveWireframe.frag"));
+    m_primitiveWireframe->attach(
+        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/primitiveWireframe.geo"));
     m_primitiveWireframe->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/primitiveWireframe.vert"));
 
     //Solid Wireframe
     m_solidWireframe = new Program();
-    m_solidWireframe->attach(m_wireframeShaderGEO);
+    m_solidWireframe->attach(wireframeGeo);
     m_solidWireframe->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframeSolid.frag"));
-    m_solidWireframe->attach(m_wireframeShader);
-
-
+    m_solidWireframe->attach(wireframeVert);
 
     FileAssociatedShader *phongLighting = new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phongLighting.frag");
 
@@ -194,7 +195,6 @@ const bool Painter::initialize()
     setUniforms();
 
     // Post Processing Shader
-
     m_flush = new Program();
     m_flush->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
@@ -229,7 +229,6 @@ void Painter::setUniforms()
         lightMat2[1] = glm::vec4(0.1,0.1,0.1,1.0);    //diffuse
         lightMat2[2] = glm::vec4(0.8,0.0,0.0,1.0);    //specular
         lightMat2[3] = glm::vec4(0.002,0.002,0.0004,1.4);    //attenuation1, attenuation2, attenuation3, shininess
-
         m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, false);
 
         glm::mat4 materialCoeff;
@@ -237,10 +236,8 @@ void Painter::setUniforms()
         materialCoeff[1] = glm::vec4(1.0,1.0,1.0,1.0);    //diffuse
         materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);    //specular
         materialCoeff[3] = glm::vec4(0,0,0,0);            //emission
-
         m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
     }
-
     else if(m_useProgram == m_gooch)
     {
         m_useProgram->setUniform(LIGHTPOSITION_UNIFORM, glm::vec3(-2.0,0.0,2.0));
@@ -269,7 +266,6 @@ void Painter::paint()
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
-
 }
 
 void Painter::resize(  //probably never called anywhere?
@@ -297,10 +293,10 @@ void Painter::setShading(char shader)
         case 'w': m_useProgram = m_wireframe; std::printf("\nWireframe Shading\n\n"); break;
         case 's': m_useProgram = m_solidWireframe; std::printf("\nWireframeSolid Shading\n\n"); break;
         case 'r': m_useProgram = m_primitiveWireframe; std::printf("\nprimitive Wireframe Shading\n\n"); break;
+        case 'n': m_useProgram = m_normals; std::printf("\Normals\n\n"); break;
     }
     setUniforms();
     //repaint missing
-  
 }
 
 void Painter::postShaderRelinked()
