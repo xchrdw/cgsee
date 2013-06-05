@@ -54,7 +54,7 @@ template <typename T>
 typename AttributeIterator<T>::reference
     AttributeIterator<T>::operator*()
 {
-    AttributeStorage & storage = m_owner->m_vertices.at(index);
+    VertexList::AttributeStorage & storage = m_owner->m_vertices.at(m_currentIndex);
     if (!m_typeChecked)
     {
         m_typeChecked = storage.checkDataType<T>(m_attrDesc);
@@ -67,7 +67,7 @@ template <typename T>
 typename AttributeIterator<T>::pointer
     AttributeIterator<T>::operator->()
 {
-    AttributeStorage & storage = m_owner->m_vertices.at(index);
+    VertexList::AttributeStorage & storage = m_owner->m_vertices.at(m_currentIndex);
     if (!m_typeChecked)
     {
         m_typeChecked = storage.checkDataType<T>(m_attrDesc);

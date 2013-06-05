@@ -22,6 +22,8 @@ public:
     AttributeIterator();
     AttributeIterator(AttributeIterator<T> const &);
     ~AttributeIterator();
+    typedef typename std::iterator<std::input_iterator_tag, T>::pointer pointer;
+    typedef typename std::iterator<std::input_iterator_tag, T>::reference reference;
 
     bool operator ==(AttributeIterator<T> const & rhs) const;
     bool operator !=(AttributeIterator<T> const & rhs) const;
@@ -30,8 +32,8 @@ public:
     AttributeIterator<T>& operator++();
     AttributeIterator<T> operator++(int);
 
-    reference operator *();
-    pointer operator ->();
+    reference operator*();
+    pointer operator->();
 
     bool isInvalid() const;
 

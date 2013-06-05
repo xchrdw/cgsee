@@ -23,12 +23,12 @@ Canvas::Canvas(
 ,   m_format(format)
 {
     m_timer = new QBasicTimer();
-    m_timer->start(1000/60, this);
+    //m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
 
     // Important for overdraw, not occluding the scene.
-    //setAutoFillBackground(false);
+    setAutoFillBackground(false);
     //setUpdatesEnabled(false);
 }
 
