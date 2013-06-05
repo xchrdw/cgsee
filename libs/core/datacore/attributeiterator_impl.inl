@@ -9,9 +9,9 @@ AttributeIterator<T>::AttributeIterator()
 template <typename T>
 AttributeIterator<T>::AttributeIterator(const AttributeIterator<T>& rhs):
     m_owner(rhs.m_owner)
-    ,   m_currentIndex(rhs.m_currentIndex)
-    ,   m_attrDesc(rhs.m_attrDesc)
-    ,   m_typeChecked(rhs.m_typeChecked)
+,   m_currentIndex(rhs.m_currentIndex)
+,   m_attrDesc(rhs.m_attrDesc)
+,   m_typeChecked(rhs.m_typeChecked)
 {
 
 }

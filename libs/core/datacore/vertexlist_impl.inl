@@ -98,7 +98,7 @@ void VertexList::setVertexAttributes(int startIndex, int endIndex, const QString
 
 template <class T>
 typename VertexList::const_iterator<T>::type 
-    VertexList::end( const QString &attrName ) const
+    VertexList::end(const QString &attrName) const
 {
     typedef typename VertexList::const_iterator<T>::type return_type;
 
@@ -107,7 +107,7 @@ typename VertexList::const_iterator<T>::type
 
 template <class T>
 typename VertexList::iterator<T>::type 
-    VertexList::end( const QString &attrName )
+    VertexList::end(const QString &attrName)
 {
     typedef typename VertexList::iterator<T>::type return_type;
 
@@ -116,7 +116,7 @@ typename VertexList::iterator<T>::type
 
 template <class T>
 typename VertexList::const_iterator<T>::type 
-    VertexList::begin( const QString &attrName ) const
+    VertexList::begin(const QString &attrName) const
 {
     typedef typename VertexList::const_iterator<T>::type return_type;
 
@@ -129,7 +129,7 @@ typename VertexList::const_iterator<T>::type
 
 template <class T>
 typename VertexList::iterator<T>::type 
-    VertexList::begin( const QString &attrName )
+    VertexList::begin(const QString &attrName)
 {
     typedef typename VertexList::iterator<T>::type return_type;
 

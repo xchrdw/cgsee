@@ -40,9 +40,10 @@ public:
     friend class AttributeStorage;
     friend class DataBlock;
 
-    protected slots:
-        void onVertexListUpdated();
-        void onVertexListDestroyed();
+protected slots:
+    void onVertexListUpdated();
+    void onVertexListDestroyed();
+
 protected:
     VertexIndexList(QObject* parent = nullptr);
     virtual t_StandardPointer createClone() override;
