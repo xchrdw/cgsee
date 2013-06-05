@@ -44,6 +44,9 @@ protected slots:
     void on_gouraudShadingAction_triggered();
     void on_flatShadingAction_triggered();
     void on_goochShadingAction_triggered();
+    void on_wireframeShadingAction_triggered();
+    void on_solidWireframeShadingAction_triggered();
+    void on_primitiveWireframeShadingAction_triggered();
 
 protected:
 

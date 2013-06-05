@@ -151,20 +151,41 @@ void Viewer::on_reloadAllShadersAction_triggered()
 
 void Viewer::on_phongShadingAction_triggered()
 {
-    (m_qtCanvas->painter())->setShading('p');
+    m_qtCanvas->painter()->setShading('p');
 }
 
 void Viewer::on_gouraudShadingAction_triggered()
 {
     m_qtCanvas->painter()->setShading('g');
+    m_qtCanvas->repaint();
 }
 
 void Viewer::on_flatShadingAction_triggered()
 {
-    (m_qtCanvas->painter())->setShading('f');
+    m_qtCanvas->painter()->setShading('f');
+    m_qtCanvas->repaint();
 }
 
 void Viewer::on_goochShadingAction_triggered()
 {
-    (m_qtCanvas->painter())->setShading('o');
+    m_qtCanvas->painter()->setShading('o');
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_wireframeShadingAction_triggered()
+{
+    m_qtCanvas->painter()->setShading('w');
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_solidWireframeShadingAction_triggered()
+{
+    m_qtCanvas->painter()->setShading('s');
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_primitiveWireframeShadingAction_triggered()
+{
+    m_qtCanvas->painter()->setShading('r');
+    m_qtCanvas->repaint();
 }

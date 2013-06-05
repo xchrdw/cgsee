@@ -63,6 +63,7 @@ protected:
     Program * m_useProgram;
     FrameBufferObject * m_fboNormalz;
 
+
     glm::vec3 camPos;
 
     Program * m_flush;

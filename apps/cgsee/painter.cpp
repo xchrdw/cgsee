@@ -121,18 +121,17 @@ const bool Painter::initialize()
     m_normalz->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
     m_normalz->attach(
-        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/normalz.geo"));
-    m_normalz->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
+
+    FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
+    FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
 
     //Wireframe
     m_wireframe = new Program();
-    m_wireframe->attach(
-        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo"));
+    m_wireframe->attach(m_wireframeShaderGEO);
     m_wireframe->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe.frag"));
-    m_wireframe->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert"));
+    m_wireframe->attach(m_wireframeShader);
 
     //Primtive Wireframe
     m_primitiveWireframe = new Program();
@@ -145,12 +144,10 @@ const bool Painter::initialize()
 
     //Solid Wireframe
     m_solidWireframe = new Program();
+    m_solidWireframe->attach(m_wireframeShaderGEO);
     m_solidWireframe->attach(
-        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo"));
-    m_solidWireframe->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe.frag"));
-    m_solidWireframe->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframeSolid.vert"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframeSolid.frag"));
+    m_solidWireframe->attach(m_wireframeShader);
 
 
 
@@ -212,7 +209,7 @@ const bool Painter::initialize()
 
 void Painter::setUniforms()
 {
-    if(m_useProgram != m_gooch)
+    if(m_useProgram == m_flat || m_useProgram == m_gouraud || m_useProgram == m_phong)
     {
         m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
         m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
@@ -297,10 +294,13 @@ void Painter::setShading(char shader)
         case 'g': m_useProgram = m_gouraud; std::printf("\nGouraud Shading\n"); break;
         case 'f': m_useProgram = m_flat; std::printf("\nFlat Shading\n"); break;
         case 'o': m_useProgram = m_gooch; std::printf("\nGooch Shading\n\n"); break;
-
+        case 'w': m_useProgram = m_wireframe; std::printf("\nWireframe Shading\n\n"); break;
+        case 's': m_useProgram = m_solidWireframe; std::printf("\nWireframeSolid Shading\n\n"); break;
+        case 'r': m_useProgram = m_primitiveWireframe; std::printf("\nprimitive Wireframe Shading\n\n"); break;
     }
     setUniforms();
     //repaint missing
+  
 }
 
 void Painter::postShaderRelinked()
