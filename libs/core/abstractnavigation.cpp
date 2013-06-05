@@ -9,8 +9,9 @@
 #include "abstractnavigation.h"
 #include "camera.h"
 
-static const float DURATION = 333.f;
+const float AbstractNavigation::TIMER_MS = 1000.f / 60.f;
 
+static const float DURATION = 333.f;
 
 AbstractNavigation::AbstractNavigation(Camera * camera) 
     : m_width(camera->viewport().x)
@@ -177,7 +178,7 @@ void AbstractNavigation::setFromMatrix(const glm::mat4 & view)
 
 glm::mat4 AbstractNavigation::defaultView()
 {
-    return glm::lookAt(glm::vec3(0.f, 0.f, -2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    return frontview();
 }
 
 glm::mat4 AbstractNavigation::frontview() // TODO calculate AABB dependent

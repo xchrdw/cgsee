@@ -69,7 +69,7 @@ protected:
     float m_fovy;
     glm::mat4 m_viewmatrix;
 
-    static const int TIMER_MS = 1000 / 60;
+    static const float TIMER_MS;
 
 private:
     void timerEvent(QTimerEvent * event);
