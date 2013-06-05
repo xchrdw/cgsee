@@ -187,7 +187,7 @@ unsigned int VertexList::size() const
 
 void VertexList::resize(unsigned int s)
 {
-    m_vertices.reserve(s);
+    m_vertices.resize(s);
 }
 
 bool VertexList::isEmpty() const

@@ -45,7 +45,7 @@ private:
 protected:
     t_VertexListP m_owner;
     unsigned int m_currentIndex;
-    t_AttrDesc const & m_attrDesc;
+    t_AttrDesc const * m_attrDesc;
     bool m_typeChecked;
 };
 

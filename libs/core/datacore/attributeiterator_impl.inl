@@ -1,7 +1,11 @@
 #include <cassert>
 
 template <typename T>
-AttributeIterator<T>::AttributeIterator()
+AttributeIterator<T>::AttributeIterator():
+    m_owner(nullptr)
+,   m_currentIndex(-1)
+,   m_attrDesc(nullptr)
+,   m_typeChecked(false)
 {
 
 }
@@ -54,26 +58,26 @@ template <typename T>
 typename AttributeIterator<T>::reference
     AttributeIterator<T>::operator*()
 {
-    VertexList::AttributeStorage & storage = m_owner->m_vertices.at(m_currentIndex);
+    VertexList::AttributeStorage & storage = m_owner->m_vertices[m_currentIndex];
     if (!m_typeChecked)
     {
-        m_typeChecked = storage.checkDataType<T>(m_attrDesc);
+        m_typeChecked = storage.checkDataType<T>(*m_attrDesc);
         assert(m_typeChecked);
     }
-    return *storage.getDataUnchecked<T>(m_attrDesc);
+    return *storage.getDataUnchecked<T>(*m_attrDesc);
 }
 
 template <typename T>
 typename AttributeIterator<T>::pointer
     AttributeIterator<T>::operator->()
 {
-    VertexList::AttributeStorage & storage = m_owner->m_vertices.at(m_currentIndex);
+    VertexList::AttributeStorage & storage = m_owner->m_vertices[m_currentIndex];
     if (!m_typeChecked)
     {
-        m_typeChecked = storage.checkDataType<T>(m_attrDesc);
+        m_typeChecked = storage.checkDataType<T>(*m_attrDesc);
         assert(m_typeChecked);
     }
-    return storage.getDataUnchecked<T>(m_attrDesc);
+    return storage.getDataUnchecked<T>(*m_attrDesc);
 }
 
 template <typename T>
@@ -87,6 +91,6 @@ void AttributeIterator<T>::_initialize(t_VertexListP owner, unsigned int index ,
 {
     m_owner = owner;
     m_currentIndex = index;
-    m_attrDesc = attrDesc;
+    m_attrDesc = &attrDesc;
     m_typeChecked = false;
 }

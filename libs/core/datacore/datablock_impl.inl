@@ -28,6 +28,12 @@ typename DataBlockSubclass::t_StandardPointer
 }
 
 template <class DataBlockSubclass>
+void DataBlock::destroyDataBlock(typename DataBlockSubclass::t_StandardPointer obj)
+{
+    delete obj; 
+}
+
+template <class DataBlockSubclass>
 typename DataBlockSubclass::t_StandardPointer
     DataBlock::clone(QString &newName, DataBlockRegistry &registry, QObject* parent)
 {

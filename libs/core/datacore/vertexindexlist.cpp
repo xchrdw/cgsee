@@ -61,7 +61,7 @@ bool VertexIndexList::isEmpty() const
 
 void VertexIndexList::resize(unsigned int s)
 {
-    m_indices.reserve(s);
+    m_indices.resize(s);
 }
 
 t_VertexIndexListP VertexIndexList::createClone()

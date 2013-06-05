@@ -20,6 +20,12 @@ protected:
 private slots:
 
     void initTestCase();
-    void firstTest();
+    void sillyTest();
+    void writeReadTest();
+    void iteratorTest();
+    void constIteratorTest();
     void cleanupTestCase();
+
+    void init();
+    void cleanup();
 };

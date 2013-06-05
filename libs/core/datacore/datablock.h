@@ -37,6 +37,10 @@ public:
     static typename DataBlockSubclass::t_StandardPointer 
         createDataBlockWithName(QString const &name, DataBlockRegistry &registry, QObject* parent = nullptr);
 
+    // Alternatively, you can use DataBlock::deleteLater() member func. 
+    template<class DataBlockSubclass>
+    static void destroyDataBlock(typename DataBlockSubclass::t_StandardPointer obj);
+
     // attempt to clone the item.
     // it will be given a new name and saved in the registry provided.
     template <class DataBlockSubclass>
