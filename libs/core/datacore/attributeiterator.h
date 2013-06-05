@@ -1,6 +1,19 @@
 #pragma once
 #include <iterator>
 
+// AttributeIterator iterates over vertices in a VertexList object, providing
+// an attribute specified by its creation. Use it like this:
+// 
+// auto myIterator = vList.begin<glm::vec3> ("position");
+// auto endIterator = vList.end<glm::vec3> ("position");
+// 
+// for (; myIterator != endIterator; ++myIterator)
+// {
+//     (*myIterator) = glm::vec3();
+// }
+// 
+// ...
+
 template <typename T>
 class AttributeIterator final
     : public std::iterator<std::input_iterator_tag, T>

@@ -1,5 +1,10 @@
 #pragma once
 
+// The structures and functions found in this file abstract away implementation details of 
+// creating, copying and destroying of objects. These details depend on meta object
+// system, which is either provided by Qt or designed by the user.
+// 
+
 struct AbstractInPlaceTypeFunctions
 {
     virtual ~AbstractInPlaceTypeFunctions();

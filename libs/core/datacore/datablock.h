@@ -6,6 +6,19 @@
 
 class DataBlockRegistry;
 
+// Base class for all DataBlocks in DataCore. Provides some basic functionality.
+// All data blocks are created using createDataBlockWithName<T>(..) functions, 
+// and are automatically registered in provided Registry.
+// 
+// QString vListName("VertexList"); 
+// t_VertexListP vList = DataBlock::createDataBlockWithName<VertexList>(vListName, registry);
+// // vListName contains now true name of the data block.
+// 
+// The reasons to use separate function instead of class constructors are:
+// - the data blocks are guaranteed to be registered in the Registry automatically
+// - the data blocks can be wrapped in smart pointers, and they will be eventually
+// - If something exceptional happens, we can simply return nullptr.
+
 class CGSEE_API DataBlock: public QObject
 {
     Q_OBJECT

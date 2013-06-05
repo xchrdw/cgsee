@@ -9,6 +9,16 @@
 
 #include "registertypeshere.h"
 
+// A VertexList object is a storage of vertices, each defined by a heterogeneous 
+// collection of its attributes. Attributes of a single vertex are represented 
+// by an AttributeStorage object. VertexList stores internally an array of 
+// AttributeStorage objects and provides an interface to access their content.
+// 
+// A freshly created VertexList object has to be initialized with a list 
+// of AttributeSpec objects, that determine attribute types that are to be stored
+// as well as names of each attribute, that are necessary to access data later.
+// 
+
 /// Determines how much memory (in bytes) will be used for attributes of a 
 /// vertex. 
 /// == sizeof(AttributeStorage)   -- not yet
@@ -107,9 +117,13 @@ public:
 
     void initialize(const QList<AttributeSpec> &attrTypes);
 
+    // access functions
+    // template parameters == C++ attribute types
+    // 1. set/get a single attribute value of a single vertex
     template <class RetType>
     RetType * getVertexAttribute(int index, const QString &attrName);
 
+    // get a specified attribute of many vertices
     template <class T>
     void foreachVertexAttribute(int startIndex
         ,   int endIndex
@@ -117,12 +131,14 @@ public:
         ,   std::function<bool(int)> select // can be null
         ,   std::function<void(int, const T&)> inject);
 
+    // set a specified attribute of many vertices
     template <class T>
     void setVertexAttributes(int startIndex
         ,   int endIndex
         ,   const QString &attrName
         ,   std::function<void (int, T&)> setter);
 
+    // Iterator-related functions
     template <class T>
     typename iterator<T>::type begin(const QString &attrName);
 
@@ -137,6 +153,7 @@ public:
 
     void createNewVertices(unsigned int amount);
 
+    // some utility functions
     unsigned int size() const;
     bool isEmpty() const;
     bool isAttributeUsed(QString attrName) const;
