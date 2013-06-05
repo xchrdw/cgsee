@@ -1,5 +1,42 @@
 #pragma once
 #include <iterator>
+#include <type_traits>
+
+// Some small helpers
+
+// if_then_else chooses one or the other type depending on trait's value
+template <typename trait, typename ifTrue, typename ifFalse>
+struct if_then_else
+{
+    typedef typename if_then_else<typename trait::type, ifTrue, ifFalse>::type
+        type;
+};
+
+template <typename ifTrue, typename ifFalse>
+struct if_then_else<std::true_type, ifTrue, ifFalse>
+{
+    typedef ifTrue type;
+};
+
+template <typename ifTrue, typename ifFalse>
+struct if_then_else<std::false_type, ifTrue, ifFalse>
+{
+    typedef ifFalse type;
+};
+
+
+// clear_const removes outer const qualifiers
+template <typename T>
+struct clear_const
+{
+    typedef T type;
+};
+
+template <typename T>
+struct clear_const <T const>
+{
+    typedef T type;
+};
 
 // AttributeIterator iterates over vertices in a VertexList object, providing
 // an attribute specified by its creation. Use it like this:
@@ -39,11 +76,14 @@ public:
 
     friend class VertexList;
 private:
+    typedef typename if_then_else<std::is_const<T>
+        ,   t_ConstVertexListP
+        ,   t_VertexListP>::type    t_OwnerType;
     // internal func; only to be called from VertexList class
-    void _initialize(t_VertexListP owner, unsigned int index
+    void _initialize(t_OwnerType owner, unsigned int index
         ,   t_AttrDesc const & attrDesc);
 protected:
-    t_VertexListP m_owner;
+    t_OwnerType m_owner;
     unsigned int m_currentIndex;
     t_AttrDesc const * m_attrDesc;
     bool m_typeChecked;

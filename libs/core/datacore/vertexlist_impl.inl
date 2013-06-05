@@ -11,6 +11,16 @@ RetType * VertexList::AttributeStorage::getData(const t_AttrDesc & loc)
 }
 
 template <class RetType>
+RetType const* VertexList::AttributeStorage::getData(const t_AttrDesc & loc) const
+{
+    const unsigned char* resultPtr = m_storage + loc.location;
+    if (checkDataType<RetType>(loc))
+        return reinterpret_cast<RetType const*> (resultPtr);
+
+    return nullptr;
+}
+
+template <class RetType>
 RetType * VertexList::AttributeStorage::getDataUnchecked(const t_AttrDesc & loc)
 {
     unsigned char* resultPtr = m_storage + loc.location;
@@ -19,7 +29,15 @@ RetType * VertexList::AttributeStorage::getDataUnchecked(const t_AttrDesc & loc)
 }
 
 template <class RetType>
-bool VertexList::AttributeStorage::checkDataType(const t_AttrDesc & loc)
+RetType const* VertexList::AttributeStorage::getDataUnchecked(const t_AttrDesc & loc) const
+{
+    const unsigned char* resultPtr = m_storage + loc.location;
+
+    return reinterpret_cast<RetType const*> (resultPtr);
+}
+
+template <class RetType>
+bool VertexList::AttributeStorage::checkDataType(const t_AttrDesc & loc) const
 {
     if (loc.size + loc.location > StaticAttributeStorageSize)
         return false;
@@ -31,7 +49,7 @@ bool VertexList::AttributeStorage::checkDataType(const t_AttrDesc & loc)
             return false;
     }
 
-    unsigned char* resultPtr = m_storage + loc.location;
+    const unsigned char* resultPtr = m_storage + loc.location;
     if (typeid(resultPtr) != *loc.typeInfo)
         return false;
 

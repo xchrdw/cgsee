@@ -58,26 +58,34 @@ template <typename T>
 typename AttributeIterator<T>::reference
     AttributeIterator<T>::operator*()
 {
-    VertexList::AttributeStorage & storage = m_owner->m_vertices[m_currentIndex];
+    typedef typename if_then_else<std::is_const<T>
+        ,   VertexList::AttributeStorage const&
+        ,   VertexList::AttributeStorage &>::type t_AttrStorageType;
+
+    t_AttrStorageType storage = m_owner->m_vertices[m_currentIndex];
     if (!m_typeChecked)
     {
-        m_typeChecked = storage.checkDataType<T>(*m_attrDesc);
+        m_typeChecked = storage.checkDataType<typename clear_const<T>::type>(*m_attrDesc);
         assert(m_typeChecked);
     }
-    return *storage.getDataUnchecked<T>(*m_attrDesc);
+    return *storage.getDataUnchecked<typename clear_const<T>::type>(*m_attrDesc);
 }
 
 template <typename T>
 typename AttributeIterator<T>::pointer
     AttributeIterator<T>::operator->()
 {
-    VertexList::AttributeStorage & storage = m_owner->m_vertices[m_currentIndex];
+    typedef typename if_then_else<std::is_const<T>
+        ,   VertexList::AttributeStorage const&
+        ,   VertexList::AttributeStorage &>::type t_AttrStorageType;
+
+    t_AttrStorageType storage = m_owner->m_vertices[m_currentIndex];
     if (!m_typeChecked)
     {
-        m_typeChecked = storage.checkDataType<T>(*m_attrDesc);
+        m_typeChecked = storage.checkDataType<typename clear_const<T>::type>(*m_attrDesc);
         assert(m_typeChecked);
     }
-    return storage.getDataUnchecked<T>(*m_attrDesc);
+    return storage.getDataUnchecked<typename clear_const<T>::type>(*m_attrDesc);
 }
 
 template <typename T>
@@ -87,7 +95,9 @@ bool AttributeIterator<T>::isInvalid() const
 }
 
 template <typename T>
-void AttributeIterator<T>::_initialize(t_VertexListP owner, unsigned int index , t_AttrDesc const & attrDesc)
+void AttributeIterator<T>::_initialize(typename AttributeIterator<T>::t_OwnerType owner
+                                       , unsigned int index 
+                                       , t_AttrDesc const & attrDesc)
 {
     m_owner = owner;
     m_currentIndex = index;

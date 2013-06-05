@@ -109,7 +109,16 @@ void DataCoreTest::iteratorTest()
 
 void DataCoreTest::constIteratorTest()
 {
+    VertexList const * constVList(vertexList);
 
+    AttributeIterator<const glm::vec3> start(constVList->begin<glm::vec3>("position"));
+    AttributeIterator<const glm::vec3> end(constVList->end<glm::vec3>("position"));
+    unsigned int currentIdx = 0;
+
+    for (;start != end; ++start, ++currentIdx)
+    {
+        QVERIFY(glm::distance(*start, pointsArray[currentIdx]) < 0.0001);
+    }
 }
 
 void DataCoreTest::cleanupTestCase()

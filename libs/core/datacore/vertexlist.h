@@ -52,6 +52,7 @@ class CGSEE_API VertexList: public DataBlock
     Q_OBJECT
 public:
     typedef VertexList * t_StandardPointer;
+    typedef VertexList const * t_StandardPointerToConst;
 
     // A vertex (and everything really) can be described by its attributes.
     // This class provides a storage for them, but it doesn't memorize the right layout.
@@ -84,12 +85,16 @@ public:
         // when something is wrong
         template <class RetType>
         RetType* getData(const t_AttrDesc &loc); 
+        template <class RetType>
+        RetType const* getData(const t_AttrDesc &loc) const; 
 
         template <class RetType>
         RetType* getDataUnchecked(const t_AttrDesc &loc);
+        template <class RetType>
+        RetType const* getDataUnchecked(const t_AttrDesc &loc) const;
 
         template <class RetType>
-        bool checkDataType(const t_AttrDesc &loc);
+        bool checkDataType(const t_AttrDesc &loc) const;
     protected:
         t_StorageType m_storage;
         //unsigned int m_storageSize;
@@ -174,6 +179,7 @@ protected:
 };
 
 typedef VertexList::t_StandardPointer t_VertexListP;
+typedef VertexList::t_StandardPointerToConst t_ConstVertexListP;
 
 #include "vertexlist_impl.inl"
 #include "attributeiterator.h"
