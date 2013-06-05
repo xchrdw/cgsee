@@ -152,6 +152,7 @@ void Viewer::on_reloadAllShadersAction_triggered()
 void Viewer::on_phongShadingAction_triggered()
 {
     m_qtCanvas->painter()->setShading('p');
+    m_qtCanvas->repaint();
 }
 
 void Viewer::on_gouraudShadingAction_triggered()
