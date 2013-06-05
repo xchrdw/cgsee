@@ -23,15 +23,15 @@ Canvas::Canvas(
 
 :   QGLWidget(format.asQGLFormat(), parent)
 ,   m_painter(nullptr)
+,   m_navigation(nullptr)
 ,   m_timer(nullptr)
 ,   m_format(format)
-,   m_navigation(nullptr)
 {
     m_timer = new QBasicTimer();
     //m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
-	
+    
     // Important for overdraw, not occluding the scene.
     setAutoFillBackground(false); 
 }
@@ -186,34 +186,34 @@ void Canvas::resize(int width, int height)
 
 AbstractNavigation * Canvas::navigation()
 {
-	return m_navigation;
+    return m_navigation;
 }
 
 void Canvas::setNavigation( AbstractNavigation * navigation )
 {
     if (m_navigation)
         delete m_navigation;
-	m_navigation = navigation;
+    m_navigation = navigation;
     m_navigation->setCanvas(this);
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )
 {
-	m_navigation->mousePressEvent(event);
+    m_navigation->mousePressEvent(event);
 }
 
 void Canvas::mouseReleaseEvent( QMouseEvent * event )
 {
-	m_navigation->mouseReleaseEvent(event);
+    m_navigation->mouseReleaseEvent(event);
 }
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
-	m_navigation->mouseMoveEvent(event);
+    m_navigation->mouseMoveEvent(event);
 }
 
 void Canvas::wheelEvent(QWheelEvent * event)
 {
-	m_navigation->wheelEvent(event);
+    m_navigation->wheelEvent(event);
 }
 

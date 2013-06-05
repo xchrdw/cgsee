@@ -13,11 +13,11 @@ static const float DURATION = 333.f;
 
 
 AbstractNavigation::AbstractNavigation(Camera * camera) 
-    : m_camera(camera)
+    : m_width(camera->viewport().x)
+    , m_height(camera->viewport().y)
     , m_fovy(camera->fovy())
     , m_viewmatrix(camera->view())
-    , m_width(camera->viewport().x)
-    , m_height(camera->viewport().y)
+    , m_camera(camera)
     , m_canvas(0)
     , m_timer()
     , m_timer_requests(0)
@@ -105,8 +105,7 @@ void AbstractNavigation::startTimer()
 */
 void AbstractNavigation::stopTimer()
 {
-    assert(m_timer_requests > 0);
-    m_timer_requests = m_timer_requests - 1;
+    m_timer_requests = glm::max(0, m_timer_requests-1);
 
     if(m_timer_requests == 0) {
         m_timer.stop();

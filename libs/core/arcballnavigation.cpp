@@ -5,11 +5,11 @@
 
 ArcballNavigation::ArcballNavigation(Camera * camera) 
     : AbstractNavigation(camera)
+    , m_mouse_last(0)
+    , m_mouse_cur(0)
     , m_arcball_on(false)
     , m_zoom_on(false)
     , m_panning_on(false)
-    , m_mouse_last(0)
-    , m_mouse_cur(0)
 {
 }
 

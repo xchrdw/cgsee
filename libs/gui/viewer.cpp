@@ -39,8 +39,8 @@ Viewer::Viewer(
 
 :   QMainWindow(parent, flags)
 ,   m_ui(new Ui_Viewer)
-,   m_saved_views(4)
 ,   m_qtCanvas(nullptr)
+,   m_saved_views(4)
 {
     m_ui->setupUi(this);
     

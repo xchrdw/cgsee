@@ -130,11 +130,9 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
 void FlightNavigation::setFromMatrix(const glm::mat4 & view){ 
     
     //Extract Up Vector and Viewing direction from viewmatrix
-
-    m_up = glm::column(view, 1).xyz;
+    m_up = glm::row(view, 1).xyz;
     
-    glm::vec3 direction = glm::column(view, 2).xyz;
-    direction = -direction;
+    glm::vec3 lookat = glm::row(view, 2).xyz;
     
     //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
     
@@ -158,7 +156,7 @@ void FlightNavigation::setFromMatrix(const glm::mat4 & view){
     m_eye = (n2n3 * d1) + glm::cross(n1, (d3*n2) - (d2*n3));
     m_eye /= -denom;
     
-    m_center = m_eye + direction;
+    m_center = m_eye - lookat;
     
     updateView();
 }

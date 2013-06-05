@@ -24,8 +24,8 @@ public:
 
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
-	void setNavigation( AbstractNavigation * navigation );
-	AbstractNavigation * navigation();
+    void setNavigation( AbstractNavigation * navigation );
+    AbstractNavigation * navigation();
 
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
