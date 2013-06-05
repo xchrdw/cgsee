@@ -22,36 +22,36 @@ AttributeSpec::AttributeSpec(const QString &name, const QString &type):
     
 }
 
-AttributeStorage::AttributeStorage()
+VertexList::AttributeStorage::AttributeStorage()
 {
 
 }
 
-AttributeStorage::AttributeStorage(const AttributeStorage& rhs):
+VertexList::AttributeStorage::AttributeStorage(const AttributeStorage& rhs):
     m_owner(rhs.m_owner)
 {
     copyStorage(rhs.m_storage);
 }
 
-AttributeStorage::AttributeStorage(AttributeStorage &&rhs):
+VertexList::AttributeStorage::AttributeStorage(AttributeStorage &&rhs):
     m_owner(rhs.m_owner)
 {
     copyStorage(rhs.m_storage);
 }
 
-AttributeStorage::AttributeStorage(VertexList &owner):
+VertexList::AttributeStorage::AttributeStorage(VertexList &owner):
     m_owner(&owner)
 {
     initialize(owner);
 }
 
-AttributeStorage::~AttributeStorage()
+VertexList::AttributeStorage::~AttributeStorage()
 {
     if (m_owner)
         runDestructors(m_owner->getAttrMap());
 }
 
-const AttributeStorage & AttributeStorage::operator=(const AttributeStorage &rhs)
+const VertexList::AttributeStorage & VertexList::AttributeStorage::operator=(const AttributeStorage &rhs)
 {
     if (this == &rhs) // NOTE: perhaps not needed, but it is in some cases
         return *this;
@@ -60,7 +60,7 @@ const AttributeStorage & AttributeStorage::operator=(const AttributeStorage &rhs
     return *this;
 }
 
-void AttributeStorage::initialize(VertexList &owner)
+void VertexList::AttributeStorage::initialize(VertexList &owner)
 {
     unsigned int memoryNeeded = 0;
     const t_AttrMap &attrMap = owner.getAttrMap();
@@ -78,7 +78,7 @@ void AttributeStorage::initialize(VertexList &owner)
     }
 }
 
-void AttributeStorage::runDestructors(const t_AttrMap &attrMap)
+void VertexList::AttributeStorage::runDestructors(const t_AttrMap &attrMap)
 {
     for (const t_AttrDesc & attr: attrMap)
         if (attr.size + attr.location <= StaticAttributeStorageSize)
@@ -86,7 +86,7 @@ void AttributeStorage::runDestructors(const t_AttrMap &attrMap)
     m_owner = nullptr;
 }
 
-void AttributeStorage::copyStorage(t_StorageType const& otherStorage)
+void VertexList::AttributeStorage::copyStorage(t_StorageType const& otherStorage)
 {
     // TODO: differentiate between trivially copyable and not types
     // memcpy(newStorage, m_storage, m_storageSize); // for trivially copyable types

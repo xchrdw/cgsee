@@ -11,7 +11,7 @@
 
 /// Determines how much memory (in bytes) will be used for attributes of a 
 /// vertex. 
-/// == sizeof(AttributeStorage)
+/// == sizeof(AttributeStorage)   -- not yet
 const int StaticAttributeStorageSize = 64;
 
 // describes layout of vertex attributes in a storage.
@@ -35,55 +35,6 @@ struct CGSEE_API AttributeSpec
 };
 
 typedef QHash<QString, t_AttrDesc> t_AttrMap;
-class VertexList;
-
-// A vertex (and everything really) can be described by its attributes.
-// This class provides a storage for them, but it doesn't memorize the right layout.
-// Which is not needed anyway, as most of the times many vertices have same attribute types.
-class CGSEE_API AttributeStorage final
-{
-public:
-    typedef unsigned char t_StorageType[StaticAttributeStorageSize];
-
-    AttributeStorage();
-    AttributeStorage(AttributeStorage &&rhs);
-    // Initializes attributeStorage and creates in-place default constructed
-    // data objects, which hold vertex attributes
-    explicit AttributeStorage(VertexList &owner);
-
-    // copy constructor and assignment.
-    AttributeStorage(const AttributeStorage&);
-    AttributeStorage const& operator =(const AttributeStorage&);
-
-    ~AttributeStorage();
-
-    void initialize(VertexList &owner);
-
-    // prepares storage for deletion.
-    // invalidates its content
-    void runDestructors(const t_AttrMap &attrMap);
-
-    // Returns a pointer to attribute data object(eg. glm::vec3), 
-    // checks for the right type(with typeid) and returns nullptr
-    // when something is wrong
-    template <class RetType>
-    RetType* getData(const t_AttrDesc &loc); 
-
-    template <class RetType>
-    RetType* getDataUnchecked(const t_AttrDesc &loc);
-
-    template <class RetType>
-    bool checkDataType(const t_AttrDesc &loc);
-protected:
-    t_StorageType m_storage;
-    //unsigned int m_storageSize;
-    //bool m_initialized;
-
-    //mutable unsigned int * m_useCount;
-    QPointer<VertexList> m_owner;
-
-    void copyStorage(t_StorageType const& otherStorage);
-};
 template <typename T> class AttributeIterator;
 
 class CGSEE_API VertexList: public DataBlock
@@ -91,6 +42,54 @@ class CGSEE_API VertexList: public DataBlock
     Q_OBJECT
 public:
     typedef VertexList * t_StandardPointer;
+
+    // A vertex (and everything really) can be described by its attributes.
+    // This class provides a storage for them, but it doesn't memorize the right layout.
+    // Which is not needed anyway, as most of the times many vertices have same attribute types.
+    class CGSEE_API AttributeStorage final
+    {
+    public:
+        typedef unsigned char t_StorageType[StaticAttributeStorageSize];
+
+        AttributeStorage();
+        AttributeStorage(AttributeStorage &&rhs);
+        // Initializes attributeStorage and creates in-place default constructed
+        // data objects, which hold vertex attributes
+        explicit AttributeStorage(VertexList &owner);
+
+        // copy constructor and assignment.
+        AttributeStorage(const AttributeStorage&);
+        AttributeStorage const& operator =(const AttributeStorage&);
+
+        ~AttributeStorage();
+
+        void initialize(VertexList &owner);
+
+        // prepares storage for deletion.
+        // invalidates its content
+        void runDestructors(const t_AttrMap &attrMap);
+
+        // Returns a pointer to attribute data object(eg. glm::vec3), 
+        // checks for the right type(with typeid) and returns nullptr
+        // when something is wrong
+        template <class RetType>
+        RetType* getData(const t_AttrDesc &loc); 
+
+        template <class RetType>
+        RetType* getDataUnchecked(const t_AttrDesc &loc);
+
+        template <class RetType>
+        bool checkDataType(const t_AttrDesc &loc);
+    protected:
+        t_StorageType m_storage;
+        //unsigned int m_storageSize;
+        //bool m_initialized;
+
+        //mutable unsigned int * m_useCount;
+        QPointer<VertexList> m_owner; // todo: move it somewhere else
+
+        void copyStorage(t_StorageType const& otherStorage);
+    };
 
     template <typename T>
     struct const_iterator

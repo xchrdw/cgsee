@@ -1,7 +1,7 @@
 #pragma once
 
 template <class RetType>
-RetType * AttributeStorage::getData(const t_AttrDesc & loc)
+RetType * VertexList::AttributeStorage::getData(const t_AttrDesc & loc)
 {
     unsigned char* resultPtr = m_storage + loc.location;
     if (checkDataType<RetType>(loc))
@@ -11,7 +11,7 @@ RetType * AttributeStorage::getData(const t_AttrDesc & loc)
 }
 
 template <class RetType>
-RetType * AttributeStorage::getDataUnchecked(const t_AttrDesc & loc)
+RetType * VertexList::AttributeStorage::getDataUnchecked(const t_AttrDesc & loc)
 {
     unsigned char* resultPtr = m_storage + loc.location;
 
@@ -19,7 +19,7 @@ RetType * AttributeStorage::getDataUnchecked(const t_AttrDesc & loc)
 }
 
 template <class RetType>
-bool AttributeStorage::checkDataType(const t_AttrDesc & loc)
+bool VertexList::AttributeStorage::checkDataType(const t_AttrDesc & loc)
 {
     if (loc.size + loc.location > StaticAttributeStorageSize)
         return false;
