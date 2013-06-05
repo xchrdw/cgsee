@@ -29,12 +29,12 @@ ObjLoader::~ObjLoader()
 
 QStringList ObjLoader::loadableTypes() const
 {
-    return {"Wavefront Object (*.obj)"};
+    return QStringList("Wavefront Object (*.obj)");
 }
 
 QStringList ObjLoader::loadableExtensions() const
 {
-    return {"obj"};
+    return QStringList("obj");
 }
 
 Group * ObjLoader::importFromFile(const QString & filePath) const

@@ -6,7 +6,7 @@
 IF(X64 AND NOT APPLE)
 
     FIND_PATH(ASSIMP_INCLUDE_PATH assimp/Importer.hpp
-        ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0-win64/include
+        ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0/include
         $ENV{ASSIMP_DIR}/include
         $ENV{ASSIMP_HOME}/include
         /usr/include
