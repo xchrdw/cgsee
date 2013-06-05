@@ -3,14 +3,17 @@
 DataBlock::DataBlock(QObject * parent):
     QObject(parent)
 {
+
 }
 
 DataBlock::DataBlock(const DataBlock &) // protected
 {
+
 }
 
 DataBlock::~DataBlock() // virtual
 {
+
 }
 
 void DataBlock::triggerUpdatedSignal()
@@ -31,6 +34,7 @@ DataBlockRegistry::DataBlockRegistry(QString const &objName, QObject *parent):
 
 DataBlockRegistry::~DataBlockRegistry() // virtual
 {
+
 }
 
 QString DataBlockRegistry::registerNewData(QString proposedName, t_DataBlockP data)
