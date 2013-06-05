@@ -175,3 +175,42 @@ void AbstractNavigation::setFromMatrix(const glm::mat4 & view)
     m_viewmatrix = view;
 }
 
+glm::mat4 AbstractNavigation::defaultView()
+{
+    return glm::lookAt(glm::vec3(0.f, 0.f, -2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+}
+
+glm::mat4 AbstractNavigation::frontview() // TODO calculate AABB dependent
+{
+    return glm::lookAt(glm::vec3(0.f, 0.f, -2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+}
+
+glm::mat4 AbstractNavigation::rightview()
+{
+    return frontview() * glm::rotate(-90.f, glm::vec3(0,1,0));
+}
+
+glm::mat4 AbstractNavigation::backview()
+{
+    return frontview() * glm::rotate(180.0f, glm::vec3(0,1,0));
+}
+
+glm::mat4 AbstractNavigation::leftview()
+{
+    return frontview() * glm::rotate(90.f, glm::vec3(0,1,0));
+}
+
+glm::mat4 AbstractNavigation::topview()
+{
+    return frontview() * glm::rotate(-90.f, glm::vec3(1,0,0));
+}
+
+glm::mat4 AbstractNavigation::bottomview()
+{
+    return frontview() * glm::rotate(90.f, glm::vec3(1,0,0));
+}
+
+glm::mat4 AbstractNavigation::topRightView()
+{
+    return frontview() * glm::rotate(45.f, glm::vec3(0,1,0)) * glm::rotate(-45.f, glm::vec3(1,0,0)); 
+}

@@ -23,7 +23,8 @@ public:
 
     virtual void reset();
 
-    //void assignCoordinateProvider(CoordinateProvider *provider);
+    // ADD to implement scene dependent navigation
+    // void assignCoordinateProvider(CoordinateProvider *provider);
 
     // interaction mapping
     virtual void keyPressEvent(QKeyEvent * event);
@@ -40,6 +41,16 @@ public:
 
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
+
+    glm::mat4 defaultView();
+    glm::mat4 frontview();
+    glm::mat4 rightview();
+    glm::mat4 backview();
+    glm::mat4 leftview();
+    glm::mat4 topview();
+    glm::mat4 bottomview();
+    glm::mat4 topRightView();
+
 
 protected:
     void startTimer();
@@ -65,7 +76,6 @@ private:
 
     void finishTransition();
     void updateTransition();
-
     Camera * m_camera;
     QWidget * m_canvas;
     QBasicTimer m_timer;

@@ -253,7 +253,6 @@ QString mat2string(glm::mat4 mat) {
 
 void Viewer::restoreViews( QSettings &s ) {
     s.beginGroup(SETTINGS_SAVED_VIEWS);
-    glm::mat4 default_view = glm::lookAt(glm::vec3(0.f, 0.f, -2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
     for (int i = 0; i < m_saved_views.size(); i++)
     {
         QString name = "view_" + QString::number(i+1);
@@ -261,7 +260,7 @@ void Viewer::restoreViews( QSettings &s ) {
         if (str.size() > 0) {
             m_saved_views[i] = string2mat(str);
         } else {
-            m_saved_views[i] = default_view;
+            m_saved_views[i] = glm::mat4(0);
         }
 
     }
@@ -277,30 +276,34 @@ void Viewer::saveView(int i) {
 }
 
 void Viewer::loadView(int i) {
-    navigation()->loadView(m_saved_views[i]);
+    if (m_saved_views[i] == glm::mat4(0)) {
+        navigation()->loadView(navigation()->defaultView());
+    } else {
+        navigation()->loadView(m_saved_views[i]);
+    }
 }
 
 
 void Viewer::on_actionFrontView_triggered() {
-    navigation()->loadView(glm::lookAt(glm::vec3(0.f, 0.f,-2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
+    navigation()->loadView(navigation()->frontview());
 }
 void Viewer::on_actionLeftView_triggered() {
-    navigation()->loadView(glm::lookAt(glm::vec3(2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
+    navigation()->loadView(navigation()->leftview());
 }
 void Viewer::on_actionBackView_triggered() {
-    navigation()->loadView(glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
+    navigation()->loadView(navigation()->backview());
 }
 void Viewer::on_actionRightView_triggered() {
-    navigation()->loadView(glm::lookAt(glm::vec3(-2.f, 0.f, 0.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
+    navigation()->loadView(navigation()->rightview());
 }
 void Viewer::on_actionTopView_triggered() {
-    navigation()->loadView(glm::lookAt(glm::vec3(0.f, 2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, 1.f)));
+    navigation()->loadView(navigation()->topview());
 }
 void Viewer::on_actionBottomView_triggered() {
-    navigation()->loadView(glm::lookAt(glm::vec3(0.f, -2.f, 0.f), glm::vec3(0), glm::vec3(0.f, 0.f, -1.f)));
+    navigation()->loadView(navigation()->bottomview());
 }
 void Viewer::on_actionTopRightView_triggered() {
-    navigation()->loadView(glm::lookAt(glm::vec3(1.15f, 1.15f, -1.15f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f)));
+    navigation()->loadView(navigation()->topRightView());
 }
 
 
