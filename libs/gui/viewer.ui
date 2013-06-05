@@ -111,6 +111,7 @@
                 <addaction name="wireframeShadingAction"/>
                 <addaction name="solidWireframeShadingAction"/>
                 <addaction name="primitiveWireframeShadingAction"/>
+                <addaction name="normalsAction"/>
             </widget>
             <addaction name="fileMenu"/>
             <addaction name="editMenu"/>
@@ -470,6 +471,14 @@
             </property>
             <property name="text">
                 <string>Pr&amp;imitiveWireframe Shading</string>
+            </property>
+        </action>
+        <action name="normalsAction">
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="text">
+                <string>Normals</string>
             </property>
         </action>
     </widget>

@@ -190,7 +190,7 @@ const bool Painter::initialize()
          new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
     //set UNIFORMS for seleced shader
-    m_useProgram = m_flat;
+    m_useProgram = m_primitiveWireframe;
     setUniforms();
 
     // Post Processing Shader
@@ -297,10 +297,11 @@ void Painter::setShading(char shader)
         case 'w': m_useProgram = m_wireframe; std::printf("\nWireframe Shading\n\n"); break;
         case 's': m_useProgram = m_solidWireframe; std::printf("\nWireframeSolid Shading\n\n"); break;
         case 'r': m_useProgram = m_primitiveWireframe; std::printf("\nprimitive Wireframe Shading\n\n"); break;
+        case 'n': m_useProgram = m_normals; std::printf("\Normals\n\n"); break;
     }
     setUniforms();
     //repaint missing
-  
+
 }
 
 void Painter::postShaderRelinked()
