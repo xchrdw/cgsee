@@ -6,6 +6,7 @@
 #include <QMap>
 
 #include <core/abstractpainter.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 
@@ -51,6 +52,7 @@ protected:
     ScreenQuad * m_quad;
 
     Program * m_normalz;
+    Program * m_normals;
     Program * m_wireframe;
     Program * m_primitiveWireframe;
     Program * m_solidWireframe;
@@ -65,4 +67,5 @@ protected:
 
     Program * m_flush;
     Camera * m_camera;
+    glm::mat3 m_eyeRotate;
 };

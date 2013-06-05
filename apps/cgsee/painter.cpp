@@ -29,6 +29,7 @@ Painter::Painter()
 :   AbstractPainter()
 ,   m_group(nullptr)
 ,   m_quad(nullptr)
+,   m_normals(nullptr)
 ,   m_normalz(nullptr)
 ,   m_wireframe(nullptr)
 ,   m_primitiveWireframe(nullptr)
@@ -49,11 +50,15 @@ Painter::~Painter()
     delete m_group;
     delete m_quad;
 
+    delete m_normals;
     delete m_normalz;
     delete m_flat;
     delete m_gouraud;
     delete m_phong;
     delete m_gooch;
+    delete m_wireframe;
+    delete m_primitiveWireframe;
+    delete m_solidWireframe;
     delete m_fboNormalz;
     delete m_flush;
 }
@@ -98,12 +103,23 @@ const bool Painter::initialize()
 
     m_quad = new ScreenQuad();
 
-    // G-Buffer Shader
+    m_eyeRotate = (glm::mat3)glm::rotate<float>(glm::mat4(), 0.0, glm::detail::tvec3<float>(0, 1, 0));
 
-    //Wireframe
+    // NORMALS
+    m_normals = new Program();
+    m_normals->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normals.frag"));
+    m_normals->attach(
+        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/normals.geo"));
+    m_normals->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/normals.vert"));
+
+    // NORMALZ
     m_normalz = new Program();
     m_normalz->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
+    m_normalz->attach(
+        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/normalz.geo"));
     m_normalz->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
