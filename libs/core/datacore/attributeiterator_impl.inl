@@ -95,12 +95,23 @@ bool AttributeIterator<T>::isInvalid() const
 }
 
 template <typename T>
-void AttributeIterator<T>::_initialize(typename AttributeIterator<T>::t_OwnerType owner
+void AttributeIterator<T>::_initialize(t_VertexListP owner
+                                       , unsigned int index 
+                                       , t_AttrDesc & attrDesc)
+{
+    m_owner = owner;
+    m_currentIndex = index;
+    m_attrDesc = &attrDesc;
+    m_typeChecked = false;
+}
+
+template <typename T>
+void AttributeIterator<T>::_initialize(t_ConstVertexListP owner
                                        , unsigned int index 
                                        , t_AttrDesc const & attrDesc)
 {
     m_owner = owner;
     m_currentIndex = index;
-    m_attrDesc = &attrDesc;
+    m_attrDesc = t_AttrDescType(new t_AttrDesc(attrDesc));
     m_typeChecked = false;
 }

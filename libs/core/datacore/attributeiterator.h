@@ -79,13 +79,23 @@ private:
     typedef typename if_then_else<std::is_const<T>
         ,   t_ConstVertexListP
         ,   t_VertexListP>::type    t_OwnerType;
+
+    // If this is const iterator, we should copy attribute descriptor somewhere else 
+    // and dispose of it at the end.
+    // Otherwise we use the object given to us.
+    typedef typename if_then_else<std::is_const<T>
+        ,   std::shared_ptr<t_AttrDesc>
+        ,   t_AttrDesc *>::type   t_AttrDescType;
+
     // internal func; only to be called from VertexList class
-    void _initialize(t_OwnerType owner, unsigned int index
+    void _initialize(t_ConstVertexListP owner, unsigned int index
         ,   t_AttrDesc const & attrDesc);
+    void _initialize(t_VertexListP owner, unsigned int index
+        ,   t_AttrDesc & attrDesc);
 protected:
     t_OwnerType m_owner;
     unsigned int m_currentIndex;
-    t_AttrDesc const * m_attrDesc;
+    t_AttrDescType m_attrDesc;
     bool m_typeChecked;
 };
 
