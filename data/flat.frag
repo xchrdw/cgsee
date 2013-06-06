@@ -7,7 +7,7 @@ in vec4 gl_FragCoord;
 out vec4 gl_FragColor;
 
 in vec3 normal;
-in vec4 position;
+in vec3 position;
 
 uniform vec3 cameraposition;
 
@@ -24,5 +24,5 @@ vec4 phongLighting(vec3 n, vec3 v_pos, vec3 cameraposition, vec3 lightdir, vec3 
 void main()
 {
     vec3 n = normal;
-    gl_FragColor = phongLighting(n, position.xyz, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);
+    gl_FragColor = phongLighting(n, position, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);
 }

@@ -7,11 +7,11 @@ uniform mat4 transform;
 uniform mat4 view;
 
 out vec3 _normal;
-out vec4 _position;
+out vec3 _position;
 
 void main(void) 
 {
     _normal = normalize(a_normal);
-    _position = transform * vec4(a_vertex, 1.0);
-    //position = vec3(view * vec4(a_vertex, 1.0)); why define both??
+    gl_Position = transform * vec4(a_vertex, 1.0);
+    _position = vec3(view * vec4(a_vertex, 1.0));
 }
