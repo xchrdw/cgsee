@@ -1,5 +1,4 @@
 
-#include <QFileSystemModel>
 #include <QDockWidget>
 #include <QMenu>
 
@@ -30,7 +29,7 @@ NavigationHandler::NavigationHandler(
     m_viewer->addDockWidget(Qt::LeftDockWidgetArea, m_dockLeft);
     m_viewer->addDockWidget(Qt::BottomDockWidgetArea, m_dockBottom);
 
-    m_explorer->model()->setNameFilters(m_loader->allLoadableTypes());
+    m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
 
         
     QObject::connect(

@@ -21,11 +21,11 @@ public:
 	FileExplorer(QObject * parent = nullptr);
 	virtual ~FileExplorer();
 
-	QFileSystemModel * model();
 	QMenu * menu();
 	QModelIndex clickedFile();
 
 	void setFilter(const QDir::Filters & filters);
+	void setAllLoadableTypes(const QStringList & types);
 
 signals:
 	void activatedItem(const QString & path);

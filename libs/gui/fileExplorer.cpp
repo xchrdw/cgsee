@@ -39,11 +39,6 @@ FileExplorer::~FileExplorer()
 }
 
 
-QFileSystemModel * FileExplorer::model()
-{
-	return m_model;
-}
-
 QMenu * FileExplorer::menu()
 {
 	return m_menu;
@@ -58,6 +53,11 @@ QModelIndex FileExplorer::clickedFile()
 void FileExplorer::setFilter(const QDir::Filters & filters)
 {
 	m_model->setFilter(filters);
+}
+
+void FileExplorer::setAllLoadableTypes(const QStringList & list)
+{
+	m_model->setNameFilters(list);
 }
 
 void FileExplorer::setClickedFile(const QModelIndex & index)
