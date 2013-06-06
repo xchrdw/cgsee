@@ -65,10 +65,10 @@ typename AttributeIterator<T>::reference
     t_AttrStorageType storage = m_owner->m_vertices[m_currentIndex];
     if (!m_typeChecked)
     {
-        m_typeChecked = storage.checkDataType<typename clear_const<T>::type>(*m_attrDesc);
+        m_typeChecked = storage.template checkDataType<typename clear_const<T>::type>(*m_attrDesc);
         assert(m_typeChecked);
     }
-    return *storage.getDataUnchecked<typename clear_const<T>::type>(*m_attrDesc);
+    return *storage.template getDataUnchecked<typename clear_const<T>::type>(*m_attrDesc);
 }
 
 template <typename T>
@@ -82,10 +82,10 @@ typename AttributeIterator<T>::pointer
     t_AttrStorageType storage = m_owner->m_vertices[m_currentIndex];
     if (!m_typeChecked)
     {
-        m_typeChecked = storage.checkDataType<typename clear_const<T>::type>(*m_attrDesc);
+        m_typeChecked = storage.template checkDataType<typename clear_const<T>::type>(*m_attrDesc);
         assert(m_typeChecked);
     }
-    return storage.getDataUnchecked<typename clear_const<T>::type>(*m_attrDesc);
+    return storage.template getDataUnchecked<typename clear_const<T>::type>(*m_attrDesc);
 }
 
 template <typename T>
