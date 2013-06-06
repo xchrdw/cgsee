@@ -34,6 +34,7 @@ public slots:
 	// void callSetRoot(const QModelIndex & index);
 	void emitActivatedItem(const QModelIndex & index);
 	void setClickedFile(const QModelIndex & index);
+	void triggeredOpen(const bool & triggered);
 	void showContextMenu(const QPoint & point);
 	void setRoot(QString rootPath);
 

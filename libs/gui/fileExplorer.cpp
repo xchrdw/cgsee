@@ -21,6 +21,8 @@ FileExplorer::FileExplorer(
 
 	m_model->setNameFilterDisables(false);
 
+	this->menu()->addAction(QString("Open"), this, SLOT(triggeredOpen(const bool)));
+
 	QObject::connect(
 		this, SIGNAL(customContextMenuRequested(const QPoint &)),
 		this, SLOT(showContextMenu(const QPoint &)));
@@ -70,6 +72,11 @@ void FileExplorer::setClickedFile(const QModelIndex & index)
 	m_clickedFile = index;
 }
 
+void FileExplorer::triggeredOpen(const bool & triggered)
+{
+    emitActivatedItem(clickedFile());
+}
+
 void FileExplorer::showContextMenu(const QPoint & point)
 {
 	this->setClickedFile(this->indexAt(point));
@@ -87,7 +94,6 @@ void FileExplorer::emitActivatedItem(const QModelIndex & index)
 		emit activatedItem(path);
 	}
 }
-
 
 void FileExplorer::setRoot(QString rootPath)
 {

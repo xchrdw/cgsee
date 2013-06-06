@@ -32,9 +32,7 @@ NavigationHandler::NavigationHandler(
 
     m_explorer->model()->setNameFilters(m_loader->allLoadableTypes());
 
-    m_explorer->menu()->addAction(QString("Open"), this, SLOT(triggeredLoadFile(const bool)));
-
-    
+        
     QObject::connect(
         m_navigator, SIGNAL(clickedDirectory(const QString &)),
         m_explorer, SLOT(setRoot(const QString &)));
@@ -49,12 +47,6 @@ NavigationHandler::~NavigationHandler()
     delete m_dockLeft;
     delete m_dockBottom;
     delete m_loader;
-}
-
-
-void NavigationHandler::triggeredLoadFile(const bool & triggered)
-{
-    // this->activatedItem(m_explorer->clickedFile());
 }
 
 void NavigationHandler::loadFile(const QString & path)

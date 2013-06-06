@@ -26,7 +26,6 @@ public:
 
 
 public slots:
-    void triggeredLoadFile(const bool & triggered);
     void loadFile(const QString & path);
 
 protected:
