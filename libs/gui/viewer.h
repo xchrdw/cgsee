@@ -20,7 +20,12 @@ class GLFormat;
 class Ui_Viewer;
 class Canvas;
 class AbstractScenePainter;
-class NavigationHandler;
+
+class FileNavigator;
+class FileExplorer;
+class Viewer;
+class AbstractModelLoader;
+class Group;
 
 
 class CGSEE_API Viewer : public QMainWindow
@@ -45,7 +50,11 @@ protected slots:
 
     void on_openFileDialogAction_triggered();
 
+    void on_loadFile(const QString & path);
+
 protected:
+
+    void initializeNavigation();
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -62,5 +71,11 @@ protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
 
     Canvas * m_qtCanvas;
-    NavigationHandler * m_navigationHandler;
+
+    QDockWidget * m_dockLeft;
+    QDockWidget * m_dockBottom;
+
+    FileNavigator * m_navigator;
+    FileExplorer * m_explorer;
+    AbstractModelLoader * m_loader;
 };

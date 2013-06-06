@@ -14,8 +14,6 @@ set(SOURCES
     fileExplorer.cpp
     fileNavigator.h
     fileNavigator.cpp
-    navigationHandler.h
-    navigationHandler.cpp
     viewer.h
     viewer.cpp
     viewer.ui

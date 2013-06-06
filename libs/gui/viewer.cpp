@@ -6,13 +6,16 @@
 #include <QSettings>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDockWidget>
+#include <QMenu>
 
 #include "ui_viewer.h"
 
 #include "viewer.h"
 #include "canvas.h"
 #include "canvasexporter.h"
-#include "navigationHandler.h"
+#include "fileNavigator.h"
+#include "fileExplorer.h"
 
 #include <core/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
@@ -35,7 +38,12 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 
 ,   m_qtCanvas(nullptr)
-,   m_navigationHandler(nullptr)
+
+,   m_dockLeft(new QDockWidget(tr("Navigator")))
+,   m_dockBottom(new QDockWidget(tr("Explorer")))
+,   m_navigator(new FileNavigator(m_dockLeft))
+,   m_explorer(new FileExplorer(m_dockBottom))
+,   m_loader(new AssimpLoader())
 {
     m_ui->setupUi(this);
 
@@ -45,12 +53,31 @@ Viewer::Viewer(
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
 
-    m_navigationHandler = new NavigationHandler(this);
+    initializeNavigation();
+};
+
+void Viewer::initializeNavigation()
+{
+    m_dockLeft->setWidget(m_navigator);
+    m_dockBottom->setWidget(m_explorer);
+
+    this->addDockWidget(Qt::LeftDockWidgetArea, m_dockLeft);
+    this->addDockWidget(Qt::BottomDockWidgetArea, m_dockBottom);
+
+    m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
+        
+    QObject::connect(
+        m_navigator, SIGNAL(clickedDirectory(const QString &)),
+        m_explorer, SLOT(setRoot(const QString &)));
+
+    QObject::connect(
+        m_explorer, SIGNAL(activatedItem(const QString &)),
+        this, SLOT(on_loadFile(const QString &)));
 
     QObject::connect(
         m_ui->openFileDialogAction, SIGNAL(changed()),
         this, SLOT(on_openFileDialogAction_triggered()));
-};
+}
 
 #ifdef WIN32
 const HGLRC Viewer::currentContextHandle()
@@ -124,7 +151,10 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_STATE, saveState());
 
     delete m_qtCanvas;
-    delete m_navigationHandler;
+
+    delete m_dockLeft;
+    delete m_dockBottom;
+    delete m_loader;
 }
 
 void Viewer::setPainter(AbstractScenePainter * painter)
@@ -162,14 +192,18 @@ void Viewer::on_reloadAllShadersAction_triggered()
 
 void Viewer::on_openFileDialogAction_triggered()
 {
-    AssimpLoader loader;
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), loader.loadableTypes().join(";;"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), m_loader->loadableTypes().join(";;"));
     if (fileName.isEmpty())
         return;
     
-    Group * scene = loader.importFromFile(fileName);
+    on_loadFile(fileName);
+}
+
+void Viewer::on_loadFile(const QString & path)
+{
+    Group * scene = m_loader->importFromFile(path);
     if (!scene)
-        QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + fileName);
+        QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     else {
         this->painter()->assignScene(scene);
         this->m_qtCanvas->update();
