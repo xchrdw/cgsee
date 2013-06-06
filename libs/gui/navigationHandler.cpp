@@ -9,7 +9,7 @@
 
 #include "navigationHandler.h"
 
-#include <core/group.h>
+// #include <core/group.h>
 #include <core/assimploader.h>
 #include <core/abstractscenepainter.h>
 

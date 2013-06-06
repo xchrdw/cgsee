@@ -14,6 +14,7 @@ class FileNavigator;
 class FileExplorer;
 class Viewer;
 class AbstractModelLoader;
+class Group;
 
 
 class CGSEE_API NavigationHandler : public QObject

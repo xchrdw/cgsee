@@ -60,13 +60,6 @@ void FileExplorer::setFilter(const QDir::Filters & filters)
 	m_model->setFilter(filters);
 }
 
-
-// void FileExplorer::callSetRoot(const QModelIndex & index)
-// {
-// 	QString rootPath = m_model->fileInfo(index).absoluteFilePath();
-// 	this->setRoot(rootPath);
-// }
-
 void FileExplorer::setClickedFile(const QModelIndex & index)
 {
 	m_clickedFile = index;
