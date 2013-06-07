@@ -23,8 +23,8 @@ vec4 phongLighting(vec3 n, vec3 v_pos, vec3 cameraposition, vec3 lightdir, vec3 
 
 void main()
 {
+    vec3 n = normalize(a_normal);
 	gl_Position = transform * vec4(a_vertex, 1.0);
-	vec3 n = normalize(a_normal);
 	vec3 position = vec3(view * vec4(a_vertex, 1.0));
 
 	color=phongLighting(n, position, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);
