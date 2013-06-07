@@ -105,7 +105,6 @@ const bool Painter::initialize()
 
     m_quad = new ScreenQuad();
 
-    m_eyeRotate = (glm::mat3)glm::rotate<float>(glm::mat4(), 0.0, glm::detail::tvec3<float>(0, 1, 0));
 
     // NORMALS
     m_normals = new Program();
@@ -297,7 +296,7 @@ void Painter::setShading(char shader)
         case 'w': m_useProgram = m_wireframe; std::printf("\nWireframe Shading\n\n"); break;
         case 's': m_useProgram = m_solidWireframe; std::printf("\nWireframeSolid Shading\n\n"); break;
         case 'r': m_useProgram = m_primitiveWireframe; std::printf("\nprimitive Wireframe Shading\n\n"); break;
-        case 'n': m_useProgram = m_normals; std::printf("\Normals\n\n"); break;
+        case 'n': m_useProgram = m_normals; std::printf("\nNormals\n\n"); break;
     }
     setUniforms();
     //repaint missing

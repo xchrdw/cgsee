@@ -67,5 +67,4 @@ protected:
 
     Program * m_flush;
     Camera * m_camera;
-    glm::mat3 m_eyeRotate;
 };
