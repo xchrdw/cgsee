@@ -151,10 +151,16 @@ public:
     typename const_iterator<T>::type begin(const QString &attrName) const;
 
     template <class T>
+    typename const_iterator<T>::type cbegin(const QString &attrName) const;
+
+    template <class T>
     typename iterator<T>::type end(const QString &attrName);
 
     template <class T>
     typename const_iterator<T>::type end(const QString &attrName) const;
+
+    template <class T>
+    typename const_iterator<T>::type cend(const QString &attrName) const;
 
     void createNewVertices(unsigned int amount);
 
