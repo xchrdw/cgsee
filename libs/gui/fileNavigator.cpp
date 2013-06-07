@@ -19,7 +19,7 @@ FileNavigator::FileNavigator(
 	this->setColumnHidden(3, true);
 
 	QObject::connect(
-        this, SIGNAL(clicked(const QModelIndex &)),
+        this, SIGNAL(activated(const QModelIndex &)),
         this, SLOT(emitClickedDirectory(const QModelIndex &)));
 };
 
