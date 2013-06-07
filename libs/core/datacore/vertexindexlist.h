@@ -20,14 +20,20 @@ public:
         ,   std::function<t_indexType(unsigned int)> initFunc);
 
     // Calls the same function from VertexList
-    template <class T>
+    template <typename T>
     void foreachVertexAttribute(int startIndex
         ,   int endIndex
         ,   const QString &attrName
         ,   std::function<bool(int)> select // can be null
         ,   std::function<void(int, const T&)> inject);
 
-    template <class T>
+    template <typename T>
+    void setVertexAttributes(int startIndex
+        ,   int endIndex
+        ,   const QString &attrName
+        ,   std::function<void(int, T&)> setter);
+
+    template <typename T>
     void foreachTriangle(int startIndex
         ,   int endIndex
         ,   const QString &attrName

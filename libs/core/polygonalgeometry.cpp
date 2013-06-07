@@ -165,10 +165,10 @@ void PolygonalGeometry::retrieveNormals()
             glm::vec3 a = glm::normalize(v3-v1);
             glm::vec3 b = glm::normalize(v2-v1);
             glm::vec3 n = glm::cross(a, b);
-            myVList->setVertexAttributes<glm::vec3>(i, i+3, "normal",
+            inds->setVertexAttributes<glm::vec3>(i, i+3, "normal",
                 [&](int i, glm::vec3& oldn)
                 {
-                    oldn = n;
+                    oldn = glm::normalize(n);
                 });
         });
 
