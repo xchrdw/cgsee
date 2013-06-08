@@ -133,8 +133,8 @@ void PolygonalDrawable::draw(
     const t_bufferObjects::const_iterator eEnd(m_elementArrayBOs.end());
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
     for(; e != eEnd; ++e)
         (*e)->draw(m_geometry->mode());

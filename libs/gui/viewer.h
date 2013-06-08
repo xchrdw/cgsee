@@ -1,5 +1,6 @@
-
 #pragma once
+
+#include <QMainWindow>
 
 #ifdef WIN32
 #include <windows.h>
@@ -9,7 +10,6 @@
 
 #include <memory>
 
-#include <QMainWindow>
 
 #include <core/declspec.h>
 
@@ -40,6 +40,14 @@ protected slots:
     void on_captureAsImageAdvancedAction_triggered();
 
     void on_reloadAllShadersAction_triggered();
+    void on_phongShadingAction_triggered();
+    void on_gouraudShadingAction_triggered();
+    void on_flatShadingAction_triggered();
+    void on_goochShadingAction_triggered();
+    void on_wireframeShadingAction_triggered();
+    void on_solidWireframeShadingAction_triggered();
+    void on_primitiveWireframeShadingAction_triggered();
+    void on_normalsAction_triggered();
 
 protected:
 
