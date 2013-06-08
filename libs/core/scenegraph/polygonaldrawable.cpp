@@ -25,17 +25,12 @@ PolygonalDrawable::~PolygonalDrawable()
     deleteBuffers();
 }
 
-void PolygonalDrawable::setGeometry( std::shared_ptr<PolygonalGeometry> geometry )
+void PolygonalDrawable::setGeometry( t_geometryP geometry )
 {
     if (m_geometry != nullptr)
         deleteBuffers();
 
     m_geometry = geometry;
-}
-
-std::shared_ptr<PolygonalGeometry> PolygonalDrawable::geometry()
-{
-    return m_geometry;
 }
 
 const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
@@ -75,15 +70,12 @@ void PolygonalDrawable::draw(
     glBindVertexArray(m_vao);                                                                  
     glError();
 
-    t_bufferObjects::const_iterator e(m_elementArrayBOs.begin());
-    const t_bufferObjects::const_iterator eEnd(m_elementArrayBOs.end());
-
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-
-    for(; e != eEnd; ++e)
-        (*e)->draw( mode() );
+ 
+    for( const auto & bo : m_elementArrayBOs )
+        bo->draw( mode() );
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -143,8 +135,8 @@ void PolygonalDrawable::initialize(const Program & program)
 
 void PolygonalDrawable::deleteBuffers()
 {
-    m_elementArrayBOs.clear();
-    m_arrayBOsByAttribute.clear();
+    qDeleteAll( m_elementArrayBOs );
+    qDeleteAll( m_arrayBOsByAttribute );
 
     if(-1 != m_vao)
     {
@@ -154,6 +146,8 @@ void PolygonalDrawable::deleteBuffers()
         m_vao = -1;
     }
 }
+
+
 // PolygonalDrawable::PolygonalDrawable(const QString & name)
 // :   Node(name)
 // ,   m_vao(-1)

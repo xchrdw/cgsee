@@ -25,22 +25,17 @@ public:
     };
 
 public:
-    Node(const QString & name = "unnamed");
+    Node( const QString & name );
     virtual ~Node();
 
-    virtual void draw(
-        const Program & program
-    ,   const glm::mat4 & transform) = 0;
-
+    virtual void draw( const Program & program, const glm::mat4 & transform) = 0;
+    virtual const AxisAlignedBoundingBox boundingBox() const = 0;
+    
     const QString name() const;
-    void setName(const QString & name);
+    void setName( const QString & name );
 
     const t_parents & parents() const;
     t_parents & parents();
-
-    virtual const AxisAlignedBoundingBox boundingBox() const = 0;
-
-    // transform
 
     const glm::mat4 & transform() const;
     void setTransform(const glm::mat4 & transform);
@@ -56,12 +51,9 @@ protected:
 
 protected:
     QString m_name;
-
     t_parents m_parents;
-
     e_ReferenceFrame m_rf;
     glm::mat4 m_transform;
-
     mutable AxisAlignedBoundingBox m_aabb;
 };
 

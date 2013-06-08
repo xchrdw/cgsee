@@ -1,29 +1,31 @@
 
 #include "polygonalgeometry.h"
 
+#include <core/datacore/datablock.h>
 #include <core/aabb.h>
-#include <core/datacore/vertexindexlist.h>  //includes vertexlist.h
 
 PolygonalGeometry::PolygonalGeometry( DataBlockRegistry * registry )
 :   m_registry( registry )
+,   m_datablock( nullptr )
 {
     if( m_registry == nullptr )
        m_registry = std::make_shared<DataBlockRegistry>();
    
     m_vertListHandle = "VERTICES";
     m_indicesHandle = "INDICES";
-    t_VertexListP temp = DataBlock::createDataBlockWithName<VertexList>(m_vertListHandle, *m_registry);
-    DataBlock::createDataBlockWithName<VertexIndexList>(m_indicesHandle, *m_registry, temp);
+    m_datablock = DataBlock::createDataBlockWithName<VertexList>(m_vertListHandle, *m_registry);
+    DataBlock::createDataBlockWithName<VertexIndexList>(m_indicesHandle, *m_registry, m_datablock);
 
     QList<AttributeSpec> attrSpec;
     attrSpec.append(AttributeSpec("position", "glm::vec3"));
     attrSpec.append(AttributeSpec("normal", "glm::vec3"));
     attrSpec.append(AttributeSpec("texcoord", "glm::vec2"));
-    temp->initialize(attrSpec);
+    m_datablock->initialize(attrSpec);
 }
 
 PolygonalGeometry::~PolygonalGeometry()
 {
+    DataBlock::destroyDataBlock<VertexList>( m_datablock );
 }
 
 t_vec3s PolygonalGeometry::vertices() const

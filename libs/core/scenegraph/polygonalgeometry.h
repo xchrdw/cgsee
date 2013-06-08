@@ -7,9 +7,10 @@
 
 #include <core/declspec.h>
 #include <core/common.h>
-#include <core/datacore/datablock.h>
+#include <core/datacore/vertexindexlist.h>  //includes vertexlist.h
 
 
+class DataBlockRegistry;
 class AxisAlignedBoundingBox;
 
 class CGSEE_API PolygonalGeometry
@@ -48,6 +49,7 @@ protected:
     // TODO:
 //     DataBlockRegistry & m_registry;
     std::shared_ptr<DataBlockRegistry> m_registry;
+    t_VertexListP m_datablock;
     QString m_vertListHandle;
     QString m_indicesHandle;
     //t_vec3s m_vertices;
