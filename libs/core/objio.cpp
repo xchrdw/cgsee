@@ -320,7 +320,7 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
     const bool usesTexCoordIndices(!group.vtis.empty());
     const bool usesNormalIndices(!group.vnis.empty());
 
-    PolygonalGeometry * geom(new PolygonalGeometry(object.qname() + " geometry"));
+    auto geom = make_shared<PolygonalGeometry>();
 
     const GLuint size(static_cast<GLuint>(group.vis.size()));
     geom->resize(size);
@@ -342,14 +342,13 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
             geom->setNormal(i, object.vns[group.vnis[i]]);
     }
 
-    // TODO: support other modes here!
-    geom->setMode(GL_TRIANGLES);
-
     if(!usesNormalIndices)
         geom->retrieveNormals();
 
     PolygonalDrawable * drawable(new PolygonalDrawable(object.qname()));
     drawable->setGeometry(geom);
+    // TODO: support other modes here!
+    drawable->setMode(GL_TRIANGLES);
 
     return drawable;
 }
