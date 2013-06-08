@@ -12,6 +12,7 @@ CGSee::CGSee(int & argc, char ** argv)
 ,   m_painter(nullptr)
 {
     // Create Viewer
+
     m_viewer = new Viewer();
     m_viewer->setWindowTitle(title());
     m_viewer->initialize(format());
@@ -29,12 +30,10 @@ CGSee::CGSee(int & argc, char ** argv)
     navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
 
-    
     // Start
+
     m_viewer->show();
 }
-
-
 
 CGSee::~CGSee()
 {

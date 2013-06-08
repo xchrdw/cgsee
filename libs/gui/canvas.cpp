@@ -31,7 +31,7 @@ Canvas::Canvas(
     //m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
-    
+
     // Important for overdraw, not occluding the scene.
     setAutoFillBackground(false); 
 }
@@ -183,7 +183,6 @@ void Canvas::resize(int width, int height)
     QGLWidget::resize(width, height);
 }
 
-
 AbstractNavigation * Canvas::navigation()
 {
     return m_navigation;
@@ -216,4 +215,3 @@ void Canvas::wheelEvent(QWheelEvent * event)
 {
     m_navigation->wheelEvent(event);
 }
-

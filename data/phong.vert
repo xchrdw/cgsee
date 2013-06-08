@@ -1,17 +1,17 @@
-#version 330
+#version 150 core
 
 in vec3 a_vertex;
 in vec3 a_normal;
 
 uniform mat4 transform;
-
-uniform float znear;
-uniform float zfar;
+uniform mat4 view;
 
 out vec3 normal;
+out vec3 position;
 
 void main(void) 
 {
-    normal = a_normal;
+	normal = normalize(a_normal);
 	gl_Position = transform * vec4(a_vertex, 1.0);
+	position = vec3(view * vec4(a_vertex, 1.0));
 }

@@ -125,10 +125,27 @@
     <addaction name="separator"/>
     <addaction name="preferencesAction"/>
    </widget>
+   <widget class="QMenu" name="shadingMenu">
+    <property name="title">
+     <string>&amp;Shading</string>
+    </property>
+    <addaction name="flatShadingAction"/>
+    <addaction name="gouraudShadingAction"/>
+    <addaction name="phongShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="goochShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="wireframeShadingAction"/>
+    <addaction name="solidWireframeShadingAction"/>
+    <addaction name="primitiveWireframeShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="normalsAction"/>
+   </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
+   <addaction name="shadingMenu"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -169,6 +186,9 @@
    <property name="text">
     <string>Specify Resolution ...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="captureCameraPathAction">
    <property name="enabled">
@@ -176,6 +196,9 @@
    </property>
    <property name="text">
     <string>Capture Camera Path ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="aboutAction">
@@ -207,6 +230,9 @@
    <property name="text">
     <string>&amp;Drive Manipulator</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="playCameraPathAction">
    <property name="enabled">
@@ -214,6 +240,9 @@
    </property>
    <property name="text">
     <string>&amp;Play Camera Path ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="flightManipulatorAction">
@@ -518,6 +547,73 @@
    </property>
    <property name="shortcut">
     <string>Alt+F3</string>
+   </property>
+  </action>
+  <action name="phongShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Phong Shading</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F12</string>
+   </property>
+  </action>
+  <action name="flatShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Flat Shading</string>
+   </property>
+  </action>
+  <action name="gouraudShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Gouraud Shading</string>
+   </property>
+  </action>
+  <action name="goochShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>G&amp;ooch Shading</string>
+   </property>
+  </action>
+  <action name="wireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>W&amp;ireframe Shading</string>
+   </property>
+  </action>
+  <action name="solidWireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>S&amp;olidWireframe Shading</string>
+   </property>
+  </action>
+  <action name="primitiveWireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pr&amp;imitiveWireframe Shading</string>
+   </property>
+  </action>
+  <action name="normalsAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Normals</string>
    </property>
   </action>
  </widget>

@@ -323,6 +323,7 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
     PolygonalGeometry * geom(new PolygonalGeometry(object.qname() + " geometry"));
 
     const GLuint size(static_cast<GLuint>(group.vis.size()));
+    geom->resize(size);
 
     for(GLuint i = 0; i < size; ++i)
     {
@@ -330,13 +331,15 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
 
         // TODO: make use of vertex reuse!
 
-        geom->indices().push_back(i);
-        geom->vertices().push_back(object.vs[group.vis[i]]);
+        geom->setIndex(i, i);
+        geom->setVertex(i, object.vs[group.vis[i]]);
 
         if(usesTexCoordIndices)
-            geom->texcs().push_back(object.vts[group.vtis[i]]);
+            //geom->texcs().push_back(object.vts[group.vtis[i]]);
+            geom->setTexC(i, object.vts[group.vtis[i]]);
         if(usesNormalIndices)
-            geom->normals().push_back(object.vns[group.vnis[i]]);
+            //geom->normals().push_back(object.vns[group.vnis[i]]);
+            geom->setNormal(i, object.vns[group.vnis[i]]);
     }
 
     // TODO: support other modes here!
