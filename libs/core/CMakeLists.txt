@@ -10,6 +10,10 @@ set(SOURCES
 
     aabb.h
     aabb.cpp
+    abstractnavigation.h
+    abstractnavigation.cpp
+    arcballnavigation.h
+    arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstractglparent.h
@@ -40,8 +44,12 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+    flightnavigation.h
+    flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
+    fpsnavigation.h
+    fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
     glformat.h
@@ -106,3 +114,4 @@ set_target_properties(${target}
     DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
 
 add_definitions("-DCGSEE_EXPORTS")
+add_definitions("-DGLM_SWIZZLE")

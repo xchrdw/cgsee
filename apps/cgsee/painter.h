@@ -18,7 +18,7 @@ class FrameBufferObject;
 class Painter : public AbstractPainter
 {
 public:
-    Painter();
+    Painter(Camera * camera);
     virtual ~Painter();
 
     virtual void paint();
@@ -28,10 +28,9 @@ public:
     virtual void resize(
         const int width
     ,   const int height);
-
 protected:
-    virtual const bool initialize();
-    virtual Camera * camera();
+    virtual const bool initialize() override;
+    virtual Camera * camera() override;
 
 protected:
     void postShaderRelinked();
@@ -45,7 +44,7 @@ protected:
 
     static void releaseSampler(
         const t_samplerByName & sampler);
-
+   
 protected:
     Group * m_group;
     ScreenQuad * m_quad;
@@ -66,5 +65,6 @@ protected:
     glm::vec3 camPos;
 
     Program * m_flush;
+
     Camera * m_camera;
 };

@@ -1,5 +1,5 @@
 
-
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "painter.h"
 
@@ -14,20 +14,23 @@
 #include <core/objio.h>
 #include <core/program.h>
 #include <core/screenquad.h>
+#include "core/arcballnavigation.h"
+#include "core/flightnavigation.h"
+
 
 //for phong, flat and gouraud
-static const QString CAMERAPOSITION_UNIFORM   ("cameraposition");
-static const QString LIGHTDIR_UNIFORM   ("lightdir");
-static const QString LIGHTDIR_UNIFORM2   ("lightdir2");
-static const QString LIGHTAMBIENTGLOBAL_UNIFORM   ("lightambientglobal");
-static const QString LIGHT_UNIFORM   ("light");
-static const QString LIGHT_UNIFORM2   ("light2");
-static const QString MATERIAL_UNIFORM   ("material");
-static const QString LIGHTPOSITION_UNIFORM   ("lightposition");
+static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
+static const QString LIGHTDIR_UNIFORM ("lightdir");
+static const QString LIGHTDIR_UNIFORM2 ("lightdir2");
+static const QString LIGHTAMBIENTGLOBAL_UNIFORM ("lightambientglobal");
+static const QString LIGHT_UNIFORM ("light");
+static const QString LIGHT_UNIFORM2 ("light2");
+static const QString MATERIAL_UNIFORM ("material");
+static const QString LIGHTPOSITION_UNIFORM ("lightposition");
 //gooch
-static const QString WARMCOLDCOLOR_UNIFORM   ("warmcoldcolor");
+static const QString WARMCOLDCOLOR_UNIFORM ("warmcoldcolor");
 
-Painter::Painter()
+Painter::Painter(Camera * camera)
 :   AbstractPainter()
 ,   m_group(nullptr)
 ,   m_quad(nullptr)
@@ -43,8 +46,9 @@ Painter::Painter()
 ,   m_useProgram(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
-,   m_camera(nullptr)
+,   m_camera(camera)
 {
+
 }
 
 Painter::~Painter()
@@ -63,11 +67,6 @@ Painter::~Painter()
     delete m_solidWireframe;
     delete m_fboNormalz;
     delete m_flush;
-}
-
-Camera * Painter::camera()
-{
-    return m_camera;
 }
 
 const bool Painter::initialize()
@@ -90,18 +89,7 @@ const bool Painter::initialize()
     m_group->setTransform(transform);
 
     // Camera Setup
-
-    m_camera = new Camera();
-
-    m_camera->setFovy (45.0f);
-    m_camera->setZNear( 1.0f);
-    m_camera->setZFar (10.0f);
-
     m_camera->append(m_group);
-
-    camPos=glm::vec3( -2.0f, 0.0f,-2.f);
-    m_camera->setView(glm::lookAt(
-        camPos , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
 
     m_quad = new ScreenQuad();
 
@@ -328,4 +316,9 @@ void Painter::releaseSampler(
     for(; i != iEnd; ++i)
         i.value()->releaseTexture2D();
 
+}
+
+Camera * Painter::camera()
+{
+    return m_camera;
 }
