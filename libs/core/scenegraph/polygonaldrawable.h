@@ -7,7 +7,7 @@
 #include <QMap>
 #include <QVector>
 
-#include "declspec.h"
+#include <core/declspec.h>
 
 #include "node.h"
 

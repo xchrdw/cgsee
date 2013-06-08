@@ -1,8 +1,8 @@
 
 #include "polygonalgeometry.h"
 
-#include "aabb.h"
-#include "datacore/vertexindexlist.h"  //includes vertexlist.h
+#include <core/aabb.h>
+#include <core/datacore/vertexindexlist.h>  //includes vertexlist.h
 
 PolygonalGeometry::PolygonalGeometry(const QString & name)
 :   Node(name)

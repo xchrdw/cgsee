@@ -30,6 +30,16 @@ set(SOURCES
     datacore/registertypeshere.h
     datacore/vertexlist_impl.inl
     datacore/datablock_impl.inl
+    
+    scenegraph/node.h
+    scenegraph/node.cpp
+    scenegraph/group.h
+    scenegraph/group.cpp
+    scenegraph/polygonaldrawable.h
+    scenegraph/polygonaldrawable.cpp
+    scenegraph/polygonalgeometry.h
+    scenegraph/polygonalgeometry.cpp
+    
     abstracttimer.h
     autotimer.h
     autotimer.cpp
@@ -48,19 +58,11 @@ set(SOURCES
     glformat.cpp
     gpuquery.h
     gpuquery.cpp
-    group.h
-    group.cpp
     messagehandler.h
     messagehandler.cpp
     mathmacros.h
-    node.h
-    node.cpp
     objio.h
     objio.cpp
-    polygonaldrawable.h
-    polygonaldrawable.cpp
-    polygonalgeometry.h
-    polygonalgeometry.cpp
     program.h
     program.cpp
     screenquad.h

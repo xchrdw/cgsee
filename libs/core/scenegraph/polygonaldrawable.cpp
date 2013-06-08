@@ -2,11 +2,11 @@
 
 #include "polygonaldrawable.h"
 
-#include "aabb.h"
-#include "bufferobject.h"
-#include "polygonalgeometry.h"
-#include "program.h"
+#include <core/aabb.h>
+#include <core/bufferobject.h>
+#include <core/program.h>
 
+#include "polygonalgeometry.h"
 
 static const QString TRANSFORM_UNIFORM ("transform");
 

@@ -10,7 +10,7 @@
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
-#include <core/group.h>
+#include <core/scenegraph/group.h>
 #include <core/objio.h>
 #include <core/program.h>
 #include <core/screenquad.h>

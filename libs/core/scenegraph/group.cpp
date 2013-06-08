@@ -2,7 +2,7 @@
 #include "group.h"
 
 #include "polygonaldrawable.h"
-#include "program.h"
+#include <core/program.h>
 
 
 Group::Group(const QString & name)

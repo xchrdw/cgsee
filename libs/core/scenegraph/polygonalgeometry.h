@@ -4,11 +4,11 @@
 
 #include <QString>
 
-#include "declspec.h"
+#include <core/declspec.h>
+#include <core/common.h>
+#include <core/datacore/datablock.h>
 
 #include "node.h"
-#include "common.h"
-#include "datacore/datablock.h"
 
 class CGSEE_API PolygonalGeometry : public Node
 {

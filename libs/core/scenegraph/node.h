@@ -4,9 +4,9 @@
 #include <QSet>
 #include <QList>
 
-#include "declspec.h"
+#include <core/declspec.h>
 
-#include "aabb.h"
+#include <core/aabb.h>
 
 
 class Program;

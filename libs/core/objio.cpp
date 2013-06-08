@@ -11,9 +11,9 @@
 
 #include "objio.h"
 
-#include "group.h"
-#include "polygonaldrawable.h"
-#include "polygonalgeometry.h"
+#include "scenegraph/group.h"
+#include "scenegraph/polygonaldrawable.h"
+#include "scenegraph/polygonalgeometry.h"
 
 
 using namespace std;
