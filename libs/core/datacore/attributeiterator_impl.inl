@@ -20,6 +20,17 @@ AttributeIterator<T>::AttributeIterator(const AttributeIterator<T>& rhs):
 
 }
 
+template <typename T> template<typename Trhs>
+AttributeIterator<T>::AttributeIterator(AttributeIterator<Trhs> const& rhs
+                  , typename _enable_conversion<Trhs>::type):
+    m_owner(rhs.m_owner)
+,   m_currentIndex(rhs.m_currentIndex)
+,   m_attrDesc(t_AttrDescType(new t_AttrDesc(*rhs.m_attrDesc)))
+,   m_typeChecked(rhs.m_typeChecked)
+{
+
+}
+
 template <typename T>
 AttributeIterator<T>::~AttributeIterator()
 {

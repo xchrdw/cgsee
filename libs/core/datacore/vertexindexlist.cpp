@@ -12,6 +12,7 @@ VertexIndexList::VertexIndexList(QObject* parent)
 
 void VertexIndexList::setVertexList(t_VertexListP associatedList)
 {
+    m_associatedList = associatedList;
     if (associatedList)
     {
         connect(associatedList, SIGNAL(updated(QObject*)), SLOT(onVertexListUpdated()));
