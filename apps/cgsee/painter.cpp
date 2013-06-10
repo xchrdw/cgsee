@@ -1,5 +1,5 @@
 
-
+#include "QDebug"
 
 #include "painter.h"
 
@@ -11,6 +11,8 @@
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
 #include <core/scenegraph/group.h>
+#include <core/scenegraph/scenetraverser.h>
+#include <core/scenegraph/sceneiterator.h>
 #include <core/objio.h>
 #include <core/program.h>
 #include <core/screenquad.h>
@@ -99,6 +101,23 @@ const bool Painter::initialize()
 
     m_camera->append(m_group);
 
+    // TODO: Kann wieder weg.
+    // Traverser und Iterator Test.
+//     size_t count = 0;
+//     SceneTraverser traverser;
+//     traverser.traverse( *m_camera, [&count]( Node & node )
+//     {
+//         ++count;
+//     } );
+//     qDebug() << "count" << count;
+//     
+//     count = 0;
+//     for( SceneIterator iter( m_camera->begin() ); iter != m_camera->end(); ++iter )
+//     {
+//         ++count;
+//     }
+//     qDebug() << "count" << count;
+    
     camPos=glm::vec3( -2.0f, 0.0f,-2.f);
     m_camera->setView(glm::lookAt(
         camPos , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));

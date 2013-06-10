@@ -20,8 +20,8 @@ void Group::draw(
     const Program & program
 ,   const glm::mat4 & transform)
 {
-    t_nodes::const_iterator i(m_children.begin());
-    const t_nodes::const_iterator iEnd(m_children.end());
+    t_children::const_iterator i(m_children.begin());
+    const t_children::const_iterator iEnd(m_children.end());
 
     for(; i != iEnd; ++i)
     {
@@ -40,21 +40,21 @@ const bool Group::contains(Node * node) const
 }
 
 void Group::insert(
-    const Group::t_nodes::iterator & before
+    const Group::t_children::iterator & before
 ,   Group * group)
 {
     return insert(before, dynamic_cast<Node *>(group));
 }
 
 void Group::insert(
-    const Group::t_nodes::iterator & before
+    const Group::t_children::iterator & before
 ,   PolygonalDrawable * drawable)
 {
     return insert(before, dynamic_cast<Node *>(drawable));
 }
 
 void Group::insert(
-    const Group::t_nodes::iterator & before
+    const Group::t_children::iterator & before
 ,   Node * node)
 {
     if(!node)
@@ -149,18 +149,13 @@ const void Group::remove(
         delete node;
 }
 
-const Group::t_nodes & Group::children() const
-{
-    return m_children;
-}
-
 const AxisAlignedBoundingBox Group::boundingBox() const
 {
     if(m_aabb.valid())
         return m_aabb;
 
-    t_nodes::const_iterator i(m_children.begin());
-    const t_nodes::const_iterator iEnd(m_children.end());
+    t_children::const_iterator i(m_children.begin());
+    const t_children::const_iterator iEnd(m_children.end());
 
     if(RF_Relative == m_rf)
         for(; i != iEnd; ++i)

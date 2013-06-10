@@ -1,9 +1,12 @@
 
+#include "nodeiterator.h"
 #include "node.h"
 
 
 Node::Node(const QString & name)
 :   m_name(name)
+,   m_parents()
+,   m_children()
 ,   m_rf(RF_Relative)
 ,   m_transform(glm::mat4(1))
 {
@@ -31,6 +34,21 @@ const Node::t_parents & Node::parents() const
 Node::t_parents & Node::parents()
 {
     return m_parents;
+}
+
+const Node::t_children & Node::children() const
+{
+    return m_children;
+}
+
+IteratorType Node::begin()
+{
+    return IteratorType( new NodeIterator(m_children.begin()) ); 
+}
+
+IteratorType Node::end()
+{
+    return IteratorType( new NodeIterator(m_children.end()) ); 
 }
 
 void Node::invalidateBoundingBox()
