@@ -5,7 +5,7 @@
 #include <core/program.h>
 
 
-Group::Group(const QString & name)
+Group::Group( const QString & name )
 :   Node(name)
 {
 }
@@ -16,22 +16,8 @@ Group::~Group()
         removeLast();
 }
 
-void Group::draw(
-    const Program & program
-,   const glm::mat4 & transform)
+void Group::draw( const Program & program, const glm::mat4 & transform )
 {
-    t_children::const_iterator i(m_children.begin());
-    const t_children::const_iterator iEnd(m_children.end());
-
-    for(; i != iEnd; ++i)
-    {
-        Node * node(*i);
-
-        if(RF_Absolute == m_rf)
-            node->draw(program, this->transform());
-        else
-            node->draw(program, transform * this->transform());
-    }
 }
 
 const bool Group::contains(Node * node) const
@@ -39,23 +25,17 @@ const bool Group::contains(Node * node) const
     return m_children.contains(node);
 }
 
-void Group::insert(
-    const Group::t_children::iterator & before
-,   Group * group)
+void Group::insert( const Group::t_children::iterator & before, Group * group )
 {
     return insert(before, dynamic_cast<Node *>(group));
 }
 
-void Group::insert(
-    const Group::t_children::iterator & before
-,   PolygonalDrawable * drawable)
+void Group::insert( const Group::t_children::iterator & before, PolygonalDrawable * drawable )
 {
     return insert(before, dynamic_cast<Node *>(drawable));
 }
 
-void Group::insert(
-    const Group::t_children::iterator & before
-,   Node * node)
+void Group::insert( const Group::t_children::iterator & before, Node * node )
 {
     if(!node)
         return;
@@ -66,17 +46,17 @@ void Group::insert(
     m_children.insert(before, node);
 }
 
-void Group::prepend(Group * group)
+void Group::prepend( Group * group )
 {
     return prepend(dynamic_cast<Node *>(group));
 }
 
-void Group::prepend(PolygonalDrawable * drawable)
+void Group::prepend( PolygonalDrawable * drawable )
 {
     return prepend(dynamic_cast<Node *>(drawable));
 }
 
-void Group::prepend(Node * node)
+void Group::prepend( Node * node )
 {
     if(!node)
         return;
@@ -87,17 +67,17 @@ void Group::prepend(Node * node)
     m_children.push_front(node);
 }
 
-void Group::append(Group * group)
+void Group::append( Group * group )
 {
     return append(dynamic_cast<Node *>(group));
 }
 
-void Group::append(PolygonalDrawable * drawable)
+void Group::append( PolygonalDrawable * drawable )
 {
     return append(dynamic_cast<Node *>(drawable));
 }
 
-void Group::append(Node * node)
+void Group::append( Node * node )
 {
     if(!node)
         return;
@@ -136,9 +116,7 @@ void Group::removeLast()
         delete node;
 }
 
-const void Group::remove(
-    Node * node
-,   const bool deleteIfParentsEmpty)
+const void Group::remove( Node * node, const bool deleteIfParentsEmpty )
 {
     if(!contains(node))
         node->parents().remove(this);

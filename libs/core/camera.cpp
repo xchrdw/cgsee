@@ -35,9 +35,7 @@ void Camera::draw(
     return draw(program);
 }
 
-void Camera::draw(
-    const Program & program
-,   FrameBufferObject * target)
+void Camera::draw( const Program & program, FrameBufferObject * target )
 {
     if(m_invalidated)
         update();
@@ -56,11 +54,6 @@ void Camera::draw(
         
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
-    
-    Group::draw(program, glm::mat4());
-
-    if(target)
-        target->release();
 }
 
 void Camera::invalidate()

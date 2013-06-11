@@ -45,6 +45,7 @@ set(SOURCES
     scenegraph/sceneiterator.cpp
     scenegraph/sceneiterator.h
     scenegraph/scenetraverser.h
+    scenegraph/drawtraverser.h
     
     abstracttimer.h
     autotimer.h

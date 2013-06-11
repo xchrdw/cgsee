@@ -28,7 +28,7 @@ public:
     void append( Group * group);
     void append( PolygonalDrawable * drawable );
 
-    void insert( const t_children::iterator & before, Group * group);
+    void insert( const t_children::iterator & before, Group * group );
     void insert( const t_children::iterator & before, PolygonalDrawable * drawable );
 
 
@@ -41,8 +41,8 @@ public:
     virtual const AxisAlignedBoundingBox boundingBox() const;
 
 protected:
-    void prepend(Node * node);
-    void append(Node * node);
+    void prepend( Node * node );
+    void append( Node * node );
 
     void insert( const t_children::iterator & before, Node * node );
 };
