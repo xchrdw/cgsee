@@ -7,9 +7,9 @@
 
 
 FileExplorer::FileExplorer(
-	QObject * parent)
-
-:	m_model(new QFileSystemModel)
+	QWidget * parent)
+:	QListView(parent)
+,	m_model(new QFileSystemModel)
 ,	m_menu(new QMenu)
 ,	m_clickedFile()
 {

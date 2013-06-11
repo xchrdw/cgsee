@@ -17,7 +17,7 @@ class CGSEE_API FileNavigator : public QTreeView
 	Q_OBJECT
 
 public:
-	FileNavigator(QObject * parent = nullptr);
+	FileNavigator(QWidget * parent = nullptr);
 	virtual ~FileNavigator();
 
 

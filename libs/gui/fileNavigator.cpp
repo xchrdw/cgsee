@@ -5,9 +5,9 @@
 
 
 FileNavigator::FileNavigator(
-	QObject * parent)
-
-:	m_model(new QFileSystemModel)
+	QWidget * parent)
+:	QTreeView(parent)
+,	m_model(new QFileSystemModel)
 {
 	this->setModel(m_model);
 

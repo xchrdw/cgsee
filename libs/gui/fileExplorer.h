@@ -1,8 +1,6 @@
 
 #pragma once
 
-
-
 #include <QListView>
 #include <QDir>
 
@@ -18,7 +16,7 @@ class CGSEE_API FileExplorer : public QListView
 	Q_OBJECT
 	
 public:
-	FileExplorer(QObject * parent = nullptr);
+	FileExplorer(QWidget * parent = nullptr);
 	virtual ~FileExplorer();
 
 	QMenu * menu();
