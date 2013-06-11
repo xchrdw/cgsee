@@ -134,7 +134,7 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
         glm::vec3 vector(
             mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z
         );
-        geometry->vertices().push_back(vector);
+        geometry->setVertex(i, vector);
     }
 
     for (int i = 0; i < mesh.mNumFaces; i++) {
@@ -142,7 +142,7 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
             qCritical("Ignore polygon with num vertices != 3 (only triangles are supported).");
         else
             for (int j = 0; j < mesh.mFaces[i].mNumIndices; j++)
-                geometry->indices().push_back(mesh.mFaces[i].mIndices[j]);
+                geometry->setIndex(i*j, mesh.mFaces[i].mIndices[j]);
     }
 
     geometry->setMode(GL_TRIANGLES);
