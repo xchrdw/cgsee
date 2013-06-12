@@ -51,7 +51,9 @@ protected slots:
     void on_openFileDialogAction_triggered();
 
     void on_loadFile(const QString & path);
-
+    
+    void on_toggleNavigator_triggered();
+    void on_toggleExplorer_triggered();
 protected:
 
     void initializeNavigation();

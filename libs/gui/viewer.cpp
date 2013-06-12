@@ -191,6 +191,7 @@ AbstractScenePainter * Viewer::painter()
 
 void Viewer::on_captureAsImageAction_triggered()
 {
+    m_dockLeft->show();
     assert(m_qtCanvas);
     CanvasExporter::save(*m_qtCanvas, this);
 }
@@ -224,4 +225,16 @@ void Viewer::on_loadFile(const QString & path)
         this->painter()->assignScene(scene);
         this->m_qtCanvas->update();
     }
+}
+
+void Viewer::on_toggleNavigator_triggered()
+{
+    bool visible = m_dockLeft->isVisible();
+    m_dockLeft->setVisible(!visible);
+}
+
+void Viewer::on_toggleExplorer_triggered()
+{
+    bool visible = m_dockBottom->isVisible();
+    m_dockBottom->setVisible(!visible);
 }
