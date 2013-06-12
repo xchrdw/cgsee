@@ -9,7 +9,7 @@
 #include "node.h"
 #include "common.h"
 #include "datacore/datablock.h"
-#include "vertexcacheoptimizer.h"
+#include "geometryoptimizer.h"
 
 class CGSEE_API PolygonalGeometry : public Node
 {
@@ -52,8 +52,7 @@ public:
     }
 
     // TODO:
-    // * generate triangle strip
-    // * vertex cache optimization
+    // * generate triangle strip (update: can probably not be combined with Forsyths vertexCacheOpt algorythm
     // * per face, per vertex normals
 
     void retrieveNormals();

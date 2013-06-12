@@ -6,10 +6,11 @@
 class VertexCacheOptimizer : public GeometryOptimizer
 {
 public:
-	static void applyOptimization(t_uints &indices, const uint numVertices);
     void applyOn(t_VertexIndexListP vertexIndices, t_VertexListP vertexData) override;
 
 protected:
+	static void applyOptimization(t_uints &indices, const uint numVertices);
+
     struct Vertex {
         Vertex() :
             cachePosition(-1),

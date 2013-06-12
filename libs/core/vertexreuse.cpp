@@ -56,6 +56,60 @@ public:
 typedef std::pair<VertexData, int> VertexPair;
 typedef std::unordered_map<VertexData, int, VertexHash<VertexData>> VertexMap;
 
+
+void VertexReuse::applyOn(t_VertexIndexListP vertexIndices, t_VertexListP vertexData)
+{
+    t_uints indices = vertexIndices->getIndices();
+    t_vec3s vertices, normals;
+    t_vec2s texcs;
+    uint oldDataSize = vertexData->size(), newDataSize=0;
+    vertices.resize(vertexData->size());
+    normals.resize(vertexData->size());
+    texcs.resize(vertexData->size());
+
+    vertexData->foreachVertexAttribute<glm::vec3>(0, vertexData->size(), "position", nullptr,
+        [&vertices](int i, const glm::vec3 & pos)
+        {
+            vertices[i] = pos;
+        });
+    vertexData->foreachVertexAttribute<glm::vec3>(0, vertexData->size(), "normal", nullptr,
+        [&normals](int i, const glm::vec3 & pos)
+        {
+            normals[i] = pos;
+        });
+    vertexData->foreachVertexAttribute<glm::vec2>(0, vertexData->size(), "texcoord", nullptr,
+        [&texcs](int i, const glm::vec2 & pos)
+        {
+            texcs[i] = pos;
+        });
+
+    VertexReuse::reuseVertices(vertices, normals, texcs, indices);
+
+    // shrink size of vertexData, as it should be smaller after deduplication
+    vertexData->resize(0); // resizing directly to vertices size does not work for some reason (r6010) - seems like a qt bug(?)
+    vertexData->resize(vertices.size());
+
+    vertexIndices->setMultipleIndices(0, indices.size(), std::bind(&t_uints::at, &indices, std::placeholders::_1));
+    vertexData->setVertexAttributes<glm::vec3>(0, vertices.size(), "position",
+        [&vertices](int i, glm::vec3 & pos)
+        {
+            pos = vertices[i];
+        });
+    vertexData->setVertexAttributes<glm::vec3>(0, normals.size(), "normal",
+        [&normals](int i, glm::vec3 & normal)
+        {
+            normal = normals[i];
+        });
+    vertexData->setVertexAttributes<glm::vec2>(0, texcs.size(), "texcoord",
+        [&texcs](int i, glm::vec2 & texcoord)
+        {
+            texcoord = texcs[i];
+        });
+
+    newDataSize = vertexData->size();
+    assert(newDataSize <= oldDataSize);
+}
+
 void VertexReuse::reuseVertices(t_vec3s& vertices, t_vec3s& normals, t_vec2s& texcs, t_uints& indices)
 {
     const size_t numVertices = vertices.size();

@@ -52,6 +52,7 @@ set(SOURCES
     fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
+	geometryoptimizer.h
     glformat.h
     glformat.cpp
     gpuquery.h
