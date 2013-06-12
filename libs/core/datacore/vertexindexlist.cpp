@@ -20,6 +20,11 @@ void VertexIndexList::setVertexList(t_VertexListP associatedList)
     }
 }
 
+t_VertexListP VertexIndexList::getVertexList()
+{
+    return m_associatedList;
+}
+
 QVector<VertexIndexList::t_indexType> const& VertexIndexList::getIndices() const
 {
     return m_indices;
@@ -42,7 +47,7 @@ void VertexIndexList::setMultipleIndices(unsigned int start, unsigned int end, s
 
 void VertexIndexList::onVertexListUpdated()
 {
-
+    // TODO: check validity of index list?
 }
 
 void VertexIndexList::onVertexListDestroyed()

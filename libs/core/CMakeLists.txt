@@ -58,6 +58,8 @@ set(SOURCES
     gpuquery.cpp
     group.h
     group.cpp
+    mesh.h
+    mesh.cpp
     messagehandler.h
     messagehandler.cpp
     mathmacros.h

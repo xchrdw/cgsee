@@ -14,6 +14,7 @@ public:
     typedef VertexIndexList * t_StandardPointer;
 
     void setVertexList(t_VertexListP associatedList);
+    t_VertexListP getVertexList();
     QVector<t_indexType> const& getIndices() const;
     void setSingleIndex(unsigned int pos, t_indexType const vindex);
     void setMultipleIndices(unsigned int start, unsigned int end
