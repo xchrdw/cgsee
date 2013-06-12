@@ -1,11 +1,13 @@
 #pragma once
 
 #include "common.h"
+#include "geometryoptimizer.h"
 
-class VertexCacheOptimizer
+class VertexCacheOptimizer : public GeometryOptimizer
 {
 public:
 	static void applyOptimization(t_uints &indices, const uint numVertices);
+    void applyOn(t_VertexIndexListP vertexIndices, t_VertexListP vertexData) override;
 
 protected:
     struct Vertex {

@@ -72,10 +72,11 @@ void PolygonalDrawable::initialize(const Program & program)
     glBindVertexArray(m_vao);                                                                  
     glError();
 
+    // TODO: change optimizer interfaces to match new data organization
     // Apply vertex deduplication
-    VertexReuse::reuseVertices(m_geometry->vertices(), m_geometry->normals(), m_geometry->texcs(), m_geometry->indices());
+    // VertexReuse::reuseVertices(m_geometry->vertices(), m_geometry->normals(), m_geometry->texcs(), m_geometry->indices());
     // Apply Vertex Cache Optimization
-    VertexCacheOptimizer::applyOptimization(m_geometry->indices(), m_geometry->vertices().size());
+    // VertexCacheOptimizer::applyOptimization(m_geometry->indices(), m_geometry->vertices().size());
 
     // setup element array buffers
 

@@ -9,6 +9,7 @@
 #include "node.h"
 #include "common.h"
 #include "datacore/datablock.h"
+#include "vertexcacheoptimizer.h"
 
 class CGSEE_API PolygonalGeometry : public Node
 {
@@ -41,6 +42,14 @@ public:
     virtual const AxisAlignedBoundingBox boundingBox() const;
 
     // Geometry Computation
+
+    virtual void applyOptimizer(GeometryOptimizer *opt) {
+        t_VertexIndexListP indices = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
+        t_VertexListP vertexData   = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
+        assert(indices);
+        assert(vertexData);
+        opt->applyOn(indices, vertexData);
+    }
 
     // TODO:
     // * generate triangle strip
