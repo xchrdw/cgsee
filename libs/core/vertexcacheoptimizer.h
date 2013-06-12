@@ -9,7 +9,7 @@ public:
     void applyOn(t_VertexIndexListP vertexIndices, t_VertexListP vertexData) override;
 
 protected:
-	static void applyOptimization(t_uints &indices, const uint numVertices);
+    static void applyOptimization(t_uints &indices, const uint numVertices);
 
     struct Vertex {
         Vertex() :

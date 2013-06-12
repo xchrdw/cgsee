@@ -73,9 +73,9 @@ void PolygonalDrawable::initialize(const Program & program)
     glError();
 
     // Apply vertex deduplication
-    m_geometry->applyOptimizer(new VertexReuse);
+    m_geometry->applyOptimizer(new VertexReuse());
     // Apply Vertex Cache Optimization
-    m_geometry->applyOptimizer(new VertexCacheOptimizer);
+    m_geometry->applyOptimizer(new VertexCacheOptimizer());
 
     // setup element array buffers
 

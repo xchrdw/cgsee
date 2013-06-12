@@ -43,13 +43,7 @@ public:
 
     // Geometry Computation
 
-    virtual void applyOptimizer(GeometryOptimizer *opt) {
-        t_VertexIndexListP indices = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
-        t_VertexListP vertexData   = qobject_cast<t_VertexListP>(m_registry.getDataBlockByName(m_vertListName));
-        assert(indices);
-        assert(vertexData);
-        opt->applyOn(indices, vertexData);
-    }
+    virtual void applyOptimizer(GeometryOptimizer *opt);
 
     // TODO:
     // * generate triangle strip (update: can probably not be combined with Forsyths vertexCacheOpt algorythm
