@@ -5,11 +5,13 @@
 #include <windows.h>
 #else
 #include <GL/glx.h>  // for GLXContext
+#undef None
 #endif
+
+#include <QMainWindow>
 
 #include <memory>
 
-#include <QMainWindow>
 
 #include <glm/glm.hpp>
 
