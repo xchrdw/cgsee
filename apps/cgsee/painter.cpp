@@ -280,9 +280,10 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
+    AutoTimer t("Draw traversal");
     DrawTraverser drawtraverser;
     drawtraverser.traverse( *m_camera, *m_useProgram, m_fboNormalz );
-
+    
     sampler.clear();
     sampler["source"] = m_fboNormalz;
 

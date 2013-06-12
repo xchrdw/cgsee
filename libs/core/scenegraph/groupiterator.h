@@ -13,21 +13,21 @@
 
 class Node;
 
-class CGSEE_API NodeIterator : public INodeIterator
+class CGSEE_API GroupIterator : public INodeIterator
 {
 public:
-    NodeIterator( QList<Node*>::iterator it );
-    virtual ~NodeIterator();
+    GroupIterator( QList<Node*>::iterator it );
+    virtual ~GroupIterator();
     
-    virtual NodeIterator & operator++() override;
-    virtual bool operator==( IteratorType rhs ) const override;
-    virtual bool operator!=( IteratorType rhs ) const override;
+    virtual GroupIterator & operator++() override;
+    virtual bool operator==( t_nodeIterator rhs ) const override;
+    virtual bool operator!=( t_nodeIterator rhs ) const override;
     virtual bool operator==( const INodeIterator & rhs ) const override;
     virtual bool operator!=( const INodeIterator & rhs ) const override;
     virtual Node * operator->() const override;
     virtual Node & operator*() const override;
 
-    virtual IteratorType copy() const override;
+    virtual t_nodeIterator copy() const override;
     
 private:
     QList<Node*>::iterator it_;

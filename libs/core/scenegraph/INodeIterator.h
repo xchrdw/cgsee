@@ -11,15 +11,15 @@ class Node;
 class INodeIterator;
 
 
-typedef std::unique_ptr<INodeIterator> IteratorType;
+typedef std::unique_ptr<INodeIterator> t_nodeIterator;
 
 class CGSEE_API INodeIterator
 {
 public:
     virtual INodeIterator & operator++() =0;
     
-    virtual bool operator==( IteratorType rhs ) const =0;
-    virtual bool operator!=( IteratorType rhs ) const =0;
+    virtual bool operator==( t_nodeIterator rhs ) const =0;
+    virtual bool operator!=( t_nodeIterator rhs ) const =0;
     
     virtual bool operator==( const INodeIterator & rhs ) const =0;
     virtual bool operator!=( const INodeIterator & rhs ) const =0;
@@ -27,7 +27,7 @@ public:
     virtual Node * operator->() const =0;
     virtual Node & operator*() const =0;
     
-    virtual IteratorType copy() const =0;
+    virtual t_nodeIterator copy() const =0;
 };
 
 

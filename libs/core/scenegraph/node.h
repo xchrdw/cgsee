@@ -7,11 +7,9 @@
 #include <core/declspec.h>
 #include <core/aabb.h>
 
-#include "nodeiterator.h"
-
+#include "INodeIterator.h"
 
 class Program;
-class Group;
 
 class CGSEE_API Node
 {
@@ -40,17 +38,16 @@ public:
 
     const t_children & children() const;
     // NodeIterators to children.
-    virtual IteratorType begin();
-    virtual IteratorType end();
+    virtual t_nodeIterator begin() =0;
+    virtual t_nodeIterator end() =0;
     
     const glm::mat4 & transform() const;
     void setTransform(const glm::mat4 & transform);
 
     const e_ReferenceFrame referenceFrame() const;
     void setReferenceFrame(const e_ReferenceFrame referenceFrame);
-
-    // This saves casting during traversal.
-    virtual Group * asGroup();
+    
+    bool isCircularDependentTo( const Node & other ) const;
 
 protected:
     virtual void invalidateBoundingBox();

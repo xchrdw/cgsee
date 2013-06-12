@@ -27,6 +27,9 @@ public:
     PolygonalDrawable( const QString & name );
     virtual ~PolygonalDrawable();
 
+    virtual t_nodeIterator begin() override;
+    virtual t_nodeIterator end() override;
+    
     void setGeometry( t_geometryP geometry );
     t_geometryP geometry() { return m_geometry; }
 
@@ -53,43 +56,3 @@ protected:
     t_bufferObjects m_elementArrayBOs;
     t_bufferObjectsByAttribute m_arrayBOsByAttribute;    
 };
-
-// class BufferObject;
-// class Program;
-// 
-// 
-// class CGSEE_API PolygonalDrawable : public Node
-// {
-// public:
-//     PolygonalDrawable(const QString & name = "unnamed");
-//     virtual ~PolygonalDrawable();
-// 
-//     void setGeometry(PolygonalGeometry * geometry);
-//     PolygonalGeometry * geometry();
-// 
-//     virtual void draw(
-//         const Program & program
-//     ,   const glm::mat4 & transform);
-// 
-//     virtual const AxisAlignedBoundingBox boundingBox() const;
-// 
-// protected:
-// 
-//     const glm::mat4 & transform() const;
-// 
-//     void initialize(const Program & program);
-//     void deleteBuffers();
-// 
-//     virtual void invalidateBoundingBox();
-// 
-// protected:
-//     GLuint m_vao;
-// 
-//     PolygonalGeometry * m_geometry;
-// 
-//     typedef QVector<BufferObject *> t_bufferObjects;
-//     t_bufferObjects m_elementArrayBOs;
-// 
-//     typedef QMap<QString, BufferObject *> t_bufferObjectsByAttribute;
-//     t_bufferObjectsByAttribute m_arrayBOsByAttribute;    
-// };

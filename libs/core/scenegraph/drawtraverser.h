@@ -13,7 +13,7 @@
 
 #include "node.h"
 
-class CGSEE_API DrawTraverser
+struct CGSEE_API DrawTraverser final
 {
 public:
     typedef std::vector<std::shared_ptr<Node> >::iterator t_nodeIter;

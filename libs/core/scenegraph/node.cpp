@@ -1,5 +1,5 @@
 
-#include "nodeiterator.h"
+#include "scenetraverser.h"
 #include "node.h"
 
 
@@ -41,16 +41,6 @@ const Node::t_children & Node::children() const
     return m_children;
 }
 
-IteratorType Node::begin()
-{
-    return IteratorType( new NodeIterator(m_children.begin()) ); 
-}
-
-IteratorType Node::end()
-{
-    return IteratorType( new NodeIterator(m_children.end()) ); 
-}
-
 void Node::invalidateBoundingBox()
 {
     m_aabb.invalidate();
@@ -90,7 +80,16 @@ void Node::setReferenceFrame(const e_ReferenceFrame referenceFrame)
     invalidateBoundingBox();
 }
 
-Group * Node::asGroup()
+bool Node::isCircularDependentTo( const Node & other ) const
 {
-    return nullptr;
+    bool isDependent = false;
+    ConstSceneTraverser traverser;
+    traverser.traverse( other, 
+        [&]( const Node & node )
+        {
+            if( this == &node )
+                isDependent = true;
+        }
+    );
+    return isDependent;
 }

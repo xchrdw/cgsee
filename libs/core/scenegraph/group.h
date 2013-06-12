@@ -19,7 +19,9 @@ public:
 
 
     // child handling
-
+    virtual t_nodeIterator begin() override;
+    virtual t_nodeIterator end() override;
+    
     const bool contains( Node * node ) const;
 
     void prepend( Group * group );

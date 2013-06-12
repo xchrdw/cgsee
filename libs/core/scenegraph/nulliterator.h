@@ -22,13 +22,15 @@ public:
     virtual ~NullIterator() {}
     
     virtual NullIterator & operator++() override 
-    { return *this; }
+    { 
+        return *this; 
+    }
 
-    virtual bool operator==( IteratorType rhs ) const override
+    virtual bool operator==( t_nodeIterator rhs ) const override
     { 
         return operator==( *rhs ); 
     }
-    virtual bool operator!=( IteratorType rhs ) const override
+    virtual bool operator!=( t_nodeIterator rhs ) const override
     { 
         return !operator==( *rhs ); 
     }
@@ -52,8 +54,10 @@ public:
     virtual Node & operator*() const override
     { assert(false); }
 
-    virtual IteratorType copy() const override
-    { return IteratorType( new NullIterator() ); }
+    virtual t_nodeIterator copy() const override
+    { 
+        return t_nodeIterator( new NullIterator() ); 
+    }
 };
 
 #endif // NullIterator_H

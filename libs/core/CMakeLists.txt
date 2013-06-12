@@ -40,8 +40,8 @@ set(SOURCES
     scenegraph/polygonalgeometry.h
     scenegraph/polygonalgeometry.cpp
     scenegraph/INodeIterator.h
-    scenegraph/nodeiterator.cpp
-    scenegraph/nodeiterator.h
+    scenegraph/groupiterator.cpp
+    scenegraph/groupiterator.h
     scenegraph/sceneiterator.cpp
     scenegraph/sceneiterator.h
     scenegraph/scenetraverser.h

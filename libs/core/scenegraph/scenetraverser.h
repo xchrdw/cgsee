@@ -11,24 +11,41 @@
 
 #include "node.h"
 
-class CGSEE_API SceneTraverser
+struct CGSEE_API SceneTraverser final
 {
 public:
-    typedef std::vector<std::shared_ptr<Node> >::iterator t_nodeIter;
-
-    virtual ~SceneTraverser()
+    ~SceneTraverser()
     {}
         
-    virtual void traverse( Node & node, std::function<void (Node &)> visitor )
+    void traverse( Node & node, std::function<void (Node &)> visitor )
     {
+        visitor( node );
+        
         Node::t_children::const_iterator it = node.children().begin();
         Node::t_children::const_iterator itEnd = node.children().end();
         for( ; it != itEnd; ++it ){
             traverse( **it, visitor );
         }
-        visitor( node );
     }
 };
 
+
+struct CGSEE_API ConstSceneTraverser final
+{
+public:
+    ~ConstSceneTraverser()
+    {}
+        
+    void traverse( const Node & node, std::function<void (const Node &)> visitor )
+    {
+        visitor( node );
+        
+        Node::t_children::const_iterator it = node.children().begin();
+        Node::t_children::const_iterator itEnd = node.children().end();
+        for( ; it != itEnd; ++it ){
+            traverse( **it, visitor );
+        }
+    }
+};
 
 #endif // SceneTraverser_H
