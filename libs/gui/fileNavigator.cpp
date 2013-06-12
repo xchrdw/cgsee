@@ -21,6 +21,10 @@ FileNavigator::FileNavigator(
 	QObject::connect(
         this, SIGNAL(activated(const QModelIndex &)),
         this, SLOT(emitClickedDirectory(const QModelIndex &)));
+
+	QObject::connect(
+        this, SIGNAL(clicked(const QModelIndex &)),
+        this, SLOT(emitClickedDirectory(const QModelIndex &)));
 };
 
 void FileNavigator::setRoot(const QString & rootPath)
