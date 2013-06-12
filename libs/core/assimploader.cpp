@@ -15,9 +15,9 @@ AssimpLoader::~AssimpLoader()
     delete m_importer;
 }
 
-QStringList AssimpLoader::loadableTypes() const
+QStringList AssimpLoader::namedLoadableTypes() const
 {
-    QStringList types;
+    QStringList types = AbstractModelLoader::namedLoadableTypes();
     types
         << "Collada (*.dae *.xml)"
         << "Blender (*.blend)"

@@ -16,10 +16,10 @@ public:
     bool canLoad(const QString & extension) const;
     bool canSave(const QString & extension) const;
 
-    virtual QStringList loadableTypes() const;
+    virtual QStringList namedLoadableTypes() const;
     QStringList allLoadableTypes() const;
 
-    virtual QStringList saveableTypes() const;
+    virtual QStringList namedSaveableTypes() const;
     QStringList allSaveableTypes() const;
 
     virtual Group * importFromFile(const QString & filePath) const;

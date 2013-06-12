@@ -22,7 +22,7 @@ public:
     AssimpLoader();
     virtual ~AssimpLoader();
     
-    virtual QStringList loadableTypes() const;
+    virtual QStringList namedLoadableTypes() const;
     virtual Group * importFromFile(const QString & filePath) const;
     
 protected:

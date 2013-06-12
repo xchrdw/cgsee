@@ -209,7 +209,9 @@ void Viewer::on_reloadAllShadersAction_triggered()
 
 void Viewer::on_openFileDialogAction_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath(), m_loader->loadableTypes().join(";;"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
+        QDir::homePath(), m_loader->namedLoadableTypes().join(";;"), 
+        0, QFileDialog::HideNameFilterDetails);
     if (fileName.isEmpty())
         return;
     

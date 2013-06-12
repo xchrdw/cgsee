@@ -21,9 +21,10 @@ bool AbstractModelLoader::canSave(const QString & extension) const
     return saveableExtensions().contains(extension);
 }
 
-QStringList AbstractModelLoader::loadableTypes() const
+QStringList AbstractModelLoader::namedLoadableTypes() const
 {
-    return QStringList();
+    QString allTypes = "All Supported Files (" + allLoadableTypes().join(" ") + ")";
+    return QStringList(allTypes);
 }
 
 QStringList AbstractModelLoader::allLoadableTypes() const
@@ -35,9 +36,10 @@ QStringList AbstractModelLoader::allLoadableTypes() const
     return extensions;
 }
 
-QStringList AbstractModelLoader::saveableTypes() const
+QStringList AbstractModelLoader::namedSaveableTypes() const
 {
-    return QStringList();
+    QString allTypes = "All Supported Files (" + allSaveableTypes().join(" ") + ")";
+    return QStringList(allTypes);
 }
 
 QStringList AbstractModelLoader::allSaveableTypes() const
