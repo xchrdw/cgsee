@@ -34,6 +34,8 @@ set(SOURCES
     datacore/registertypeshere.h
     datacore/vertexlist_impl.inl
     datacore/datablock_impl.inl
+    datacore/datablockpointer.h
+    datacore/datablockpointer_impl.inl
     abstracttimer.h
     autotimer.h
     autotimer.cpp
