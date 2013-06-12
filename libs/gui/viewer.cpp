@@ -58,11 +58,8 @@ Viewer::Viewer(
 
 void Viewer::initializeNavigation()
 {
-    m_dockLeft->setWidget(m_navigator);
-    m_dockBottom->setWidget(m_explorer);
-
-    this->addDockWidget(Qt::LeftDockWidgetArea, m_dockLeft);
-    this->addDockWidget(Qt::BottomDockWidgetArea, m_dockBottom);
+    this->initializeDockWidgets(m_dockLeft, m_navigator, Qt::LeftDockWidgetArea);
+    this->initializeDockWidgets(m_dockBottom, m_explorer, Qt::BottomDockWidgetArea);
 
     m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
         
@@ -77,6 +74,25 @@ void Viewer::initializeNavigation()
     QObject::connect(
         m_ui->openFileDialogAction, SIGNAL(changed()),
         this, SLOT(on_openFileDialogAction_triggered()));
+}
+
+void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
+{
+    dockWidget->setWidget(widget);
+    this->addDockWidget(area, dockWidget);
+    
+#ifdef __APPLE__
+    /** 
+     THIS IS A BUG WORKAROUND
+     The bug lies somewhere in Canvas::Canvas().
+     When called in Viewer::createQtContext(), the widgets get messed up.
+    **/
+    static int count = 0;
+    dockWidget->setFloating(true);
+    dockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
+    
+    dockWidget->move(this->pos() - QPoint(dockWidget->width()+5, count-- * (dockWidget->height()+20)));
+#endif
 }
 
 #ifdef WIN32

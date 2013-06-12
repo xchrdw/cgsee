@@ -55,6 +55,8 @@ protected slots:
 protected:
 
     void initializeNavigation();
+    void initializeDockWidgets(QDockWidget * dockWidget,
+        QWidget * widget, Qt::DockWidgetArea area);
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
