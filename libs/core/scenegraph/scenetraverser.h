@@ -21,8 +21,8 @@ public:
     {
         visitor( node );
         
-        Node::t_children::const_iterator it = node.children().begin();
-        Node::t_children::const_iterator itEnd = node.children().end();
+        auto it = node.children().begin();
+        auto itEnd = node.children().end();
         for( ; it != itEnd; ++it ){
             traverse( **it, visitor );
         }

@@ -12,7 +12,7 @@
 #include <core/gpuquery.h>
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/scenetraverser.h>
-#include <core/scenegraph/drawtraverser.h>
+#include <core/scenegraph/drawvisitor.h>
 #include <core/scenegraph/sceneiterator.h>
 #include <core/objio.h>
 #include <core/program.h>
@@ -281,8 +281,12 @@ void Painter::paint()
     t_samplerByName sampler;
 
     AutoTimer t("Draw traversal");
-    DrawTraverser drawtraverser;
-    drawtraverser.traverse( *m_camera, *m_useProgram, m_fboNormalz );
+    
+    SceneTraverser traverser;
+    DrawVisitor drawVisitor( m_useProgram, m_camera->transform() );
+    m_fboNormalz->bind();
+    traverser.traverse( *m_camera, drawVisitor );
+    m_fboNormalz->release();
     
     sampler.clear();
     sampler["source"] = m_fboNormalz;

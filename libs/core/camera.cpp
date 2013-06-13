@@ -21,27 +21,19 @@ Camera::Camera(const QString & name)
 ,   m_zFar (0.f)
 ,   m_invalidated(true)
 {
+    // TODO: Sinn und Unsinn der Camera als Node (d.h. als Teil des Graphen)...
     m_rf = RF_Absolute;
+//     m_rf = RF_Relative;
 }
 
 Camera::~Camera()
 {
 }
 
-void Camera::draw(
-    const Program & program
-,   const glm::mat4 & transform)
-{
-    return draw(program);
-}
-
-void Camera::draw( const Program & program, FrameBufferObject * target )
+void Camera::draw( const Program & program, const glm::mat4 & transform )
 {
     if(m_invalidated)
         update();
-
-    if(target)
-        target->bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
