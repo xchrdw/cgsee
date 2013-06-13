@@ -11,12 +11,12 @@ GroupIterator::GroupIterator( QList<Node*>::iterator it )
 
 GroupIterator::~GroupIterator(){}
 
-bool GroupIterator::operator==( t_nodeIterator rhs ) const
+bool GroupIterator::operator==( t_nodeIteratorP rhs ) const
 { 
     return operator==( *rhs );
 }
 
-bool GroupIterator::operator!=( t_nodeIterator rhs ) const
+bool GroupIterator::operator!=( t_nodeIteratorP rhs ) const
 { 
     return !operator==( *rhs );
 };
@@ -50,7 +50,7 @@ Node * GroupIterator::operator->() const
     return *it_; 
 }
 
-t_nodeIterator GroupIterator::copy() const
+t_nodeIteratorP GroupIterator::copy() const
 {
-    return t_nodeIterator( new GroupIterator( *this ) );
+    return t_nodeIteratorP( new GroupIterator( *this ) );
 }

@@ -38,8 +38,8 @@ public:
 
     const t_children & children() const;
     // NodeIterators to children.
-    virtual t_nodeIterator begin() =0;
-    virtual t_nodeIterator end() =0;
+    virtual t_nodeIteratorP begin() =0;
+    virtual t_nodeIteratorP end() =0;
     
     const glm::mat4 & transform() const;
     void setTransform(const glm::mat4 & transform);

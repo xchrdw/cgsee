@@ -20,14 +20,14 @@ void Group::draw( const Program & program, const glm::mat4 & transform )
 {
 }
 
-t_nodeIterator Group::begin()
+t_nodeIteratorP Group::begin()
 {
-    return t_nodeIterator( new GroupIterator(m_children.begin()) );
+    return t_nodeIteratorP( new GroupIterator(m_children.begin()) );
 }
 
-t_nodeIterator Group::end()
+t_nodeIteratorP Group::end()
 {
-    return t_nodeIterator( new GroupIterator(m_children.end()) );
+    return t_nodeIteratorP( new GroupIterator(m_children.end()) );
 }
 
 const bool Group::contains(Node * node) const

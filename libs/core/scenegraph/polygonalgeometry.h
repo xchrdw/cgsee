@@ -12,15 +12,22 @@
 
 class DataBlockRegistry;
 class AxisAlignedBoundingBox;
+class BufferObject;
+class Program;
 
 class CGSEE_API PolygonalGeometry
 {
 public:
+    typedef QVector<BufferObject *> t_bufferObjects;
+    typedef QMap<QString, BufferObject *> t_bufferObjectsByAttribute;
+    
     // TODO: Nur voruebergehend mit default value. Spaeter wieder als ref.
     PolygonalGeometry( DataBlockRegistry * registry = nullptr);
     virtual ~PolygonalGeometry();
 
-    t_vec3s vertices() const;
+    t_VertexListP vertices() const;
+    t_vec3s copyVertices() const; // TODO: Temporary solution.
+    
     //t_vec3s & vertices();  
     void setVertex( int i, glm::vec3 const & data );
     t_vec3s normals() const;
@@ -35,16 +42,22 @@ public:
 
     void resize( unsigned int size );
 
+    void initialize( const Program & program );
+    
+    inline GLuint vao() { return m_vao; }
+    t_bufferObjects & elementArrayBOs() { return m_elementArrayBOs; } // TODO: perhaps as const.
+    
     // Geometry Computation
 
     // TODO:
     // * generate triangle strip
     // * vertex cache optimization
     // * per face, per vertex normals
-
-    // TODO: Nach PolygonalDrawable?
     void retrieveNormals();
-
+    
+protected:
+    void deleteBuffers();
+    
 protected:
     // TODO:
 //     DataBlockRegistry & m_registry;
@@ -52,12 +65,10 @@ protected:
     t_VertexListP m_datablock;
     QString m_vertListHandle;
     QString m_indicesHandle;
-    //t_vec3s m_vertices;
-    //t_vec3s m_normals;
-    //t_vec2s m_texcs;
-    //t_uints m_indices;
 
-
+    GLuint m_vao;
+    t_bufferObjects m_elementArrayBOs;
+    t_bufferObjectsByAttribute m_arrayBOsByAttribute;
 };
 /*
 class CGSEE_API PolygonalGeometry : public Node

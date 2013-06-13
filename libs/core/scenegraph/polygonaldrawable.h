@@ -13,7 +13,6 @@
 
 class PolygonalGeometry;
 class DataBlockRegistry;
-class BufferObject;
 class Program;
 
 
@@ -27,32 +26,23 @@ public:
     PolygonalDrawable( const QString & name );
     virtual ~PolygonalDrawable();
 
-    virtual t_nodeIterator begin() override;
-    virtual t_nodeIterator end() override;
+    virtual void draw( const Program & program, const glm::mat4 & transform ) override;
+    
+    virtual t_nodeIteratorP begin() override;
+    virtual t_nodeIteratorP end() override;
+
+    virtual const AxisAlignedBoundingBox boundingBox() const override;
     
     void setGeometry( t_geometryP geometry );
     t_geometryP geometry() { return m_geometry; }
 
     void setMode( const GLenum mode ) { m_mode = mode; }
     inline const GLenum mode() const { return m_mode; }
-
-    virtual const AxisAlignedBoundingBox boundingBox() const override;
     
-    virtual void draw( const Program & program, const glm::mat4 & transform ) override;
-
 protected:
-    // TODO: Kontrolle ueber OpenGL Buffer kann nach PolygonalGeometry.
-    void initialize(const Program & program);
-    void deleteBuffers();
     virtual void invalidateBoundingBox() override;
 
 protected:
-    typedef QVector<BufferObject *> t_bufferObjects;
-    typedef QMap<QString, BufferObject *> t_bufferObjectsByAttribute;
-
-    GLuint m_vao;
     t_geometryP m_geometry;
     GLenum  m_mode;
-    t_bufferObjects m_elementArrayBOs;
-    t_bufferObjectsByAttribute m_arrayBOsByAttribute;    
 };

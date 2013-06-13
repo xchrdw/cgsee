@@ -13,7 +13,7 @@
 class CGSEE_API SceneIterator : public INodeIterator
 {
 public:
-    SceneIterator( t_nodeIterator it );
+    SceneIterator( t_nodeIteratorP it );
     virtual ~SceneIterator();
     
     SceneIterator( const SceneIterator & rhs ); // TODO: evtl = delete;
@@ -21,8 +21,8 @@ public:
 //     SceneIterator & operator=( const SceneIterator & rhs );
     
     virtual SceneIterator & operator++() override;
-    virtual bool operator ==( t_nodeIterator rhs ) const override;
-    virtual bool operator !=( t_nodeIterator rhs ) const override;
+    virtual bool operator ==( t_nodeIteratorP rhs ) const override;
+    virtual bool operator !=( t_nodeIteratorP rhs ) const override;
     
     virtual bool operator ==( const INodeIterator & rhs ) const override;
     virtual bool operator !=( const INodeIterator & rhs ) const override;
@@ -32,10 +32,10 @@ public:
     virtual Node & operator*() const override;
     virtual Node * operator->() const override;
     
-    virtual t_nodeIterator copy() const override;
+    virtual t_nodeIteratorP copy() const override;
     
 private:
-    typedef std::deque< std::pair<t_nodeIterator, t_nodeIterator > > t_queu;
+    typedef std::deque< std::pair<t_nodeIteratorP, t_nodeIteratorP > > t_queu;
    
     t_queu iterators_;
 };

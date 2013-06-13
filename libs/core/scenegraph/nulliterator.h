@@ -26,11 +26,11 @@ public:
         return *this; 
     }
 
-    virtual bool operator==( t_nodeIterator rhs ) const override
+    virtual bool operator==( t_nodeIteratorP rhs ) const override
     { 
         return operator==( *rhs ); 
     }
-    virtual bool operator!=( t_nodeIterator rhs ) const override
+    virtual bool operator!=( t_nodeIteratorP rhs ) const override
     { 
         return !operator==( *rhs ); 
     }
@@ -54,9 +54,9 @@ public:
     virtual Node & operator*() const override
     { assert(false); }
 
-    virtual t_nodeIterator copy() const override
+    virtual t_nodeIteratorP copy() const override
     { 
-        return t_nodeIterator( new NullIterator() ); 
+        return t_nodeIteratorP( new NullIterator() ); 
     }
 };
 

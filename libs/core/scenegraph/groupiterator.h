@@ -20,14 +20,14 @@ public:
     virtual ~GroupIterator();
     
     virtual GroupIterator & operator++() override;
-    virtual bool operator==( t_nodeIterator rhs ) const override;
-    virtual bool operator!=( t_nodeIterator rhs ) const override;
+    virtual bool operator==( t_nodeIteratorP rhs ) const override;
+    virtual bool operator!=( t_nodeIteratorP rhs ) const override;
     virtual bool operator==( const INodeIterator & rhs ) const override;
     virtual bool operator!=( const INodeIterator & rhs ) const override;
     virtual Node * operator->() const override;
     virtual Node & operator*() const override;
 
-    virtual t_nodeIterator copy() const override;
+    virtual t_nodeIteratorP copy() const override;
     
 private:
     QList<Node*>::iterator it_;

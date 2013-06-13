@@ -19,8 +19,8 @@ public:
 
 
     // child handling
-    virtual t_nodeIterator begin() override;
-    virtual t_nodeIterator end() override;
+    virtual t_nodeIteratorP begin() override;
+    virtual t_nodeIteratorP end() override;
     
     const bool contains( Node * node ) const;
 

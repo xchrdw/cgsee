@@ -6,12 +6,12 @@
 #include "sceneiterator.h"
 
 
-SceneIterator::SceneIterator( t_nodeIterator it )
+SceneIterator::SceneIterator( t_nodeIteratorP it )
 : iterators_()
 {
     assert( it );
     
-    iterators_.push_back( {std::move(it), t_nodeIterator(new NullIterator())} );
+    iterators_.push_back( {std::move(it), t_nodeIteratorP(new NullIterator())} );
 }
 
 SceneIterator::~SceneIterator()
@@ -28,12 +28,12 @@ SceneIterator::SceneIterator( const SceneIterator & rhs )
         iterators_.push_back({ it->first->copy(), it->second->copy() });
 }
 
-bool SceneIterator::operator ==( t_nodeIterator rhs ) const 
+bool SceneIterator::operator ==( t_nodeIteratorP rhs ) const 
 { 
     return *(iterators_.back().first) == *rhs;
 }
 
-bool SceneIterator::operator !=( t_nodeIterator rhs ) const
+bool SceneIterator::operator !=( t_nodeIteratorP rhs ) const
 {
     return !operator==( std::move(*rhs) );
 }
@@ -77,7 +77,7 @@ Node * SceneIterator::operator->() const
     return &(**(iterators_.back().first));
 }
 
-t_nodeIterator SceneIterator::copy() const
+t_nodeIteratorP SceneIterator::copy() const
 {
-    return t_nodeIterator( new SceneIterator( *this ) );
+    return t_nodeIteratorP( new SceneIterator( *this ) );
 }
