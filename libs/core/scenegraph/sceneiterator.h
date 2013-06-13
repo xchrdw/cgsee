@@ -35,7 +35,16 @@ public:
     virtual t_nodeIteratorP copy() const override;
     
 private:
-    typedef std::deque< std::pair<t_nodeIteratorP, t_nodeIteratorP > > t_queu;
+    typedef struct IteratorPair {
+        IteratorPair( t_nodeIteratorP it1, t_nodeIteratorP it2 ) 
+        : first(std::move(it1)), second(std::move(it2))
+        {}
+        t_nodeIteratorP first;
+        t_nodeIteratorP second;
+    } t_iteratorPair;
+    
+//     typedef std::pair<t_nodeIteratorP, t_nodeIteratorP > t_iteratorPair;
+    typedef std::deque< t_iteratorPair > t_queu;
    
     t_queu iterators_;
 };
