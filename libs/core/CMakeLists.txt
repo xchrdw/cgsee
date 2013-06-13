@@ -42,10 +42,11 @@ set(SOURCES
     scenegraph/INodeIterator.h
     scenegraph/groupiterator.cpp
     scenegraph/groupiterator.h
+    scenegraph/nulliterator.h
     scenegraph/sceneiterator.cpp
     scenegraph/sceneiterator.h
     scenegraph/scenetraverser.h
-    scenegraph/drawtraverser.h
+    scenegraph/drawvisitor.h
     
     abstracttimer.h
     autotimer.h
