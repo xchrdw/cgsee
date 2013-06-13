@@ -26,7 +26,7 @@ public:
         if( Node::RF_Relative == node.referenceFrame() )
             transform *= node.transform();
     }
-    
+
 private:
     Program * program;
     glm::mat4 transform;
