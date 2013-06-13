@@ -52,6 +52,7 @@ set(SOURCES
     fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
+    geometryoptimizer.h
     glformat.h
     glformat.cpp
     gpuquery.h
@@ -77,10 +78,10 @@ set(SOURCES
     shader.cpp
     timer.h
     timer.cpp
-	vertexcacheoptimizer.h
-	vertexcacheoptimizer.cpp
-	vertexreuse.h
-	vertexreuse.cpp
+    vertexcacheoptimizer.h
+    vertexcacheoptimizer.cpp
+    vertexreuse.h
+    vertexreuse.cpp
 )
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$|\\\\.inl$" 
