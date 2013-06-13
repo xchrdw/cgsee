@@ -12,14 +12,15 @@
 #include <core/declspec.h>
 
 #include "node.h"
+#include "ISceneVisitor.h"
 
-struct CGSEE_API DrawVisitor
+class CGSEE_API DrawVisitor : public ISceneVisitor
 {
 public:
     DrawVisitor( Program * p, glm::mat4 t ) : program(p), transform(t)
     {}
     
-    void operator() ( Node & node )
+    virtual void operator() ( Node & node ) override
     {
         node.draw( *program, transform );
         if( Node::RF_Relative == node.referenceFrame() )
