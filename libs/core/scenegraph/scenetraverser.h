@@ -37,9 +37,10 @@ public:
     ~ConstSceneTraverser()
     {}
         
-    void traverse( const Node & node, std::function<void (const Node &)> visitor )
+    void traverse( const Node & node, std::function<bool (const Node &)> visitor )
     {
-        visitor( node );
+        if( !visitor( node ) )
+            return;
         
         Node::t_children::const_iterator it = node.children().begin();
         Node::t_children::const_iterator itEnd = node.children().end();
