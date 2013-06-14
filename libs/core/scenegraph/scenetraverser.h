@@ -17,9 +17,10 @@ public:
     ~SceneTraverser()
     {}
         
-    void traverse( Node & node, std::function<void (Node &)> visitor )
+    void traverse( Node & node, std::function<bool (Node &)> visitor )
     {
-        visitor( node );
+        if( !visitor( node ) )
+            return;
         
         auto it = node.children().begin();
         auto itEnd = node.children().end();

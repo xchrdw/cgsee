@@ -12,7 +12,7 @@ class CGSEE_API ISceneVisitor
 public:
     virtual ~ISceneVisitor() {}
     
-    virtual void operator() ( Node & node ) =0;
+    virtual bool operator() ( Node & node ) =0;
 };
 
 #endif // ISceneVisitor_H

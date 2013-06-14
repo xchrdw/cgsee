@@ -20,11 +20,12 @@ public:
     DrawVisitor( Program * p, glm::mat4 t ) : program(p), transform(t)
     {}
     
-    virtual void operator() ( Node & node ) override
+    virtual bool operator() ( Node & node ) override
     {
         node.draw( *program, transform );
         if( Node::RF_Relative == node.referenceFrame() )
             transform *= node.transform();
+        return true;
     }
 
 private:
