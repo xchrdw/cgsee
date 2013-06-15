@@ -140,6 +140,8 @@
     <addaction name="primitiveWireframeShadingAction"/>
     <addaction name="separator"/>
     <addaction name="normalsAction"/>
+    <addaction name="separator"/>
+    <addaction name="pathTracingAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
@@ -614,6 +616,14 @@
    </property>
    <property name="text">
     <string>Normals</string>
+   </property>
+  </action>
+  <action name="pathTracingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Path&amp;Tracing</string>
    </property>
   </action>
  </widget>

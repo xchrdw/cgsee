@@ -212,6 +212,11 @@ void Viewer::on_normalsAction_triggered()
     m_qtCanvas->repaint();
 }
 
+void Viewer::on_pathTracingAction_triggered()
+{
+    m_qtCanvas->painter()->setShading('t');
+    m_qtCanvas->repaint();
+}
 
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {

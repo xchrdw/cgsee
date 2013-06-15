@@ -58,6 +58,7 @@ protected:
     Program * m_gouraud;
     Program * m_phong;
     Program * m_gooch;
+    Program * m_pathTracing;
     Program * m_useProgram;
     FrameBufferObject * m_fboNormalz;
 

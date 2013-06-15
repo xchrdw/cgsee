@@ -175,11 +175,7 @@ const bool Painter::initialize()
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gooch.frag"));
     m_gooch->attach(
          new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
-
-    //set UNIFORMS for selected shader
-    m_useProgram = m_flat;
-    setUniforms();
-
+    
     // Post Processing Shader
 
     m_flush = new Program();
@@ -190,6 +186,16 @@ const bool Painter::initialize()
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+    
+    m_pathTracing = new Program();
+    m_pathTracing->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/pathTracing.frag"));
+    m_pathTracing->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/pathTracing.vert"));
+
+    //set UNIFORMS for selected shader
+    m_useProgram = m_pathTracing;
+    setUniforms();
 
     return true;
 }
@@ -240,6 +246,11 @@ void Painter::setUniforms()
         warmColdColor[3] = glm::vec4(0.45,0.45,0,0);            //Diffuse Warm, DiffuseCool
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
+
+    else if(m_useProgram == m_pathTracing)
+    {
+        m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
+    }
 }
 
 void Painter::paint()
@@ -285,6 +296,7 @@ void Painter::setShading(char shader)
         case 's': m_useProgram = m_solidWireframe; std::printf("\nWireframeSolid Shading\n\n"); break;
         case 'r': m_useProgram = m_primitiveWireframe; std::printf("\nprimitive Wireframe Shading\n\n"); break;
         case 'n': m_useProgram = m_normals; std::printf("\nNormals\n\n"); break;
+        case 't': m_useProgram = m_pathTracing; std::printf("\nPathTracing\n\n"); break;
     }
     setUniforms();
     //repaint missing
