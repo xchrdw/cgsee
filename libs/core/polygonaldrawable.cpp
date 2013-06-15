@@ -91,6 +91,24 @@ void PolygonalDrawable::initialize(const Program & program)
     
     m_arrayBOsByAttribute["a_vertex"] = vertexBO;
 
+    // ********
+    // Pathtracing: Make geometry info accessible
+
+    GLuint vertexTexture, normalTexture;
+    glGenTextures(1, &vertexTexture);
+    glBindTexture(GL_TEXTURE_BUFFER, vertexTexture);
+    glError();
+
+    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, vertexBO->buffer());
+    glError();
+
+                        
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_BUFFER, vertexTexture);
+    program.setUniform("vertexBuffer", 0);
+
+    //*********
+
     // TODO: the geometry should provide this information.
 
     if(!m_geometry->normals().isEmpty())
@@ -99,6 +117,14 @@ void PolygonalDrawable::initialize(const Program & program)
 	    normalBO->data<glm::vec3>(m_geometry->normals(), GL_FLOAT, 3);
 
         m_arrayBOsByAttribute["a_normal"] = normalBO;
+
+        
+        glGenTextures(1, &normalTexture);
+        glBindTexture(GL_TEXTURE_BUFFER, normalTexture);
+        glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, normalBO->buffer());
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_BUFFER, normalTexture);
+        program.setUniform("vertexBuffer", 1);
     }
 
     // bind all buffers to their attributes
@@ -110,6 +136,31 @@ void PolygonalDrawable::initialize(const Program & program)
         i.value()->bind(program.attributeLocation(i.key()));
 
     glBindVertexArray(0);
+
+    // Pathtracing: create data objects
+    GLuint pathTracingGeometryID;
+    std::vector<glm::vec3> pathTracingGeometry;
+    GLuint geometryTextureID;
+
+    // ... fill array with geometry / aabb's ... //
+
+    glGenBuffers(1, &pathTracingGeometryID);
+    glBindBuffer(GL_TEXTURE_BUFFER, pathTracingGeometryID);
+    glBufferData(GL_TEXTURE_BUFFER, pathTracingGeometry.size(), pathTracingGeometry.data(), GL_STATIC_DRAW);
+    glError();
+
+    glGenTextures(1, &geometryTextureID);
+    glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
+    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, geometryTextureID);
+    glError();
+
+
+    program.setUniform("geometryBuffer", 2);
+
+
+    glBindTexture(GL_TEXTURE_BUFFER, 0);
+    glBindBuffer(GL_TEXTURE_BUFFER, 0);
+
     glError();
 }
 

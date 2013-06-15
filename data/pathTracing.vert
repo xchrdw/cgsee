@@ -12,6 +12,6 @@ out vec3 position;
 void main(void) 
 {
     normal = normalize(a_normal);
-    position = vec3(view * vec4(a_vertex, 1.0));
+    position = (view * vec4(a_vertex, 1.0)).xyz;
     gl_Position = transform * vec4(a_vertex, 1.0);
 }
