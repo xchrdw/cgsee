@@ -2,13 +2,15 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <memory>
+
 #include <QString>
 #include <QMap>
 
 #include <core/abstractpainter.h>
 
 
-
+class DataBlockRegistry;
 class Camera;
 class Group;
 class ScreenQuad;
@@ -47,6 +49,7 @@ protected:
         const t_samplerByName & sampler);
 
 protected:
+    std::shared_ptr<DataBlockRegistry> m_registry;
     Group * m_group;
     ScreenQuad * m_quad;
 

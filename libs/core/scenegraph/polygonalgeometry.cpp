@@ -6,7 +6,7 @@
 #include <core/bufferobject.h>
 #include <core/program.h>
 
-PolygonalGeometry::PolygonalGeometry( DataBlockRegistry * registry )
+PolygonalGeometry::PolygonalGeometry( std::shared_ptr<DataBlockRegistry> registry )
 :   m_registry( registry )
 ,   m_datablock( nullptr )
 ,   m_vao( -1 )

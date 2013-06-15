@@ -10,6 +10,7 @@
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
+#include <core/datacore/datablock.h>
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
@@ -31,6 +32,7 @@ static const QString WARMCOLDCOLOR_UNIFORM   ("warmcoldcolor");
 
 Painter::Painter()
 :   AbstractPainter()
+,   m_registry(nullptr)
 ,   m_group(nullptr)
 ,   m_quad(nullptr)
 ,   m_normals(nullptr)
@@ -76,7 +78,9 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    m_group = ObjIO::groupFromObjFile("data/suzanneVN.obj");
+    m_registry = std::make_shared<DataBlockRegistry>();
+    
+    m_group = ObjIO::groupFromObjFile("data/suzanneVN.obj", m_registry);
 
     if(!m_group)
     {

@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <sstream>
+#include <memory>
 
 #include <QString>
 
@@ -10,13 +11,14 @@
 #include "common.h"
 
 
+class DataBlockRegistry;
 class Group;
 class PolygonalDrawable;
 
 class CGSEE_API ObjIO
 {
 public:
-    static Group * groupFromObjFile(const QString & filePath);
+    static Group * groupFromObjFile(const QString & filePath, std::shared_ptr<DataBlockRegistry> registry);
 
 protected:
 
@@ -63,10 +65,12 @@ protected:
 
 
 protected:
-    static Group * toGroup(const t_objects & objects);
+    static Group * toGroup(const t_objects & objects, std::shared_ptr<DataBlockRegistry> registry);
     static PolygonalDrawable * createPolygonalDrawable(
         const ObjObject & object
-    ,   const ObjGroup & group);
+    ,   const ObjGroup & group
+    ,   std::shared_ptr<DataBlockRegistry> registry
+    );
 
     static void parseV(
         std::istringstream & line

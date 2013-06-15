@@ -22,7 +22,7 @@ public:
     typedef QMap<QString, BufferObject *> t_bufferObjectsByAttribute;
     
     // TODO: Nur voruebergehend mit default value. Spaeter wieder als ref.
-    PolygonalGeometry( DataBlockRegistry * registry = nullptr);
+    PolygonalGeometry( std::shared_ptr<DataBlockRegistry> registry = nullptr);
     virtual ~PolygonalGeometry();
 
     t_VertexListP vertices() const;

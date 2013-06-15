@@ -9,11 +9,12 @@
 
 #include <QFile>
 
-#include "objio.h"
-
+#include "datacore/datablock.h"
 #include "scenegraph/group.h"
 #include "scenegraph/polygonaldrawable.h"
 #include "scenegraph/polygonalgeometry.h"
+
+#include "objio.h"
 
 
 using namespace std;
@@ -39,7 +40,7 @@ ObjIO::ObjObject::~ObjObject()
     groups.clear();
 }
 
-Group * ObjIO::groupFromObjFile(const QString & filePath)
+Group * ObjIO::groupFromObjFile(const QString & filePath, std::shared_ptr<DataBlockRegistry> registry)
 {
     // http://en.wikipedia.org/wiki/Wavefront_.obj_file
     // http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Load_OBJ
@@ -105,7 +106,7 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
     }
     stream.close();
 
-    Group * group = toGroup(objects);
+    Group * group = toGroup(objects, registry);
     group->setName(filePath);
 
     return group;
@@ -257,7 +258,7 @@ inline void ObjIO::parseG(
     object.groups.push_back(group);
 }
 
-Group * ObjIO::toGroup(const t_objects & objects)
+Group * ObjIO::toGroup(const t_objects & objects, std::shared_ptr<DataBlockRegistry> registry)
 {
     std::vector<Group *> groups;
 
@@ -272,7 +273,7 @@ Group * ObjIO::toGroup(const t_objects & objects)
         groups.push_back(group);
 
         if(!oobject.vis.empty())
-            group->append(createPolygonalDrawable(oobject, oobject));
+            group->append(createPolygonalDrawable(oobject, oobject, registry));
 
         t_groups::const_iterator ig(oobject.groups.cbegin());
         const t_groups::const_iterator igEnd(oobject.groups.cend());
@@ -282,7 +283,7 @@ Group * ObjIO::toGroup(const t_objects & objects)
             const ObjGroup & ogroup(**ig);
 
             assert(!ogroup.vis.empty());
-            group->append(createPolygonalDrawable(oobject, ogroup));
+            group->append(createPolygonalDrawable(oobject, ogroup, registry));
         }
     }
 
@@ -304,7 +305,9 @@ Group * ObjIO::toGroup(const t_objects & objects)
 
 PolygonalDrawable * ObjIO::createPolygonalDrawable(
     const ObjObject & object
-,   const ObjGroup & group)
+,   const ObjGroup & group
+,   std::shared_ptr<DataBlockRegistry> registry
+)
 {
     if(group.vis.empty())
         return nullptr;
@@ -320,7 +323,7 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
     const bool usesTexCoordIndices(!group.vtis.empty());
     const bool usesNormalIndices(!group.vnis.empty());
 
-    auto geom = make_shared<PolygonalGeometry>();
+    auto geom = make_shared<PolygonalGeometry>( registry );
 
     const GLuint size(static_cast<GLuint>(group.vis.size()));
     geom->resize(size);
