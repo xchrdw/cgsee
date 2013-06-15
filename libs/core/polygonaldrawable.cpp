@@ -91,22 +91,6 @@ void PolygonalDrawable::initialize(const Program & program)
     
     m_arrayBOsByAttribute["a_vertex"] = vertexBO;
 
-    // ********
-    // Pathtracing: Make geometry info accessible
-
-    GLuint vertexTexture, normalTexture;
-    glGenTextures(1, &vertexTexture);
-    glBindTexture(GL_TEXTURE_BUFFER, vertexTexture);
-    glError();
-
-    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, vertexBO->buffer());
-    glError();
-
-                        
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_BUFFER, vertexTexture);
-    program.setUniform("vertexBuffer", 0);
-
     //*********
 
     // TODO: the geometry should provide this information.
@@ -117,14 +101,6 @@ void PolygonalDrawable::initialize(const Program & program)
 	    normalBO->data<glm::vec3>(m_geometry->normals(), GL_FLOAT, 3);
 
         m_arrayBOsByAttribute["a_normal"] = normalBO;
-
-        
-        glGenTextures(1, &normalTexture);
-        glBindTexture(GL_TEXTURE_BUFFER, normalTexture);
-        glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, normalBO->buffer());
-        glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_BUFFER, normalTexture);
-        program.setUniform("vertexBuffer", 1);
     }
 
     // bind all buffers to their attributes
@@ -136,6 +112,29 @@ void PolygonalDrawable::initialize(const Program & program)
         i.value()->bind(program.attributeLocation(i.key()));
 
     glBindVertexArray(0);
+
+    glError();
+
+    initPathTracingData(program);
+}
+
+void PolygonalDrawable::initPathTracingData(const Program & program)
+{
+    // ********
+    // Pathtracing: Make vertex, normal info accessible
+
+    GLuint vertexTextureID, normalTextureID;
+
+    glGenTextures(1, &vertexTextureID);
+    glBindTexture(GL_TEXTURE_BUFFER, vertexTextureID);
+    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, m_arrayBOsByAttribute["a_vertex"]->buffer());
+    glError();
+
+    // normal data
+    glGenTextures(1, &normalTextureID);
+    glBindTexture(GL_TEXTURE_BUFFER, normalTextureID);
+    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, m_arrayBOsByAttribute["a_normal"]->buffer());
+    glError();
 
     // Pathtracing: create data objects
     GLuint pathTracingGeometryID;
@@ -154,14 +153,20 @@ void PolygonalDrawable::initialize(const Program & program)
     glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, geometryTextureID);
     glError();
 
+    // ***
+    // pass textures to shader
+    
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_BUFFER, vertexTextureID);
+    program.setUniform("vertexBuffer", 0);
+    
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_BUFFER, normalTextureID);
+    program.setUniform("normalBuffer", 1);
 
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
     program.setUniform("geometryBuffer", 2);
-
-
-    glBindTexture(GL_TEXTURE_BUFFER, 0);
-    glBindBuffer(GL_TEXTURE_BUFFER, 0);
-
-    glError();
 }
 
 void PolygonalDrawable::draw(

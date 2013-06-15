@@ -37,6 +37,7 @@ protected:
     const glm::mat4 & transform() const;
 
     void initialize(const Program & program);
+    void initPathTracingData(const Program & program);
     void deleteBuffers();
 
     virtual void invalidateBoundingBox();
