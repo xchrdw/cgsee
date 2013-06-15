@@ -2,7 +2,6 @@
 #include <core/program.h>
 
 #include "polygonaldrawable.h"
-#include "groupiterator.h"
 #include "group.h"
 
 Group::Group( const QString & name )
@@ -18,16 +17,6 @@ Group::~Group()
 
 void Group::draw( const Program & program, const glm::mat4 & transform )
 {
-}
-
-t_nodeIteratorP Group::begin()
-{
-    return t_nodeIteratorP( new GroupIterator(m_children.begin()) );
-}
-
-t_nodeIteratorP Group::end()
-{
-    return t_nodeIteratorP( new GroupIterator(m_children.end()) );
 }
 
 const bool Group::contains(Node * node) const

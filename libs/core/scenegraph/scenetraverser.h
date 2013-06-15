@@ -3,51 +3,24 @@
 #ifndef SceneTraverser_H
 #define SceneTraverser_H
 
-#include <vector>
-#include <memory>
 #include <functional>
 
 #include <core/declspec.h>
 
-#include "node.h"
+
+class Node;
 
 struct CGSEE_API SceneTraverser final
 {
 public:
-    ~SceneTraverser()
-    {}
-        
-    void traverse( Node & node, std::function<bool (Node &)> visitor )
-    {
-        if( !visitor( node ) )
-            return;
-        
-        auto it = node.children().begin();
-        auto itEnd = node.children().end();
-        for( ; it != itEnd; ++it ){
-            traverse( **it, visitor );
-        }
-    }
+    void traverse( Node & node, std::function<bool (Node &)> visitor );
 };
 
 
 struct CGSEE_API ConstSceneTraverser final
 {
 public:
-    ~ConstSceneTraverser()
-    {}
-        
-    void traverse( const Node & node, std::function<bool (const Node &)> visitor )
-    {
-        if( !visitor( node ) )
-            return;
-        
-        Node::t_children::const_iterator it = node.children().begin();
-        Node::t_children::const_iterator itEnd = node.children().end();
-        for( ; it != itEnd; ++it ){
-            traverse( **it, visitor );
-        }
-    }
+    void traverse( const Node & node, std::function<bool (const Node &)> visitor );
 };
 
 #endif // SceneTraverser_H

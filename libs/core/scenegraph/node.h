@@ -7,7 +7,6 @@
 #include <core/declspec.h>
 #include <core/aabb.h>
 
-#include "INodeIterator.h"
 
 class Program;
 
@@ -37,9 +36,6 @@ public:
     t_parents & parents();
 
     const t_children & children() const;
-    // NodeIterators to children.
-    virtual t_nodeIteratorP begin() =0;
-    virtual t_nodeIteratorP end() =0;
     
     const glm::mat4 & transform() const;
     void setTransform(const glm::mat4 & transform);
@@ -47,7 +43,7 @@ public:
     const e_ReferenceFrame referenceFrame() const;
     void setReferenceFrame(const e_ReferenceFrame referenceFrame);
     
-    bool isCircularDependentTo( const Node & other ) const;
+//     bool isCircularDependentTo( const Node & other ) const;
 
 protected:
     virtual void invalidateBoundingBox();

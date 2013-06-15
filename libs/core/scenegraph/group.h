@@ -17,11 +17,6 @@ public:
 
     virtual void draw( const Program & program, const glm::mat4 & transform);
 
-
-    // child handling
-    virtual t_nodeIteratorP begin() override;
-    virtual t_nodeIteratorP end() override;
-    
     const bool contains( Node * node ) const;
 
     void prepend( Group * group );

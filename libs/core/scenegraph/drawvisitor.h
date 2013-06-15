@@ -5,32 +5,23 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <vector>
-#include <memory>
-#include <functional>
-
 #include <core/declspec.h>
 
-#include "node.h"
 #include "ISceneVisitor.h"
+
+
+class Program;
+class Node;
 
 class CGSEE_API DrawVisitor : public ISceneVisitor
 {
 public:
-    DrawVisitor( Program * p, glm::mat4 t ) : program(p), transform(t)
-    {}
-    
-    virtual bool operator() ( Node & node ) override
-    {
-        node.draw( *program, transform );
-        if( Node::RF_Relative == node.referenceFrame() )
-            transform *= node.transform();
-        return true;
-    }
+    DrawVisitor( Program * p, glm::mat4 t );
+    virtual bool operator() ( Node & node ) override;
 
 private:
-    Program * program;
-    glm::mat4 transform;
+    Program * m_program;
+    glm::mat4 m_transform;
 };
 
 

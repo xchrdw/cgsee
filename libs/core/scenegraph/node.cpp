@@ -1,5 +1,4 @@
 
-#include "scenetraverser.h"
 #include "node.h"
 
 
@@ -78,18 +77,4 @@ void Node::setReferenceFrame(const e_ReferenceFrame referenceFrame)
 
     m_rf = referenceFrame;
     invalidateBoundingBox();
-}
-
-bool Node::isCircularDependentTo( const Node & other ) const
-{
-    bool isDependent = false;
-    ConstSceneTraverser traverser;
-    traverser.traverse( other, 
-        [&]( const Node & node )
-        {
-            if( this == &node )
-                isDependent = true;
-        }
-    );
-    return isDependent;
 }

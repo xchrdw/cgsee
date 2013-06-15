@@ -39,15 +39,11 @@ set(SOURCES
     scenegraph/polygonaldrawable.cpp
     scenegraph/polygonalgeometry.h
     scenegraph/polygonalgeometry.cpp
-    scenegraph/INodeIterator.h
-    scenegraph/groupiterator.cpp
-    scenegraph/groupiterator.h
-    scenegraph/nulliterator.h
-    scenegraph/sceneiterator.cpp
-    scenegraph/sceneiterator.h
     scenegraph/scenetraverser.h
+    scenegraph/scenetraverser.cpp
     scenegraph/ISceneVisitor.h
     scenegraph/drawvisitor.h
+    scenegraph/drawvisitor.cpp
     
     abstracttimer.h
     autotimer.h

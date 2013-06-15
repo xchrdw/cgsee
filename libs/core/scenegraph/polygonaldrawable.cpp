@@ -6,7 +6,6 @@
 #include <core/bufferobject.h>
 #include <core/program.h>
 
-#include "nulliterator.h"
 #include "polygonalgeometry.h"
 
 static const QString TRANSFORM_UNIFORM( "transform" );
@@ -22,16 +21,6 @@ PolygonalDrawable::PolygonalDrawable( const QString & name )
 
 PolygonalDrawable::~PolygonalDrawable()
 {
-}
-
-t_nodeIteratorP PolygonalDrawable::begin()
-{
-    return t_nodeIteratorP( new NullIterator() );
-}
-
-t_nodeIteratorP PolygonalDrawable::end()
-{
-    return t_nodeIteratorP( new NullIterator() );
 }
 
 void PolygonalDrawable::setGeometry( t_geometryP geometry )

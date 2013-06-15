@@ -27,9 +27,6 @@ public:
     virtual ~PolygonalDrawable();
 
     virtual void draw( const Program & program, const glm::mat4 & transform ) override;
-    
-    virtual t_nodeIteratorP begin() override;
-    virtual t_nodeIteratorP end() override;
 
     virtual const AxisAlignedBoundingBox boundingBox() const override;
     
