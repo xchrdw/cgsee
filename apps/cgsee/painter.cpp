@@ -96,7 +96,6 @@ const bool Painter::initialize()
 
     m_quad = new ScreenQuad();
 
-    // G-Buffer Shader
 
     // NORMALS
     m_normals = new Program();
