@@ -15,6 +15,7 @@
 
 #include <glm/glm.hpp>
 
+
 #include <core/declspec.h>
 
 
@@ -23,9 +24,16 @@ class QSettings;
 
 class Ui_Viewer;
 class Canvas;
-class AbstractPainter;
 class AbstractNavigation;
 class Camera;
+class AbstractScenePainter;
+
+class FileNavigator;
+class FileExplorer;
+class Viewer;
+class AbstractModelLoader;
+class Group;
+
 
 class CGSEE_API Viewer : public QMainWindow
 {
@@ -45,8 +53,8 @@ public:
    void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
     
-    void setPainter(AbstractPainter * painter);
-    AbstractPainter * painter();
+    void setPainter(AbstractScenePainter * painter);
+    AbstractScenePainter * painter();
 
     void setCamera(Camera * camera);
     Camera * camera();
@@ -96,7 +104,17 @@ protected slots:
     void on_primitiveWireframeShadingAction_triggered();
     void on_normalsAction_triggered();
 
+    void on_openFileDialogAction_triggered();
+
+    void on_loadFile(const QString & path);
+    
+    void on_toggleNavigator_triggered();
+    void on_toggleExplorer_triggered();
 protected:
+
+    void initializeNavigation();
+    void initializeDockWidgets(QDockWidget * dockWidget,
+        QWidget * widget, Qt::DockWidgetArea area);
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -120,4 +138,10 @@ protected:
     Camera * m_camera;
     QVector<glm::mat4> m_saved_views;
 
+    QDockWidget * m_dockLeft;
+    QDockWidget * m_dockBottom;
+
+    FileNavigator * m_navigator;
+    FileExplorer * m_explorer;
+    AbstractModelLoader * m_loader;
 };
