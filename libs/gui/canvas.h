@@ -11,7 +11,7 @@ class QBasicTimer;
 class QTimerEvent;
 class Timer;
 
-class AbstractPainter;
+class AbstractScenePainter;
 class AbstractNavigation;
 class CGSEE_API Canvas : public QGLWidget, public AbstractGLParent
 {

@@ -129,14 +129,25 @@ void AssimpLoader::parseMeshes(aiMesh **meshes,
 PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
 {
     PolygonalGeometry * geometry = new PolygonalGeometry(QString(mesh.mName.C_Str()) + " geometry");
-
+    
+    const bool usesNormalIndices(mesh.mNormals != NULL);
+    
     for (int i = 0; i < mesh.mNumVertices; i++) {
         glm::vec3 vector(
-            mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z
-        );
+                         mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z
+                         );
         geometry->setVertex(i, vector);
     }
-
+    
+    if (usesNormalIndices) {
+        for (int i = 0; i < mesh.mNumVertices; i++) {
+            glm::vec3 vector(
+                             mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z
+                             );
+            geometry->setNormal(i, vector);
+        }
+    }
+    
     unsigned int currentIndex = 0;
     for (int i = 0; i < mesh.mNumFaces; i++) {
         if (mesh.mFaces[i].mNumIndices != 3)
@@ -145,10 +156,11 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
             for (int j = 0; j < mesh.mFaces[i].mNumIndices; j++)
                 geometry->setIndex(currentIndex++, mesh.mFaces[i].mIndices[j]);
     }
-
+    
     geometry->setMode(GL_TRIANGLES);
-    geometry->retrieveNormals();
-
+    if (!usesNormalIndices)
+        geometry->retrieveNormals();
+    
     PolygonalDrawable * drawable = new PolygonalDrawable(mesh.mName.C_Str());
     drawable->setGeometry(geometry);
     return drawable;
