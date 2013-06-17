@@ -80,7 +80,34 @@
      <addaction name="trackballManipulatorAction"/>
      <addaction name="ufoManipulatorAction"/>
     </widget>
+    <widget class="QMenu" name="selectViewMenu">
+     <property name="title">
+      <string>Show View</string>
+     </property>
+     <addaction name="actionFrontView"/>
+     <addaction name="actionLeftView"/>
+     <addaction name="actionBackView"/>
+     <addaction name="actionRightView"/>
+     <addaction name="actionTopView"/>
+     <addaction name="actionBottomView"/>
+     <addaction name="actionTopRightView"/>
+    </widget>
+    <widget class="QMenu" name="menuSave_Load_View">
+     <property name="title">
+      <string>Save/Load View</string>
+     </property>
+     <addaction name="actionLoad_1"/>
+     <addaction name="actionLoad_2"/>
+     <addaction name="actionLoad_3"/>
+     <addaction name="actionLoad_4"/>
+     <addaction name="actionSave_1"/>
+     <addaction name="actionSave_2"/>
+     <addaction name="actionSave_3"/>
+     <addaction name="actionSave_4"/>
+    </widget>
     <addaction name="selectManipulatorMenu"/>
+    <addaction name="selectViewMenu"/>
+    <addaction name="menuSave_Load_View"/>
     <addaction name="separator"/>
     <addaction name="captureCameraPathAction"/>
     <addaction name="playCameraPathAction"/>
@@ -99,6 +126,22 @@
     <addaction name="separator"/>
     <addaction name="preferencesAction"/>
    </widget>
+   <widget class="QMenu" name="shadingMenu">
+    <property name="title">
+     <string>&amp;Shading</string>
+    </property>
+    <addaction name="flatShadingAction"/>
+    <addaction name="gouraudShadingAction"/>
+    <addaction name="phongShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="goochShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="wireframeShadingAction"/>
+    <addaction name="solidWireframeShadingAction"/>
+    <addaction name="primitiveWireframeShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="normalsAction"/>
+   </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>View</string>
@@ -111,6 +154,7 @@
    <addaction name="menuView"/>
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
+   <addaction name="shadingMenu"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -124,9 +168,6 @@
    <property name="text">
     <string>Toggle &amp;Debug Mode</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
   </action>
   <action name="togglePrintModeAction">
    <property name="checkable">
@@ -138,9 +179,6 @@
    <property name="text">
     <string>Toggle &amp;Print Mode</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
   </action>
   <action name="toggleFullScreenAction">
    <property name="enabled">
@@ -148,9 +186,6 @@
    </property>
    <property name="text">
     <string>Toggle Full Screen</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="specifyResolutionAction">
@@ -234,14 +269,17 @@
    </property>
   </action>
   <action name="flightManipulatorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>&amp;Flight Manipulator</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
+   <property name="shortcut">
+    <string>1</string>
    </property>
   </action>
   <action name="terrainManipulatorAction">
@@ -251,19 +289,22 @@
    <property name="text">
     <string>&amp;Terrain Manipulator</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
   </action>
   <action name="trackballManipulatorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Track&amp;ball Manipulator</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
+   <property name="shortcut">
+    <string>2</string>
    </property>
   </action>
   <action name="treemapManipulatorAction">
@@ -273,19 +314,19 @@
    <property name="text">
     <string>3D Tree&amp;map Manipulator</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
   </action>
   <action name="fpsManipulatorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>FPS Manipulator</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
+   <property name="shortcut">
+    <string>3</string>
    </property>
   </action>
   <action name="specifyBenchmarkAction">
@@ -295,9 +336,6 @@
    <property name="text">
     <string>&amp;Specify Benchmark ...</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
   </action>
   <action name="runBenchmarksAction">
    <property name="enabled">
@@ -306,9 +344,6 @@
    <property name="text">
     <string>&amp;Run Benchmarks ...</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
   </action>
   <action name="manageConfigurationsAction">
    <property name="enabled">
@@ -316,9 +351,6 @@
    </property>
    <property name="text">
     <string>Manage &amp;Configurations ...</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="preferencesAction">
@@ -355,9 +387,6 @@
    <property name="text">
     <string>&amp;UFO Manipulator</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
   </action>
   <action name="selectVantagePointAction">
    <property name="enabled">
@@ -366,9 +395,6 @@
    <property name="text">
     <string>Select V&amp;antage Point ...</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
   </action>
   <action name="createVantagePointAction">
    <property name="enabled">
@@ -376,9 +402,6 @@
    </property>
    <property name="text">
     <string>Create Vantage Point</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="toggleHpiLogoAction">
@@ -429,6 +452,201 @@
   <action name="toggleExplorer">
    <property name="text">
     <string>Show/Hide Explorer</string>
+   </property>
+  </action>
+  <action name="actionFrontView">
+   <property name="text">
+    <string>Front</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionLeftView">
+   <property name="text">
+    <string>Left</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="actionBackView">
+   <property name="text">
+    <string>Back</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionRightView">
+   <property name="text">
+    <string>Right</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="actionTopView">
+   <property name="text">
+    <string>Top</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+F1</string>
+   </property>
+  </action>
+  <action name="actionBottomView">
+   <property name="text">
+    <string>Bottom</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+F2</string>
+   </property>
+  </action>
+  <action name="actionLoad_1">
+   <property name="text">
+    <string>Load 1</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F1</string>
+   </property>
+  </action>
+  <action name="actionLoad_2">
+   <property name="text">
+    <string>Load 2</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F2</string>
+   </property>
+  </action>
+  <action name="actionLoad_3">
+   <property name="text">
+    <string>Load 3</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionLoad_4">
+   <property name="text">
+    <string>Load 4</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F4</string>
+   </property>
+  </action>
+  <action name="actionSave_1">
+   <property name="text">
+    <string>Save 1</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F1</string>
+   </property>
+  </action>
+  <action name="actionSave_2">
+   <property name="text">
+    <string>Save 2</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F2</string>
+   </property>
+  </action>
+  <action name="actionSave_3">
+   <property name="text">
+    <string>Save 3</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F3</string>
+   </property>
+  </action>
+  <action name="actionSave_4">
+   <property name="text">
+    <string>Save 4</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F4</string>
+   </property>
+  </action>
+  <action name="actionTopLeft">
+   <property name="text">
+    <string>TopLeft</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionTopRightView">
+   <property name="text">
+    <string>TopRight</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+F3</string>
+   </property>
+  </action>
+  <action name="phongShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Phong Shading</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F12</string>
+   </property>
+  </action>
+  <action name="flatShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Flat Shading</string>
+   </property>
+  </action>
+  <action name="gouraudShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Gouraud Shading</string>
+   </property>
+  </action>
+  <action name="goochShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>G&amp;ooch Shading</string>
+   </property>
+  </action>
+  <action name="wireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>W&amp;ireframe Shading</string>
+   </property>
+  </action>
+  <action name="solidWireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>S&amp;olidWireframe Shading</string>
+   </property>
+  </action>
+  <action name="primitiveWireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pr&amp;imitiveWireframe Shading</string>
+   </property>
+  </action>
+  <action name="normalsAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Normals</string>
    </property>
   </action>
  </widget>

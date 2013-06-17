@@ -6,6 +6,8 @@
 #include "bufferobject.h"
 #include "polygonalgeometry.h"
 #include "program.h"
+#include "vertexcacheoptimizer.h"
+#include "vertexreuse.h"
 
 
 static const QString TRANSFORM_UNIFORM ("transform");
@@ -70,6 +72,11 @@ void PolygonalDrawable::initialize(const Program & program)
     glBindVertexArray(m_vao);                                                                  
     glError();
 
+    // Apply vertex deduplication
+    m_geometry->applyOptimizer(new VertexReuse());
+    // Apply Vertex Cache Optimization
+    m_geometry->applyOptimizer(new VertexCacheOptimizer());
+
     // setup element array buffers
 
     BufferObject * indexBO(new BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));
@@ -126,8 +133,8 @@ void PolygonalDrawable::draw(
     const t_bufferObjects::const_iterator eEnd(m_elementArrayBOs.end());
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
     for(; e != eEnd; ++e)
         (*e)->draw(m_geometry->mode());

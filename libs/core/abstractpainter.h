@@ -13,11 +13,13 @@ class AbstractGLParent;
 class CGSEE_API AbstractPainter
 {
 public:
-    AbstractPainter();
+    AbstractPainter(void);
     virtual ~AbstractPainter();
 
     // calls initialize if not initialized - so call this when subclassed
     virtual void paint();
+
+    virtual void setShading(char shader) = 0;
 
     const QImage capture(
         AbstractGLParent & parent
@@ -29,10 +31,6 @@ public:
         const int width
     ,   const int height);
 
-    virtual void keyPress(QKeyEvent * event);
-    virtual void keyRelease(QKeyEvent * event);
-
-    // TODO: more to come...
 
 protected:
     virtual const bool initialize() = 0;

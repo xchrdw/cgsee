@@ -10,6 +10,10 @@ set(SOURCES
 
     aabb.h
     aabb.cpp
+    abstractnavigation.h
+    abstractnavigation.cpp
+    arcballnavigation.h
+    arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstractglparent.h
@@ -46,10 +50,15 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+    flightnavigation.h
+    flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
+    fpsnavigation.h
+    fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
+    geometryoptimizer.h
     glformat.h
     glformat.cpp
     gpuquery.h
@@ -75,6 +84,10 @@ set(SOURCES
     shader.cpp
     timer.h
     timer.cpp
+    vertexcacheoptimizer.h
+    vertexcacheoptimizer.cpp
+    vertexreuse.h
+    vertexreuse.cpp
 )
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$|\\\\.inl$" 
@@ -109,3 +122,4 @@ set_target_properties(${target}
     DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
 
 add_definitions("-DCGSEE_EXPORTS")
+add_definitions("-DGLM_SWIZZLE")

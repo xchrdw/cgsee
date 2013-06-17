@@ -1,16 +1,16 @@
-#version 150 core
+#version 330
 
 in vec4 gl_FragCoord;
-out vec4 fragcolor;
+out vec4 fragColor;
 
-in vec3 v_normal;
+in vec3 normal;
 
 uniform float znear;
 uniform float zfar;
 
 void main()
 {
-	vec3 n = normalize(v_normal);
+	vec3 n = normalize(normal);
 	n *= 0.5;
 	n += 0.5;
 
@@ -23,5 +23,5 @@ void main()
 	// simplyfied with wolfram alpha
 	z = - znear * z / (zfar * z - zfar - znear * z);
 
-	fragcolor = vec4(n, z);
+	fragColor = vec4(n, z);
 }

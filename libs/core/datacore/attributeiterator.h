@@ -25,20 +25,6 @@ struct if_then_else<std::false_type, ifTrue, ifFalse>
 };
 
 
-// clear_const removes outer const qualifiers
-template <typename T>
-struct clear_const
-{
-    typedef T type;
-};
-
-template <typename T>
-struct clear_const <T const>
-{
-    typedef T type;
-};
-
-
 // And is only true if both arguments are true
 template <typename T1, typename T2>
 struct logic_and : public std::false_type
@@ -85,7 +71,14 @@ public:
 
     template <typename Trhs>
     AttributeIterator(AttributeIterator<Trhs> const& rhs
-                    , typename _enable_conversion<Trhs>::type j = nullptr);
+                    , typename _enable_conversion<Trhs>::type j = nullptr):
+        m_owner(rhs.m_owner)
+    ,   m_currentIndex(rhs.m_currentIndex)
+    ,   m_attrDesc(t_AttrDescType(new t_AttrDesc(*rhs.m_attrDesc)))
+    ,   m_typeChecked(rhs.m_typeChecked)
+    { // Put the function body here to work around a VS ICE
+
+    }
 
     ~AttributeIterator();
     typedef typename std::iterator<std::input_iterator_tag, T>::pointer pointer;
