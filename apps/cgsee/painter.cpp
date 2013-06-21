@@ -8,6 +8,7 @@
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
+#include <core/pathtracer.h>
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
@@ -48,6 +49,7 @@ Painter::Painter(Camera * camera)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
 ,   m_camera(camera)
+,   m_pathTracer(nullptr)
 {
 }
 
@@ -58,6 +60,7 @@ Painter::Painter(Group * scene)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
 ,   m_camera(nullptr)
+,   m_pathTracer(nullptr)
 {
 }
 
@@ -76,11 +79,14 @@ Painter::~Painter()
     delete m_solidWireframe;
     delete m_fboNormalz;
     delete m_flush;
+    delete m_pathTracer;
 }
 
 const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
+
+    m_pathTracer = new PathTracer();
 
     if (m_scene) {
         glm::mat4 transform(1.f);
@@ -92,6 +98,8 @@ const bool Painter::initialize()
         
         m_scene->setTransform(transform);
         m_camera->append(m_scene);
+        m_pathTracer->setTransform(transform);
+        m_pathTracer->append(m_scene);
     } 
 
     m_quad = new ScreenQuad();
@@ -262,15 +270,19 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    m_camera->draw(*m_useProgram, m_fboNormalz);
+    if (m_useProgram != m_pathTracing) { // rasterization
+        m_camera->draw(*m_useProgram, m_fboNormalz);
 
-    sampler.clear();
-    sampler["source"] = m_fboNormalz;
+        sampler.clear();
+        sampler["source"] = m_fboNormalz;
 
-    bindSampler(sampler, *m_flush);
-    m_quad->draw(*m_flush, nullptr);
-    releaseSampler(sampler);
-
+        bindSampler(sampler, *m_flush);
+        m_quad->draw(*m_flush, nullptr);
+        releaseSampler(sampler);
+    } else {
+        // Render scene with pathtracing
+        m_pathTracer->draw(*m_useProgram, nullptr);
+    }
 }
 
 void Painter::resize(  //probably never called anywhere?
@@ -282,6 +294,8 @@ void Painter::resize(  //probably never called anywhere?
     m_camera->setViewport(width, height);
 
     m_fboNormalz->resize(width, height);
+
+    m_pathTracer->setViewport(width, height);
 
     postShaderRelinked();
 

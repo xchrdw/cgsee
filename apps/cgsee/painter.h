@@ -13,6 +13,7 @@
 class Camera;
 class Group;
 class ScreenQuad;
+class PathTracer;
 class Program;
 class FrameBufferObject;
 
@@ -69,4 +70,6 @@ protected:
     Program * m_flush;
 
     Camera * m_camera;
+
+    PathTracer * m_pathTracer;
 };

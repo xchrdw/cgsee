@@ -72,6 +72,8 @@ set(SOURCES
     node.cpp
     objloader.h
     objloader.cpp
+    pathtracer.h
+    pathtracer.cpp
     polygonaldrawable.h
     polygonaldrawable.cpp
     polygonalgeometry.h
