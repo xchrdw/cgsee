@@ -105,6 +105,7 @@ protected slots:
     void on_normalsAction_triggered();
 
     void on_openFileDialogAction_triggered();
+    void on_quitAction_triggered();
 
     void on_loadFile(const QString & path);
     

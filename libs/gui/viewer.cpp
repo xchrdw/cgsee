@@ -228,6 +228,11 @@ void Viewer::on_openFileDialogAction_triggered()
     
     on_loadFile(fileName);
 }
+    
+void Viewer::on_quitAction_triggered()
+{
+    QApplication::quit();
+}
 
 void Viewer::on_loadFile(const QString & path)
 {
