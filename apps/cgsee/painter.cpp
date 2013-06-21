@@ -1,5 +1,5 @@
-
-#include "QDebug"
+#include <glm/gtc/matrix_transform.hpp>
+#include <QDebug>
 
 #include "painter.h"
 
@@ -14,26 +14,28 @@
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
-#include <core/objio.h>
+#include <core/objloader.h>
+#include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
+#include "core/arcballnavigation.h"
+#include "core/flightnavigation.h"
+
 
 //for phong, flat and gouraud
-static const QString CAMERAPOSITION_UNIFORM   ("cameraposition");
-static const QString LIGHTDIR_UNIFORM   ("lightdir");
-static const QString LIGHTDIR_UNIFORM2   ("lightdir2");
-static const QString LIGHTAMBIENTGLOBAL_UNIFORM   ("lightambientglobal");
-static const QString LIGHT_UNIFORM   ("light");
-static const QString LIGHT_UNIFORM2   ("light2");
-static const QString MATERIAL_UNIFORM   ("material");
-static const QString LIGHTPOSITION_UNIFORM   ("lightposition");
+static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
+static const QString LIGHTDIR_UNIFORM ("lightdir");
+static const QString LIGHTDIR_UNIFORM2 ("lightdir2");
+static const QString LIGHTAMBIENTGLOBAL_UNIFORM ("lightambientglobal");
+static const QString LIGHT_UNIFORM ("light");
+static const QString LIGHT_UNIFORM2 ("light2");
+static const QString MATERIAL_UNIFORM ("material");
+static const QString LIGHTPOSITION_UNIFORM ("lightposition");
 //gooch
-static const QString WARMCOLDCOLOR_UNIFORM   ("warmcoldcolor");
+static const QString WARMCOLDCOLOR_UNIFORM ("warmcoldcolor");
 
-Painter::Painter()
-:   AbstractPainter()
-,   m_registry(nullptr)
-,   m_group(nullptr)
+Painter::Painter(Camera * camera)
+:   AbstractScenePainter()
 ,   m_quad(nullptr)
 ,   m_normals(nullptr)
 ,   m_normalz(nullptr)
@@ -47,13 +49,22 @@ Painter::Painter()
 ,   m_useProgram(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_flush(nullptr)
+,   m_camera(camera)
+{
+}
+
+Painter::Painter(Group * scene)
+:   AbstractScenePainter(scene)
+,   m_quad(nullptr)
+,   m_normalz(nullptr)
+,   m_fboNormalz(nullptr)
+,   m_flush(nullptr)
 ,   m_camera(nullptr)
 {
 }
 
 Painter::~Painter()
 {
-    delete m_group;
     delete m_quad;
 
     delete m_normals;
@@ -69,45 +80,21 @@ Painter::~Painter()
     delete m_flush;
 }
 
-Camera * Painter::camera()
-{
-    return m_camera;
-}
-
 const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    m_registry = std::make_shared<DataBlockRegistry>();
-    
-    m_group = ObjIO::groupFromObjFile("data/suzanneVN.obj", m_registry);
-
-    if(!m_group)
-    {
-        qWarning("Have you set the Working Directory?");
-        return false;
-    }
-
-    glm::mat4 transform(1.f);
-
-    transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
-    transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
-
-    m_group->setTransform(transform);
-
-    // Camera Setup
-
-    m_camera = new Camera();
-
-    m_camera->setFovy (45.0f);
-    m_camera->setZNear( 1.0f);
-    m_camera->setZFar (10.0f);
-
-    m_camera->append(m_group);
-
-    camPos=glm::vec3( -2.0f, 0.0f,-2.f);
-    m_camera->setView(glm::lookAt(
-        camPos , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+    if (m_scene) {
+        glm::mat4 transform(1.f);
+        
+        transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
+        transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
+        transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
+        transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
+        
+        m_scene->setTransform(transform);
+        m_camera->append(m_scene);
+    } 
 
     m_quad = new ScreenQuad();
 
@@ -266,14 +253,13 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    AutoTimer t("Draw traversal");
-    
+//     m_camera->draw(*m_useProgram, m_fboNormalz);
+    m_fboNormalz->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor( m_useProgram, m_camera->transform() );
-    m_fboNormalz->bind();
     traverser.traverse( *m_camera, drawVisitor );
     m_fboNormalz->release();
-    
+
     sampler.clear();
     sampler["source"] = m_fboNormalz;
 
@@ -340,4 +326,9 @@ void Painter::releaseSampler(
     for(; i != iEnd; ++i)
         i.value()->releaseTexture2D();
 
+}
+
+Camera * Painter::camera()
+{
+    return m_camera;
 }

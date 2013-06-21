@@ -5,17 +5,18 @@
 #include <core/aabb.h>
 #include <core/bufferobject.h>
 #include <core/program.h>
+#include <core/vertexcacheoptimizer.h>
+#include <core/vertexreuse.h>
 
 PolygonalGeometry::PolygonalGeometry( std::shared_ptr<DataBlockRegistry> registry )
 :   m_registry( registry )
 ,   m_datablock( nullptr )
 ,   m_vao( -1 )
+,   m_vertListHandle( "VERTICES" )
+,   m_indicesHandle( "INDICES" )
+,   m_elementArrayBOs()
+,   m_arrayBOsByAttribute()
 {
-    if( m_registry == nullptr )
-       m_registry = std::make_shared<DataBlockRegistry>();
-   
-    m_vertListHandle = "VERTICES";
-    m_indicesHandle = "INDICES";
     m_datablock = DataBlock::createDataBlockWithName<VertexList>(m_vertListHandle, *m_registry);
     DataBlock::createDataBlockWithName<VertexIndexList>(m_indicesHandle, *m_registry, m_datablock);
 
@@ -47,7 +48,8 @@ t_vec3s PolygonalGeometry::copyVertices() const // TODO: Temporary solution.
         [&temp](int i, const glm::vec3 & pos)
         {
             temp[i] = pos;
-        });
+        }
+    );
     return temp;
 }
 
@@ -166,10 +168,16 @@ void PolygonalGeometry::initialize( const Program & program )
     glError();
     glBindVertexArray(m_vao);                                                                  
     glError();
+    
+    // Apply vertex deduplication
+
+    applyOptimizer( new VertexReuse() ); // TODO: That's just bad!
+    // Apply Vertex Cache Optimization
+    applyOptimizer( new VertexCacheOptimizer() ); // TODO: That's just bad!
 
     // setup element array buffers
 
-    BufferObject * indexBO(new BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW));
+    BufferObject * indexBO( new BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW) );
     indexBO->data<GLuint>(indices(), GL_UNSIGNED_INT, 1);
 
     m_elementArrayBOs.push_back(indexBO);
@@ -185,7 +193,7 @@ void PolygonalGeometry::initialize( const Program & program )
 
     if(!normals().isEmpty())
     {
-        BufferObject * normalBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
+        BufferObject * normalBO( new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW) );
         normalBO->data<glm::vec3>(normals(), GL_FLOAT, 3);
 
         m_arrayBOsByAttribute["a_normal"] = normalBO;
@@ -215,4 +223,13 @@ void PolygonalGeometry::deleteBuffers()
 
         m_vao = -1;
     }
+}
+
+void PolygonalGeometry::applyOptimizer( GeometryOptimizer * opt ) 
+{
+        t_VertexListP vertexData = qobject_cast<t_VertexListP>(m_registry->getDataBlockByName(m_vertListHandle));
+        t_VertexIndexListP indices = qobject_cast<VertexIndexList*>(m_registry->getDataBlockByName(m_indicesHandle));
+        assert(indices);
+        assert(vertexData);
+        opt->applyOn(indices, vertexData);
 }

@@ -25,17 +25,19 @@ struct if_then_else<std::false_type, ifTrue, ifFalse>
 };
 
 
-// clear_const removes outer const qualifiers
-template <typename T>
-struct clear_const
+// And is only true if both arguments are true
+template <typename T1, typename T2>
+struct logic_and : public std::false_type
 {
-    typedef T type;
+    typedef std::false_type::type type;
+    typedef std::false_type::value_type value_type;
 };
 
-template <typename T>
-struct clear_const <T const>
+template <>
+struct logic_and <std::true_type, std::true_type>: public std::true_type
 {
-    typedef T type;
+    typedef std::true_type::type type;
+    typedef std::true_type::value_type value_type;
 };
 
 // AttributeIterator iterates over vertices in a VertexList object, providing
@@ -58,6 +60,26 @@ class AttributeIterator final
 public:
     AttributeIterator();
     AttributeIterator(AttributeIterator<T> const &);
+
+    template <typename Trhs
+        ,   typename = typename std::enable_if<! std::is_const<Trhs>::value>::type
+        ,   typename = typename std::enable_if<std::is_same<T, const Trhs>::value>::type>
+    struct _enable_conversion
+    {
+        typedef void* type;
+    };
+
+    template <typename Trhs>
+    AttributeIterator(AttributeIterator<Trhs> const& rhs
+                    , typename _enable_conversion<Trhs>::type j = nullptr):
+        m_owner(rhs.m_owner)
+    ,   m_currentIndex(rhs.m_currentIndex)
+    ,   m_attrDesc(t_AttrDescType(new t_AttrDesc(*rhs.m_attrDesc)))
+    ,   m_typeChecked(rhs.m_typeChecked)
+    { // Put the function body here to work around a VS ICE
+
+    }
+
     ~AttributeIterator();
     typedef typename std::iterator<std::input_iterator_tag, T>::pointer pointer;
     typedef typename std::iterator<std::input_iterator_tag, T>::reference reference;
@@ -75,6 +97,7 @@ public:
     bool isInvalid() const;
 
     friend class VertexList;
+    template <typename Trhs> friend class AttributeIterator;
 private:
     typedef typename if_then_else<std::is_const<T>
         ,   t_ConstVertexListP
