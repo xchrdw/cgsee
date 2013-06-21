@@ -11,8 +11,8 @@ FileNavigator::FileNavigator(
 {
 	this->setModel(m_model);
 
-	setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
-	setRoot("");
+	this->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+    this->setRoot("");
 
 	this->setColumnHidden(1, true);
 	this->setColumnHidden(2, true);

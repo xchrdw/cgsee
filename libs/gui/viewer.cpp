@@ -58,16 +58,18 @@ Viewer::Viewer(
     
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings s;
-
+    
+    initializeNavigation();
+    restoreViews(s);
+    
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
-
-    restoreViews(s);
-    initializeNavigation();
 };
 
 void Viewer::initializeNavigation()
 {
+    m_dockLeft->setObjectName("fileNavigator");
+    m_dockBottom->setObjectName("fileExplorer");
     this->initializeDockWidgets(m_dockLeft, m_navigator, Qt::LeftDockWidgetArea);
     this->initializeDockWidgets(m_dockBottom, m_explorer, Qt::BottomDockWidgetArea);
 
