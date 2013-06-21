@@ -7,6 +7,7 @@
 
 PathTracer::PathTracer(const QString & name)
 :   Camera(name)
+,   m_invalidatedGeometry(true)
 ,   m_vao(-1)
 ,   m_vertexBO(nullptr)
 {
@@ -16,7 +17,7 @@ PathTracer::~PathTracer()
 {
 }
 
-void PathTracer::initialize(const Program & program) const
+void PathTracer::initialize(const Program & program)
 {
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
@@ -64,6 +65,9 @@ void PathTracer::draw(
     if(-1 == m_vao)
         initialize(program);
 
+    if(m_invalidated)
+        buildBoundingVolumeHierarchy();
+
     if(target)
         target->bind();
 
@@ -99,4 +103,19 @@ void PathTracer::draw(
 
     if(target)
         target->release();
+}
+
+void PathTracer::buildBoundingVolumeHierarchy()
+{
+
+}
+
+void PathTracer::invalidateGeometry()
+{
+    m_invalidatedGeometry = true;
+}
+
+void PathTracer::append(Group * group)
+{
+    Group::append(group);
 }

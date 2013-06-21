@@ -22,10 +22,18 @@ public:
     virtual void draw(
         const Program & program
         ,   const glm::mat4 & transform) override;
+    
+    void append(Group * group);
 
 protected:
-    void initialize(const Program & program) const;
+    void initialize(const Program & program);
 
-    mutable GLuint m_vao;
-    mutable BufferObject * m_vertexBO;
+    void buildBoundingVolumeHierarchy();
+
+    void invalidateGeometry();
+
+    bool m_invalidatedGeometry;
+
+    GLuint m_vao;
+    BufferObject * m_vertexBO;
 };
