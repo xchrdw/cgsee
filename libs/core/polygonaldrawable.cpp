@@ -69,10 +69,11 @@ void PolygonalDrawable::initialize(const Program & program)
 
     glGenVertexArrays(1, &m_vao);
     glError();
-    glBindVertexArray(m_vao);                                                                  
+    glBindVertexArray(m_vao);
     glError();
 
     // Apply vertex deduplication
+
     m_geometry->applyOptimizer(new VertexReuse());
     // Apply Vertex Cache Optimization
     m_geometry->applyOptimizer(new VertexCacheOptimizer());
@@ -88,7 +89,7 @@ void PolygonalDrawable::initialize(const Program & program)
 
 	BufferObject * vertexBO(new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW));
 	vertexBO->data<glm::vec3>(m_geometry->vertices(), GL_FLOAT, 3);
-    
+
     m_arrayBOsByAttribute["a_vertex"] = vertexBO;
 
     //*********
@@ -194,7 +195,7 @@ void PolygonalDrawable::draw(
     program.use();
     program.setUniform(TRANSFORM_UNIFORM, transform);
 
-    glBindVertexArray(m_vao);                                                                  
+    glBindVertexArray(m_vao);
     glError();
 
     t_bufferObjects::const_iterator e(m_elementArrayBOs.begin());
