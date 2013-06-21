@@ -103,7 +103,7 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
     dockWidget->setFloating(true);
     dockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
     
-    dockWidget->move(this->pos() - QPoint(dockWidget->width()+5, count-- * (dockWidget->height()+20)));
+    dockWidget->move(QPoint(20, 40 + count++ * (dockWidget->height() + 35)));
 #endif
 }
 
