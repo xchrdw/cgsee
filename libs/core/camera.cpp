@@ -6,12 +6,12 @@
 #include "gpuquery.h"
 #include "framebufferobject.h"
 
-static const QString VIEWPORT_UNIFORM   ("viewport");
-static const QString VIEW_UNIFORM       ("view");
-static const QString PROJECTION_UNIFORM ("projection");
+const QString Camera::VIEWPORT_UNIFORM   ("viewport");
+const QString Camera::VIEW_UNIFORM       ("view");
+const QString Camera::PROJECTION_UNIFORM ("projection");
 
-static const QString ZNEAR_UNIFORM      ("znear");
-static const QString ZFAR_UNIFORM       ("zfar");
+const QString Camera::ZNEAR_UNIFORM      ("znear");
+const QString Camera::ZFAR_UNIFORM       ("zfar");
 
 
 Camera::Camera(const QString & name)
