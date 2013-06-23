@@ -12,6 +12,8 @@
 #include <QMessageBox>
 #include <QDockWidget>
 #include <QMenu>
+#include <QFileSystemModel>
+#include <QDir>
 
 #include "ui_viewer.h"
 #include "viewer.h"
@@ -63,10 +65,10 @@ Viewer::Viewer(
     restoreState(s.value(SETTINGS_STATE).toByteArray());
     
     restoreViews(s);
-    initializeNavigation();
+    initializeExplorer();
 };
 
-void Viewer::initializeNavigation()
+void Viewer::initializeExplorer()
 {
     m_dockLeft->setObjectName("fileNavigator");
     m_dockBottom->setObjectName("fileExplorer");
@@ -84,8 +86,14 @@ void Viewer::initializeNavigation()
         this, SLOT(on_loadFile(const QString &)));
 
     QObject::connect(
+        m_explorer, SIGNAL(activatedDir(const QString &)),
+        m_navigator, SLOT(on_activatedDir(const QString &)));
+
+    QObject::connect(
         m_ui->openFileDialogAction, SIGNAL(changed()),
         this, SLOT(on_openFileDialogAction_triggered()));
+
+    m_explorer->emitActivatedItem(m_explorer->model()->index(QDir::currentPath()));
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)

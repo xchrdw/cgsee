@@ -113,7 +113,7 @@ protected slots:
     void on_toggleExplorer_triggered();
 protected:
 
-    void initializeNavigation();
+    void initializeExplorer();
     void initializeDockWidgets(QDockWidget * dockWidget,
         QWidget * widget, Qt::DockWidgetArea area);
 
