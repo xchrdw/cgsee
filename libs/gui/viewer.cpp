@@ -60,16 +60,18 @@ Viewer::Viewer(
     
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings s;
-
+    
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
-
+    
     restoreViews(s);
     initializeExplorer();
 };
 
 void Viewer::initializeExplorer()
 {
+    m_dockLeft->setObjectName("fileNavigator");
+    m_dockBottom->setObjectName("fileExplorer");
     this->initializeDockWidgets(m_dockLeft, m_navigator, Qt::LeftDockWidgetArea);
     this->initializeDockWidgets(m_dockBottom, m_explorer, Qt::BottomDockWidgetArea);
 
@@ -109,7 +111,7 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
     dockWidget->setFloating(true);
     dockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
     
-    dockWidget->move(this->pos() - QPoint(dockWidget->width()+5, count-- * (dockWidget->height()+20)));
+    dockWidget->move(QPoint(20, 40 + count++ * (dockWidget->height() + 35)));
 #endif
 }
 
@@ -235,6 +237,11 @@ void Viewer::on_openFileDialogAction_triggered()
         return;
     
     on_loadFile(fileName);
+}
+    
+void Viewer::on_quitAction_triggered()
+{
+    QApplication::quit();
 }
 
 void Viewer::on_loadFile(const QString & path)

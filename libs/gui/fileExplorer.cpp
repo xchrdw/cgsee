@@ -13,11 +13,11 @@ FileExplorer::FileExplorer(
 ,	m_menu(new QMenu)
 ,	m_clickedFile()
 {
-	setModel(m_model);
-	setContextMenuPolicy(Qt::CustomContextMenu);
+	this->setModel(m_model);
+	this->setContextMenuPolicy(Qt::CustomContextMenu);
 
-	setFilter(QDir::NoDot | QDir::Files | QDir::AllDirs);
-	setRoot("");
+	this->setFilter(QDir::NoDot | QDir::Files | QDir::AllDirs);
+	this->setRoot("");
 
 	m_model->setNameFilterDisables(false);
 
