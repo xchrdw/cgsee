@@ -107,6 +107,7 @@ protected slots:
     void on_normalsAction_triggered();
 
     void on_openFileDialogAction_triggered();
+    void on_quitAction_triggered();
 
     void on_loadFile(const QString & path);
     
@@ -114,7 +115,7 @@ protected slots:
     void on_toggleExplorer_triggered();
 protected:
 
-    void initializeNavigation();
+    void initializeExplorer();
     void initializeDockWidgets(QDockWidget * dockWidget,
         QWidget * widget, Qt::DockWidgetArea area);
 
