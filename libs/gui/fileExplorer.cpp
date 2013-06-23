@@ -44,6 +44,11 @@ QMenu * FileExplorer::menu()
 	return m_menu;
 }
 
+QFileSystemModel * FileExplorer::model()
+{
+	return m_model;
+}
+
 QModelIndex FileExplorer::clickedFile()
 {
 	return m_clickedFile;
@@ -83,6 +88,7 @@ void FileExplorer::emitActivatedItem(const QModelIndex & index)
 	if (m_model->fileInfo(index).isDir())
 	{
 		setRoot(path);
+		emit activatedDir(path);
 	} else {
 		emit activatedItem(path);
 	}
