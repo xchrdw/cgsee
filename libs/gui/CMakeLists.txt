@@ -14,6 +14,8 @@ set(SOURCES
     fileExplorer.cpp
     fileNavigator.h
     fileNavigator.cpp
+    propertywidgetbuilder.h
+    propertywidgetbuilder.cpp
     viewer.h
     viewer.cpp
     viewer.ui

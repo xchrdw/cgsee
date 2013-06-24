@@ -1,5 +1,6 @@
 
 #include "boolproperty.h"
+#include "abstractpropertyvisitor.h"
 
 BoolProperty::BoolProperty()
 :   AbstractPainterProperty()
@@ -28,4 +29,9 @@ BoolProperty::BoolProperty(QString name, bool enabled)
 BoolProperty::~BoolProperty()
 {
     AbstractPainterProperty::~AbstractPainterProperty();
+}
+
+void BoolProperty::visit(AbstractPropertyVisitor & visitor) const
+{
+    visitor.visitBool(*this);
 }

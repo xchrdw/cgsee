@@ -13,6 +13,8 @@ public:
     BoolProperty(QString name, bool enabled);
     virtual ~BoolProperty();
 
+    virtual void visit(AbstractPropertyVisitor & visitor) const;
+
     bool enabled() const;
     void setEnabled(bool enabled);
 private:

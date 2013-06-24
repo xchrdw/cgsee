@@ -14,6 +14,7 @@ public:
     virtual ~AbstractPainterProperty();
 
     virtual void visit(AbstractPropertyVisitor & visitor) const =0;
+    
     QString name() const;
     void setName(QString name);
 private:

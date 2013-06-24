@@ -10,6 +10,7 @@
 #include "abstractglparent.h"
 #include <core/camera.h>
 #include <core/gpuquery.h>
+#include "abstractpainterproperty.h"
 
 
 
