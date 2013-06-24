@@ -20,6 +20,7 @@
 #include "core/flightnavigation.h"
 
 
+
 //for phong, flat and gouraud
 static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
 static const QString LIGHTDIR_UNIFORM ("lightdir");

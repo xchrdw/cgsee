@@ -6,6 +6,7 @@
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/arcballnavigation.h>
+#include "core/convergentCamera.h"
 
 
 CGSee::CGSee(int & argc, char ** argv)
@@ -19,7 +20,8 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setWindowTitle(title());
     m_viewer->initialize(format());
 
-    Camera * camera = new Camera();
+    //Camera * camera = new Camera();// changed for StereoCamera
+    ConvergentCamera * camera = new ConvergentCamera();
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
     camera->setZFar (10.0f);

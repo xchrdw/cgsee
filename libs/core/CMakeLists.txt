@@ -23,6 +23,8 @@ set(SOURCES
     abstractpainter.cpp
     abstractscenepainter.h
     abstractscenepainter.cpp
+    abstractStereoCamera.h
+    abstractStereoCamera.cpp
 
     datacore/datablock.h
     datacore/datablock.cpp
@@ -50,6 +52,8 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+    convergentCamera.h
+    convergentCamera.cpp
     flightnavigation.h
     flightnavigation.cpp
     fileassociatedshader.h
@@ -72,6 +76,10 @@ set(SOURCES
     node.cpp
     objloader.h
     objloader.cpp
+    offAxisCamera.h
+    offAxisCamera.cpp
+    parallelCamera.h
+    parallelCamera.cpp
     polygonaldrawable.h
     polygonaldrawable.cpp
     polygonalgeometry.h
