@@ -30,6 +30,7 @@ class AbstractScenePainter;
 
 class FileNavigator;
 class FileExplorer;
+class SceneHierarchy;
 class Viewer;
 class AbstractModelLoader;
 class Group;
@@ -143,8 +144,10 @@ protected:
 
     QDockWidget * m_dockNavigator;
     QDockWidget * m_dockExplorer;
+    QDockWidget * m_dockScene;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
+    SceneHierarchy * m_sceneHierarchy;
     AbstractModelLoader * m_loader;
 };

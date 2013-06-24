@@ -14,6 +14,8 @@ set(SOURCES
     fileExplorer.cpp
     fileNavigator.h
     fileNavigator.cpp
+    scenehierarchy.h
+    scenehierarchy.cpp
     viewer.h
     viewer.cpp
     viewer.ui

@@ -21,6 +21,7 @@
 #include "canvasexporter.h"
 #include "fileNavigator.h"
 #include "fileExplorer.h"
+#include "scenehierarchy.h"
 
 #include <core/abstractnavigation.h>
 #include <core/flightnavigation.h>
@@ -53,8 +54,10 @@ Viewer::Viewer(
 
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
+,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
+,   m_sceneHierarchy(new SceneHierarchy(m_dockScene))
 ,   m_loader(new AssimpLoader())
 {
 
@@ -68,6 +71,8 @@ Viewer::Viewer(
     
     restoreViews(s);
     initializeExplorer();
+    m_dockScene->setObjectName("scenehierarchy");
+    this->initializeDockWidgets(m_dockScene, m_sceneHierarchy, Qt::RightDockWidgetArea);
 };
 
 void Viewer::initializeExplorer()
@@ -192,6 +197,7 @@ Viewer::~Viewer()
 
     delete m_dockNavigator;
     delete m_dockExplorer;
+    delete m_dockScene;
     delete m_loader;
 }
 
