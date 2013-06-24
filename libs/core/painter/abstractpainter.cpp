@@ -8,18 +8,26 @@
 #include "abstractpainter.h"
 
 #include "abstractglparent.h"
-#include "camera.h"
-#include "gpuquery.h"
+#include <core/camera.h>
+#include <core/gpuquery.h>
 
 
 
 AbstractPainter::AbstractPainter()
 :   m_initialized(false)
+,   m_properties(new QList<AbstractPainterProperty *>())
 {
 }
  
 AbstractPainter::~AbstractPainter()
 {
+    qDeleteAll(m_properties->begin(), m_properties->end());
+    delete m_properties;
+}
+
+const QList<AbstractPainterProperty *> & AbstractPainter::properties() const
+{
+    return *m_properties;
 }
 
 void AbstractPainter::paint()

@@ -16,13 +16,19 @@ set(SOURCES
     arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
-    abstractglparent.h
     abstractmodelloader.cpp
     abstractmodelloader.h
-    abstractpainter.h
-    abstractpainter.cpp
-    abstractscenepainter.h
-    abstractscenepainter.cpp
+    painter/abstractglparent.h
+    painter/abstractpainter.h
+    painter/abstractpainter.cpp
+    painter/abstractscenepainter.h
+    painter/abstractscenepainter.cpp
+    painter/abstractpainterproperty.h
+    painter/abstractpainterproperty.cpp
+    painter/boolproperty.h
+    painter/boolproperty.cpp
+    painter/abstractpropertyvisitor.h
+    painter/abstractpropertyvisitor.cpp
 
     datacore/datablock.h
     datacore/datablock.cpp

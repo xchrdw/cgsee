@@ -5,7 +5,7 @@
 #include <QString>
 #include <QMap>
 
-#include <core/abstractscenepainter.h>
+#include <core/painter/abstractscenepainter.h>
 
 
 

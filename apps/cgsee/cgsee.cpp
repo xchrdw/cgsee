@@ -32,8 +32,8 @@ CGSee::CGSee(int & argc, char ** argv)
     navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
 
-    // AssimpLoader loader;
-    // m_painter->assignScene(loader.importFromFile("data/mario.dae"));
+    AssimpLoader loader;
+    m_painter->assignScene(loader.importFromFile("data/mario.dae"));
 
     // Start
 

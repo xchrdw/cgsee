@@ -9,6 +9,7 @@
 class QKeyEvent;
 class Camera;
 class AbstractGLParent;
+class AbstractPainterProperty;
 
 class CGSEE_API AbstractPainter
 {
@@ -31,6 +32,7 @@ public:
         const int width
     ,   const int height);
 
+    const QList<AbstractPainterProperty *> & properties() const;
 
 protected:
     virtual const bool initialize() = 0;
@@ -38,4 +40,5 @@ protected:
 
 protected:
     bool m_initialized;
+    QList<AbstractPainterProperty *> * m_properties;
 };

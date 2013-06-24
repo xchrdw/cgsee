@@ -27,7 +27,7 @@
 #include <core/fpsnavigation.h>
 #include <core/arcballnavigation.h>
 
-#include <core/abstractscenepainter.h>
+#include <core/painter/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
