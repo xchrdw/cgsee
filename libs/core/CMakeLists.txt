@@ -65,6 +65,7 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+    coordinateprovider.h
     flightnavigation.h
     flightnavigation.cpp
     fileassociatedshader.h
