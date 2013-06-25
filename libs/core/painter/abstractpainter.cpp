@@ -38,9 +38,7 @@ bool AbstractPainter::addProperty(AbstractPainterProperty * property)
 
 bool AbstractPainter::removeProperty(QString name)
 {
-    AbstractPainterProperty * property = this->property(name);
-    if (property)
-        delete property;
+    delete this->property(name);
     return m_properties->remove(name);
 }
 

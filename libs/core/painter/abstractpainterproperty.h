@@ -6,11 +6,12 @@
 
 class AbstractPropertyVisitor;
 class BoolProperty;
+class ListProperty;
 
 class CGSEE_API AbstractPainterProperty
 {
 public:
-    AbstractPainterProperty() = delete;
+    AbstractPainterProperty();
     explicit AbstractPainterProperty(QString name);
     AbstractPainterProperty(QString name, QString description);
     virtual ~AbstractPainterProperty();
@@ -18,6 +19,7 @@ public:
     virtual void visit(AbstractPropertyVisitor & visitor) =0;
 
     virtual BoolProperty * toBool();
+    virtual ListProperty * toList();
     
     QString name() const;
     void setName(QString name);

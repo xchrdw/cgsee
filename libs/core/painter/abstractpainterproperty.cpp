@@ -1,6 +1,12 @@
 
 #include "abstractpainterproperty.h"
 
+AbstractPainterProperty::AbstractPainterProperty()
+:   m_name("")
+,   m_description("")
+{
+}
+
 AbstractPainterProperty::AbstractPainterProperty(QString name)
 :   m_name(name)
 ,   m_description("")
@@ -38,6 +44,11 @@ void AbstractPainterProperty::setDescription(QString description)
 }
 
 BoolProperty * AbstractPainterProperty::toBool()
+{
+    return nullptr;
+}
+
+ListProperty * AbstractPainterProperty::toList()
 {
     return nullptr;
 }

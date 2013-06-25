@@ -2,6 +2,12 @@
 #include "boolproperty.h"
 #include "abstractpropertyvisitor.h"
 
+BoolProperty::BoolProperty()
+:   AbstractPainterProperty()
+,   m_enabled(false)
+{
+}
+
 BoolProperty::BoolProperty(QString name)
 :   AbstractPainterProperty(name)
 ,   m_enabled(false)

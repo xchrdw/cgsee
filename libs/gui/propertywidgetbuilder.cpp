@@ -42,6 +42,11 @@ void PropertyWidgetBuilder::visitBool(BoolProperty & boolProperty)
     });
 }
 
+void PropertyWidgetBuilder::visitList(ListProperty & listProperty)
+{
+    // do stuff
+}
+
 QWidget * PropertyWidgetBuilder::retainWidget()
 {
     QWidget * widget = m_widget;
