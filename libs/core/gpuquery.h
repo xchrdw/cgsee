@@ -30,7 +30,7 @@ public:
     static const QString glewError(const GLenum penum);
 
     // Extension Info
-    
+
     static const bool extensionSupported(const char * extension);
     static const bool extensionSupported(const QString & extension);
 
@@ -46,13 +46,5 @@ protected:
     static const GLint memoryInfo(const GLenum penum);
 };
 
-
-inline void glError()
-{
-    GPUQuery::error(__FILE__, __LINE__);
-}
-
-inline const bool glIsError()
-{
-    return GPUQuery::error(__FILE__, __LINE__);
-}
+#define glError() GPUQuery::error(__FILE__, __LINE__)
+#define glIsError() GPUQuery::error(__FILE__, __LINE__)
