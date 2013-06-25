@@ -51,7 +51,7 @@ Painter::Painter(Camera * camera)
 ,   m_flush(nullptr)
 ,   m_camera(camera)
 {
-    m_properties->append(new BoolProperty("Test", true));
+    this->addProperty(new BoolProperty("Test", "Switch to fantastic mode", true));
 }
 
 Painter::Painter(Group * scene)
@@ -252,23 +252,26 @@ void Painter::paint()
 {
     AbstractPainter::paint();
 
+    if (this->property("Test")->toBool()->enabled()) {
+        this->setShading('n');
+    }
+    
     t_samplerByName sampler;
 
     m_camera->draw(*m_useProgram, m_fboNormalz);
-
     sampler.clear();
     sampler["source"] = m_fboNormalz;
 
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
-
 }
 
 void Painter::resize(  //probably never called anywhere?
     const int width
 ,   const int height)
 {
+    
     AbstractPainter::resize(width, height);
 
     m_camera->setViewport(width, height);

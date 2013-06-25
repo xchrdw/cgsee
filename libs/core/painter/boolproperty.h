@@ -9,13 +9,15 @@ class AbstractPropertyVisitor;
 class CGSEE_API BoolProperty : public AbstractPainterProperty
 {
 public:
-    BoolProperty();
     explicit BoolProperty(QString name);
-    explicit BoolProperty(bool enabled);
+    BoolProperty(QString name, QString description);
     BoolProperty(QString name, bool enabled);
+    BoolProperty(QString name, QString description, bool enabled);
     virtual ~BoolProperty();
 
     virtual void visit(AbstractPropertyVisitor & visitor);
+
+    virtual BoolProperty * toBool();
 
     bool enabled() const;
     void setEnabled(bool enabled);

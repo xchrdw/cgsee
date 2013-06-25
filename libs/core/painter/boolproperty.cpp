@@ -2,26 +2,26 @@
 #include "boolproperty.h"
 #include "abstractpropertyvisitor.h"
 
-BoolProperty::BoolProperty()
-:   AbstractPainterProperty()
-,   m_enabled(false)
-{
-}
-
 BoolProperty::BoolProperty(QString name)
 :   AbstractPainterProperty(name)
 ,   m_enabled(false)
 {
 }
 
-BoolProperty::BoolProperty(bool enabled)
-:   AbstractPainterProperty()
-,   m_enabled(enabled)
+BoolProperty::BoolProperty(QString name, QString description)
+:   AbstractPainterProperty(name, description)
+,   m_enabled(false)
 {
 }
 
 BoolProperty::BoolProperty(QString name, bool enabled)
 :   AbstractPainterProperty(name)
+,   m_enabled(enabled)
+{
+}
+
+BoolProperty::BoolProperty(QString name, QString description, bool enabled)
+:   AbstractPainterProperty(name, description)
 ,   m_enabled(enabled)
 {
 }
@@ -44,4 +44,9 @@ bool BoolProperty::enabled() const
 void BoolProperty::setEnabled(bool enabled)
 {
     m_enabled = enabled;
+}
+
+BoolProperty * BoolProperty::toBool()
+{
+    return this;
 }

@@ -29,11 +29,16 @@ void PropertyWidgetBuilder::buildWidget(const QList<AbstractPainterProperty *> &
 
 void PropertyWidgetBuilder::visitBool(BoolProperty & boolProperty)
 {
-    QCheckBox * box = new QCheckBox(boolProperty.name(), m_widget);
+    QCheckBox * box = new QCheckBox(boolProperty.description(), m_widget);
+    if (boolProperty.enabled())
+        box->setCheckState(Qt::Checked);
+    else
+        box->setCheckState(Qt::Unchecked);
+    
     m_layout->addWidget(box);
     QObject::connect(box, &QCheckBox::stateChanged, [&boolProperty] (int state) -> void {
-        boolProperty.setEnabled(state);
-        qDebug("Painte: Set %s = %i", qPrintable(boolProperty.name()), boolProperty.enabled());
+        boolProperty.setEnabled(!!state);
+        qDebug("Painter: Set %s = %i", qPrintable(boolProperty.name()), boolProperty.enabled());
     });
 }
 

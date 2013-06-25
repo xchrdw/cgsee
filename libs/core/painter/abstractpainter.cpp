@@ -16,19 +16,42 @@
 
 AbstractPainter::AbstractPainter()
 :   m_initialized(false)
-,   m_properties(new QList<AbstractPainterProperty *>())
+,   m_properties(new QHash<QString, AbstractPainterProperty *>())
 {
 }
  
 AbstractPainter::~AbstractPainter()
 {
-    qDeleteAll(m_properties->begin(), m_properties->end());
+    // qDeleteAll(*m_properties); 
+    // ... leads to "*** error for object 0x1088adb70: pointer being freed was not allocated"
     delete m_properties;
 }
 
-const QList<AbstractPainterProperty *> & AbstractPainter::properties() const
+bool AbstractPainter::addProperty(AbstractPainterProperty * property)
 {
-    return *m_properties;
+    if (!this->property(property->name())) {
+        m_properties->insert(property->name(), property);
+        return true;
+    } else
+        return false;
+}
+
+bool AbstractPainter::removeProperty(QString name)
+{
+    AbstractPainterProperty * property = this->property(name);
+    if (property)
+        delete property;
+    return m_properties->remove(name);
+}
+
+AbstractPainterProperty * AbstractPainter::property(QString name)
+{
+    return m_properties->value(name, nullptr);
+}
+
+const QList<AbstractPainterProperty *> AbstractPainter::properties() const
+{
+    return m_properties->values();
 }
 
 void AbstractPainter::paint()

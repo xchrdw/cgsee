@@ -2,6 +2,7 @@
 #pragma once
 
 #include <QStringList>
+#include <QHash>
 
 #include <core/declspec.h>
 #include <core/glformat.h>
@@ -32,7 +33,10 @@ public:
         const int width
     ,   const int height);
 
-    const QList<AbstractPainterProperty *> & properties() const;
+    bool addProperty(AbstractPainterProperty * property);
+    bool removeProperty(QString name);
+    AbstractPainterProperty * property(QString name);
+    const QList<AbstractPainterProperty *> properties() const;
 
 protected:
     virtual const bool initialize() = 0;
@@ -40,5 +44,5 @@ protected:
 
 protected:
     bool m_initialized;
-    QList<AbstractPainterProperty *> * m_properties;
+    QHash<QString, AbstractPainterProperty *> * m_properties;
 };
