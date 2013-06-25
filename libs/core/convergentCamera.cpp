@@ -56,7 +56,7 @@ void ConvergentCamera::activateLeftCamera(const Program & program
     transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
 
     setView(glm::lookAt(
-         glm::vec3( -6.0f, 0.0f, -3.f) , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+         glm::vec3( 6.f, 0.0f, -2.0f) , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
     
     update();
 
