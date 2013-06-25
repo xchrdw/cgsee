@@ -31,7 +31,17 @@ BoolProperty::~BoolProperty()
     AbstractPainterProperty::~AbstractPainterProperty();
 }
 
-void BoolProperty::visit(AbstractPropertyVisitor & visitor) const
+void BoolProperty::visit(AbstractPropertyVisitor & visitor)
 {
     visitor.visitBool(*this);
+}
+
+bool BoolProperty::enabled() const
+{
+    return m_enabled;
+}
+
+void BoolProperty::setEnabled(bool enabled)
+{
+    m_enabled = enabled;
 }

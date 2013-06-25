@@ -10,7 +10,7 @@ class BoolProperty;
 class CGSEE_API AbstractPropertyVisitor
 {
 public:
-    virtual void visitBool(const BoolProperty & boolProperty) =0;
+    virtual void visitBool(BoolProperty & boolProperty) =0;
 
 protected:
     void iterateOverProperties(const QList<AbstractPainterProperty *> & properties);

@@ -2,7 +2,9 @@
 #pragma once
 
 #include <core/declspec.h>
-#include "abstractpainterproperty.h"
+#include <core/painter/abstractpainterproperty.h>
+
+class AbstractPropertyVisitor;
 
 class CGSEE_API BoolProperty : public AbstractPainterProperty
 {
@@ -13,10 +15,10 @@ public:
     BoolProperty(QString name, bool enabled);
     virtual ~BoolProperty();
 
-    virtual void visit(AbstractPropertyVisitor & visitor) const;
+    virtual void visit(AbstractPropertyVisitor & visitor);
 
     bool enabled() const;
     void setEnabled(bool enabled);
-private:
+protected:
     bool m_enabled;
 };

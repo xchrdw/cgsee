@@ -32,6 +32,8 @@ static const QString LIGHTPOSITION_UNIFORM ("lightposition");
 //gooch
 static const QString WARMCOLDCOLOR_UNIFORM ("warmcoldcolor");
 
+#include <core/painter/boolproperty.h>
+
 Painter::Painter(Camera * camera)
 :   AbstractScenePainter()
 ,   m_quad(nullptr)
@@ -49,6 +51,7 @@ Painter::Painter(Camera * camera)
 ,   m_flush(nullptr)
 ,   m_camera(camera)
 {
+    m_properties->append(new BoolProperty("Test", true));
 }
 
 Painter::Painter(Group * scene)
