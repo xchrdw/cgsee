@@ -4,12 +4,19 @@
 #include "gpuquery.h"
 #include "framebufferobject.h"
 
+#include <core/fileassociatedshader.h>
+
 static const QString VIEWPORT_UNIFORM   ("viewport");
 static const QString VIEW_UNIFORM       ("view");
 static const QString PROJECTION_UNIFORM ("projection");
 
 static const QString ZNEAR_UNIFORM      ("znear");
 static const QString ZFAR_UNIFORM       ("zfar");
+
+
+static const QString LIGHTPOSITION_UNIFORM ("lightposition");
+//gooch
+static const QString WARMCOLDCOLOR_UNIFORM ("warmcoldcolor");
 
 ConvergentCamera::ConvergentCamera(const QString & name)
 
@@ -28,10 +35,10 @@ void ConvergentCamera::activateRightCamera(const Program & program
 
     glm::mat4 transform(1.0f);
     setView(glm::lookAt(
-        glm::vec3( -2.0f, 0.0f,4.f) , glm::vec3( 1.f, -1.f, 0.f), glm::vec3( 1.f, 1.f, 1.f)));
+         glm::vec3( 6.0f, 0.0f, -3.f) , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
     //transform *= //glm::scale(glm::mat4(1.f), glm::vec3(0.5f));
     //transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
-    
+    update();
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
         
@@ -49,8 +56,10 @@ void ConvergentCamera::activateLeftCamera(const Program & program
     transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
 
     setView(glm::lookAt(
-        glm::vec3( -4.0f, 0.0f,-2.f) , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
+         glm::vec3( -6.0f, 0.0f, -3.f) , glm::vec3( 0.f, 0.f, 0.f), glm::vec3( 0.f, 1.f, 0.f)));
     
+    update();
+
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
         

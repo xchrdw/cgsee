@@ -181,7 +181,7 @@ const bool Painter::initialize()
          new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
     //set UNIFORMS for selected shader
-    m_useProgram = m_flat;
+    m_useProgram = m_gooch;
     setUniforms();
 
     // Post Processing Shader
