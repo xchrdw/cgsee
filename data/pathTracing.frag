@@ -1,3 +1,4 @@
+// #version 410
 #version 150 core
 
 // in vec3 normal;
@@ -14,37 +15,28 @@ uniform ivec2 viewport;
 
 uniform mat4 transform;
 
+uniform isamplerBuffer indexBuffer;
 uniform samplerBuffer vertexBuffer;
 uniform samplerBuffer normalBuffer;
-uniform samplerBuffer geometryBuffer;
+// uniform samplerBuffer geometryBuffer;
 
 void main()
 {
+    int numIndices  = textureSize(indexBuffer);
     int numVertices = textureSize(vertexBuffer);
-    vec3 nearest = vec3(1.0, 1.0, 0.0);
-    float minDist = 10000.0;
-    float dist = 0.0;
-    vec3 vertex = vec3(0.0);
     
-    // vec3 objCoord = vec3(viewport * v_uv, 0.0);
+    int iIndex = int(numIndices  * v_uv.s * v_uv.t);
+    int vIndex = int(numVertices * v_uv.s * v_uv.t);
     
-    // --- do pathtracing --- //
+    // Check if vertex buffer has the right size (~507)
+    // fragColor   = vec4(numVertices / 600.0, 0.0, 0.0, 1.0);
     
-    /* int i = 0;
-    int nearestIndex = -1;
-    for (i = 0; i < numVertices; ++i) {
-    	vertex = texelFetch(vertexBuffer, i).xyz;
-    	dist = abs(length(vertex - objCoord));
-    	if (dist < minDist) {
-    		minDist = dist;
-    		nearest = vertex;
-            nearestIndex = i;
-    	}
-    } */
-
-    //fragColor = vec4(vec3(nearestIndex/507.0), 1.0);
-    //fragColor = texelFetch(normalBuffer, nearestIndex);
-    //fragColor = vec4(vec3(normal), 1.0);
+    // print index texture, works
+    fragColor = texelFetch(indexBuffer,  iIndex)/float(numVertices);
     
-    fragColor = vec4(v_uv, 0.0, 1.0);
+    // print vertex/normal Buffer - contain only 0 when index buffer is loaded
+    // fragColor = texelFetch(vertexBuffer,  texelFetch(indexBuffer, iIndex).x);
+    // fragColor = texelFetch(vertexBuffer, vIndex);
+    // fragColor = texelFetch(normalBuffer, vIndex);
+   
 }

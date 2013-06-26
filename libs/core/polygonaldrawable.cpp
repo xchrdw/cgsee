@@ -132,54 +132,63 @@ void PolygonalDrawable::initPathTracingData(const Program & program)
     glGenTextures(1, &indexTextureID);
     glBindTexture(GL_TEXTURE_BUFFER, indexTextureID);
     glTexBuffer(GL_TEXTURE_BUFFER, GL_R32I, m_elementArrayBOs.first()->buffer()); // hope that we only have one object in this list...
+    //glBindTexture(GL_TEXTURE_BUFFER, 0);
     glError();
 
     glGenTextures(1, &vertexTextureID);
     glBindTexture(GL_TEXTURE_BUFFER, vertexTextureID);
     glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, m_arrayBOsByAttribute["a_vertex"]->buffer());
+    //glBindTexture(GL_TEXTURE_BUFFER, 0);
     glError();
 
     // normal data
     glGenTextures(1, &normalTextureID);
     glBindTexture(GL_TEXTURE_BUFFER, normalTextureID);
     glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, m_arrayBOsByAttribute["a_normal"]->buffer());
+    //glBindTexture(GL_TEXTURE_BUFFER, 0);
     glError();
 
     // Pathtracing: create data objects
-    GLuint pathTracingGeometryID;
-    std::vector<glm::vec3> pathTracingGeometry;
-    GLuint geometryTextureID;
+    //GLuint pathTracingGeometryID;
+    //std::vector<glm::vec3> pathTracingGeometry;
+    //GLuint geometryTextureID;
 
     // ... fill array with geometry / aabb's ... //
 
-    glGenBuffers(1, &pathTracingGeometryID);
-    glBindBuffer(GL_TEXTURE_BUFFER, pathTracingGeometryID);
-    glBufferData(GL_TEXTURE_BUFFER, pathTracingGeometry.size(), pathTracingGeometry.data(), GL_STATIC_DRAW);
-    glError();
+    //glGenBuffers(1, &pathTracingGeometryID);
+    //glBindBuffer(GL_TEXTURE_BUFFER, pathTracingGeometryID);
+    //glBufferData(GL_TEXTURE_BUFFER, pathTracingGeometry.size(), pathTracingGeometry.data(), GL_STATIC_DRAW);
+    ////glBindTexture(GL_TEXTURE_BUFFER, 0);
+    //glError();
 
-    glGenTextures(1, &geometryTextureID);
-    glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
-    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, geometryTextureID);
-    glError();
+    //glGenTextures(1, &geometryTextureID);
+    //glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
+    //glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, geometryTextureID);
+    ////glBindTexture(GL_TEXTURE_BUFFER, 0);
+    //glError();
 
     // ***
     // pass textures to shader
     
-    glActiveTexture(GL_TEXTURE0 + 0);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_BUFFER, indexTextureID);
     program.setUniform("indexBuffer", 0);
-    
-    glActiveTexture(GL_TEXTURE0 + 1);
+    glError();
+
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_BUFFER, vertexTextureID);
     program.setUniform("vertexBuffer", 1);
+    glError();
     
-    glActiveTexture(GL_TEXTURE0 + 2);
+    glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_BUFFER, normalTextureID);
     program.setUniform("normalBuffer", 2);
+    glError();
 
-    glActiveTexture(GL_TEXTURE0 + 3);
-    glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
-    program.setUniform("geometryBuffer", 3);
+    //glActiveTexture(GL_TEXTURE3);
+    //glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
+    //program.setUniform("geometryBuffer", 3);
+    //glError();
 }
 
 void PolygonalDrawable::draw(
