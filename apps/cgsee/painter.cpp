@@ -137,6 +137,12 @@ const bool Painter::initialize()
     m_shadows->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/shadows.vert"));
 
+    m_shadowMapping = new Program();
+    m_shadowMapping->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/shadowmapping.frag"));
+    m_shadowMapping->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/shadowmapping.vert"));
+
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
 
@@ -283,9 +289,30 @@ void Painter::paint()
 
     t_samplerByName sampler;
     m_camera->draw(*m_normalz, m_fboNormalz);
+
     m_shadowcam->draw(*m_shadows, m_fboShadowMap);
     
     m_camera->draw(*m_useProgram, m_fboColor);
+
+    // ----------------------
+
+    glm::mat4 biasMatrix(
+        0.5, 0.0, 0.0, 0.0,
+        0.0, 0.5, 0.0, 0.0,
+        0.0, 0.0, 0.5, 0.0,
+        0.5, 0.5, 0.5, 1.0
+    );
+
+    sampler.clear();
+    sampler["shadowMap"] = m_fboShadowMap;
+    bindSampler(sampler, *m_shadowMapping);
+    m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
+    m_shadowMapping->setUniform("biasMatrix", biasMatrix, false);
+    m_shadowMapping->setUniform("LightSourceTransform", m_shadowcam->transform(), false);
+    m_camera->draw(*m_shadowMapping, m_fboColor);
+    releaseSampler(sampler);    
+    // ----------------------
+
 
     sampler.clear();
     sampler["source"] = m_fboActiveBuffer;

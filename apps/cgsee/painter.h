@@ -55,6 +55,7 @@ protected:
     Program * m_normalz;
     Program * m_normals;
     Program * m_shadows;
+    Program * m_shadowMapping;
     Program * m_wireframe;
     Program * m_primitiveWireframe;
     Program * m_solidWireframe;

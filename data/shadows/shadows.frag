@@ -3,17 +3,13 @@
 in vec4 gl_FragCoord;
 out vec4 fragColor;
 
-in vec3 normal;
+
 
 uniform float znear;
 uniform float zfar;
 
 void main()
 {
-	vec3 n = normalize(normal);
-	n *= 0.5;
-	n += 0.5;
-
 	float z = gl_FragCoord.z; 
 
 	//float d = (2.0 * zfar * znear / (zfar + znear - (zfar - znear) * (2.0 * z- 1.0)));
