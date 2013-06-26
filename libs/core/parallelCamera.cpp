@@ -27,13 +27,14 @@ void ParallelCamera::activateRightCamera(const Program & program
 {
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    glm::vec3 viewDirection = m_virtualCameraPosition - m_center;
+    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation);
+    glm::vec3 viewDirection = m_center - m_virtualCameraPosition;
     glm::normalize(viewDirection);
 
-    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation * (-1.f));
+    glm::vec3 center = cameraPosition + viewDirection;
 
     setView(glm::lookAt(
-        cameraPosition , cameraPosition += (viewDirection * 100.f), m_up));
+        cameraPosition, center, m_up));
     setTransform(m_projection * m_view);
     glm::mat4 transform = m_projection * m_view;
 
@@ -52,13 +53,14 @@ void ParallelCamera::activateLeftCamera(const Program & program
 {
     glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT );
 
-    glm::vec3 viewDirection = m_virtualCameraPosition - m_center;
+    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation * (-1.f));
+    glm::vec3 viewDirection = m_center - m_virtualCameraPosition;
     glm::normalize(viewDirection);
 
-    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation);
+    glm::vec3 center = cameraPosition + viewDirection;
 
     setView(glm::lookAt(
-        cameraPosition , cameraPosition += (viewDirection * 100.f), m_up));
+        cameraPosition, center, m_up));
     setTransform(m_projection * m_view);
     glm::mat4 transform = m_projection * m_view;
 
@@ -107,6 +109,7 @@ void ParallelCamera::draw(
     
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
    
+    setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
 
     if(target)
         target->release();

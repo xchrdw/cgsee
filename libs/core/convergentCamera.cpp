@@ -16,7 +16,7 @@ static const QString ZFAR_UNIFORM       ("zfar");
 
 ConvergentCamera::ConvergentCamera(const QString & name)
     : AbstractStereoCamera(name),
-    m_focusDistance(1.5f)
+    m_focusDistance(3.5f)
 {
 }
 
@@ -29,11 +29,11 @@ void ConvergentCamera::activateRightCamera(const Program & program
 {
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation);
+    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation * (-1.f));
     glm::vec3 viewDirection = m_center - m_virtualCameraPosition;
     glm::normalize(viewDirection);
 
-    glm::vec3 focusCenter = cameraPosition + viewDirection * m_focusDistance;
+    glm::vec3 focusCenter = m_virtualCameraPosition + viewDirection * m_focusDistance;
 
     setView(glm::lookAt(
         cameraPosition, focusCenter, m_up));
@@ -55,11 +55,11 @@ void ConvergentCamera::activateLeftCamera(const Program & program
 {
     glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT );
 
-    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation * (-1.f));
+    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation);
     glm::vec3 viewDirection = m_center - m_virtualCameraPosition;
     glm::normalize(viewDirection);
 
-    glm::vec3 focusCenter = cameraPosition + viewDirection * m_focusDistance;
+    glm::vec3 focusCenter = m_virtualCameraPosition + viewDirection * m_focusDistance;
 
     setView(glm::lookAt(
         cameraPosition, focusCenter, m_up));

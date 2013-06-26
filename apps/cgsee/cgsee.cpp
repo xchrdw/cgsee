@@ -7,6 +7,7 @@
 #include <core/camera.h>
 #include <core/arcballnavigation.h>
 #include "core/convergentCamera.h"
+#include "core/parallelCamera.h"
 
 
 CGSee::CGSee(int & argc, char ** argv)
