@@ -3,9 +3,9 @@
 
 #include <QStringList>
 #include <core/declspec.h>
-#include "abstractpainterproperty.h"
+#include "abstractlistproperty.h"
 
-class CGSEE_API ListProperty : public AbstractPainterProperty
+class CGSEE_API ListProperty : public AbstractListProperty
 {
 public:
     ListProperty();
@@ -13,17 +13,13 @@ public:
     ListProperty(QString name, QString description);
     virtual ~ListProperty();
 
-    virtual void visit(AbstractPropertyVisitor & visitor);
+    virtual QStringList descriptionList() const;
+    virtual QString selectedDescription() const;
+    virtual bool select(QString description);
 
-    virtual ListProperty * toList();
-
-    QStringList & list() const;
-    QString selection() const;
-
+    bool remove(QString string);
     bool insert(QString string);
     bool insertList(QStringList strings);
-    bool remove(QString string);
-    bool select(QString string);
 
 protected:
     static const int kNoIndex = -1;

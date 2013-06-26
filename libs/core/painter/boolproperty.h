@@ -18,8 +18,6 @@ public:
 
     virtual void visit(AbstractPropertyVisitor & visitor);
 
-    virtual BoolProperty * toBool();
-
     bool enabled() const;
     void setEnabled(bool enabled);
 protected:

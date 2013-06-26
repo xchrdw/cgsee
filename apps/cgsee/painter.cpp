@@ -20,7 +20,7 @@
 #include "core/flightnavigation.h"
 
 #include <core/painter/boolproperty.h>
-#include <core/painter/listproperty.h>
+#include <core/painter/genericlistproperty.h>
 
 
 //for phong, flat and gouraud
@@ -53,8 +53,10 @@ Painter::Painter(Camera * camera)
 ,   m_camera(camera)
 {
     this->addProperty(new BoolProperty("bool", "Activation: ", true));
-    ListProperty * listProperty = new ListProperty("list", "Choose mode: ");
-    listProperty->insertList({"Mode1", "Model2", "Model3"});
+    GenericListProperty<int> * listProperty = new GenericListProperty<int>("list", "Choose mode: ");
+    listProperty->insert("Number1", new int(1));
+    listProperty->insert("Number2", new int(2));
+    listProperty->insert("Number3", new int(3));
     this->addProperty(listProperty);
 }
 

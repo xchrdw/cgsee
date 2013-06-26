@@ -50,8 +50,3 @@ void BoolProperty::setEnabled(bool enabled)
 {
     m_enabled = enabled;
 }
-
-BoolProperty * BoolProperty::toBool()
-{
-    return this;
-}

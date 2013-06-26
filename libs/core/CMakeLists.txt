@@ -32,7 +32,7 @@ set(SOURCES
     painter/abstractlistproperty.h
     painter/abstractlistproperty.cpp
     painter/genericlistproperty.h
-    painter/genericlistproperty.cpp
+    painter/genericlistproperty-inl.h
     painter/abstractpropertyvisitor.h
     painter/abstractpropertyvisitor.cpp
 

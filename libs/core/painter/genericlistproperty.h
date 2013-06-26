@@ -11,12 +11,12 @@ class GenericListProperty : public AbstractListProperty
 public:
     GenericListProperty();
     GenericListProperty(QString name);
-    GenericListProperty(QString name, QString, description);
+    GenericListProperty(QString name, QString description);
     ~GenericListProperty();
 
-    virtual QStringList keyList() const;
-    virtual QString * selectedKey() const;
-    virtual bool select(QString key);
+    virtual QStringList descriptionList() const;
+    virtual QString selectedDescription() const;
+    virtual bool select(QString description);
 
     QList<ValueClass> valueList();
     ValueClass * selectedValue();
@@ -27,6 +27,11 @@ public:
     bool remove(ValueClass * value);
 
 protected:
+    ValueClass * value(QString key);
+
+protected:
     QMap<QString, ValueClass *> * m_map;
     QString * m_selectedKey;
-}
+};
+
+#include "genericlistproperty-inl.h"

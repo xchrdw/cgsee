@@ -5,7 +5,6 @@
 #include <QString>
 #include "propertywidgetbuilder.h"
 #include <core/painter/boolproperty.h>
-#include <core/painter/listproperty.h>
 #include <core/painter/abstractlistproperty.h>
 
 PropertyWidgetBuilder::PropertyWidgetBuilder()
@@ -46,10 +45,10 @@ void PropertyWidgetBuilder::visitBool(BoolProperty & boolProperty)
     });
 }
 
-void PropertyWidgetBuilder::visitList(ListProperty & listProperty)
+void PropertyWidgetBuilder::visitList(AbstractListProperty & listProperty)
 {
     QComboBox * comboBox = new QComboBox(m_widget);
-    comboBox->addItems(listProperty.list());
+    comboBox->addItems(listProperty.descriptionList());
 
     m_layout->addRow(listProperty.description(), comboBox);
 
@@ -59,13 +58,8 @@ void PropertyWidgetBuilder::visitList(ListProperty & listProperty)
                          listProperty.select(text);
                          qDebug("Painter: Set %s = %s",
                                 qPrintable(listProperty.name()),
-                                qPrintable(listProperty.selection()));
+                                qPrintable(listProperty.selectedDescription()));
                      });
-}
-
-void PropertyWidgetBuilder::visitGenericList(AbstractListProperty & listProperty)
-{
-    // do stuff
 }
 
 QWidget * PropertyWidgetBuilder::retainWidget()

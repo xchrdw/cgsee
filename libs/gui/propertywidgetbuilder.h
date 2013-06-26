@@ -16,8 +16,7 @@ public:
     void buildWidget(const QList<AbstractPainterProperty *> & properties);
 
     virtual void visitBool(BoolProperty & boolProperty);
-    virtual void visitList(ListProperty & listProperty);
-    virtual void visitGenericList(AbstractListProperty & listProperty);
+    virtual void visitList(AbstractListProperty & listProperty);
 
     QWidget * retainWidget();
 
