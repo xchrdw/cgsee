@@ -336,6 +336,12 @@ void Viewer::on_fboShadowMapAction_triggered()
     m_qtCanvas->repaint();
 }
 
+void Viewer::on_fboTempBufferAction_triggered()
+{
+    m_qtCanvas->painter()->setFrameBuffer(4);
+    m_qtCanvas->repaint();
+}
+
 
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {

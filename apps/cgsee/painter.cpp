@@ -46,6 +46,7 @@ Painter::Painter(Camera * camera)
 ,   m_gooch(nullptr)
 ,   m_useProgram(nullptr)
 ,   m_fboColor(nullptr)
+,   m_fboColorTemp(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_fboShadowMap(nullptr)
 ,   m_fboActiveBuffer(nullptr)
@@ -65,6 +66,7 @@ Painter::Painter(Group * scene)
 ,   m_quad(nullptr)
 ,   m_normalz(nullptr)
 ,   m_fboColor(nullptr)
+,   m_fboColorTemp(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_fboShadowMap(nullptr)
 ,   m_flush(nullptr)
@@ -223,10 +225,10 @@ const bool Painter::initialize()
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-
     m_fboColor = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-
+    m_fboColorTemp = new FrameBufferObject(
+        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboShadowMap = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
@@ -283,6 +285,13 @@ void Painter::setUniforms()
     }
 }
 
+glm::mat4 biasMatrix(
+    0.5, 0.0, 0.0, 0.0,
+    0.0, 0.5, 0.0, 0.0,
+    0.0, 0.0, 0.5, 0.0,
+    0.5, 0.5, 0.5, 1.0
+);
+
 void Painter::paint()
 {
     AbstractPainter::paint();
@@ -295,21 +304,16 @@ void Painter::paint()
     m_camera->draw(*m_useProgram, m_fboColor);
 
     // ----------------------
-
-    glm::mat4 biasMatrix(
-        0.5, 0.0, 0.0, 0.0,
-        0.0, 0.5, 0.0, 0.0,
-        0.0, 0.0, 0.5, 0.0,
-        0.5, 0.5, 0.5, 1.0
-    );
-
     sampler.clear();
+    sampler["source"] = m_fboColor;
     sampler["shadowMap"] = m_fboShadowMap;
     bindSampler(sampler, *m_shadowMapping);
     m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
-    m_shadowMapping->setUniform("biasMatrix", biasMatrix, false);
-    m_shadowMapping->setUniform("LightSourceTransform", m_shadowcam->transform(), false);
-    m_camera->draw(*m_shadowMapping, m_fboColor);
+    m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
+    m_shadowMapping->setUniform("LightSourceTransform", biasMatrix * m_shadowcam->transform(), false);
+    m_camera->draw(*m_shadowMapping, m_fboColorTemp);
+    swapBuffers();
+
     releaseSampler(sampler);    
     // ----------------------
 
@@ -321,6 +325,7 @@ void Painter::paint()
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
 
+    swapBuffers();
 }
 
 void Painter::resize(  //probably never called anywhere?
@@ -334,6 +339,7 @@ void Painter::resize(  //probably never called anywhere?
     m_shadowcam->update();
 
     m_fboColor->resize(width, height);
+    m_fboColorTemp->resize(width, height);
     m_fboNormalz->resize(width, height);
     m_fboShadowMap->resize(width, height);
 
@@ -366,8 +372,8 @@ void Painter::setFrameBuffer(int frameBuffer)
         case 1: m_fboActiveBuffer = m_fboColor; std::printf("\nColor Buffer\n"); break;
         case 2: m_fboActiveBuffer = m_fboNormalz; std::printf("\nNormal Buffer\n"); break;
         case 3: m_fboActiveBuffer = m_fboShadowMap; std::printf("\nShadowMap Buffer\n"); break;
+        case 4: m_fboActiveBuffer = m_fboColorTemp; std::printf("\nTemp Buffer\n"); break;
     }
-
 }
 
 void Painter::postShaderRelinked()
@@ -407,4 +413,11 @@ void Painter::sceneChanged(Group * scene)
     if(m_scene)
         m_shadowcam->remove(m_scene);
     m_shadowcam->append(scene);
+}
+
+void Painter::swapBuffers()
+{
+    FrameBufferObject * temp = m_fboColor;
+    m_fboColor = m_fboColorTemp;
+    m_fboColorTemp = temp;
 }

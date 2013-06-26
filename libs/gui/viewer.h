@@ -107,6 +107,7 @@ protected slots:
     void on_fboColorAction_triggered();
     void on_fboNormalzAction_triggered();
     void on_fboShadowMapAction_triggered();
+    void on_fboTempBufferAction_triggered();
 
     void on_openFileDialogAction_triggered();
     void on_quitAction_triggered();

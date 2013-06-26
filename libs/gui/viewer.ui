@@ -156,6 +156,7 @@
     <addaction name="fboColorAction"/>
     <addaction name="fboNormalzAction"/>
     <addaction name="fboShadowMapAction"/>
+    <addaction name="fboTempBufferAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
@@ -689,6 +690,11 @@
   <action name="fboShadowMapAction">
    <property name="text">
     <string>ShadowMap</string>
+   </property>
+  </action>
+  <action name="fboTempBufferAction">
+   <property name="text">
+    <string>TempBuffer</string>
    </property>
   </action>
  </widget>
