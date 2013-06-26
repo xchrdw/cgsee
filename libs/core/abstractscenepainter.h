@@ -15,5 +15,8 @@ public:
     Group * retainScene();
     Group & getScene() const;
 protected:
+    virtual void sceneChanged(Group * scene);
+
     Group * m_scene;
+
 };

@@ -226,6 +226,7 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+    m_qtCanvas->repaint();
 }
 
 void Viewer::on_openFileDialogAction_triggered()
@@ -313,6 +314,25 @@ void Viewer::on_primitiveWireframeShadingAction_triggered()
 void Viewer::on_normalsAction_triggered()
 {
     m_qtCanvas->painter()->setShading('n');
+    m_qtCanvas->repaint();
+}
+
+
+void Viewer::on_fboColorAction_triggered()
+{
+    m_qtCanvas->painter()->setFrameBuffer(1);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboNormalzAction_triggered()
+{
+    m_qtCanvas->painter()->setFrameBuffer(2);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboShadowMapAction_triggered()
+{
+    m_qtCanvas->painter()->setFrameBuffer(3);
     m_qtCanvas->repaint();
 }
 
@@ -469,4 +489,5 @@ void Viewer::on_actionSave_1_triggered() { saveView(0); }
 void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
+
 

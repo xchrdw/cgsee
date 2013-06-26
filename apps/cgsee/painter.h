@@ -26,6 +26,8 @@ public:
     virtual void paint();
 
     virtual void setShading(char shader);
+    virtual void setFrameBuffer(int frameBuffer);
+
 
     virtual void resize(
         const int width
@@ -46,12 +48,13 @@ protected:
 
     static void releaseSampler(
         const t_samplerByName & sampler);
-   
+    void sceneChanged(Group * scene);
 protected:
     ScreenQuad * m_quad;
 
     Program * m_normalz;
     Program * m_normals;
+    Program * m_shadows;
     Program * m_wireframe;
     Program * m_primitiveWireframe;
     Program * m_solidWireframe;
@@ -60,7 +63,10 @@ protected:
     Program * m_phong;
     Program * m_gooch;
     Program * m_useProgram;
+    FrameBufferObject * m_fboColor;
     FrameBufferObject * m_fboNormalz;
+    FrameBufferObject * m_fboShadowMap;
+    FrameBufferObject * m_fboActiveBuffer;
 
 
     glm::vec3 camPos;
@@ -68,4 +74,5 @@ protected:
     Program * m_flush;
 
     Camera * m_camera;
+    Camera * m_shadowcam;
 };

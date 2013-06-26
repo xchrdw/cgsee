@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>734</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="canvasMenu">
@@ -149,12 +149,21 @@
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
    </widget>
+   <widget class="QMenu" name="menuFrameBuffer">
+    <property name="title">
+     <string>FrameBuffer</string>
+    </property>
+    <addaction name="fboColorAction"/>
+    <addaction name="fboNormalzAction"/>
+    <addaction name="fboShadowMapAction"/>
+   </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
    <addaction name="menuView"/>
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
    <addaction name="shadingMenu"/>
+   <addaction name="menuFrameBuffer"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -665,6 +674,21 @@
    </property>
    <property name="text">
     <string>Normals</string>
+   </property>
+  </action>
+  <action name="fboColorAction">
+   <property name="text">
+    <string>Color</string>
+   </property>
+  </action>
+  <action name="fboNormalzAction">
+   <property name="text">
+    <string>NormalZ</string>
+   </property>
+  </action>
+  <action name="fboShadowMapAction">
+   <property name="text">
+    <string>ShadowMap</string>
    </property>
   </action>
  </widget>

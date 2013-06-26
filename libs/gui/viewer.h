@@ -103,6 +103,10 @@ protected slots:
     void on_solidWireframeShadingAction_triggered();
     void on_primitiveWireframeShadingAction_triggered();
     void on_normalsAction_triggered();
+   
+    void on_fboColorAction_triggered();
+    void on_fboNormalzAction_triggered();
+    void on_fboShadowMapAction_triggered();
 
     void on_openFileDialogAction_triggered();
     void on_quitAction_triggered();
