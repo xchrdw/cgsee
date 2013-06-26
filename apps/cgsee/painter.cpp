@@ -1,6 +1,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <QDebug>
+#include <QWidget>
 
 #include "painter.h"
 
@@ -21,6 +22,7 @@
 
 #include <core/painter/boolproperty.h>
 #include <core/painter/genericlistproperty.h>
+#include <gui/propertywidgetbuilder.h>
 
 
 //for phong, flat and gouraud
@@ -52,12 +54,6 @@ Painter::Painter(Camera * camera)
 ,   m_flush(nullptr)
 ,   m_camera(camera)
 {
-    this->addProperty(new BoolProperty("bool", "Activation: ", true));
-    GenericListProperty<int> * listProperty = new GenericListProperty<int>("list", "Choose mode: ");
-    listProperty->insert("Number1", new int(1));
-    listProperty->insert("Number2", new int(2));
-    listProperty->insert("Number3", new int(3));
-    this->addProperty(listProperty);
 }
 
 Painter::Painter(Group * scene)
@@ -107,21 +103,29 @@ const bool Painter::initialize()
 
 
     // NORMALS
-    m_normals = new Program();
-    m_normals->attach(
+
+    GenericListProperty<Program> * shaders = new GenericListProperty<Program>("shaders", "Choose Rendering Shader: ");
+
+    Program * normals = new Program();
+    normals->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normals.frag"));
-    m_normals->attach(
+    normals->attach(
         new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/normals.geo"));
-    m_normals->attach(
+    normals->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normals.vert"));
 
+    shaders->insert("normals", normals);
+
     // NORMALZ
-    m_normalz = new Program();
-    m_normalz->attach(
+    Program * rainbow = new Program();
+    rainbow->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
-    m_normalz->attach(
+    rainbow->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
+    shaders->insert("rainbow", rainbow);
+    this->addProperty(shaders);
+    
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
 
@@ -189,6 +193,7 @@ const bool Painter::initialize()
          new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
     //set UNIFORMS for selected shader
+    this->property<GenericListProperty<Program>>("shaders")->select("normals");
     m_useProgram = m_flat;
     setUniforms();
 
@@ -202,6 +207,12 @@ const bool Painter::initialize()
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+
+
+    PropertyWidgetBuilder builder;
+    builder.buildWidget(this->properties());
+    
+    builder.retainWidget()->show();
 
     return true;
 }
@@ -257,15 +268,10 @@ void Painter::setUniforms()
 void Painter::paint()
 {
     AbstractPainter::paint();
-
-    if (this->property<BoolProperty>("bool")->enabled())
-        this->setShading('n');
-    else
-        this->setShading('g');
     
     t_samplerByName sampler;
 
-    m_camera->draw(*m_useProgram, m_fboNormalz);
+    m_camera->draw(*(this->property<GenericListProperty<Program>>("shaders")->selectedValue()), m_fboNormalz);
     sampler.clear();
     sampler["source"] = m_fboNormalz;
 

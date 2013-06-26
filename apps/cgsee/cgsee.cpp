@@ -6,7 +6,6 @@
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/arcballnavigation.h>
-#include <gui/propertywidgetbuilder.h>
 
 
 CGSee::CGSee(int & argc, char ** argv)
@@ -28,11 +27,6 @@ CGSee::CGSee(int & argc, char ** argv)
 
     m_painter = new Painter(camera);
     m_viewer->setPainter(m_painter);
-    
-    PropertyWidgetBuilder builder;
-    builder.buildWidget(m_painter->properties());
-    
-    builder.retainWidget()->show();
 
     AbstractNavigation * navigation = new ArcballNavigation(camera);
     navigation->reset(); // initialize view matrix 

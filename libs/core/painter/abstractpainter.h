@@ -33,17 +33,15 @@ public:
         const int width
     ,   const int height);
 
+    bool propertyExists(QString name);
     bool addProperty(AbstractPainterProperty * property);
     bool removeProperty(QString name);
-
 
     AbstractPainterProperty * property(QString name);
     
     template <class PainterProperty>
-    PainterProperty * property(QString name)
-    {
-        return dynamic_cast<PainterProperty *>(this->property(name));
-    }
+    PainterProperty * property(QString name);
+
 
     const QList<AbstractPainterProperty *> properties() const;
 
@@ -55,3 +53,13 @@ protected:
     bool m_initialized;
     QHash<QString, AbstractPainterProperty *> * m_properties;
 };
+
+template <class PainterProperty>
+PainterProperty * AbstractPainter::property(QString name)
+{
+    PainterProperty * property = dynamic_cast<PainterProperty *>(this->property(name));
+    if (!property)
+        qFatal("Requested Property \"%s\" is not of desired Type", qPrintable(name));
+
+    return property;
+}

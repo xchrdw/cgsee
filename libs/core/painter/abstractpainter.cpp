@@ -27,9 +27,14 @@ AbstractPainter::~AbstractPainter()
     delete m_properties;
 }
 
+bool AbstractPainter::propertyExists(QString name)
+{
+    return m_properties->value(name, nullptr);
+}
+
 bool AbstractPainter::addProperty(AbstractPainterProperty * property)
 {
-    if (!this->property(property->name())) {
+    if (!this->propertyExists(property->name())) {
         m_properties->insert(property->name(), property);
         return true;
     } else
@@ -44,7 +49,11 @@ bool AbstractPainter::removeProperty(QString name)
 
 AbstractPainterProperty * AbstractPainter::property(QString name)
 {
-    return m_properties->value(name, nullptr);
+    AbstractPainterProperty * property = m_properties->value(name, nullptr);
+    if (!property)
+        qFatal("Requested Property \"%s\" not found", qPrintable(name));
+
+    return property;
 }
 
 const QList<AbstractPainterProperty *> AbstractPainter::properties() const

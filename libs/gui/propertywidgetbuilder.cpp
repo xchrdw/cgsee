@@ -65,6 +65,8 @@ void PropertyWidgetBuilder::visitList(AbstractListProperty & listProperty)
 QWidget * PropertyWidgetBuilder::retainWidget()
 {
     QWidget * widget = m_widget;
+    widget->setWindowTitle("Painter Properties");
+    widget->setWindowFlags(Qt::Tool);
     m_widget = nullptr;
     return widget;
 }

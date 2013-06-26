@@ -34,8 +34,6 @@ GenericListProperty<ValueClass>::~GenericListProperty()
 template <class ValueClass>
 QStringList GenericListProperty<ValueClass>::descriptionList() const
 {
-    for (auto key : m_map->keys())
-        qDebug("%s", qPrintable(key));
     return m_map->keys();
 }
 
@@ -70,7 +68,7 @@ ValueClass * GenericListProperty<ValueClass>::selectedValue()
 template <class ValueClass>
 ValueClass * GenericListProperty<ValueClass>::value(QString key)
 {
-    return this->value(key, nullptr);
+    return m_map->value(key, nullptr);
 }
 
 template <class ValueClass>
