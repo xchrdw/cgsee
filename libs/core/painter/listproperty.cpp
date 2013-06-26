@@ -26,7 +26,7 @@ ListProperty::ListProperty(QString name, QString description)
 
 ListProperty::~ListProperty()
 {
-    AbstractPainterProperty::~AbstractPainterProperty();
+    delete m_list;
 }
 
 void ListProperty::visit(AbstractPropertyVisitor & visitor)
@@ -59,6 +59,21 @@ bool ListProperty::insert(QString string)
     } else
         m_list->append(string);
         return true;
+}
+
+bool ListProperty::insertList(QStringList strings)
+{
+    bool success = true;
+    
+    for (QString string : strings)
+        if (!(success = this->insert(string)))
+            break;
+
+    if (!success)
+        for (QString string : strings)
+            this->remove(string);
+
+    return success;
 }
 
 bool ListProperty::remove(QString string)

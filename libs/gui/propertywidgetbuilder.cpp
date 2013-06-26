@@ -1,9 +1,12 @@
 
 #include <QFormLayout>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QString>
 #include "propertywidgetbuilder.h"
 #include <core/painter/boolproperty.h>
+#include <core/painter/listproperty.h>
+#include <core/painter/abstractlistproperty.h>
 
 PropertyWidgetBuilder::PropertyWidgetBuilder()
 :   m_widget(new QWidget())
@@ -29,20 +32,38 @@ void PropertyWidgetBuilder::buildWidget(const QList<AbstractPainterProperty *> &
 
 void PropertyWidgetBuilder::visitBool(BoolProperty & boolProperty)
 {
-    QCheckBox * box = new QCheckBox(boolProperty.description(), m_widget);
+    QCheckBox * checkBox = new QCheckBox(m_widget);
     if (boolProperty.enabled())
-        box->setCheckState(Qt::Checked);
+        checkBox->setCheckState(Qt::Checked);
     else
-        box->setCheckState(Qt::Unchecked);
+        checkBox->setCheckState(Qt::Unchecked);
     
-    m_layout->addWidget(box);
-    QObject::connect(box, &QCheckBox::stateChanged, [&boolProperty] (int state) -> void {
-        boolProperty.setEnabled(!!state);
+    m_layout->addRow(boolProperty.description(), checkBox);
+    
+    QObject::connect(checkBox, &QCheckBox::stateChanged, [&boolProperty] (int state) {
+        boolProperty.setEnabled(state);
         qDebug("Painter: Set %s = %i", qPrintable(boolProperty.name()), boolProperty.enabled());
     });
 }
 
 void PropertyWidgetBuilder::visitList(ListProperty & listProperty)
+{
+    QComboBox * comboBox = new QComboBox(m_widget);
+    comboBox->addItems(listProperty.list());
+
+    m_layout->addRow(listProperty.description(), comboBox);
+
+    QObject::connect(comboBox,
+                     static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+                     [&listProperty] (const QString & text) {
+                         listProperty.select(text);
+                         qDebug("Painter: Set %s = %s",
+                                qPrintable(listProperty.name()),
+                                qPrintable(listProperty.selection()));
+                     });
+}
+
+void PropertyWidgetBuilder::visitGenericList(AbstractListProperty & listProperty)
 {
     // do stuff
 }

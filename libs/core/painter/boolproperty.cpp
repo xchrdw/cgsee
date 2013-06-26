@@ -34,7 +34,6 @@ BoolProperty::BoolProperty(QString name, QString description, bool enabled)
 
 BoolProperty::~BoolProperty()
 {
-    AbstractPainterProperty::~AbstractPainterProperty();
 }
 
 void BoolProperty::visit(AbstractPropertyVisitor & visitor)

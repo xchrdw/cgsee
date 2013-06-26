@@ -42,13 +42,3 @@ void AbstractPainterProperty::setDescription(QString description)
 {
     m_description = description;
 }
-
-BoolProperty * AbstractPainterProperty::toBool()
-{
-    return nullptr;
-}
-
-ListProperty * AbstractPainterProperty::toList()
-{
-    return nullptr;
-}

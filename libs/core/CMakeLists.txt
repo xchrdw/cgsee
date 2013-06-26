@@ -29,6 +29,8 @@ set(SOURCES
     painter/boolproperty.cpp
     painter/listproperty.h
     painter/listproperty.cpp
+    painter/abstractlistproperty.h
+    painter/abstractlistproperty.cpp
     painter/abstractpropertyvisitor.h
     painter/abstractpropertyvisitor.cpp
 

@@ -35,7 +35,16 @@ public:
 
     bool addProperty(AbstractPainterProperty * property);
     bool removeProperty(QString name);
+
+
     AbstractPainterProperty * property(QString name);
+    
+    template <class PainterProperty>
+    PainterProperty * property(QString name)
+    {
+        return dynamic_cast<PainterProperty *>(this->property(name));
+    }
+
     const QList<AbstractPainterProperty *> properties() const;
 
 protected:

@@ -19,6 +19,9 @@
 #include "core/arcballnavigation.h"
 #include "core/flightnavigation.h"
 
+#include <core/painter/boolproperty.h>
+#include <core/painter/listproperty.h>
+
 
 //for phong, flat and gouraud
 static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
@@ -31,8 +34,6 @@ static const QString MATERIAL_UNIFORM ("material");
 static const QString LIGHTPOSITION_UNIFORM ("lightposition");
 //gooch
 static const QString WARMCOLDCOLOR_UNIFORM ("warmcoldcolor");
-
-#include <core/painter/boolproperty.h>
 
 Painter::Painter(Camera * camera)
 :   AbstractScenePainter()
@@ -51,7 +52,10 @@ Painter::Painter(Camera * camera)
 ,   m_flush(nullptr)
 ,   m_camera(camera)
 {
-    this->addProperty(new BoolProperty("Test", "Switch to fantastic mode", true));
+    this->addProperty(new BoolProperty("bool", "Activation: ", true));
+    ListProperty * listProperty = new ListProperty("list", "Choose mode: ");
+    listProperty->insertList({"Mode1", "Model2", "Model3"});
+    this->addProperty(listProperty);
 }
 
 Painter::Painter(Group * scene)
@@ -252,9 +256,10 @@ void Painter::paint()
 {
     AbstractPainter::paint();
 
-    if (this->property("Test")->toBool()->enabled()) {
+    if (this->property<BoolProperty>("bool")->enabled())
         this->setShading('n');
-    }
+    else
+        this->setShading('g');
     
     t_samplerByName sampler;
 

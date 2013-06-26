@@ -5,8 +5,6 @@
 #include <core/declspec.h>
 
 class AbstractPropertyVisitor;
-class BoolProperty;
-class ListProperty;
 
 class CGSEE_API AbstractPainterProperty
 {
@@ -17,9 +15,6 @@ public:
     virtual ~AbstractPainterProperty();
 
     virtual void visit(AbstractPropertyVisitor & visitor) =0;
-
-    virtual BoolProperty * toBool();
-    virtual ListProperty * toList();
     
     QString name() const;
     void setName(QString name);

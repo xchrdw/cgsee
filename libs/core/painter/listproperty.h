@@ -21,6 +21,7 @@ public:
     QString selection() const;
 
     bool insert(QString string);
+    bool insertList(QStringList strings);
     bool remove(QString string);
     bool select(QString string);
 
