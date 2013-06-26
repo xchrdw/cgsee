@@ -213,13 +213,13 @@ glm::mat4 AbstractNavigation::bottomview()
 
 glm::mat4 AbstractNavigation::topRightView()
 {
-    return frontview() * glm::rotate(45.f, glm::vec3(0,1,0)) * glm::rotate(-45.f, glm::vec3(1,0,0)); 
+    return frontview() * glm::rotate(30.f, glm::vec3(1,0,0)) *  glm::rotate(45.f, glm::vec3(0,1,0)); 
 }
 
 void AbstractNavigation::sceneChanged(Group * scene)
 {
     AxisAlignedBoundingBox bb = scene->boundingBox();
     m_frontView = glm::lookAt(bb.center() + glm::vec3(0.f, 0.f, bb.radius()*2.5), bb.center(), glm::vec3(0.f, 1.f, 0.f));
-    setFromMatrix(m_frontView);
+    setFromMatrix(topRightView());
     updateCamera();
 }

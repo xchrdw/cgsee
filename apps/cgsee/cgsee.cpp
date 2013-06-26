@@ -29,15 +29,15 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setPainter(m_painter);
 
     AbstractNavigation * navigation = new ArcballNavigation(camera);
-    navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
 
-    // AssimpLoader loader;
-    // m_painter->assignScene(loader.importFromFile("data/mario.dae"));
-
     // Start
-
     m_viewer->show();
+
+    AssimpLoader loader;
+    m_painter->assignScene(loader.importFromFile("data/shadow_test.obj"));
+    navigation->sceneChanged(&m_painter->getScene());
+
 }
 
 CGSee::~CGSee()
