@@ -219,7 +219,7 @@ glm::mat4 AbstractNavigation::topRightView()
 void AbstractNavigation::sceneChanged(Group * scene)
 {
     AxisAlignedBoundingBox bb = scene->boundingBox();
-    m_frontView = glm::lookAt(bb.center() + glm::vec3(0.f, 0.f, bb.radius()*3), bb.center(), glm::vec3(0.f, 1.f, 0.f));
+    m_frontView = glm::lookAt(bb.center() + glm::vec3(0.f, 0.f, bb.radius()*2.5), bb.center(), glm::vec3(0.f, 1.f, 0.f));
     setFromMatrix(m_frontView);
     updateCamera();
 }
