@@ -141,6 +141,9 @@
     <addaction name="primitiveWireframeShadingAction"/>
     <addaction name="separator"/>
     <addaction name="normalsAction"/>
+    <addaction name="separator"/>
+    <addaction name="shadowMappingAction"/>
+    <addaction name="ssaoAction"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -695,6 +698,25 @@
   <action name="fboTempBufferAction">
    <property name="text">
     <string>TempBuffer</string>
+   </property>
+  </action>
+  <action name="shadowMappingAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ShadowMapping</string>
+   </property>
+  </action>
+  <action name="ssaoAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SSAO</string>
    </property>
   </action>
  </widget>

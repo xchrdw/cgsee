@@ -4,7 +4,6 @@
 
 uniform sampler2D normalz;
 
-
 out vec4 fragcolor;
 in vec2 v_uv;
 
@@ -29,8 +28,8 @@ const vec2 poisson16[] = vec2[](    // These are the Poisson Disk Samples
     vec2(  0.14383161,  -0.14100790 )
    );
 
-const float filterRadius = 0.01;
-const float distanceThreshold = 0.1;
+const float filterRadius = 0.02;
+const float distanceThreshold = 0.015;
 
 
 void main()
@@ -39,13 +38,20 @@ void main()
     
     float depth = normalz_texel.a;
     
+    if(depth == 1.0) {
+        // discard
+        fragcolor = vec4(1.0, 0.0, 1.0, 1.0);
+        return;
+    }
+
     vec3 viewPos = vec3(v_uv, depth);
-    vec3 viewNormal = normalz_texel.xyz * 2.0 - 1.0;
+    vec3 viewNormal = normalize(normalz_texel.xyz * 2.0 - 1.0);
  
     float ambientOcclusion = 0;
     // perform AO
     for (int i = 0; i < sample_count; ++i)
     {
+        //int i=4;
         vec2 sampleTexCoord = v_uv + (poisson16[i] * (filterRadius));
         float sampleDepth = texture(normalz, sampleTexCoord).a;
         vec3 samplePos = vec3(sampleTexCoord, sampleDepth);
@@ -60,8 +66,14 @@ void main()
         float a = 1.0 - smoothstep(distanceThreshold, distanceThreshold * 2, VPdistSP);
         // b = dot-Product
         float b = NdotS;
- 
+        
+        if(NdotS > 0.0) {
+            // discard
+            //fragcolor = vec4(0.0, 1.0, 1.0, 1.0);
+            //return;
+        }
         ambientOcclusion += (a * b);
+        
     }
 
     fragcolor = vec4(1.0 - (ambientOcclusion / sample_count));

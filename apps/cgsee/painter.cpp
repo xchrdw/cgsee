@@ -55,6 +55,8 @@ Painter::Painter(Camera * camera)
 ,   m_fboActiveBuffer(nullptr)
 ,   m_flush(nullptr)
 ,   m_camera(camera)
+,   m_useShadows(true)
+,   m_useSSAO(false)
 {
     m_lightcam = new Camera();
     m_lightcam->setViewport(camera->viewport());
@@ -62,23 +64,6 @@ Painter::Painter(Camera * camera)
     m_lightcam->setZFar(camera->zFar());
     m_lightcam->setZNear(camera->zNear());
     m_lightcam->setView(glm::lookAt(glm::vec3(5.0,5.0,5.0), glm::vec3(0), glm::vec3(0.0,1.0,0.0)));
-}
-
-Painter::Painter(Group * scene)
-:   AbstractScenePainter(scene)
-,   m_quad(nullptr)
-,   m_normalz(nullptr)
-,   m_lightsource(nullptr)
-,   m_shadowMapping(nullptr)
-,   m_SSAO(nullptr)
-,   m_fboColor(nullptr)
-,   m_fboColorTemp(nullptr)
-,   m_fboNormalz(nullptr)
-,   m_fboShadowMap(nullptr)
-,   m_flush(nullptr)
-,   m_camera(nullptr)
-,   m_lightcam(nullptr)
-{
 }
 
 Painter::~Painter()
@@ -317,9 +302,10 @@ void Painter::paint()
     
     m_camera->draw(*m_useProgram, m_fboColor);
 
-    //addShadows(sampler);
-
-    addSSAO(sampler);
+    if(m_useShadows)
+        addShadows(sampler);
+    if(m_useSSAO)
+        addSSAO(sampler);
 
     sampler.clear();
     sampler["source"] = m_fboActiveBuffer;
@@ -406,6 +392,15 @@ void Painter::setFrameBuffer(int frameBuffer)
         case 4: m_fboActiveBuffer = m_fboColorTemp; std::printf("\nTemp Buffer\n"); break;
     }
 }
+
+void Painter::setEffect( int effect, bool active )
+{
+    switch(effect) 
+    {
+        case 1: m_useShadows = active; std::printf("\nShadow toggled\n"); break;
+        case 2: m_useSSAO = active; std::printf("\nSSAO toggled\n"); break;
+    }}
+
 
 void Painter::postShaderRelinked()
 {

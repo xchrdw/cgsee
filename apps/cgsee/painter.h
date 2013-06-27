@@ -20,13 +20,13 @@ class Painter : public AbstractScenePainter
 {
 public:
     Painter(Camera * camera);
-    Painter(Group * scene);
     virtual ~Painter();
 
     virtual void paint();
 
     virtual void setShading(char shader);
     virtual void setFrameBuffer(int frameBuffer);
+    virtual void setEffect( int effect, bool active );
 
 
     virtual void resize(
@@ -84,4 +84,6 @@ protected:
 
     Camera * m_camera;
     Camera * m_lightcam;
+    bool m_useShadows;
+    bool m_useSSAO;
 };

@@ -318,6 +318,18 @@ void Viewer::on_normalsAction_triggered()
 }
 
 
+void Viewer::on_shadowMappingAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(1, m_ui->shadowMappingAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_ssaoAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(2, m_ui->ssaoAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
 void Viewer::on_fboColorAction_triggered()
 {
     m_qtCanvas->painter()->setFrameBuffer(1);
@@ -495,5 +507,4 @@ void Viewer::on_actionSave_1_triggered() { saveView(0); }
 void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
-
 
