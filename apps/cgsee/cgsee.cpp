@@ -31,7 +31,6 @@ CGSee::CGSee(int & argc, char ** argv)
     AbstractNavigation * navigation = new ArcballNavigation(camera);
     m_viewer->setNavigation(navigation);
 
-    // Start
     m_viewer->show();
 
     AssimpLoader loader;

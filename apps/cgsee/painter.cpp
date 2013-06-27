@@ -65,8 +65,6 @@ Painter::Painter(Camera * camera)
     m_lightcam->setZFar(camera->zFar());
     m_lightcam->setZNear(camera->zNear());
     m_lightcam->setView(glm::lookAt(glm::vec3(5.0,5.0,5.0), glm::vec3(0), glm::vec3(0.0,1.0,0.0)));
-}
-
 Painter::~Painter()
 {
     delete m_quad;
@@ -91,19 +89,6 @@ Painter::~Painter()
 const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
-
-    if (m_scene) {
-        glm::mat4 transform(1.f);
-        
-        transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
-        transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
-        transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
-        transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
-        
-        m_scene->setTransform(transform);
-        m_camera->append(m_scene);
-        m_lightcam->append(m_scene);
-    } 
 
     m_quad = new ScreenQuad();
 
