@@ -25,8 +25,6 @@ public:
 
     virtual void paint();
 
-    void swapBuffers();
-
     virtual void setShading(char shader);
     virtual void setFrameBuffer(int frameBuffer);
 
@@ -40,9 +38,15 @@ protected:
 
 protected:
     void postShaderRelinked();
+    
     void setUniforms();
 
+    void swapBuffers();
+
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
+
+    void addShadows( t_samplerByName &sampler );
+    void addSSAO( t_samplerByName &sampler );
 
     static void bindSampler(
         const t_samplerByName & sampler
@@ -56,8 +60,9 @@ protected:
 
     Program * m_normalz;
     Program * m_normals;
-    Program * m_shadows;
+    Program * m_lightsource;
     Program * m_shadowMapping;
+    Program * m_SSAO;
     Program * m_wireframe;
     Program * m_primitiveWireframe;
     Program * m_solidWireframe;
@@ -78,5 +83,5 @@ protected:
     Program * m_flush;
 
     Camera * m_camera;
-    Camera * m_shadowcam;
+    Camera * m_lightcam;
 };

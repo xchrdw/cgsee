@@ -1,22 +1,25 @@
-#version 330
+#version 150
+
+uniform ivec2 viewport;
+uniform float znear;
+uniform float zfar;
+
+//uniform sampler2D source;
+uniform sampler2D shadowMap;
+
 
 in vec4 gl_FragCoord;
 in vec4 shadowCoord;
 
 out vec4 fragColor;
 
-uniform ivec2 viewport;
-uniform float znear;
-uniform float zfar;
-
-uniform sampler2D source;
-uniform sampler2D shadowMap;
 
 void main()
 {
     float u = gl_FragCoord.x / viewport.x;
     float v = gl_FragCoord.y / viewport.y;
-    vec4 sourceFragment = texture(source, vec2(u,v));
+    
+    //vec4 sourceFragment = texture(source, vec2(u,v));
 
 	vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
     

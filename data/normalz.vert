@@ -12,6 +12,6 @@ out vec3 normal;
 
 void main(void) 
 {
-    normal = a_normal;
+    normal = mat3(transform) * a_normal;
 	gl_Position = transform * vec4(a_vertex, 1.0);
 }

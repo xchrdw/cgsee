@@ -1,15 +1,12 @@
-#version 330
-
-in vec3 a_vertex;
-in vec3 a_normal;
+#version 150
 
 uniform mat4 transform;
 uniform mat4 LightSourceTransform;
 uniform mat4 invCameraTransform;
 uniform mat4 biasMatrix;
 
-uniform float znear;
-uniform float zfar;
+in vec3 a_vertex;
+in vec3 a_normal;
 
 out vec3 normal;
 out vec4 shadowCoord;

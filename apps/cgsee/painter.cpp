@@ -37,6 +37,9 @@ Painter::Painter(Camera * camera)
 ,   m_quad(nullptr)
 ,   m_normals(nullptr)
 ,   m_normalz(nullptr)
+,   m_lightsource(nullptr)
+,   m_shadowMapping(nullptr)
+,   m_SSAO(nullptr)
 ,   m_wireframe(nullptr)
 ,   m_primitiveWireframe(nullptr)
 ,   m_solidWireframe(nullptr)
@@ -53,25 +56,28 @@ Painter::Painter(Camera * camera)
 ,   m_flush(nullptr)
 ,   m_camera(camera)
 {
-    m_shadowcam = new Camera();
-    m_shadowcam->setViewport(camera->viewport());
-    m_shadowcam->setFovy(camera->fovy());
-    m_shadowcam->setZFar(camera->zFar());
-    m_shadowcam->setZNear(camera->zNear());
-    m_shadowcam->setView(glm::lookAt(glm::vec3(5.0,5.0,5.0), glm::vec3(0), glm::vec3(0.0,1.0,0.0)));
+    m_lightcam = new Camera();
+    m_lightcam->setViewport(camera->viewport());
+    m_lightcam->setFovy(camera->fovy());
+    m_lightcam->setZFar(camera->zFar());
+    m_lightcam->setZNear(camera->zNear());
+    m_lightcam->setView(glm::lookAt(glm::vec3(5.0,5.0,5.0), glm::vec3(0), glm::vec3(0.0,1.0,0.0)));
 }
 
 Painter::Painter(Group * scene)
 :   AbstractScenePainter(scene)
 ,   m_quad(nullptr)
 ,   m_normalz(nullptr)
+,   m_lightsource(nullptr)
+,   m_shadowMapping(nullptr)
+,   m_SSAO(nullptr)
 ,   m_fboColor(nullptr)
 ,   m_fboColorTemp(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_fboShadowMap(nullptr)
 ,   m_flush(nullptr)
 ,   m_camera(nullptr)
-,   m_shadowcam(nullptr)
+,   m_lightcam(nullptr)
 {
 }
 
@@ -81,7 +87,9 @@ Painter::~Painter()
 
     delete m_normals;
     delete m_normalz;
-    delete m_shadows;
+    delete m_lightsource;
+    delete m_shadowMapping;
+    delete m_SSAO;
     delete m_flat;
     delete m_gouraud;
     delete m_phong;
@@ -109,12 +117,10 @@ const bool Painter::initialize()
         
         m_scene->setTransform(transform);
         m_camera->append(m_scene);
-        m_shadowcam->append(m_scene);
+        m_lightcam->append(m_scene);
     } 
 
     m_quad = new ScreenQuad();
-
-    
 
     // NORMALS
     m_normals = new Program();
@@ -133,17 +139,24 @@ const bool Painter::initialize()
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
     
     // SHADOWS
-    m_shadows = new Program();
-    m_shadows->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/shadows.frag"));
-    m_shadows->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/shadows.vert"));
+    m_lightsource = new Program();
+    m_lightsource->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/lightsource.frag"));
+    m_lightsource->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/lightsource.vert"));
 
     m_shadowMapping = new Program();
     m_shadowMapping->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/shadowmapping.frag"));
     m_shadowMapping->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/shadowmapping.vert"));
+
+    // SSAO
+    m_SSAO = new Program();
+    m_SSAO->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/ssao.frag"));
+    m_SSAO->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
@@ -222,7 +235,7 @@ const bool Painter::initialize()
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
     m_flush->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
-
+    
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboColor = new FrameBufferObject(
@@ -232,7 +245,7 @@ const bool Painter::initialize()
     m_fboShadowMap = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
-    m_fboActiveBuffer = m_fboColor;
+    m_fboActiveBuffer = m_fboColorTemp;
 
     return true;
 }
@@ -294,29 +307,19 @@ glm::mat4 biasMatrix(
 
 void Painter::paint()
 {
+    //swapBuffers();
+
     AbstractPainter::paint();
 
     t_samplerByName sampler;
     m_camera->draw(*m_normalz, m_fboNormalz);
 
-    m_shadowcam->draw(*m_shadows, m_fboShadowMap);
     
     m_camera->draw(*m_useProgram, m_fboColor);
 
-    // ----------------------
-    sampler.clear();
-    sampler["source"] = m_fboColor;
-    sampler["shadowMap"] = m_fboShadowMap;
-    bindSampler(sampler, *m_shadowMapping);
-    m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
-    m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
-    m_shadowMapping->setUniform("LightSourceTransform", biasMatrix * m_shadowcam->transform(), false);
-    m_camera->draw(*m_shadowMapping, m_fboColorTemp);
-    swapBuffers();
+    addShadows(sampler);
 
-    releaseSampler(sampler);    
-    // ----------------------
-
+    //addSSAO(sampler);
 
     sampler.clear();
     sampler["source"] = m_fboActiveBuffer;
@@ -325,7 +328,38 @@ void Painter::paint()
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
 
-    swapBuffers();
+
+}
+
+void Painter::addShadows( t_samplerByName &sampler )
+{
+    m_lightcam->draw(*m_lightsource, m_fboShadowMap);
+
+    sampler.clear();
+    //sampler["sourceBuffer"] = m_fboColor;
+    sampler["shadowMap"] = m_fboShadowMap;
+
+    bindSampler(sampler, *m_shadowMapping);
+    m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
+    m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
+    m_shadowMapping->setUniform("LightSourceTransform", biasMatrix * m_lightcam->transform(), false);
+    m_camera->draw(*m_shadowMapping, m_fboColorTemp);
+    releaseSampler(sampler);
+    //swapBuffers();
+}
+
+void Painter::addSSAO( t_samplerByName &sampler )
+{
+    sampler.clear();
+    sampler["normalz"] = m_fboNormalz;
+
+    bindSampler(sampler, *m_SSAO);
+    m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
+    m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
+    m_shadowMapping->setUniform("LightSourceTransform", biasMatrix * m_lightcam->transform(), false);
+    m_camera->draw(*m_shadowMapping, m_fboColorTemp);
+    releaseSampler(sampler);
+    //swapBuffers();
 }
 
 void Painter::resize(  //probably never called anywhere?
@@ -335,8 +369,8 @@ void Painter::resize(  //probably never called anywhere?
     AbstractPainter::resize(width, height);
 
     m_camera->setViewport(width, height);
-    m_shadowcam->setViewport(width, height);
-    m_shadowcam->update();
+    m_lightcam->setViewport(width, height);
+    m_lightcam->update();
 
     m_fboColor->resize(width, height);
     m_fboColorTemp->resize(width, height);
@@ -395,7 +429,7 @@ void Painter::bindSampler(
 void Painter::releaseSampler(
     const t_samplerByName & sampler)
 {
-    t_samplerByName::const_iterator i(sampler.begin());
+    t_samplerByName::const_iterator i(sampler.cbegin());
     const t_samplerByName::const_iterator iEnd(sampler.cend());
 
     for(; i != iEnd; ++i)
@@ -411,8 +445,8 @@ Camera * Painter::camera()
 void Painter::sceneChanged(Group * scene)
 {
     if(m_scene)
-        m_shadowcam->remove(m_scene);
-    m_shadowcam->append(scene);
+        m_lightcam->remove(m_scene);
+    m_lightcam->append(scene);
 }
 
 void Painter::swapBuffers()
@@ -421,3 +455,5 @@ void Painter::swapBuffers()
     m_fboColor = m_fboColorTemp;
     m_fboColorTemp = temp;
 }
+
+
