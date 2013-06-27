@@ -270,7 +270,7 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    if (m_useProgram != m_pathTracing) { // rasterization
+//    if (m_useProgram != m_pathTracing){ // rasterization
         m_camera->draw(*m_useProgram, m_fboNormalz);
 
         sampler.clear();
@@ -279,10 +279,11 @@ void Painter::paint()
         bindSampler(sampler, *m_flush);
         m_quad->draw(*m_flush, nullptr);
         releaseSampler(sampler);
-    } else {
+  //  } else {
         // Render scene with pathtracing
-        m_pathTracer->draw(*m_useProgram, nullptr);
-    }
+        if (m_useProgram == m_pathTracing)
+            m_pathTracer->draw(*m_useProgram, nullptr);
+//    }
 }
 
 void Painter::resize(  //probably never called anywhere?

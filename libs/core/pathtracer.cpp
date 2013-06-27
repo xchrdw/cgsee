@@ -24,10 +24,10 @@ void PathTracer::initialize(const Program & program)
 
     static const GLfloat vertices[] =
     {
-        +1.f, -1.f
-    ,   +1.f, +1.f
+        -1.f, +1.f
     ,   -1.f, -1.f
-    ,   -1.f, +1.f
+    ,   +1.f, +1.f
+    ,   +1.f, -1.f
     };
 
     glGenVertexArrays(1, &m_vao);
