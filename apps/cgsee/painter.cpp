@@ -317,9 +317,9 @@ void Painter::paint()
     
     m_camera->draw(*m_useProgram, m_fboColor);
 
-    addShadows(sampler);
+    //addShadows(sampler);
 
-    //addSSAO(sampler);
+    addSSAO(sampler);
 
     sampler.clear();
     sampler["source"] = m_fboActiveBuffer;
@@ -354,10 +354,7 @@ void Painter::addSSAO( t_samplerByName &sampler )
     sampler["normalz"] = m_fboNormalz;
 
     bindSampler(sampler, *m_SSAO);
-    m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
-    m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
-    m_shadowMapping->setUniform("LightSourceTransform", biasMatrix * m_lightcam->transform(), false);
-    m_camera->draw(*m_shadowMapping, m_fboColorTemp);
+    m_quad->draw(*m_SSAO, m_fboColorTemp);
     releaseSampler(sampler);
     //swapBuffers();
 }
