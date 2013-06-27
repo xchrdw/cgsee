@@ -32,12 +32,11 @@ CGSee::CGSee(int & argc, char ** argv)
     navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
 
+    m_viewer->show();
+
     // AssimpLoader loader;
     // m_painter->assignScene(loader.importFromFile("data/mario.dae"));
 
-    // Start
-
-    m_viewer->show();
 }
 
 CGSee::~CGSee()
