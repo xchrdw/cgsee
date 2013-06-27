@@ -229,6 +229,7 @@ const bool Painter::initialize()
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboShadowMap = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+    
 
     m_fboActiveBuffer = m_fboColorTemp;
 
