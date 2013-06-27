@@ -22,7 +22,7 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->initialize(format());
 
     //Camera * camera = new Camera();// changed for StereoCamera
-    ConvergentCamera * camera = new ConvergentCamera();
+    ParallelCamera * camera = new ParallelCamera();
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
     camera->setZFar (10.0f);

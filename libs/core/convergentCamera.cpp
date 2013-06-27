@@ -16,7 +16,7 @@ static const QString ZFAR_UNIFORM       ("zfar");
 
 ConvergentCamera::ConvergentCamera(const QString & name)
     : AbstractStereoCamera(name),
-    m_focusDistance(3.5f)
+    m_focusDistance(5.0f)
 {
 }
 
@@ -29,16 +29,19 @@ void ConvergentCamera::activateRightCamera(const Program & program
 {
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation * (-1.f));
+    glm::vec3 cameraPosition = m_virtualCameraPosition+( m_cameraSeparationVector * m_cameraSeparation);
     glm::vec3 viewDirection = m_center - m_virtualCameraPosition;
-    glm::normalize(viewDirection);
-
-    glm::vec3 focusCenter = m_virtualCameraPosition + viewDirection * m_focusDistance;
+    viewDirection = glm::normalize(viewDirection) * m_focusDistance;
+    glm::vec3 focusCenter = m_virtualCameraPosition + viewDirection;
 
     setView(glm::lookAt(
         cameraPosition, focusCenter, m_up));
     setTransform(m_projection * m_view);
     glm::mat4 transform = m_projection * m_view;
+
+    printf("view Direction: %f %f %f \n", viewDirection.x,viewDirection.y,viewDirection.z);
+    printf("virt cam pos: %f %f %f \n", m_virtualCameraPosition.x,m_virtualCameraPosition.y,m_virtualCameraPosition.z);
+    printf("focusCenter: %f %f %f \n\n", focusCenter.x,focusCenter.y,focusCenter.z);
 
     update();
     program.setUniform(VIEW_UNIFORM, m_view);
@@ -46,7 +49,7 @@ void ConvergentCamera::activateRightCamera(const Program & program
         
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
-    glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
+    glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
     Group::draw(program, transform);
 }
 
@@ -55,11 +58,10 @@ void ConvergentCamera::activateLeftCamera(const Program & program
 {
     glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT );
 
-    glm::vec3 cameraPosition = m_virtualCameraPosition+=( m_cameraSeparationVector * m_cameraSeparation);
+    glm::vec3 cameraPosition = m_virtualCameraPosition+( m_cameraSeparationVector * m_cameraSeparation * -1.f);
     glm::vec3 viewDirection = m_center - m_virtualCameraPosition;
-    glm::normalize(viewDirection);
-
-    glm::vec3 focusCenter = m_virtualCameraPosition + viewDirection * m_focusDistance;
+    viewDirection = glm::normalize(viewDirection) * m_focusDistance;
+    glm::vec3 focusCenter = m_virtualCameraPosition + viewDirection;
 
     setView(glm::lookAt(
         cameraPosition, focusCenter, m_up));
@@ -73,7 +75,7 @@ void ConvergentCamera::activateLeftCamera(const Program & program
         
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
-    glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
+    glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
     Group::draw(program, transform);    
 }
 
