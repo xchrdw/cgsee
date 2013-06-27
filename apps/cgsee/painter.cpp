@@ -55,6 +55,7 @@ Painter::Painter(Camera * camera)
 ,   m_fboActiveBuffer(nullptr)
 ,   m_flush(nullptr)
 ,   m_camera(camera)
+,   m_useColor(true)
 ,   m_useShadows(true)
 ,   m_useSSAO(false)
 {
@@ -69,7 +70,6 @@ Painter::Painter(Camera * camera)
 Painter::~Painter()
 {
     delete m_quad;
-
     delete m_normals;
     delete m_normalz;
     delete m_lightsource;
@@ -300,8 +300,10 @@ void Painter::paint()
     t_samplerByName sampler;
     m_camera->draw(*m_normalz, m_fboNormalz);
 
-    
-    m_camera->draw(*m_useProgram, m_fboColor);
+    if(m_useColor)
+        m_camera->draw(*m_useProgram, m_fboColor);
+    else
+        m_fboColor->clear();
 
     if(m_useShadows)
         addShadows(sampler);
@@ -398,8 +400,9 @@ void Painter::setEffect( int effect, bool active )
 {
     switch(effect) 
     {
-        case 1: m_useShadows = active; std::printf("\nShadow toggled\n"); break;
-        case 2: m_useSSAO = active; std::printf("\nSSAO toggled\n"); break;
+        case 1: m_useColor = active; std::printf("\nColor toggled\n"); break;
+        case 2: m_useShadows = active; std::printf("\nShadow toggled\n"); break;
+        case 3: m_useSSAO = active; std::printf("\nSSAO toggled\n"); break;
     }
 }
 
@@ -449,5 +452,6 @@ void Painter::swapBuffers()
     m_fboColor = m_fboTemp;
     m_fboTemp = temp;
 }
+
 
 

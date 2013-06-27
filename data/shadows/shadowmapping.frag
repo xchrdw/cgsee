@@ -29,14 +29,14 @@ void main()
     float penumbra = (z - z_blocker) / z_blocker;
     float shadow = 0.0;
     float x,y;
-    for (y = -2.5 ; y <=2.5 ; y+=1.0)
-        for (x = -2.5 ; x <=2.5 ; x+=1.0) { 
-            vec2 offset = coord.st + vec2(x, y) * (1+penumbra*15) / viewport ;
+    for (y = -2.5 ; y <=2.51 ; y+=1.0)
+        for (x = -2.5 ; x <=2.51 ; x+=1.0) { 
+            vec2 offset = coord.st + vec2(x, y) * (penumbra*30) / viewport ;
             float distanceFromLight = texture(shadowMap, offset).z;
             shadow += distanceFromLight < z ? 0.0 : 1.0;
     }
 
     //gl_FragColor = vec4(penumbra);
-    gl_FragColor = vec4(vec3(shadow/ 25.0), 1.0) * sourceFragment;
+    gl_FragColor = vec4(vec3(shadow / 36.0 + 0.4), 1.0) * sourceFragment;
 
 }

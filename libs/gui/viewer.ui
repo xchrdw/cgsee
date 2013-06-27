@@ -142,6 +142,7 @@
     <addaction name="separator"/>
     <addaction name="normalsAction"/>
     <addaction name="separator"/>
+    <addaction name="colorRenderingAction"/>
     <addaction name="shadowMappingAction"/>
     <addaction name="ssaoAction"/>
    </widget>
@@ -717,6 +718,17 @@
    </property>
    <property name="text">
     <string>SSAO</string>
+   </property>
+  </action>
+  <action name="colorRenderingAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Color</string>
    </property>
   </action>
  </widget>

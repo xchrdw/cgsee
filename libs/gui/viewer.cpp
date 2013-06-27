@@ -318,15 +318,21 @@ void Viewer::on_normalsAction_triggered()
 }
 
 
+void Viewer::on_colorRenderingAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(1, m_ui->colorRenderingAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
 void Viewer::on_shadowMappingAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(1, m_ui->shadowMappingAction->isChecked());
+    m_qtCanvas->painter()->setEffect(2, m_ui->shadowMappingAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_ssaoAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(2, m_ui->ssaoAction->isChecked());
+    m_qtCanvas->painter()->setEffect(3, m_ui->ssaoAction->isChecked());
     m_qtCanvas->repaint();
 }
 

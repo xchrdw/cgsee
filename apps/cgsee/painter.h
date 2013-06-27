@@ -84,6 +84,7 @@ protected:
 
     Camera * m_camera;
     Camera * m_lightcam;
+    bool m_useColor;
     bool m_useShadows;
     bool m_useSSAO;
 };
