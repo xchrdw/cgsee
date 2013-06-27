@@ -143,71 +143,71 @@ const bool Painter::initialize()
     m_SSAO->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
-    FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
-    FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
+    FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe/wireframe.vert");
+    FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe/wireframe.geo");
 
     //Wireframe
     m_wireframe = new Program();
     m_wireframe->attach(m_wireframeShaderGEO);
     m_wireframe->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe.frag"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe/wireframe.frag"));
     m_wireframe->attach(m_wireframeShader);
 
     //Primitive Wireframe
     m_primitiveWireframe = new Program();
     m_primitiveWireframe->attach(
-        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/primitiveWireframe.geo"));
+        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe/primitiveWireframe.geo"));
     m_primitiveWireframe->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/primitiveWireframe.frag"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe/primitiveWireframe.frag"));
     m_primitiveWireframe->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/primitiveWireframe.vert"));
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe/primitiveWireframe.vert"));
 
     //Solid Wireframe
     m_solidWireframe = new Program();
     m_solidWireframe->attach(m_wireframeShaderGEO);
     m_solidWireframe->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframeSolid.frag"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/wireframe/wireframeSolid.frag"));
     m_solidWireframe->attach(m_wireframeShader);
 
 
 
-    FileAssociatedShader *phongLighting = new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phongLighting.frag");
+    FileAssociatedShader *phongLighting = new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/phongLighting.frag");
 
     //FLAT
     m_flat = new Program();
     m_flat->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flat.frag"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/flat.frag"));
     m_flat->attach(phongLighting);
     m_flat->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/flat.vert"));
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/flat.vert"));
     m_flat->attach(
-        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/flat.geo"));
+        new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/shading/flat.geo"));
 
     //GOURAUD
 
     m_gouraud = new Program();
     m_gouraud->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gouraud.frag"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/gouraud.frag"));
     m_gouraud->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/gouraud.vert"));
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/gouraud.vert"));
     m_gouraud->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/phongLighting.vert"));
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/phongLighting.vert"));
 
     //PHONG
 
     m_phong = new Program();
     m_phong->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/phong.frag"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/phong.frag"));
     m_phong->attach(phongLighting);
     m_phong->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/phong.vert"));
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/phong.vert"));
 
     //GOOCH
     m_gooch = new Program();
     m_gooch->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gooch.frag"));
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/gooch.frag"));
     m_gooch->attach(
-         new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
+         new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/gooch.vert"));
 
     //set UNIFORMS for selected shader
     m_useProgram = m_flat;
@@ -310,7 +310,7 @@ void Painter::paint()
 
     sampler.clear();
     sampler["source"] = m_fboActiveBuffer;
-
+    sampler["effect"] = m_fboColorTemp;
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
