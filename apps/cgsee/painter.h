@@ -72,10 +72,10 @@ protected:
     Program * m_gooch;
     Program * m_useProgram;
     FrameBufferObject * m_fboColor;
-    FrameBufferObject * m_fboColorTemp;
+    FrameBufferObject * m_fboTemp;
     FrameBufferObject * m_fboNormalz;
     FrameBufferObject * m_fboShadowMap;
-    FrameBufferObject * m_fboActiveBuffer;
+    FrameBufferObject ** m_fboActiveBuffer;
 
 
     glm::vec3 camPos;

@@ -49,7 +49,7 @@ Painter::Painter(Camera * camera)
 ,   m_gooch(nullptr)
 ,   m_useProgram(nullptr)
 ,   m_fboColor(nullptr)
-,   m_fboColorTemp(nullptr)
+,   m_fboTemp(nullptr)
 ,   m_fboNormalz(nullptr)
 ,   m_fboShadowMap(nullptr)
 ,   m_fboActiveBuffer(nullptr)
@@ -225,13 +225,13 @@ const bool Painter::initialize()
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboColor = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    m_fboColorTemp = new FrameBufferObject(
+    m_fboTemp = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboShadowMap = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     
 
-    m_fboActiveBuffer = m_fboColorTemp;
+    m_fboActiveBuffer = &m_fboColor;
 
     return true;
 }
@@ -309,8 +309,7 @@ void Painter::paint()
         addSSAO(sampler);
 
     sampler.clear();
-    sampler["source"] = m_fboActiveBuffer;
-    sampler["effect"] = m_fboColorTemp;
+    sampler["source"] = *m_fboActiveBuffer;
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
@@ -323,27 +322,28 @@ void Painter::addShadows( t_samplerByName &sampler )
     m_lightcam->draw(*m_lightsource, m_fboShadowMap);
 
     sampler.clear();
-    //sampler["sourceBuffer"] = m_fboColor;
     sampler["shadowMap"] = m_fboShadowMap;
+    sampler["source"] = m_fboColor;
 
     bindSampler(sampler, *m_shadowMapping);
     m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
     m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
     m_shadowMapping->setUniform("LightSourceTransform", biasMatrix * m_lightcam->transform(), false);
-    m_camera->draw(*m_shadowMapping, m_fboColorTemp);
+    m_camera->draw(*m_shadowMapping, m_fboTemp);
     releaseSampler(sampler);
-    //swapBuffers();
+    swapBuffers();
 }
 
-void Painter::addSSAO( t_samplerByName &sampler )
+void Painter::addSSAO(t_samplerByName &sampler)
 {
     sampler.clear();
     sampler["normalz"] = m_fboNormalz;
+    sampler["source"] = m_fboColor;
 
     bindSampler(sampler, *m_SSAO);
-    m_quad->draw(*m_SSAO, m_fboColorTemp);
+    m_quad->draw(*m_SSAO, m_fboTemp);
     releaseSampler(sampler);
-    //swapBuffers();
+    swapBuffers();
 }
 
 void Painter::resize(  //probably never called anywhere?
@@ -357,7 +357,7 @@ void Painter::resize(  //probably never called anywhere?
     m_lightcam->update();
 
     m_fboColor->resize(width, height);
-    m_fboColorTemp->resize(width, height);
+    m_fboTemp->resize(width, height);
     m_fboNormalz->resize(width, height);
     m_fboShadowMap->resize(width, height);
 
@@ -387,10 +387,10 @@ void Painter::setFrameBuffer(int frameBuffer)
 {
     switch(frameBuffer) 
     {
-        case 1: m_fboActiveBuffer = m_fboColor; std::printf("\nColor Buffer\n"); break;
-        case 2: m_fboActiveBuffer = m_fboNormalz; std::printf("\nNormal Buffer\n"); break;
-        case 3: m_fboActiveBuffer = m_fboShadowMap; std::printf("\nShadowMap Buffer\n"); break;
-        case 4: m_fboActiveBuffer = m_fboColorTemp; std::printf("\nTemp Buffer\n"); break;
+        case 1: m_fboActiveBuffer = &m_fboColor; std::printf("\nColor Buffer\n"); break;
+        case 2: m_fboActiveBuffer = &m_fboNormalz; std::printf("\nNormal Buffer\n"); break;
+        case 3: m_fboActiveBuffer = &m_fboShadowMap; std::printf("\nShadowMap Buffer\n"); break;
+        case 4: m_fboActiveBuffer = &m_fboTemp; std::printf("\nTemp Buffer\n"); break;
     }
 }
 
@@ -400,7 +400,8 @@ void Painter::setEffect( int effect, bool active )
     {
         case 1: m_useShadows = active; std::printf("\nShadow toggled\n"); break;
         case 2: m_useSSAO = active; std::printf("\nSSAO toggled\n"); break;
-    }}
+    }
+}
 
 
 void Painter::postShaderRelinked()
@@ -445,8 +446,8 @@ void Painter::sceneChanged(Group * scene)
 void Painter::swapBuffers()
 {
     FrameBufferObject * temp = m_fboColor;
-    m_fboColor = m_fboColorTemp;
-    m_fboColorTemp = temp;
+    m_fboColor = m_fboTemp;
+    m_fboTemp = temp;
 }
 
 

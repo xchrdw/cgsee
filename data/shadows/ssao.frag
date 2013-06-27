@@ -3,6 +3,8 @@
 // source http://blog.evoserv.at/index.php/2012/12/hemispherical-screen-space-ambient-occlusion-ssao-for-deferred-renderers-using-openglglsl/
 
 uniform sampler2D normalz;
+uniform sampler2D source;
+
 
 out vec4 fragcolor;
 in vec2 v_uv;
@@ -27,12 +29,13 @@ const float distanceThreshold = 0.015;
 void main()
 {
 	vec4 normalz_texel = texture(normalz, v_uv);
-    
+
+    vec4 sourceFragment = texture(source, v_uv);
+
     float depth = normalz_texel.a;
     
     if(depth == 1.0) {
-        // discard
-        fragcolor = vec4(1.0, 0.0, 1.0, 1.0);
+        fragcolor = sourceFragment;
         return;
     }
 
@@ -68,5 +71,5 @@ void main()
         
     }
 
-    fragcolor = vec4(1.0 - (ambientOcclusion / sample_count));
+    fragcolor = vec4(1.0 - (ambientOcclusion / sample_count)) * sourceFragment;;
 }
