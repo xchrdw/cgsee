@@ -12,6 +12,8 @@
 #include <QMessageBox>
 #include <QDockWidget>
 #include <QMenu>
+#include <QFileSystemModel>
+#include <QDir>
 
 #include "ui_viewer.h"
 #include "viewer.h"
@@ -48,28 +50,30 @@ Viewer::Viewer(
 ,   m_qtCanvas(nullptr)
 ,   m_saved_views(4)
 
-,   m_dockLeft(new QDockWidget(tr("Navigator")))
-,   m_dockBottom(new QDockWidget(tr("Explorer")))
-,   m_navigator(new FileNavigator(m_dockLeft))
-,   m_explorer(new FileExplorer(m_dockBottom))
+,   m_dockNavigator(new QDockWidget(tr("Navigator")))
+,   m_dockExplorer(new QDockWidget(tr("Explorer")))
+,   m_navigator(new FileNavigator(m_dockNavigator))
+,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_loader(new AssimpLoader())
 {
     m_ui->setupUi(this);
     
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings s;
-
+    
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
-
+    
     restoreViews(s);
-    initializeNavigation();
+    initializeExplorer();
 };
 
-void Viewer::initializeNavigation()
+void Viewer::initializeExplorer()
 {
-    this->initializeDockWidgets(m_dockLeft, m_navigator, Qt::LeftDockWidgetArea);
-    this->initializeDockWidgets(m_dockBottom, m_explorer, Qt::BottomDockWidgetArea);
+    m_dockNavigator->setObjectName("fileNavigator");
+    m_dockExplorer->setObjectName("fileExplorer");
+    this->initializeDockWidgets(m_dockNavigator, m_navigator, Qt::LeftDockWidgetArea);
+    this->initializeDockWidgets(m_dockExplorer, m_explorer, Qt::BottomDockWidgetArea);
 
     m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
         
@@ -82,8 +86,14 @@ void Viewer::initializeNavigation()
         this, SLOT(on_loadFile(const QString &)));
 
     QObject::connect(
+        m_explorer, SIGNAL(activatedDir(const QString &)),
+        m_navigator, SLOT(on_activatedDir(const QString &)));
+
+    QObject::connect(
         m_ui->openFileDialogAction, SIGNAL(changed()),
         this, SLOT(on_openFileDialogAction_triggered()));
+
+    m_explorer->emitActivatedItem(m_explorer->model()->index(QDir::currentPath()));
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
@@ -101,7 +111,7 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
     dockWidget->setFloating(true);
     dockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
     
-    dockWidget->move(this->pos() - QPoint(dockWidget->width()+5, count-- * (dockWidget->height()+20)));
+    dockWidget->move(QPoint(20, 40 + count++ * (dockWidget->height() + 35)));
 #endif
 }
 
@@ -178,8 +188,8 @@ Viewer::~Viewer()
 
     delete m_qtCanvas;
 
-    delete m_dockLeft;
-    delete m_dockBottom;
+    delete m_dockNavigator;
+    delete m_dockExplorer;
     delete m_loader;
 }
 
@@ -202,7 +212,7 @@ AbstractScenePainter * Viewer::painter()
 
 void Viewer::on_captureAsImageAction_triggered()
 {
-    m_dockLeft->show();
+    m_dockNavigator->show();
     assert(m_qtCanvas);
     CanvasExporter::save(*m_qtCanvas, this);
 }
@@ -228,6 +238,11 @@ void Viewer::on_openFileDialogAction_triggered()
     
     on_loadFile(fileName);
 }
+    
+void Viewer::on_quitAction_triggered()
+{
+    QApplication::quit();
+}
 
 void Viewer::on_loadFile(const QString & path)
 {
@@ -242,14 +257,14 @@ void Viewer::on_loadFile(const QString & path)
 
 void Viewer::on_toggleNavigator_triggered()
 {
-    bool visible = m_dockLeft->isVisible();
-    m_dockLeft->setVisible(!visible);
+    bool visible = m_dockNavigator->isVisible();
+    m_dockNavigator->setVisible(!visible);
 }
 
 void Viewer::on_toggleExplorer_triggered()
 {
-    bool visible = m_dockBottom->isVisible();
-    m_dockBottom->setVisible(!visible);
+    bool visible = m_dockExplorer->isVisible();
+    m_dockExplorer->setVisible(!visible);
 }
 
 void Viewer::on_phongShadingAction_triggered()
