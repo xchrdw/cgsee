@@ -17,6 +17,8 @@ public:
 
     virtual void visitBool(BoolProperty & boolProperty);
     virtual void visitList(AbstractListProperty & listProperty);
+    virtual void visitInt(IntProperty & intProperty);
+    virtual void visitFloat(FloatProperty & floatProperty);
 
     QWidget * retainWidget();
 

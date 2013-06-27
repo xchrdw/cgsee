@@ -21,6 +21,8 @@
 #include "core/flightnavigation.h"
 
 #include <core/painter/boolproperty.h>
+#include <core/painter/intproperty.h>
+#include <core/painter/floatproperty.h>
 #include <core/painter/genericlistproperty.h>
 #include <gui/propertywidgetbuilder.h>
 
@@ -89,21 +91,22 @@ const bool Painter::initialize()
 
     if (m_scene) {
         glm::mat4 transform(1.f);
-        
+
         transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
         transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
         transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
         transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
-        
+
         m_scene->setTransform(transform);
         m_camera->append(m_scene);
-    } 
+    }
 
     m_quad = new ScreenQuad();
 
 
     // NORMALS
-
+    IntProperty * apples = new IntProperty("apples", "How much apples would you like?");
+    FloatProperty * derplevel = new FloatProperty("derplevel", "Please choose a level of derpin");
     GenericListProperty<Program> * shaders = new GenericListProperty<Program>("shaders", "Choose Rendering Shader: ");
 
     Program * normals = new Program();
@@ -125,7 +128,9 @@ const bool Painter::initialize()
 
     shaders->insert("rainbow", rainbow);
     this->addProperty(shaders);
-    
+    this->addProperty(apples);
+    this->addProperty(derplevel);
+
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
 
@@ -211,7 +216,7 @@ const bool Painter::initialize()
 
     PropertyWidgetBuilder builder;
     builder.buildWidget(this->properties());
-    
+
     builder.retainWidget()->show();
 
     return true;
@@ -268,7 +273,7 @@ void Painter::setUniforms()
 void Painter::paint()
 {
     AbstractPainter::paint();
-    
+
     t_samplerByName sampler;
 
     m_camera->draw(*(this->property<GenericListProperty<Program>>("shaders")->selectedValue()), m_fboNormalz);
@@ -284,7 +289,7 @@ void Painter::resize(  //probably never called anywhere?
     const int width
 ,   const int height)
 {
-    
+
     AbstractPainter::resize(width, height);
 
     m_camera->setViewport(width, height);

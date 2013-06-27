@@ -27,6 +27,10 @@ set(SOURCES
     painter/abstractpainterproperty.cpp
     painter/boolproperty.h
     painter/boolproperty.cpp
+    painter/intproperty.h
+    painter/intproperty.cpp
+    painter/floatproperty.h
+    painter/floatproperty.cpp
     painter/listproperty.h
     painter/listproperty.cpp
     painter/abstractlistproperty.h

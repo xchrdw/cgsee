@@ -3,7 +3,11 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QString>
+#include <QSlider>
+#include <QSpinBox>
 #include "propertywidgetbuilder.h"
+#include <core/painter/intproperty.h>
+#include <core/painter/floatproperty.h>
 #include <core/painter/boolproperty.h>
 #include <core/painter/abstractlistproperty.h>
 
@@ -36,9 +40,9 @@ void PropertyWidgetBuilder::visitBool(BoolProperty & boolProperty)
         checkBox->setCheckState(Qt::Checked);
     else
         checkBox->setCheckState(Qt::Unchecked);
-    
+
     m_layout->addRow(boolProperty.description(), checkBox);
-    
+
     QObject::connect(checkBox, &QCheckBox::stateChanged, [&boolProperty] (int state) {
         boolProperty.setEnabled(state);
         qDebug("Painter: Set %s = %i", qPrintable(boolProperty.name()), boolProperty.enabled());
@@ -59,6 +63,38 @@ void PropertyWidgetBuilder::visitList(AbstractListProperty & listProperty)
                          qDebug("Painter: Set %s = %s",
                                 qPrintable(listProperty.name()),
                                 qPrintable(listProperty.selectedDescription()));
+                     });
+}
+
+void PropertyWidgetBuilder::visitInt(IntProperty & intProperty)
+{
+    QSpinBox * spinbox = new QSpinBox(m_widget);
+    m_layout->addRow(intProperty.description(), spinbox);
+
+    QObject::connect(spinbox,
+                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+                     [&intProperty] (int i) {
+                         intProperty.setValue(i);
+                         qDebug("Painter: Set %s = %i",
+                                qPrintable(intProperty.name()),
+                                i);
+                     });
+}
+
+void PropertyWidgetBuilder::visitFloat(FloatProperty & floatProperty)
+{
+    QSlider * slider = new QSlider(m_widget);
+    slider->setOrientation(Qt::Horizontal);
+
+    m_layout->addRow(floatProperty.description(), slider);
+
+    QObject::connect(slider,
+                     static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
+                     [&floatProperty] (int i) {
+                         floatProperty.setValue(i);
+                         qDebug("Painter: Set %s = %i",
+                                qPrintable(floatProperty.name()),
+                                i);
                      });
 }
 

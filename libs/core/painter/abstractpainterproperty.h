@@ -18,6 +18,7 @@ public:
     void setName(QString name);
     QString description() const;
     void setDescription(QString name);
+
 protected:
     QString m_name;
     QString m_description;
