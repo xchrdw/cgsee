@@ -9,8 +9,6 @@ template <class ValueClass>
 class GenericListProperty : public AbstractListProperty
 {
 public:
-    GenericListProperty();
-    GenericListProperty(QString name);
     GenericListProperty(QString name, QString description);
     ~GenericListProperty();
 

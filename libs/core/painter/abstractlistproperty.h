@@ -7,8 +7,6 @@
 class AbstractListProperty : public AbstractPainterProperty
 {
 public:
-    AbstractListProperty();
-    explicit AbstractListProperty(QString name);
     AbstractListProperty(QString name, QString description);
     virtual ~AbstractListProperty();
 

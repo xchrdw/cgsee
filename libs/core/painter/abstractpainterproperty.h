@@ -9,13 +9,11 @@ class AbstractPropertyVisitor;
 class CGSEE_API AbstractPainterProperty
 {
 public:
-    AbstractPainterProperty();
-    explicit AbstractPainterProperty(QString name);
     AbstractPainterProperty(QString name, QString description);
     virtual ~AbstractPainterProperty();
 
     virtual void visit(AbstractPropertyVisitor & visitor) =0;
-    
+
     QString name() const;
     void setName(QString name);
     QString description() const;

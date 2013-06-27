@@ -3,20 +3,6 @@
 
 #include "abstractpropertyvisitor.h"
 
-ListProperty::ListProperty()
-:   AbstractListProperty()
-,   m_list(new QStringList())
-,   m_selection(kNoIndex)
-{
-}
-
-ListProperty::ListProperty(QString name)
-:   AbstractListProperty(name)
-,   m_list(new QStringList())
-,   m_selection(kNoIndex)
-{
-}
-
 ListProperty::ListProperty(QString name, QString description)
 :   AbstractListProperty(name, description)
 ,   m_list(new QStringList())
@@ -61,7 +47,7 @@ bool ListProperty::insert(QString string)
 bool ListProperty::insertList(QStringList strings)
 {
     bool success = true;
-    
+
     for (QString string : strings)
         if (!(success = this->insert(string)))
             break;

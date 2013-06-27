@@ -8,8 +8,6 @@
 class CGSEE_API ListProperty : public AbstractListProperty
 {
 public:
-    ListProperty();
-    explicit ListProperty(QString name);
     ListProperty(QString name, QString description);
     virtual ~ListProperty();
 

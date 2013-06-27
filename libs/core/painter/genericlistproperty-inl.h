@@ -1,20 +1,3 @@
-
-template <class ValueClass>
-GenericListProperty<ValueClass>::GenericListProperty()
-:   AbstractListProperty()
-,   m_map(new QMap<QString, ValueClass *>())
-,   m_selectedKey(nullptr)
-{
-}
-
-template <class ValueClass>
-GenericListProperty<ValueClass>::GenericListProperty(QString name)
-:   AbstractListProperty(name)
-,   m_map(new QMap<QString, ValueClass *>())
-,   m_selectedKey(nullptr)
-{
-}
-
 template <class ValueClass>
 GenericListProperty<ValueClass>::GenericListProperty(QString name, QString description)
 :   AbstractListProperty(name, description)
