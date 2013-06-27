@@ -98,17 +98,26 @@ void ConvergentCamera::draw(
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glViewport(0, 0, m_viewport.x, m_viewport.y);
-    glError();
+    float sqrt2 = 1.41421356;
 
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
+   // glViewport(0, 0, m_viewport.x / sqrt2 , m_viewport.y);
+   // glError();
 
     setFromMatrix(m_view);
 
     m_cameraSeparationVector = glm::cross(m_center-m_virtualCameraPosition , m_up);
     glm::normalize(m_cameraSeparationVector);
 
+    glViewport(0, 0, m_viewport.x / sqrt2, m_viewport.y);
+    glError();
+    update();
+    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
     activateLeftCamera(program,target);
+
+    glViewport(m_viewport.x / sqrt2, 0, m_viewport.x / sqrt2, m_viewport.y);
+    glError();
+    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
+    update();
     activateRightCamera(program,target);
     
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
