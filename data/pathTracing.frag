@@ -50,7 +50,7 @@ void main()
         return;
     }
     
-    int firstVertexIndex = texelFetch(indexBuffer, primaryNearestIndex);
+    int firstVertexIndex = texelFetch(indexBuffer, primaryNearestIndex).x;
     vec3 normalAvg = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex).x).xyz;
     normalAvg += texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+1).x).xyz;
     normalAvg += texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+2).x).xyz;
