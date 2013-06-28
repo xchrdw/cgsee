@@ -31,7 +31,10 @@
      <property name="title">
       <string>Select &amp;Frame Buffer</string>
      </property>
-     <addaction name="listOfFBOsAction"/>
+    <addaction name="fboColorAction"/>
+    <addaction name="fboNormalzAction"/>
+    <addaction name="fboShadowMapAction"/>
+    <addaction name="fboTempBufferAction"/>
      <addaction name="separator"/>
      <addaction name="showFrameBuffersAction"/>
     </widget>
@@ -152,15 +155,6 @@
     </property>
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
-   </widget>
-   <widget class="QMenu" name="menuFrameBuffer">
-    <property name="title">
-     <string>FrameBuffer</string>
-    </property>
-    <addaction name="fboColorAction"/>
-    <addaction name="fboNormalzAction"/>
-    <addaction name="fboShadowMapAction"/>
-    <addaction name="fboTempBufferAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
