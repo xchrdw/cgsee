@@ -37,6 +37,6 @@ void main()
     }
 
     //gl_FragColor = vec4(penumbra);
-    gl_FragColor = vec4(vec3(shadow / 36.0 + 0.4), 1.0) * sourceFragment;
+    fragColor = vec4(vec3(shadow / 36.0 + 0.4), 1.0) * sourceFragment;
 
 }
