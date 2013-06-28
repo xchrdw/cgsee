@@ -172,22 +172,18 @@ void PolygonalDrawable::initPathTracingData(const Program & program)
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_BUFFER, indexTextureID);
-    program.setUniform("indexBuffer", 0);
     glError();
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_BUFFER, vertexTextureID);
-    program.setUniform("vertexBuffer", 1);
     glError();
     
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_BUFFER, normalTextureID);
-    program.setUniform("normalBuffer", 2);
     glError();
 
     //glActiveTexture(GL_TEXTURE3);
     //glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
-    //program.setUniform("geometryBuffer", 3);
     //glError();
 }
 

@@ -261,6 +261,11 @@ void Painter::setUniforms()
     else if(m_useProgram == m_pathTracing)
     {
         m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
+        // Texture units to use for texture buffers
+        m_useProgram->setUniform("indexBuffer", 0);
+        m_useProgram->setUniform("vertexBuffer", 1);
+        m_useProgram->setUniform("normalBuffer", 2);
+        m_useProgram->setUniform("geometryBuffer", 3);
     }
 }
 
