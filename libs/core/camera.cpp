@@ -1,4 +1,5 @@
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_access.hpp>
 
 #include "camera.h"
 
@@ -167,4 +168,42 @@ void Camera::setZFar(const float z)
 Camera * Camera::asCamera()
 {
     return this;
+}
+
+glm::vec3 Camera::getEye(){
+    //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
+
+    glm::mat4 modelViewT = glm::transpose(m_view);
+    
+    // Get plane normals
+    glm::vec3 n1(modelViewT[0]);
+    glm::vec3 n2(modelViewT[1]);
+    glm::vec3 n3(modelViewT[2]);
+    
+    // Get plane distances
+    float d1(modelViewT[0].w);
+    float d2(modelViewT[1].w);
+    float d3(modelViewT[2].w);
+    
+    // Get the intersection of these 3 planes
+    // (using math from RealTime Collision Detection by Christer Ericson)
+    glm::vec3 n2n3 = glm::cross(n2, n3);
+    float denom = glm::dot(n1, n2n3);
+    
+    glm::vec3 eye = (n2n3 * d1) + glm::cross(n1, (d3*n2) - (d2*n3));
+    eye /= -denom;
+    
+    return eye;
+}
+
+glm::vec3 Camera::getCenter(){
+    glm::vec3 lookat = glm::row(m_view, 2).xyz;
+    glm::vec3 eye = getEye();
+    
+    return eye - lookat;
+    
+}
+
+glm::vec3 Camera::getUp(){
+    return glm::row(m_view, 1).xyz;
 }
