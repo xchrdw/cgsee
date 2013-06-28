@@ -65,6 +65,8 @@ Painter::Painter(Camera * camera)
     m_lightcam->setZFar(camera->zFar());
     m_lightcam->setZNear(camera->zNear());
     m_lightcam->setView(glm::lookAt(glm::vec3(5.0,5.0,5.0), glm::vec3(0), glm::vec3(0.0,1.0,0.0)));
+}
+
 Painter::~Painter()
 {
     delete m_quad;
