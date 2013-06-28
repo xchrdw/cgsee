@@ -14,6 +14,8 @@ static const QString PROJECTION_UNIFORM ("projection");
 static const QString ZNEAR_UNIFORM      ("znear");
 static const QString ZFAR_UNIFORM       ("zfar");
 
+static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
+
 
 Camera::Camera(const QString & name)
 :   Group(name)
@@ -57,6 +59,8 @@ void Camera::draw(
         
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
+    
+    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
     
     Group::draw(program, glm::mat4());
 
