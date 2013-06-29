@@ -28,6 +28,9 @@ float EPSILON = 0.000001;
 
 void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 intersectionPoint);
 
+
+float rand =  fract(sin(dot(direction.xy ,vec2(12.9898,78.233))) * 43758.5453);
+
 void main()
 {
     // fragColor = vec4(cameraposition, 1.0);
