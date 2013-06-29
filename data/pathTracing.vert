@@ -18,7 +18,7 @@ out vec3 direction;
 
 void main(void) 
 {
-    vec4 worldPos = transformInverse * vec4(a_vertex, 0.0, 1.0);
+    vec4 worldPos = transformInverse * vec4(a_vertex, -1.0, 1.0);
     // cam (0, 0, 1.0)
     // pos (x, y, z)
     // dir (x, y, z-1.0)

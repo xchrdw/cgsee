@@ -77,6 +77,9 @@ void PathTracer::draw(
     if(target)
         target->bind();
 
+    //update m_transform
+    update();
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     program.use();
