@@ -17,7 +17,8 @@ public:
 
     virtual void draw(
         const Program & program
-    ,   const glm::mat4 & transform);
+    ,   const glm::mat4 & transform
+    ,   const bool initOnly = false) override;
 
 
     // child handling

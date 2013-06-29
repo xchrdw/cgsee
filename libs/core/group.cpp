@@ -18,7 +18,8 @@ Group::~Group()
 
 void Group::draw(
     const Program & program
-,   const glm::mat4 & transform)
+,   const glm::mat4 & transform
+,   const bool initOnly)
 {
     t_nodes::const_iterator i(m_children.begin());
     const t_nodes::const_iterator iEnd(m_children.end());

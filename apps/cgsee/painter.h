@@ -70,6 +70,4 @@ protected:
     Program * m_flush;
 
     Camera * m_camera;
-
-    PathTracer * m_pathTracer;
 };

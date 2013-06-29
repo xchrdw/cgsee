@@ -30,7 +30,8 @@ public:
 
     virtual void draw(
         const Program & program
-    ,   const glm::mat4 & transform) = 0;
+    ,   const glm::mat4 & transform
+    ,   const bool initOnly = false) = 0;
 
     const QString name() const;
     void setName(const QString & name);
@@ -61,6 +62,7 @@ protected:
 
     e_ReferenceFrame m_rf;
     glm::mat4 m_transform;
+    glm::mat4 m_transformInverse;
 
     mutable AxisAlignedBoundingBox m_aabb;
 };

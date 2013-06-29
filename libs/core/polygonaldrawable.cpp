@@ -189,7 +189,8 @@ void PolygonalDrawable::initPathTracingData(const Program & program)
 
 void PolygonalDrawable::draw(
     const Program & program
-,   const glm::mat4 & transform)
+,   const glm::mat4 & transform
+,   const bool initOnly)
 {
     if(!m_geometry || m_geometry->indices().empty())
         return;
@@ -199,6 +200,11 @@ void PolygonalDrawable::draw(
 
     program.use();
     program.setUniform(TRANSFORM_UNIFORM, transform);
+
+    if (initOnly) {
+        //program.release();    // find a "cleaner" that..
+        return;
+    }
 
     glBindVertexArray(m_vao);
     glError();

@@ -10,7 +10,7 @@ in vec3 direction;
 
 out vec4 fragColor;
 
-// uniform vec3 cameraposition;
+uniform vec3 cameraposition;
 
 uniform ivec2 viewport;
 
@@ -23,13 +23,16 @@ uniform samplerBuffer geometryBuffer;
 
 
 vec3 light = vec3(1000.0, 0.0, 0.0);
-vec3 cameraposition = vec3(0.0, 0.0, 3.0);
+//vec3 cameraposition = vec3(1.0, 0.0, 3.0);
 float EPSILON = 0.000001;
 
 void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 intersectionPoint);
 
 void main()
 {
+    // fragColor = vec4(cameraposition, 1.0);
+    // return;
+    
     int primaryNearestIndex;
     vec3 primaryIntersectionPoint;
 
@@ -39,6 +42,9 @@ void main()
         fragColor = vec4(0,0,1,0);
         return;
     }
+    
+    fragColor = vec4(primaryIntersectionPoint, 1.0);
+    return;
 
     int secondaryNearestIndex;
     vec3 secondaryIntersectionPoint;

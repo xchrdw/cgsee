@@ -3,7 +3,10 @@
 #include "program.h"
 #include "bufferobject.h"
 #include "framebufferobject.h"
-#include "gpuquery.h"
+//#include "gpuquery.h"
+
+static const QString TRANSFORM_UNIFORM ("transform");
+static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
 
 PathTracer::PathTracer(const QString & name)
 :   Camera(name)
@@ -62,10 +65,13 @@ void PathTracer::draw(
     const Program & program
 ,   FrameBufferObject * target)
 {
+    // call group draw with initOnly, to initialize all needed buffer objects
+    Group::draw(program, glm::mat4(), true);
+
     if(-1 == m_vao)
         initialize(program);
 
-    if(m_invalidated)
+    if(m_invalidatedGeometry)
         buildBoundingVolumeHierarchy();
 
     if(target)
@@ -74,6 +80,9 @@ void PathTracer::draw(
     glClear(GL_COLOR_BUFFER_BIT);
 
     program.use();
+    program.setUniform(TRANSFORM_UNIFORM, m_transform);
+    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
 
     glBindVertexArray(m_vao);                                                                  
     glError();
@@ -103,6 +112,8 @@ void PathTracer::draw(
 
     if(target)
         target->release();
+
+    program.release();
 }
 
 void PathTracer::buildBoundingVolumeHierarchy()

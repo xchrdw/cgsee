@@ -1,3 +1,5 @@
+#include <GL/glew.h>
+
 #include "cgsee.h"
 #include "painter.h"
 
@@ -5,6 +7,7 @@
 #include <gui/canvas.h>
 #include <gui/viewer.h>
 #include <core/camera.h>
+#include <core/pathtracer.h>
 #include <core/arcballnavigation.h>
 
 
@@ -19,7 +22,8 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setWindowTitle(title());
     m_viewer->initialize(format());
 
-    Camera * camera = new Camera();
+    //Camera * camera = new Camera();
+    PathTracer * camera = new PathTracer();
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
     camera->setZFar (10.0f);

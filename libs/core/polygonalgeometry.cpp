@@ -196,7 +196,8 @@ void PolygonalGeometry::retrieveNormals()
 
 void PolygonalGeometry::draw(
     const Program & program
-,   const glm::mat4 & transform)
+,   const glm::mat4 & transform
+,   const bool initOnly)
 {
 }
 

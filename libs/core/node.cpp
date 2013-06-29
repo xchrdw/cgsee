@@ -55,6 +55,7 @@ void Node::setTransform(const glm::mat4 & transform)
         return;
 
     m_transform = transform;
+    m_transformInverse = glm::inverse(transform);
     invalidateBoundingBox();
 }
 

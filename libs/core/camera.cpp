@@ -11,6 +11,7 @@ const QString Camera::VIEWPORT_UNIFORM   ("viewport");
 const QString Camera::VIEW_UNIFORM       ("view");
 const QString Camera::PROJECTION_UNIFORM ("projection");
 
+const QString Camera::CAMERAPOSITION_UNIFORM ("cameraposition");
 const QString Camera::ZNEAR_UNIFORM      ("znear");
 const QString Camera::ZFAR_UNIFORM       ("zfar");
 
@@ -54,6 +55,7 @@ void Camera::draw(
     program.setUniform(VIEWPORT_UNIFORM, m_viewport);
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
+    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
         
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
