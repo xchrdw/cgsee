@@ -8,6 +8,7 @@
 #include "program.h"
 #include "vertexcacheoptimizer.h"
 #include "vertexreuse.h"
+#include "pathtracer.h"
 
 
 static const QString TRANSFORM_UNIFORM ("transform");
@@ -170,19 +171,19 @@ void PolygonalDrawable::initPathTracingData(const Program & program)
     // ***
     // pass textures to shader
     
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0+PathTracer::textureSlots["indexBuffer"]);
     glBindTexture(GL_TEXTURE_BUFFER, indexTextureID);
     glError();
 
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE0+PathTracer::textureSlots["vertexBuffer"]);
     glBindTexture(GL_TEXTURE_BUFFER, vertexTextureID);
     glError();
     
-    glActiveTexture(GL_TEXTURE2);
+    glActiveTexture(GL_TEXTURE0+PathTracer::textureSlots["normalBuffer"]);
     glBindTexture(GL_TEXTURE_BUFFER, normalTextureID);
     glError();
 
-    //glActiveTexture(GL_TEXTURE3);
+    //glActiveTexture(GL_TEXTURE0+PathTracer::textureSlots["geometryBuffer"]);
     //glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
     //glError();
 }

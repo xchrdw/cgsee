@@ -12,12 +12,34 @@ static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
 
 std::mt19937 rng;
 
+namespace {
+    QMap<QString, GLuint> initTextureSlots() {
+        QMap<QString, GLuint> textureSlots;
+        textureSlots["indexBuffer"] = 0;
+        textureSlots["vertexBuffer"] = 1;
+        textureSlots["normalBuffer"] = 2;
+        textureSlots["geometryBuffer"] = 3;
+        textureSlots["randomVectors"] = 4;
+        textureSlots["accumulation"] = 5;
+        return textureSlots;
+    }
+}
+
+const QMap<QString, GLuint> PathTracer::textureSlots(initTextureSlots());
+
+
 PathTracer::PathTracer(const QString & name)
 :   Camera(name)
 ,   m_invalidatedGeometry(true)
 ,   m_vao(-1)
 ,   m_vertexBO(nullptr)
+,   m_randomVectorTexture(-1)
+,   m_randomVectors(nullptr)
+,   m_accuTexture(-1)
+,   m_accuFramebuffer(-1)
 {
+    /*m_pingPongBuffers[0] = nullptr;
+    m_pingPongBuffers[1] = nullptr;*/
 }
 
 PathTracer::~PathTracer()
@@ -26,8 +48,38 @@ PathTracer::~PathTracer()
 
 void PathTracer::initialize(const Program & program)
 {
-    initVertexBuffer(program);
-    initRandomVectorBuffer(program);
+    if(-1 == m_vao)
+        initVertexBuffer(program);
+    if (-1 == m_randomVectorTexture)
+        initRandomVectorBuffer(program);
+    if (m_accuFramebuffer == -1) {
+        glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
+        glGenTextures(1, &m_accuTexture);
+        glBindTexture(GL_TEXTURE_2D, m_accuTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glError();
+   
+        glGenFramebuffers(1, &m_accuFramebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_accuFramebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_accuTexture, 0);
+        glError();
+
+        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        glError();
+        if(GL_FRAMEBUFFER_COMPLETE != status)
+            qDebug("Path Tracing Frame Buffer Object incomplete.");
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glError();
+
+        for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
+            program.setUniform(it.key(), it.value());
+    }
+    //for (int i=0; i<2; ++i) {
+    //    m_pingPongBuffers[i] = new FrameBufferObject(
+    //        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, false);
+    //    m_pingPongBuffers[i]->resize(m_viewport.x, m_viewport.y);
+    //}
 }
 
 void PathTracer::initVertexBuffer(const Program & program)
@@ -66,20 +118,28 @@ void PathTracer::initVertexBuffer(const Program & program)
 
 void PathTracer::initRandomVectorBuffer(const Program & program)
 {
-    BufferObject * m_randomVectors;
     std::vector<glm::vec3> rndVecData;
-    GLuint vectorTexture;
 
     pointsOnSphere(rndVecData, 100);
 
     m_randomVectors = new BufferObject(GL_TEXTURE_BUFFER, GL_STATIC_READ);
     m_randomVectors->data<glm::vec3>(rndVecData.data(), sizeof(glm::vec3) * rndVecData.size(),  GL_RGB32F, sizeof(glm::vec3));
     
-    glActiveTexture(GL_TEXTURE4);
-    glGenTextures(1, &vectorTexture);
-    glBindTexture(GL_TEXTURE_BUFFER, vectorTexture);
+    glActiveTexture(GL_TEXTURE0 + PathTracer::textureSlots["randomVectors"]);
+    glGenTextures(1, &m_randomVectorTexture);
+    glBindTexture(GL_TEXTURE_BUFFER, m_randomVectorTexture);
     glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, m_randomVectors->buffer());
     glError();
+}
+
+void PathTracer::setUniforms(const Program & program)
+{
+    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
+    program.setUniform(VIEW_UNIFORM, m_view);
+    program.setUniform(PROJECTION_UNIFORM, m_projection);
+    program.setUniform(TRANSFORM_UNIFORM, m_transform);
+    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
 }
 
 void PathTracer::draw(
@@ -93,30 +153,38 @@ void PathTracer::draw(
     const Program & program
 ,   FrameBufferObject * target)
 {
+    if (target) {
+        qDebug("PathTracer does not want to render to texture in the moment.");
+        return;
+    }
     // call group draw with initOnly, to initialize all needed buffer objects
     Group::draw(program, glm::mat4(), true);
 
-    if(-1 == m_vao)
-        initialize(program);
+    initialize(program);
 
     if(m_invalidatedGeometry)
         buildBoundingVolumeHierarchy();
 
-    if(target)
-        target->bind();
+    //if(target)
+    //    target->bind();
 
     //update m_transform
     update();
 
+    // pingPong framebuffers
+    //uint sourceIndex = (m_pingPong ? 0 : 1);
+    //uint destIndex = (m_pingPong ? 1 : 0);
+    //m_pingPongBuffers[sourceIndex]->bindTexture2D(program, "source", PathTracer::textureSlots["source"]);
+    //m_pingPongBuffers[destIndex]->bind();
+    
+    // use fbo for read + write
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer);
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     program.use();
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    program.setUniform(VIEW_UNIFORM, m_view);
-    program.setUniform(PROJECTION_UNIFORM, m_projection);
-    program.setUniform(TRANSFORM_UNIFORM, m_transform);
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
-    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
+    setUniforms(program);
 
     glBindVertexArray(m_vao);                                                                  
     glError();
@@ -141,8 +209,25 @@ void PathTracer::draw(
     glBindVertexArray(0);
     glError();
 
-    if(target)
-        target->release();
+    //if(target)
+    //    target->release();
+
+    //m_pingPongBuffers[sourceIndex]->releaseTexture2D();
+    //m_pingPongBuffers[destIndex]->release();
+
+    //// bind destination as read buffer and write it to the screen
+    //m_pingPongBuffers[destIndex]->bind();
+    //glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    //m_pingPongBuffers[destIndex]->release();
+    //
+    //m_pingPong = !m_pingPong;
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
+    glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
     program.release();
 }
@@ -160,6 +245,31 @@ void PathTracer::invalidateGeometry()
 void PathTracer::append(Group * group)
 {
     Group::append(group);
+}
+
+void PathTracer::setViewport(
+        const int width
+    ,   const int height)
+{
+    Camera::setViewport(width, height);
+    //for (int i=0; i<2; ++i)
+    //    if (m_pingPongBuffers[i])
+    //        m_pingPongBuffers[i]->resize(width, height);
+    if (m_accuTexture == -1)
+        return;
+    glBindTexture(GL_TEXTURE_2D, m_accuTexture);
+    glError();
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+    glError();
+
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glError();
 }
 
 

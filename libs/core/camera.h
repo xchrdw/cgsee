@@ -27,7 +27,7 @@ public:
 
     const glm::ivec2 & viewport() const;
     void setViewport(const glm::ivec2 & size);
-    void setViewport(
+    virtual void setViewport(
         const int width
     ,   const int height);
 

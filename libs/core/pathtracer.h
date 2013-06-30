@@ -4,6 +4,8 @@
 
 #include <hash_map>
 
+#include <QMap>
+
 #include "declspec.h"
 #include "camera.h"
 
@@ -15,6 +17,8 @@ class FrameBufferObject;
 class CGSEE_API PathTracer : public Camera
 {
 public:
+    const static QMap<QString, GLuint> textureSlots;
+
     PathTracer(const QString & name = "unnamed");
     virtual ~PathTracer();
 
@@ -33,6 +37,12 @@ protected:
     void initRandomVectorBuffer(const Program & program);
     void buildBoundingVolumeHierarchy();
 
+    void setUniforms(const Program & program);
+
+    virtual void setViewport(
+        const int width
+    ,   const int height) override;
+
     static void pointsOnSphere(std::vector<glm::vec3> & points, const unsigned int minN);
     static const glm::uint splitEdge(
         const glm::uint a
@@ -46,4 +56,11 @@ protected:
 
     GLuint m_vao;
     BufferObject * m_vertexBO;
+    GLuint m_randomVectorTexture;
+    BufferObject * m_randomVectors;
+
+    GLuint m_accuTexture;
+    GLuint m_accuFramebuffer;
+    //bool m_pingPong;
+    //FrameBufferObject * m_pingPongBuffers[2];
 };
