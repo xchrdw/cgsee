@@ -21,7 +21,7 @@ uniform samplerBuffer vertexBuffer;
 uniform samplerBuffer normalBuffer;
 uniform samplerBuffer geometryBuffer;
 uniform samplerBuffer randomVectors;
-uniform sampler2D accumulation; // do not read after setting fragColor!
+uniform sampler2D accumulation;
 
 
 vec3 light = vec3(1000.0, 0.0, 0.0);
@@ -52,7 +52,8 @@ void main()
         return;
     }
 
-    fragColor = vec4(primaryIntersectionPoint, 1.0);
+    // fragColor = vec4(primaryIntersectionPoint, 1.0);
+    fragColor = mix(vec4(primaryIntersectionPoint, 1.0), oldFragColor, 0.001);
     return;
 
     int secondaryNearestIndex;
@@ -73,7 +74,7 @@ void main()
 
     float cos = dot(normalize(light), normalize(normalAvg));
 
-    fragColor = mix(vec4(vec3(cos), 1.0), oldFragColor. 0.5);
+    fragColor = mix(vec4(vec3(cos), 1.0), oldFragColor, 0.5);
 
 }
 

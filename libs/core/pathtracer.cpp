@@ -35,11 +35,9 @@ PathTracer::PathTracer(const QString & name)
 ,   m_vertexBO(nullptr)
 ,   m_randomVectorTexture(-1)
 ,   m_randomVectors(nullptr)
-,   m_accuTexture(-1)
-,   m_accuFramebuffer(-1)
 {
-    /*m_pingPongBuffers[0] = nullptr;
-    m_pingPongBuffers[1] = nullptr;*/
+    m_accuTexture[0] = m_accuTexture[1] = -1;
+    m_accuFramebuffer[0] = m_accuFramebuffer[1] = -1;
 }
 
 PathTracer::~PathTracer()
@@ -52,34 +50,31 @@ void PathTracer::initialize(const Program & program)
         initVertexBuffer(program);
     if (-1 == m_randomVectorTexture)
         initRandomVectorBuffer(program);
-    if (m_accuFramebuffer == -1) {
-        glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
-        glGenTextures(1, &m_accuTexture);
-        glBindTexture(GL_TEXTURE_2D, m_accuTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
-        glError();
+    if (m_accuFramebuffer[0] == -1) {
+        glGenTextures(2, m_accuTexture);
+        glGenFramebuffers(2, m_accuFramebuffer);
+
+        for (int i=0; i<2; ++i) {
+            glBindTexture(GL_TEXTURE_2D, m_accuTexture[i]);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+            glError();
    
-        glGenFramebuffers(1, &m_accuFramebuffer);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_accuFramebuffer);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_accuTexture, 0);
-        glError();
+            glBindFramebuffer(GL_FRAMEBUFFER, m_accuFramebuffer[i]);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_accuTexture[i], 0);
+            glError();
 
-        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        glError();
-        if(GL_FRAMEBUFFER_COMPLETE != status)
-            qDebug("Path Tracing Frame Buffer Object incomplete.");
+            const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+            glError();
+            if(GL_FRAMEBUFFER_COMPLETE != status)
+                qDebug("Path Tracing Frame Buffer Object incomplete.");
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glError();
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glError();
+        }
 
         for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
             program.setUniform(it.key(), it.value());
     }
-    //for (int i=0; i<2; ++i) {
-    //    m_pingPongBuffers[i] = new FrameBufferObject(
-    //        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, false);
-    //    m_pingPongBuffers[i]->resize(m_viewport.x, m_viewport.y);
-    //}
 }
 
 void PathTracer::initVertexBuffer(const Program & program)
@@ -153,10 +148,6 @@ void PathTracer::draw(
     const Program & program
 ,   FrameBufferObject * target)
 {
-    if (target) {
-        qDebug("PathTracer does not want to render to texture in the moment.");
-        return;
-    }
     // call group draw with initOnly, to initialize all needed buffer objects
     Group::draw(program, glm::mat4(), true);
 
@@ -165,25 +156,25 @@ void PathTracer::draw(
     if(m_invalidatedGeometry)
         buildBoundingVolumeHierarchy();
 
-    //if(target)
-    //    target->bind();
 
     //update m_transform
     update();
 
-    // pingPong framebuffers
-    //uint sourceIndex = (m_pingPong ? 0 : 1);
-    //uint destIndex = (m_pingPong ? 1 : 0);
-    //m_pingPongBuffers[sourceIndex]->bindTexture2D(program, "source", PathTracer::textureSlots["source"]);
-    //m_pingPongBuffers[destIndex]->bind();
+    // switch the rendering buffers for each pass
+    m_whichBuffer = !m_whichBuffer;
+    unsigned short readIndex = m_whichBuffer ? 0 : 1;
+    unsigned short writeIndex = m_whichBuffer ? 1 : 0;
     
-    // use fbo for read + write
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
     program.use();
+
+    glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
+    glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer[writeIndex]);
+    //glClear(GL_COLOR_BUFFER_BIT);
+    
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer[readIndex]);
+
     setUniforms(program);
 
     glBindVertexArray(m_vao);                                                                  
@@ -209,25 +200,18 @@ void PathTracer::draw(
     glBindVertexArray(0);
     glError();
 
-    //if(target)
-    //    target->release();
-
-    //m_pingPongBuffers[sourceIndex]->releaseTexture2D();
-    //m_pingPongBuffers[destIndex]->release();
-
-    //// bind destination as read buffer and write it to the screen
-    //m_pingPongBuffers[destIndex]->bind();
-    //glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    //m_pingPongBuffers[destIndex]->release();
-    //
-    //m_pingPong = !m_pingPong;
-
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
+    // copy written buffer to screen/output framebuffer
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer[writeIndex]);
+    if(target)
+        target->bind();
     glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+    if(target)
+        target->release();
 
     program.release();
 }
@@ -252,24 +236,23 @@ void PathTracer::setViewport(
     ,   const int height)
 {
     Camera::setViewport(width, height);
-    //for (int i=0; i<2; ++i)
-    //    if (m_pingPongBuffers[i])
-    //        m_pingPongBuffers[i]->resize(width, height);
-    if (m_accuTexture == -1)
+    if (m_accuTexture[0] == -1)
         return;
-    glBindTexture(GL_TEXTURE_2D, m_accuTexture);
-    glError();
+    for (int i=0; i<2; ++i) {
+        glBindTexture(GL_TEXTURE_2D, m_accuTexture[i]);
+        glError();
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
-    glError();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glError();
 
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glError();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glError();
+    }
 }
 
 

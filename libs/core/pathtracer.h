@@ -59,8 +59,8 @@ protected:
     GLuint m_randomVectorTexture;
     BufferObject * m_randomVectors;
 
-    GLuint m_accuTexture;
-    GLuint m_accuFramebuffer;
-    //bool m_pingPong;
-    //FrameBufferObject * m_pingPongBuffers[2];
+    // two Framebuffers for "pingPong" rendering -> reuse result of last previous draw call
+    bool m_whichBuffer;
+    GLuint m_accuTexture[2];
+    GLuint m_accuFramebuffer[2];
 };
