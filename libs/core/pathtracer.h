@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+#include <hash_map>
+
 #include "declspec.h"
 #include "camera.h"
 
@@ -27,8 +29,16 @@ public:
 
 protected:
     void initialize(const Program & program);
-
+    void initVertexBuffer(const Program & program);
+    void initRandomVectorBuffer(const Program & program);
     void buildBoundingVolumeHierarchy();
+
+    static void pointsOnSphere(std::vector<glm::vec3> & points, const unsigned int minN);
+    static const glm::uint splitEdge(
+        const glm::uint a
+    ,   const glm::uint b
+    ,   std::vector<glm::vec3> & points
+    ,   std::hash_map<glm::highp_uint, glm::uint> & cache);
 
     void invalidateGeometry();
 

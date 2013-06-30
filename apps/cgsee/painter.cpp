@@ -259,6 +259,7 @@ void Painter::setUniforms()
         m_useProgram->setUniform("vertexBuffer", 1);
         m_useProgram->setUniform("normalBuffer", 2);
         m_useProgram->setUniform("geometryBuffer", 3);
+        m_useProgram->setUniform("randomVectors", 4);
     }
 }
 

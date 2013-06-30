@@ -1,3 +1,5 @@
+#include <random>
+
 #include "pathtracer.h"
 
 #include "program.h"
@@ -7,6 +9,8 @@
 
 static const QString TRANSFORM_UNIFORM ("transform");
 static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
+
+std::mt19937 rng;
 
 PathTracer::PathTracer(const QString & name)
 :   Camera(name)
@@ -21,6 +25,12 @@ PathTracer::~PathTracer()
 }
 
 void PathTracer::initialize(const Program & program)
+{
+    initVertexBuffer(program);
+    initRandomVectorBuffer(program);
+}
+
+void PathTracer::initVertexBuffer(const Program & program)
 {
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
@@ -54,6 +64,24 @@ void PathTracer::initialize(const Program & program)
     glError();
 }
 
+void PathTracer::initRandomVectorBuffer(const Program & program)
+{
+    BufferObject * m_randomVectors;
+    std::vector<glm::vec3> rndVecData;
+    GLuint vectorTexture;
+
+    pointsOnSphere(rndVecData, 100);
+
+    m_randomVectors = new BufferObject(GL_TEXTURE_BUFFER, GL_STATIC_READ);
+    m_randomVectors->data<glm::vec3>(rndVecData.data(), sizeof(glm::vec3) * rndVecData.size(),  GL_RGB32F, sizeof(glm::vec3));
+    
+    glActiveTexture(GL_TEXTURE4);
+    glGenTextures(1, &vectorTexture);
+    glBindTexture(GL_TEXTURE_BUFFER, vectorTexture);
+    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, m_randomVectors->buffer());
+    glError();
+}
+
 void PathTracer::draw(
     const Program & program
     ,   const glm::mat4 & transform)
@@ -83,6 +111,9 @@ void PathTracer::draw(
     glClear(GL_COLOR_BUFFER_BIT);
 
     program.use();
+    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
+    program.setUniform(VIEW_UNIFORM, m_view);
+    program.setUniform(PROJECTION_UNIFORM, m_projection);
     program.setUniform(TRANSFORM_UNIFORM, m_transform);
     program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
     program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
@@ -94,9 +125,6 @@ void PathTracer::draw(
     glEnable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
 
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    program.setUniform(VIEW_UNIFORM, m_view);
-    program.setUniform(PROJECTION_UNIFORM, m_projection);
 
     glViewport(0, 0, m_viewport.x, m_viewport.y);
     
@@ -132,4 +160,142 @@ void PathTracer::invalidateGeometry()
 void PathTracer::append(Group * group)
 {
     Group::append(group);
+}
+
+
+// https://code.google.com/p/pathgl/source/browse/pathgl.cpp thanks Daniel :-D
+// creates at least minN points on a unitsphere by creating a hemi-icosphere:
+// approach to create evenly distributed points on a sphere
+//   1. create points of icosphere
+//   2. cutout hemisphere
+//   3. randomize point list
+
+void PathTracer::pointsOnSphere(
+    std::vector<glm::vec3> & points
+,   const unsigned int minN)
+{
+    // 1. create an icosphere
+
+    static const float t = (1.f + sqrtf(5.f)) * 0.5f;
+
+    std::vector<glm::vec3> icopoints;
+    std::vector<glm::uvec3> icofaces;
+
+    // basic icosahedron
+
+    icopoints.push_back(glm::vec3(-1, t, 0));
+    icopoints.push_back(glm::vec3( 1, t, 0));
+    icopoints.push_back(glm::vec3(-1,-t, 0));
+    icopoints.push_back(glm::vec3( 1,-t, 0));
+
+    icopoints.push_back(glm::vec3( 0,-1, t));
+    icopoints.push_back(glm::vec3( 0, 1, t));
+    icopoints.push_back(glm::vec3( 0,-1,-t));
+    icopoints.push_back(glm::vec3( 0, 1,-t));
+
+    icopoints.push_back(glm::vec3( t, 0,-1));
+    icopoints.push_back(glm::vec3( t, 0, 1));
+    icopoints.push_back(glm::vec3(-t, 0,-1));
+    icopoints.push_back(glm::vec3(-t, 0, 1));
+
+    // normalize
+    for(int i = 0; i < 12; ++i)
+        icopoints[i] = glm::normalize(icopoints[i]);
+
+    icofaces.push_back(glm::uvec3(  0, 11,  5));
+    icofaces.push_back(glm::uvec3(  0,  5,  1));
+    icofaces.push_back(glm::uvec3(  0,  1,  7));
+    icofaces.push_back(glm::uvec3(  0,  7, 10));
+    icofaces.push_back(glm::uvec3(  0, 10, 11));
+
+    icofaces.push_back(glm::uvec3(  1,  5,  9));
+    icofaces.push_back(glm::uvec3(  5, 11,  4));
+    icofaces.push_back(glm::uvec3( 11, 10,  2));
+    icofaces.push_back(glm::uvec3( 10,  7,  6));
+    icofaces.push_back(glm::uvec3(  7,  1,  8));
+
+    icofaces.push_back(glm::uvec3(  3,  9,  4));
+    icofaces.push_back(glm::uvec3(  3,  4,  2));
+    icofaces.push_back(glm::uvec3(  3,  2,  6));
+    icofaces.push_back(glm::uvec3(  3,  6,  8));
+    icofaces.push_back(glm::uvec3(  3,  8,  9));
+
+    icofaces.push_back(glm::uvec3(  4,  9,  5));
+    icofaces.push_back(glm::uvec3(  2,  4, 11));
+    icofaces.push_back(glm::uvec3(  6,  2, 10));
+    icofaces.push_back(glm::uvec3(  8,  6,  7));
+    icofaces.push_back(glm::uvec3(  9,  8,  1));
+
+    // iterative triangle refinement - split each triangle
+    // into 4 new ones and create points appropriately.
+
+    const int r = static_cast<int>(ceil(log(static_cast<float>(minN * 2 / 12.f)) / log(4.f))); // N = 12 * 4 ^ r
+
+    std::hash_map<glm::highp_uint, glm::uint> cache;
+
+    for(int i = 0; i < r; ++i)
+    {
+        const int size(static_cast<int>(icofaces.size()));
+
+        for(int f = 0; f < size; ++f)
+        {
+            glm::uvec3 & face(icofaces[f]);
+
+            const glm::uint  a(face.x);
+            const glm::uint  b(face.y);
+            const glm::uint  c(face.z);
+
+            const glm::uint ab(splitEdge(a, b, icopoints, cache));
+            const glm::uint bc(splitEdge(b, c, icopoints, cache));
+            const glm::uint ca(splitEdge(c, a, icopoints, cache));
+
+            face = glm::uvec3(ab, bc, ca);
+
+            icofaces.push_back(glm::uvec3(a, ab, ca));
+            icofaces.push_back(glm::uvec3(b, bc, ab));
+            icofaces.push_back(glm::uvec3(c, ca, bc));
+        }
+    }
+
+    // 2. remove lower hemisphere
+
+    const int size(static_cast<int>(icopoints.size()));
+    for(int i = 0; i < size; ++i)
+        if(icopoints[i].y > 0.f)
+            points.push_back(icopoints[i]);
+
+    // 3. shuffle all points of hemisphere
+
+    std::shuffle(points.begin(), points.end(), rng);
+}
+
+
+// splits a triangle edge by adding an appropriate new point (normalized on sphere)
+// to the points list (if not already cached) and returns the index to this point.
+const glm::uint PathTracer::splitEdge(
+    const glm::uint a
+,   const glm::uint b
+,   std::vector<glm::vec3> & points
+,   std::hash_map<glm::highp_uint, glm::uint> & cache)
+{
+    const bool aSmaller(a < b);
+    const glm::highp_uint smaller(aSmaller ? a : b);
+    const glm::highp_uint greater(aSmaller ? b : a);
+    const glm::highp_uint hash((smaller << 32) + greater);
+
+    std::hash_map<glm::highp_uint, glm::uint>::const_iterator h(cache.find(hash));
+    if(cache.end() != h)
+        return h->second;
+
+    const glm::vec3 & a3(points[a]);
+    const glm::vec3 & b3(points[b]);
+
+    const glm::vec3 s(glm::normalize((a3 + b3) * 0.5f));
+
+    points.push_back(s);
+    const glm::uint i(static_cast<glm::uint>(points.size()) - 1);
+
+    cache[hash] = i;
+
+    return i;
 }
