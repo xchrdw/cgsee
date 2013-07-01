@@ -12,7 +12,7 @@ public:
     AbstractPainterProperty(QString name, QString description);
     virtual ~AbstractPainterProperty();
 
-    virtual void visit(AbstractPropertyVisitor & visitor) =0;
+    virtual void visit(AbstractPropertyVisitor & visitor) = 0;
 
     QString name() const;
     void setName(QString name);

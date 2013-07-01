@@ -20,11 +20,8 @@
 #include "core/arcballnavigation.h"
 #include "core/flightnavigation.h"
 
-#include <core/painter/boolproperty.h>
-#include <core/painter/intproperty.h>
-#include <core/painter/floatproperty.h>
 #include <core/painter/genericlistproperty.h>
-#include <core/painter/genericproperty.h>
+#include <core/painter/valueproperty.h>
 #include <gui/propertywidgetbuilder.h>
 
 
@@ -106,10 +103,11 @@ const bool Painter::initialize()
 
 
     // NORMALS
-    GenericProperty<int *> * intprop = new GenericProperty<int *>("intprop", "How much int?");
-    GenericProperty<float> * floatprop = new GenericProperty<float>("floatprop", "How much float?");
-    IntProperty * apples = new IntProperty("apples", "How much apples would you like?");
-    FloatProperty * derplevel = new FloatProperty("derplevel", "Please choose a level of derpin");
+    ValueProperty<int *> * intprop = new ValueProperty<int *>("intprop", "How much int?");
+    ValueProperty<bool> * boolprop = new ValueProperty<bool>("boolprop", "How much bool?");
+    boolprop->setValue(false);
+    ValueProperty<int> * apples = new ValueProperty<int>("apples", "How much apples would you like?");
+    ValueProperty<float> * derplevel = new ValueProperty<float>("derplevel", "Please choose a level of derpin");
     GenericListProperty<Program> * shaders = new GenericListProperty<Program>("shaders", "Choose Rendering Shader: ");
 
     Program * normals = new Program();
@@ -131,7 +129,7 @@ const bool Painter::initialize()
 
     shaders->insert("rainbow", rainbow);
     this->addProperty(intprop);
-    this->addProperty(floatprop);
+    this->addProperty(boolprop);
     this->addProperty(shaders);
     this->addProperty(apples);
     this->addProperty(derplevel);

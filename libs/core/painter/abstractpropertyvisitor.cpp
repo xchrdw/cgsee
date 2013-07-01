@@ -1,16 +1,6 @@
 
 #include "abstractpropertyvisitor.h"
-#include "genericproperty.h"
-
-void AbstractPropertyVisitor::visitGeneric(GenericProperty<int> & intProperty)
-{
-    qDebug("visit int property");
-}
-
-void AbstractPropertyVisitor::visitGeneric(GenericProperty<float> & intProperty)
-{
-    qDebug("visit float property");
-}
+#include "valueproperty.h"
 
 void AbstractPropertyVisitor::iterateOverProperties(const QList<AbstractPainterProperty *> & properties)
 {

@@ -6,10 +6,8 @@
 #include <QSlider>
 #include <QSpinBox>
 #include "propertywidgetbuilder.h"
-#include <core/painter/intproperty.h>
-#include <core/painter/floatproperty.h>
-#include <core/painter/boolproperty.h>
 #include <core/painter/abstractlistproperty.h>
+#include <core/painter/valueproperty.h>
 
 PropertyWidgetBuilder::PropertyWidgetBuilder()
 :   m_widget(new QWidget())
@@ -33,22 +31,6 @@ void PropertyWidgetBuilder::buildWidget(const QList<AbstractPainterProperty *> &
     this->iterateOverProperties(properties);
 }
 
-void PropertyWidgetBuilder::visitBool(BoolProperty & boolProperty)
-{
-    QCheckBox * checkBox = new QCheckBox(m_widget);
-    if (boolProperty.enabled())
-        checkBox->setCheckState(Qt::Checked);
-    else
-        checkBox->setCheckState(Qt::Unchecked);
-
-    m_layout->addRow(boolProperty.description(), checkBox);
-
-    QObject::connect(checkBox, &QCheckBox::stateChanged, [&boolProperty] (int state) {
-        boolProperty.setEnabled(state);
-        qDebug("Painter: Set %s = %i", qPrintable(boolProperty.name()), boolProperty.enabled());
-    });
-}
-
 void PropertyWidgetBuilder::visitList(AbstractListProperty & listProperty)
 {
     QComboBox * comboBox = new QComboBox(m_widget);
@@ -66,34 +48,50 @@ void PropertyWidgetBuilder::visitList(AbstractListProperty & listProperty)
                      });
 }
 
-void PropertyWidgetBuilder::visitInt(IntProperty & intProperty)
-{
-    QSpinBox * spinbox = new QSpinBox(m_widget);
-    m_layout->addRow(intProperty.description(), spinbox);
-
-    QObject::connect(spinbox,
-                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                     [&intProperty] (int i) {
-                         intProperty.setValue(i);
-                         qDebug("Painter: Set %s = %i",
-                                qPrintable(intProperty.name()),
-                                i);
-                     });
-}
-
-void PropertyWidgetBuilder::visitFloat(FloatProperty & floatProperty)
+void PropertyWidgetBuilder::visitGeneric(ValueProperty<float> & property)
 {
     QSlider * slider = new QSlider(m_widget);
     slider->setOrientation(Qt::Horizontal);
 
-    m_layout->addRow(floatProperty.description(), slider);
+    m_layout->addRow(property.description(), slider);
 
     QObject::connect(slider,
                      static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
-                     [&floatProperty] (int i) {
-                         floatProperty.setValue(i);
+                     [&property] (int i) {
+                         property.setValue(i);
                          qDebug("Painter: Set %s = %i",
-                                qPrintable(floatProperty.name()),
+                                qPrintable(property.name()),
+                                i);
+                     });
+}
+
+void PropertyWidgetBuilder::visitGeneric(ValueProperty<bool> & property)
+{
+    QCheckBox * checkBox = new QCheckBox(m_widget);
+    if (property.value())
+        checkBox->setCheckState(Qt::Checked);
+    else
+        checkBox->setCheckState(Qt::Unchecked);
+
+    m_layout->addRow(property.description(), checkBox);
+
+    QObject::connect(checkBox, &QCheckBox::stateChanged, [&property] (int state) {
+        property.setValue(state);
+        qDebug("Painter: Set %s = %i", qPrintable(property.name()), property.value());
+    });
+}
+
+void PropertyWidgetBuilder::visitGeneric(ValueProperty<int> & property)
+{
+    QSpinBox * spinbox = new QSpinBox(m_widget);
+    m_layout->addRow(property.description(), spinbox);
+
+    QObject::connect(spinbox,
+                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+                     [&property] (int i) {
+                         property.setValue(i);
+                         qDebug("Painter: Set %s = %i",
+                                qPrintable(property.name()),
                                 i);
                      });
 }

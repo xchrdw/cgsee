@@ -5,47 +5,47 @@
 #include "abstractpropertyvisitor.h"
 
 template <typename Type>
-class GenericProperty : public AbstractPainterProperty
+class ValueProperty : public AbstractPainterProperty
 {
 public:
-    GenericProperty(QString name, QString description, Type value = NULL);
-    virtual ~GenericProperty();
+    ValueProperty(QString name, QString description, Type value = NULL);
+    virtual ~ValueProperty();
 
     virtual void visit(AbstractPropertyVisitor & visitor);
 
-    Type value() const;
-    void setValue(Type value);
+    virtual Type value() const;
+    virtual void setValue(Type value);
 
 protected:
     Type m_value;
 };
 
 template <typename Type>
-GenericProperty<Type>::GenericProperty(QString name, QString description, Type value)
+ValueProperty<Type>::ValueProperty(QString name, QString description, Type value)
 :   AbstractPainterProperty(name, description)
 ,   m_value(value)
 {
 }
 
 template <typename Type>
-GenericProperty<Type>::~GenericProperty()
+ValueProperty<Type>::~ValueProperty()
 {
 }
 
 template <typename Type>
-void GenericProperty<Type>::visit(AbstractPropertyVisitor & visitor)
+void ValueProperty<Type>::visit(AbstractPropertyVisitor & visitor)
 {
     visitor.visitGeneric(*this);
 }
 
 template <typename Type>
-Type GenericProperty<Type>::value() const
+Type ValueProperty<Type>::value() const
 {
     return m_value;
 }
 
 template <typename Type>
-void GenericProperty<Type>::setValue(Type value)
+void ValueProperty<Type>::setValue(Type value)
 {
     m_value = value;
 }

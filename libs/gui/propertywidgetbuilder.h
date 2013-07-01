@@ -7,6 +7,9 @@
 class QWidget;
 class QFormLayout;
 
+template <typename Type>
+class ValueProperty;
+
 class CGSEE_API PropertyWidgetBuilder : public AbstractPropertyVisitor
 {
 public:
@@ -15,10 +18,10 @@ public:
 
     void buildWidget(const QList<AbstractPainterProperty *> & properties);
 
-    virtual void visitBool(BoolProperty & boolProperty);
     virtual void visitList(AbstractListProperty & listProperty);
-    virtual void visitInt(IntProperty & intProperty);
-    virtual void visitFloat(FloatProperty & floatProperty);
+    virtual void visitGeneric(ValueProperty<bool> & property);
+    virtual void visitGeneric(ValueProperty<float> & property);
+    virtual void visitGeneric(ValueProperty<int> & property);
 
     QWidget * retainWidget();
 

@@ -6,32 +6,28 @@
 #include <core/declspec.h>
 
 class AbstractPainterProperty;
-class BoolProperty;
 class AbstractListProperty;
-class IntProperty;
-class FloatProperty;
 
 template <typename Type>
-class GenericProperty;
+class ValueProperty;
 
 class CGSEE_API AbstractPropertyVisitor
 {
 public:
-    virtual void visitBool(BoolProperty & boolProperty) = 0;
+    template <typename Type> 
+    void visitGeneric(ValueProperty<Type> & property);
+
     virtual void visitList(AbstractListProperty & listProperty) = 0;
-    virtual void visitInt(IntProperty & intProperty) = 0;
-    virtual void visitFloat(FloatProperty & floatProperty) = 0;
-    
-    template <typename T> void visitGeneric(T & property);
-    virtual void visitGeneric(GenericProperty<int> & intProperty);
-    virtual void visitGeneric(GenericProperty<float> & intProperty);
+    virtual void visitGeneric(ValueProperty<bool> & property) = 0;
+    virtual void visitGeneric(ValueProperty<float> & property) = 0;
+    virtual void visitGeneric(ValueProperty<int> & property) = 0;
 
 protected:
     void iterateOverProperties(const QList<AbstractPainterProperty *> & properties);
 };
 
-template <typename T> 
-void AbstractPropertyVisitor::visitGeneric(T & property)
+template <typename Type>
+void AbstractPropertyVisitor::visitGeneric(ValueProperty<Type> & property)
 {
-    qDebug("Nothing todo for property with name %s", qPrintable(property.name()));
+    qWarning("No specialized visit method found for property: \"%s\"", qPrintable(property.name()));
 }
