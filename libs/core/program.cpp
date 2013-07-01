@@ -270,6 +270,17 @@ void Program::setUniform(
 
 void Program::setUniform(
     const QString & name
+,   const glm::vec3 * vec_array
+,   const unsigned int & count) const
+{
+    const GLint location(uniformLocation(name));
+
+    glUniform3fv(location, count, glm::value_ptr(*vec_array));
+    glError();
+}
+
+void Program::setUniform(
+    const QString & name
 ,   const glm::ivec3 & vec) const
 {
     const GLint location(uniformLocation(name));

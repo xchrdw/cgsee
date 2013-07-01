@@ -81,8 +81,7 @@ void FileAssociatedShader::unregisterShader(
 {
     t_shadersByFilePath::iterator f(shadersByFilePath.find(filePath));
 
-    if(shadersByFilePath.end() == f)
-        return; // shader was already deleted because it was used for more than one program
+    assert(shadersByFilePath.end() != f); // shader was loaded twice
 
     t_shaders * shaders(f.value());
 

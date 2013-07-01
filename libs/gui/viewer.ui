@@ -31,10 +31,12 @@
      <property name="title">
       <string>Select &amp;Frame Buffer</string>
      </property>
-    <addaction name="fboColorAction"/>
-    <addaction name="fboNormalzAction"/>
-    <addaction name="fboShadowMapAction"/>
-    <addaction name="fboTempBufferAction"/>
+     <addaction name="fboColorAction"/>
+     <addaction name="fboNormalzAction"/>
+     <addaction name="fboShadowsAction"/>
+     <addaction name="fboShadowMapAction"/>
+     <addaction name="fboSSAOAction"/>
+     <addaction name="fboTempBufferAction"/>
      <addaction name="separator"/>
      <addaction name="showFrameBuffersAction"/>
     </widget>
@@ -148,6 +150,7 @@
     <addaction name="colorRenderingAction"/>
     <addaction name="shadowMappingAction"/>
     <addaction name="ssaoAction"/>
+    <addaction name="ssaoBlurAction"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -162,7 +165,6 @@
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
    <addaction name="shadingMenu"/>
-   <addaction name="menuFrameBuffer"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -710,6 +712,9 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>SSAO</string>
    </property>
@@ -723,6 +728,27 @@
    </property>
    <property name="text">
     <string>Color</string>
+   </property>
+  </action>
+  <action name="fboShadowsAction">
+   <property name="text">
+    <string>Shadows</string>
+   </property>
+  </action>
+  <action name="fboSSAOAction">
+   <property name="text">
+    <string>SSAO</string>
+   </property>
+  </action>
+  <action name="ssaoBlurAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SSAO blur</string>
    </property>
   </action>
  </widget>

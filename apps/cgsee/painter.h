@@ -7,9 +7,6 @@
 
 #include <core/abstractscenepainter.h>
 
-
-
-
 class Camera;
 class Group;
 class ScreenQuad;
@@ -41,12 +38,11 @@ protected:
     
     void setUniforms();
 
-    void swapBuffers();
-
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 
-    void addShadows( t_samplerByName &sampler );
-    void addSSAO( t_samplerByName &sampler );
+    void createShadows();
+    void createSSAO();
+    void addBlur(FrameBufferObject * fbo);
 
     static void bindSampler(
         const t_samplerByName & sampler
@@ -63,6 +59,8 @@ protected:
     Program * m_lightsource;
     Program * m_shadowMapping;
     Program * m_SSAO;
+    Program * m_blurv;
+    Program * m_blurh;
     Program * m_wireframe;
     Program * m_primitiveWireframe;
     Program * m_solidWireframe;
@@ -73,10 +71,14 @@ protected:
     Program * m_useProgram;
     FrameBufferObject * m_fboColor;
     FrameBufferObject * m_fboTemp;
+    FrameBufferObject * m_fboSSAO;
+    FrameBufferObject * m_fboShadows;
     FrameBufferObject * m_fboNormalz;
     FrameBufferObject * m_fboShadowMap;
     FrameBufferObject ** m_fboActiveBuffer;
 
+    std::vector<glm::vec3> m_kernel;
+    std::vector<glm::vec3> m_noise;
 
     glm::vec3 camPos;
 
@@ -87,4 +89,5 @@ protected:
     bool m_useColor;
     bool m_useShadows;
     bool m_useSSAO;
+    bool m_blurSSAO;
 };

@@ -226,6 +226,7 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+    painter()->setShading(' ');
     m_qtCanvas->repaint();
 }
 
@@ -336,6 +337,12 @@ void Viewer::on_ssaoAction_triggered()
     m_qtCanvas->repaint();
 }
 
+void Viewer::on_ssaoBlurAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(4, m_ui->ssaoBlurAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
 void Viewer::on_fboColorAction_triggered()
 {
     m_qtCanvas->painter()->setFrameBuffer(1);
@@ -348,15 +355,26 @@ void Viewer::on_fboNormalzAction_triggered()
     m_qtCanvas->repaint();
 }
 
-void Viewer::on_fboShadowMapAction_triggered()
+void Viewer::on_fboShadowsAction_triggered()
 {
     m_qtCanvas->painter()->setFrameBuffer(3);
     m_qtCanvas->repaint();
 }
 
-void Viewer::on_fboTempBufferAction_triggered()
+void Viewer::on_fboShadowMapAction_triggered()
 {
     m_qtCanvas->painter()->setFrameBuffer(4);
+    m_qtCanvas->repaint();
+}
+void Viewer::on_fboSSAOAction_triggered()
+{
+    m_qtCanvas->painter()->setFrameBuffer(5);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboTempBufferAction_triggered()
+{
+    m_qtCanvas->painter()->setFrameBuffer(6);
     m_qtCanvas->repaint();
 }
 

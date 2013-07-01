@@ -4,7 +4,6 @@ in vec4 gl_FragCoord;
 out vec4 fragColor;
 
 
-
 uniform float znear;
 uniform float zfar;
 

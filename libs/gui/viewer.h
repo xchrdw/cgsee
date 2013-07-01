@@ -106,9 +106,12 @@ protected slots:
     void on_colorRenderingAction_triggered();
     void on_shadowMappingAction_triggered();
     void on_ssaoAction_triggered();
+    void on_ssaoBlurAction_triggered();
    
     void on_fboColorAction_triggered();
     void on_fboNormalzAction_triggered();
+    void on_fboShadowsAction_triggered();
+    void on_fboSSAOAction_triggered();
     void on_fboShadowMapAction_triggered();
     void on_fboTempBufferAction_triggered();
 
