@@ -2,9 +2,9 @@
 #pragma once
 
 #include <QString>
-#include "abstractpainterproperty.h"
+#include "abstractproperty.h"
 
-class AbstractListProperty : public AbstractPainterProperty
+class AbstractListProperty : public AbstractProperty
 {
 public:
     AbstractListProperty(QString name, QString description);

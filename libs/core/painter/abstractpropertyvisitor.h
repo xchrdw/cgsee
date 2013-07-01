@@ -5,7 +5,7 @@
 #include <QList>
 #include <core/declspec.h>
 
-class AbstractPainterProperty;
+class AbstractProperty;
 class AbstractListProperty;
 
 template <typename Type>
@@ -29,7 +29,7 @@ public:
     virtual void visitLimited(LimitedProperty<int> & property) = 0;
 
 protected:
-    void iterateOverProperties(const QList<AbstractPainterProperty *> & properties);
+    void iterateOverProperties(const QList<AbstractProperty *> & properties);
 };
 
 template <typename Type>

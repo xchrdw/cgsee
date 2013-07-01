@@ -10,7 +10,7 @@
 class QKeyEvent;
 class Camera;
 class AbstractGLParent;
-class AbstractPainterProperty;
+class AbstractProperty;
 
 class CGSEE_API AbstractPainter
 {
@@ -34,16 +34,16 @@ public:
     ,   const int height);
 
     bool propertyExists(QString name);
-    bool addProperty(AbstractPainterProperty * property);
+    bool addProperty(AbstractProperty * property);
     bool removeProperty(QString name);
 
-    AbstractPainterProperty * property(QString name);
+    AbstractProperty * property(QString name);
     
     template <class PainterProperty>
     PainterProperty * property(QString name);
 
 
-    const QList<AbstractPainterProperty *> properties() const;
+    const QList<AbstractProperty *> properties() const;
 
 protected:
     virtual const bool initialize() = 0;
@@ -51,7 +51,7 @@ protected:
 
 protected:
     bool m_initialized;
-    QHash<QString, AbstractPainterProperty *> * m_properties;
+    QHash<QString, AbstractProperty *> * m_properties;
 };
 
 template <class PainterProperty>

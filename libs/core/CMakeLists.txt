@@ -23,8 +23,8 @@ set(SOURCES
     painter/abstractpainter.cpp
     painter/abstractscenepainter.h
     painter/abstractscenepainter.cpp
-    painter/abstractpainterproperty.h
-    painter/abstractpainterproperty.cpp
+    painter/abstractproperty.h
+    painter/abstractproperty.cpp
     painter/valueproperty.h
     painter/limitedproperty.h
     painter/listproperty.h

@@ -16,7 +16,7 @@ public:
     PropertyWidgetBuilder();
     virtual ~PropertyWidgetBuilder();
 
-    void buildWidget(const QList<AbstractPainterProperty *> & properties);
+    void buildWidget(const QList<AbstractProperty *> & properties);
 
     virtual void visitList(AbstractListProperty & listProperty);
     virtual void visitGeneric(ValueProperty<bool> & property);

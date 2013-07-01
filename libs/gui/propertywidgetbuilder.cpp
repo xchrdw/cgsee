@@ -22,7 +22,7 @@ PropertyWidgetBuilder::~PropertyWidgetBuilder()
     delete m_widget;
 }
 
-void PropertyWidgetBuilder::buildWidget(const QList<AbstractPainterProperty *> & properties)
+void PropertyWidgetBuilder::buildWidget(const QList<AbstractProperty *> & properties)
 {
     delete m_widget;
     m_widget = new QWidget();

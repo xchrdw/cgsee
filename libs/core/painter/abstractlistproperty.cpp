@@ -4,7 +4,7 @@
 
 
 AbstractListProperty::AbstractListProperty(QString name, QString description)
-:   AbstractPainterProperty(name, description)
+:   AbstractProperty(name, description)
 {
 }
 

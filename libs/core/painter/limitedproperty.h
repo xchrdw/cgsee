@@ -16,9 +16,9 @@ public:
     virtual void setValue(Type value);
 
     Type minimum() const;
-    void setMinimum(Type min);
+    void setMinimum(Type min, bool silent = true);
     Type maximum() const;
-    void setMaximum(Type max);
+    void setMaximum(Type max, bool silent = true);
 
 protected:
     Type m_min;
@@ -66,9 +66,11 @@ Type LimitedProperty<Type>::minimum() const
 }
 
 template <typename Type>
-void LimitedProperty<Type>::setMinimum(Type min)
+void LimitedProperty<Type>::setMinimum(Type min, bool silent = true)
 {
     m_min = min;
+    if (!silent)
+        emit changed(*this);
 }
 
 template <typename Type>
@@ -78,9 +80,11 @@ Type LimitedProperty<Type>::maximum() const
 }
 
 template <typename Type>
-void LimitedProperty<Type>::setMaximum(Type max)
+void LimitedProperty<Type>::setMaximum(Type max, bool silent = true)
 {
     m_max = max;
+    if (!silent)
+        emit changed(*this);
 }
 
 

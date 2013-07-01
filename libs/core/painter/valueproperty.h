@@ -14,7 +14,7 @@ public:
     virtual void visit(AbstractPropertyVisitor & visitor);
 
     virtual Type value() const;
-    virtual void setValue(Type value);
+    virtual void setValue(Type value, bool silent = true);
 
 protected:
     Type m_value;
@@ -45,7 +45,9 @@ Type ValueProperty<Type>::value() const
 }
 
 template <typename Type>
-void ValueProperty<Type>::setValue(Type value)
+void ValueProperty<Type>::setValue(Type value, bool silent)
 {
     m_value = value;
+    if (!silent)
+        emit changed(*this);
 }

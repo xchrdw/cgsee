@@ -10,13 +10,13 @@
 #include "abstractglparent.h"
 #include <core/camera.h>
 #include <core/gpuquery.h>
-#include "abstractpainterproperty.h"
+#include "abstractproperty.h"
 
 
 
 AbstractPainter::AbstractPainter()
 :   m_initialized(false)
-,   m_properties(new QHash<QString, AbstractPainterProperty *>())
+,   m_properties(new QHash<QString, AbstractProperty *>())
 {
 }
  
@@ -32,7 +32,7 @@ bool AbstractPainter::propertyExists(QString name)
     return m_properties->value(name, nullptr);
 }
 
-bool AbstractPainter::addProperty(AbstractPainterProperty * property)
+bool AbstractPainter::addProperty(AbstractProperty * property)
 {
     if (!this->propertyExists(property->name())) {
         m_properties->insert(property->name(), property);
@@ -47,16 +47,16 @@ bool AbstractPainter::removeProperty(QString name)
     return m_properties->remove(name);
 }
 
-AbstractPainterProperty * AbstractPainter::property(QString name)
+AbstractProperty * AbstractPainter::property(QString name)
 {
-    AbstractPainterProperty * property = m_properties->value(name, nullptr);
+    AbstractProperty * property = m_properties->value(name, nullptr);
     if (!property)
         qFatal("Requested Property \"%s\" not found", qPrintable(name));
 
     return property;
 }
 
-const QList<AbstractPainterProperty *> AbstractPainter::properties() const
+const QList<AbstractProperty *> AbstractPainter::properties() const
 {
     return m_properties->values();
 }
