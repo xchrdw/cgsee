@@ -21,6 +21,9 @@
 
 class GLFormat;
 class QSettings;
+class QStandardItemModel;
+class QStandardItem;
+class QTreeView;
 
 class Ui_Viewer;
 class Canvas;
@@ -30,10 +33,10 @@ class AbstractScenePainter;
 
 class FileNavigator;
 class FileExplorer;
-class SceneHierarchy;
 class Viewer;
 class AbstractModelLoader;
 class Group;
+class Node;
 class DataBlockRegistry;
 
 
@@ -119,6 +122,8 @@ protected:
     void initializeExplorer();
     void initializeDockWidgets(QDockWidget * dockWidget,
         QWidget * widget, Qt::DockWidgetArea area);
+    void createSceneHierarchy(QStandardItemModel * model, Node * parentNode);
+    void fillSceneHierarchy(Node * node, QStandardItem * parent);
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -148,6 +153,7 @@ protected:
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
-    SceneHierarchy * m_sceneHierarchy;
+    QStandardItemModel * m_sceneHierarchy;
+    QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
 };

@@ -12,8 +12,11 @@
 #include <QMessageBox>
 #include <QDockWidget>
 #include <QMenu>
-#include <QFileSystemModel>
 #include <QDir>
+#include <QFileSystemModel>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QTreeView>
 
 #include "ui_viewer.h"
 #include "viewer.h"
@@ -21,7 +24,6 @@
 #include "canvasexporter.h"
 #include "fileNavigator.h"
 #include "fileExplorer.h"
-#include "scenehierarchy.h"
 
 #include <core/abstractnavigation.h>
 #include <core/flightnavigation.h>
@@ -32,6 +34,8 @@
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
+
+#include <core/scenegraph/node.h>
 
 
 namespace
@@ -57,7 +61,8 @@ Viewer::Viewer(
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
-,   m_sceneHierarchy(new SceneHierarchy(m_dockScene))
+,   m_sceneHierarchy(new QStandardItemModel())
+,   m_sceneHierarchyTree(new QTreeView(m_dockScene))
 ,   m_loader(new AssimpLoader())
 {
 
@@ -71,8 +76,9 @@ Viewer::Viewer(
     
     restoreViews(s);
     initializeExplorer();
+    m_sceneHierarchyTree->setModel(m_sceneHierarchy);
     m_dockScene->setObjectName("scenehierarchy");
-    this->initializeDockWidgets(m_dockScene, m_sceneHierarchy, Qt::RightDockWidgetArea);
+    this->initializeDockWidgets(m_dockScene, m_sceneHierarchyTree, Qt::RightDockWidgetArea);
 };
 
 void Viewer::initializeExplorer()
@@ -120,6 +126,28 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
     
     dockWidget->move(QPoint(20, 40 + count++ * (dockWidget->height() + 35)));
 #endif
+}
+
+void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * parentNode)
+{
+    QStandardItem * item = new QStandardItem(parentNode->name());
+    item->setData(QVariant(parentNode->name()), Qt::UserRole + 1);
+
+    model->clear();
+    model->appendRow(item);
+
+    fillSceneHierarchy(parentNode, item);
+}
+
+void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
+{
+    for (auto child : node->children())
+    {
+        QStandardItem * item = new QStandardItem(child->name());
+        item->setData(QVariant(child->name()), Qt::UserRole + 1);
+        parent->appendRow(item);
+        fillSceneHierarchy(child, item);
+    }
 }
 
 #ifdef WIN32
@@ -198,6 +226,7 @@ Viewer::~Viewer()
     delete m_dockNavigator;
     delete m_dockExplorer;
     delete m_dockScene;
+    delete m_sceneHierarchy;
     delete m_loader;
 }
 
@@ -260,6 +289,7 @@ void Viewer::on_loadFile(const QString & path)
     else {
         this->painter()->assignScene(scene);
         this->m_qtCanvas->update();
+        this->createSceneHierarchy(m_sceneHierarchy, (Node*) m_camera);
     }
 }
 
