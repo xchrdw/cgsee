@@ -22,6 +22,7 @@ public:
     virtual void visitGeneric(ValueProperty<bool> & property);
     virtual void visitGeneric(ValueProperty<float> & property);
     virtual void visitGeneric(ValueProperty<int> & property);
+    virtual void visitLimited(LimitedProperty<int> & property);
 
     QWidget * retainWidget();
 

@@ -8,6 +8,7 @@
 #include "propertywidgetbuilder.h"
 #include <core/painter/abstractlistproperty.h>
 #include <core/painter/valueproperty.h>
+#include <core/painter/limitedproperty.h>
 
 PropertyWidgetBuilder::PropertyWidgetBuilder()
 :   m_widget(new QWidget())
@@ -84,6 +85,23 @@ void PropertyWidgetBuilder::visitGeneric(ValueProperty<bool> & property)
 void PropertyWidgetBuilder::visitGeneric(ValueProperty<int> & property)
 {
     QSpinBox * spinbox = new QSpinBox(m_widget);
+    m_layout->addRow(property.description(), spinbox);
+
+    QObject::connect(spinbox,
+                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+                     [&property] (int i) {
+                         property.setValue(i);
+                         qDebug("Painter: Set %s = %i",
+                                qPrintable(property.name()),
+                                i);
+                     });
+}
+
+void PropertyWidgetBuilder::visitLimited(LimitedProperty<int> & property)
+{
+    QSpinBox * spinbox = new QSpinBox(m_widget);
+    spinbox->setMinimum(property.minimum());
+    spinbox->setMaximum(property.maximum());
     m_layout->addRow(property.description(), spinbox);
 
     QObject::connect(spinbox,

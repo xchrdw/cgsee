@@ -22,6 +22,7 @@
 
 #include <core/painter/genericlistproperty.h>
 #include <core/painter/valueproperty.h>
+#include <core/painter/limitedproperty.h>
 #include <gui/propertywidgetbuilder.h>
 
 
@@ -103,7 +104,7 @@ const bool Painter::initialize()
 
 
     // NORMALS
-    ValueProperty<int *> * intprop = new ValueProperty<int *>("intprop", "How much int?");
+    LimitedProperty<int> * intprop = new LimitedProperty<int>("intprop", "How much int?", 12, 1, 13);
     ValueProperty<bool> * boolprop = new ValueProperty<bool>("boolprop", "How much bool?");
     boolprop->setValue(false);
     ValueProperty<int> * apples = new ValueProperty<int>("apples", "How much apples would you like?");

@@ -11,6 +11,8 @@ public:
     LimitedProperty(QString name, QString description, Type value, Type min, Type max);
     ~LimitedProperty();
 
+    virtual void visit(AbstractPropertyVisitor & visitor);
+
     virtual void setValue(Type value);
 
     Type minimum() const;
@@ -25,25 +27,36 @@ protected:
 
 template <typename Type>
 LimitedProperty<Type>::LimitedProperty(QString name, QString description, Type value)
-:   ValueProperty(name, description, value)
+:   ValueProperty<Type>(name, description, value)
 ,   m_min(NULL)
 ,   m_max(NULL)
 {
 }
 
 template <typename Type>
-LimitedProperty(QString name, QString description, Type value, Type min, Type max)
-:   ValueProperty(name, description, value)
+LimitedProperty<Type>::LimitedProperty(QString name, QString description, Type value, Type min, Type max)
+:   ValueProperty<Type>(name, description, value)
 ,   m_min(min)
 ,   m_max(max)
 {
 }
 
 template <typename Type>
-void LimitedProperty::setValue(Type value)
+LimitedProperty<Type>::~LimitedProperty()
+{
+}
+
+template <typename Type>
+void LimitedProperty<Type>::visit(AbstractPropertyVisitor & visitor)
+{
+    visitor.visitLimited(*this);
+}
+
+template <typename Type>
+void LimitedProperty<Type>::setValue(Type value)
 {
     if ((m_min <= value) && (value <= m_max))
-        m_value = value;
+        this->m_value = value;
 }
 
 template <typename Type>
