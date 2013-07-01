@@ -27,7 +27,6 @@
 
 
 //for phong, flat and gouraud
-static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
 static const QString LIGHTDIR_UNIFORM ("lightdir");
 static const QString LIGHTDIR_UNIFORM2 ("lightdir2");
 static const QString LIGHTAMBIENTGLOBAL_UNIFORM ("lightambientglobal");
@@ -230,7 +229,6 @@ void Painter::setUniforms()
 {
     if(m_useProgram == m_flat || m_useProgram == m_gouraud || m_useProgram == m_phong)
     {
-        m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
         m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
         m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,-8.0,7.5));
 
