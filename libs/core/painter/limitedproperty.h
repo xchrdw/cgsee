@@ -13,7 +13,7 @@ public:
 
     virtual void visit(AbstractPropertyVisitor & visitor);
 
-    virtual void setValue(Type value);
+    virtual void setValue(Type value, bool silent = true);
 
     Type minimum() const;
     void setMinimum(Type min, bool silent = true);
@@ -53,10 +53,13 @@ void LimitedProperty<Type>::visit(AbstractPropertyVisitor & visitor)
 }
 
 template <typename Type>
-void LimitedProperty<Type>::setValue(Type value)
+void LimitedProperty<Type>::setValue(Type value, bool silent)
 {
-    if ((m_min <= value) && (value <= m_max))
+    if ((m_min <= value) && (value <= m_max)) {
         this->m_value = value;
+        if (!silent)
+            emit this->changed(*this);
+    }
 }
 
 template <typename Type>
@@ -66,11 +69,11 @@ Type LimitedProperty<Type>::minimum() const
 }
 
 template <typename Type>
-void LimitedProperty<Type>::setMinimum(Type min, bool silent = true)
+void LimitedProperty<Type>::setMinimum(Type min, bool silent)
 {
     m_min = min;
     if (!silent)
-        emit changed(*this);
+        emit this->changed(*this);
 }
 
 template <typename Type>
@@ -80,11 +83,11 @@ Type LimitedProperty<Type>::maximum() const
 }
 
 template <typename Type>
-void LimitedProperty<Type>::setMaximum(Type max, bool silent = true)
+void LimitedProperty<Type>::setMaximum(Type max, bool silent)
 {
     m_max = max;
     if (!silent)
-        emit changed(*this);
+        emit this->changed(*this);
 }
 
 

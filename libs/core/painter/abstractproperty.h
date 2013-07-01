@@ -24,7 +24,7 @@ public:
     void setDescription(QString name);
 
     template <class PropertyClass>
-    PropertyClass * to() const;
+    PropertyClass * to();
 
 signals:
     void changed(AbstractProperty & me);
@@ -35,10 +35,10 @@ protected:
 };
 
 template <class PropertyClass>
-PropertyClass * to() const
+PropertyClass * AbstractProperty::to()
 {
     PropertyClass * property = dynamic_cast<PropertyClass *>(this);
     if (!property)
-        qFatal("Requested Property \"%s\" is not of Type \"%s\"", qPrintable(name), typeid(PropertyClass).name());
+        qFatal("Requested Property \"%s\" is not of Type \"%s\"", qPrintable(this->name()), typeid(PropertyClass).name());
     return property;
 }

@@ -1,11 +1,11 @@
 
 #pragma once
 
-#include "abstractpainterproperty.h"
+#include "abstractproperty.h"
 #include "abstractpropertyvisitor.h"
 
 template <typename Type>
-class ValueProperty : public AbstractPainterProperty
+class ValueProperty : public AbstractProperty
 {
 public:
     ValueProperty(QString name, QString description, Type value = NULL);
@@ -22,7 +22,7 @@ protected:
 
 template <typename Type>
 ValueProperty<Type>::ValueProperty(QString name, QString description, Type value)
-:   AbstractPainterProperty(name, description)
+:   AbstractProperty(name, description)
 ,   m_value(value)
 {
 }
@@ -49,5 +49,5 @@ void ValueProperty<Type>::setValue(Type value, bool silent)
 {
     m_value = value;
     if (!silent)
-        emit changed(*this);
+        emit this->changed(*this);
 }
