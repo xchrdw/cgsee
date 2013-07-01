@@ -64,6 +64,7 @@ void main()
         //fragcolor = vec4(kernel[i]/2 + 0.5, 1.0);
     }
 
+    //fragcolor = vec4(normal/2 +0.5, 1.0);
     //fragcolor = vec4(vec3(kernel[calcNoiseCoord(v_uv, 16, 8)])/2.0 + 0.5, 1.0); 
     fragcolor = vec4(1.0 - (occlusion / sample_count)) * sourceFragment;;
 }

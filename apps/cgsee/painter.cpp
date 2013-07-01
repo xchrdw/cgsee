@@ -80,7 +80,10 @@ Painter::Painter(Camera * camera)
             glm::linearRand(-1.0f, 1.0f),
             glm::linearRand(-1.0f, 1.0f),
             glm::linearRand(0.0f, 1.0f)));
-        m_kernel[i] *=  glm::linearRand(0.0f, 1.0f);
+
+            float scale = float(i) / float(m_kernel.size());
+            scale = glm::mix(0.1f, 1.0f, scale * scale);
+            m_kernel[i] *= scale;
     }
 
     for (int i = 0; i < m_noise.size(); ++i) {

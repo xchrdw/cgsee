@@ -10,5 +10,5 @@ uniform sampler2D ssao;
 
 void main()
 {
-	fragcolor = texture(source, v_uv) * min(texture(shadows, v_uv), texture(ssao, v_uv)*1.5);
+	fragcolor = texture(source, v_uv) * min(texture(shadows, v_uv), texture(ssao, v_uv));
 }
