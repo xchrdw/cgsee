@@ -6,7 +6,6 @@
 #include "../camera.h"
 
 
-float speed = 0.003f;
 float angle = 0.05f;
 
 FlightNavigation::FlightNavigation(Camera * camera) 
@@ -128,35 +127,9 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
 
 
 void FlightNavigation::setFromMatrix(const glm::mat4 & view){ 
-    
-    //Extract Up Vector and Viewing direction from viewmatrix
-    m_up = glm::row(view, 1).xyz;
-    
-    glm::vec3 lookat = glm::row(view, 2).xyz;
-    
-    //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
-    
-    glm::mat4 modelViewT = glm::transpose(view);
-    
-    // Get plane normals
-    glm::vec3 n1(modelViewT[0]);
-    glm::vec3 n2(modelViewT[1]);
-    glm::vec3 n3(modelViewT[2]);
-    
-    // Get plane distances
-    float d1(modelViewT[0].w);
-    float d2(modelViewT[1].w);
-    float d3(modelViewT[2].w);
-    
-    // Get the intersection of these 3 planes
-    // (using math from RealTime Collision Detection by Christer Ericson)
-    glm::vec3 n2n3 = glm::cross(n2, n3);
-    float denom = glm::dot(n1, n2n3);
-    
-    m_eye = (n2n3 * d1) + glm::cross(n1, (d3*n2) - (d2*n3));
-    m_eye /= -denom;
-    
-    m_center = m_eye - lookat;
+    m_up = m_camera->getUp();
+    m_eye = m_camera->getEye();
+    m_center = m_camera->getCenter();
     
     updateView();
 }
@@ -213,6 +186,7 @@ void FlightNavigation::sideward(float speed){
 }
 
 void FlightNavigation::onTimerEvent(){
+    float speed = m_BBRadius * 0.01;
     if (m_direction.y && m_direction.x) {
         forward(m_direction.y * speed * TIMER_MS /sqrt(2.0));
         sideward(m_direction.x * speed * TIMER_MS /sqrt(2.0));
