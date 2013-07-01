@@ -24,6 +24,7 @@
 #include <core/painter/intproperty.h>
 #include <core/painter/floatproperty.h>
 #include <core/painter/genericlistproperty.h>
+#include <core/painter/genericproperty.h>
 #include <gui/propertywidgetbuilder.h>
 
 
@@ -105,6 +106,8 @@ const bool Painter::initialize()
 
 
     // NORMALS
+    GenericProperty<int *> * intprop = new GenericProperty<int *>("intprop", "How much int?");
+    GenericProperty<float> * floatprop = new GenericProperty<float>("floatprop", "How much float?");
     IntProperty * apples = new IntProperty("apples", "How much apples would you like?");
     FloatProperty * derplevel = new FloatProperty("derplevel", "Please choose a level of derpin");
     GenericListProperty<Program> * shaders = new GenericListProperty<Program>("shaders", "Choose Rendering Shader: ");
@@ -127,6 +130,8 @@ const bool Painter::initialize()
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
     shaders->insert("rainbow", rainbow);
+    this->addProperty(intprop);
+    this->addProperty(floatprop);
     this->addProperty(shaders);
     this->addProperty(apples);
     this->addProperty(derplevel);

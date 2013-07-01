@@ -25,6 +25,7 @@ set(SOURCES
     painter/abstractscenepainter.cpp
     painter/abstractpainterproperty.h
     painter/abstractpainterproperty.cpp
+    painter/genericproperty.h
     painter/boolproperty.h
     painter/boolproperty.cpp
     painter/intproperty.h
