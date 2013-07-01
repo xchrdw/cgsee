@@ -4,7 +4,6 @@ uniform ivec2 viewport;
 uniform float znear;
 uniform float zfar;
 
-uniform sampler2D source;
 uniform sampler2D shadowMap;
 
 //in vec4 fragCoord;
@@ -17,8 +16,6 @@ void main()
 {
     vec2 uv = gl_FragCoord.xy / viewport;
     
-    vec4 sourceFragment = texture(source, uv);
-
 	vec4 coord = shadowCoord / shadowCoord.w;
     
     // Used to lower moiré pattern and self-shadowing
@@ -37,6 +34,6 @@ void main()
     }
 
     //gl_FragColor = vec4(penumbra);
-    fragColor = vec4(vec3(shadow / 36.0 + 0.4), 1.0) * sourceFragment;
+    fragColor = vec4(vec3(shadow / 36.0 + 0.4), 1.0);
 
 }

@@ -4,6 +4,7 @@ in vec3 a_vertex;
 in vec3 a_normal;
 
 uniform mat4 transform;
+uniform mat4 projection;
 
 uniform float znear;
 uniform float zfar;

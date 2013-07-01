@@ -348,7 +348,6 @@ void Painter::createShadows()
     m_lightcam->draw(*m_lightsource, m_fboShadowMap);
 
     sampler["shadowMap"] = m_fboShadowMap;
-    sampler["source"] = m_fboColor;
 
     bindSampler(sampler, *m_shadowMapping);
     m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
@@ -363,7 +362,6 @@ void Painter::createSSAO()
     t_samplerByName sampler;
 
     sampler["normalz"] = m_fboNormalz;
-    sampler["source"] = m_fboColor;
 
     bindSampler(sampler, *m_SSAO);
     m_SSAO->setUniform("viewport", m_camera->viewport());

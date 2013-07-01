@@ -5,7 +5,6 @@
 uniform ivec2 viewport;
 
 uniform sampler2D normalz;
-uniform sampler2D source;
 
 uniform vec3 kernel[128];
 uniform vec3 noise[16];
@@ -25,11 +24,9 @@ int calcNoiseCoord(vec2 v, int width, int height) {
 void main()
 {
 	vec4 normalz_value = texture(normalz, v_uv);
-
-    vec4 sourceFragment = texture(source, v_uv);
     
     if(normalz_value.a == 1.0) {
-        fragcolor = sourceFragment;
+        fragcolor = vec4(1.0);
         return;
     }
 
@@ -47,7 +44,7 @@ void main()
         // get sample position:
         vec3 sample = tbn * kernel[i];
         sample = sample * filterRadius + origin;
-      
+
         // project sample position:  --- I dont know what the purpose of this is
         //vec4 offset = vec4(sample, 1.0);
         //offset = uProjectionMat * offset;
@@ -66,5 +63,6 @@ void main()
 
     //fragcolor = vec4(normal/2 +0.5, 1.0);
     //fragcolor = vec4(vec3(kernel[calcNoiseCoord(v_uv, 16, 8)])/2.0 + 0.5, 1.0); 
-    fragcolor = vec4(1.0 - (occlusion / sample_count)) * sourceFragment;;
+    fragcolor = vec4(1.0 - (occlusion / sample_count));
+    //fragcolor = vec4(rvec/2+0.5, 1.0);
 }
