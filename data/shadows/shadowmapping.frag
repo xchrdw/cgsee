@@ -6,8 +6,8 @@ uniform float zfar;
 uniform vec2 samples[128];
 uniform int sample_count;
 
-const float lightSize = 0.05; // make uniform
-const float searchWidth = 0.005; // make uniform
+const float lightSize =   0.015; // make uniform
+const float searchWidth = 0.01; // make uniform
 const float zOffset = 0.002; // make uniform
 
 uniform sampler2D shadowMap;
@@ -28,9 +28,8 @@ float average_blocker_depth(vec2 coord, float zReceiver) {
             numBlockers++;
         } 
     }
-    return zSum/numBlockers;
+    return numBlockers > 0 ? zSum/numBlockers : 0.0;
 }
-
 
 void main()
 {
@@ -44,8 +43,10 @@ void main()
 
     float zBlocker = average_blocker_depth(coord.xy, z);
 
-    if(!(zBlocker > 0.0))
-        fragColor = vec4(0);
+    if(zBlocker == 0.0) {
+        fragColor = vec4(1);
+        return;
+    }
 
     float penumbra = (z - zBlocker) / zBlocker * lightSize;
     float shadow = 0.0;
@@ -57,4 +58,5 @@ void main()
     }
 
     fragColor = vec4(vec3(shadow / sample_count), 1.0);
+    
 }
