@@ -80,8 +80,8 @@ Painter::Painter(Camera * camera)
             glm::linearRand(-1.0f, 1.0f),
             glm::linearRand(-1.0f, 1.0f),
             glm::linearRand(0.0f, 1.0f)));
-
-            float scale = float(i) / float(m_kernel.size());
+            
+            float scale = glm::linearRand(0.0f, 1.0f);
             scale = glm::mix(0.1f, 1.0f, scale * scale);
             m_kernel[i] *= scale;
     }
@@ -305,7 +305,7 @@ void Painter::setUniforms()
 
     m_SSAO->setUniform("kernel", &m_kernel[0], m_kernel.size());
     m_SSAO->setUniform("noise", &m_noise[0], m_noise.size());
-    m_SSAO->setUniform("sample_count", 128);
+    m_SSAO->setUniform("sample_count", 64);
 
 }
 
