@@ -6,9 +6,9 @@
 #include <QSlider>
 #include <QSpinBox>
 #include "propertywidgetbuilder.h"
-#include <core/painter/abstractlistproperty.h>
-#include <core/painter/valueproperty.h>
-#include <core/painter/limitedproperty.h>
+#include <core/property/abstractlistproperty.h>
+#include <core/property/valueproperty.h>
+#include <core/property/limitedproperty.h>
 
 PropertyWidgetBuilder::PropertyWidgetBuilder()
 :   m_widget(new QWidget())

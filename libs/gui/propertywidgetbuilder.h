@@ -2,7 +2,7 @@
 #pragma once
 
 #include <core/declspec.h>
-#include <core/painter/abstractpropertyvisitor.h>
+#include <core/property/abstractpropertyvisitor.h>
 
 class QWidget;
 class QFormLayout;

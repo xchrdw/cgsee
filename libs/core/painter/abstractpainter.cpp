@@ -10,55 +10,15 @@
 #include "abstractglparent.h"
 #include <core/camera.h>
 #include <core/gpuquery.h>
-#include "abstractproperty.h"
-
-
 
 AbstractPainter::AbstractPainter()
-:   m_initialized(false)
-,   m_properties(new QHash<QString, AbstractProperty *>())
+:   PropertyOwner()
+,   m_initialized(false)
 {
 }
  
 AbstractPainter::~AbstractPainter()
 {
-    // qDeleteAll(*m_properties); 
-    // ... leads to "*** error for object 0x1088adb70: pointer being freed was not allocated"
-    delete m_properties;
-}
-
-bool AbstractPainter::propertyExists(QString name)
-{
-    return m_properties->value(name, nullptr);
-}
-
-bool AbstractPainter::addProperty(AbstractProperty * property)
-{
-    if (!this->propertyExists(property->name())) {
-        m_properties->insert(property->name(), property);
-        return true;
-    } else
-        return false;
-}
-
-bool AbstractPainter::removeProperty(QString name)
-{
-    delete this->property(name);
-    return m_properties->remove(name);
-}
-
-AbstractProperty * AbstractPainter::property(QString name)
-{
-    AbstractProperty * property = m_properties->value(name, nullptr);
-    if (!property)
-        qFatal("Requested Property \"%s\" not found", qPrintable(name));
-
-    return property;
-}
-
-const QList<AbstractProperty *> AbstractPainter::properties() const
-{
-    return m_properties->values();
 }
 
 void AbstractPainter::paint()
@@ -83,7 +43,6 @@ void AbstractPainter::resize(
     if(!(m_initialized = initialize()))
         qFatal("Painter initialization failed.");
 }
-
 
 const QImage AbstractPainter::capture(
     AbstractGLParent & parent

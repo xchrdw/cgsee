@@ -20,9 +20,9 @@
 #include "core/arcballnavigation.h"
 #include "core/flightnavigation.h"
 
-#include <core/painter/genericlistproperty.h>
-#include <core/painter/valueproperty.h>
-#include <core/painter/limitedproperty.h>
+#include <core/property/genericlistproperty.h>
+#include <core/property/valueproperty.h>
+#include <core/property/limitedproperty.h>
 #include <gui/propertywidgetbuilder.h>
 
 

@@ -23,18 +23,20 @@ set(SOURCES
     painter/abstractpainter.cpp
     painter/abstractscenepainter.h
     painter/abstractscenepainter.cpp
-    painter/abstractproperty.h
-    painter/abstractproperty.cpp
-    painter/valueproperty.h
-    painter/limitedproperty.h
-    painter/listproperty.h
-    painter/listproperty.cpp
-    painter/abstractlistproperty.h
-    painter/abstractlistproperty.cpp
-    painter/genericlistproperty.h
-    painter/genericlistproperty-inl.h
-    painter/abstractpropertyvisitor.h
-    painter/abstractpropertyvisitor.cpp
+    property/abstractproperty.h
+    property/abstractproperty.cpp
+    property/valueproperty.h
+    property/limitedproperty.h
+    property/propertyowner.h
+    property/propertyowner.cpp
+    property/listproperty.h
+    property/listproperty.cpp
+    property/abstractlistproperty.h
+    property/abstractlistproperty.cpp
+    property/genericlistproperty.h
+    property/genericlistproperty-inl.h
+    property/abstractpropertyvisitor.h
+    property/abstractpropertyvisitor.cpp
 
     datacore/datablock.h
     datacore/datablock.cpp
