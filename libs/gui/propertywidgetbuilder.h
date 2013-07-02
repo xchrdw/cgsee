@@ -19,9 +19,9 @@ public:
     void buildWidget(const QList<AbstractProperty *> & properties);
 
     virtual void visitList(AbstractListProperty & listProperty);
-    virtual void visitGeneric(ValueProperty<bool> & property);
-    virtual void visitGeneric(ValueProperty<float> & property);
-    virtual void visitGeneric(ValueProperty<int> & property);
+    virtual void visitValue(ValueProperty<bool> & property);
+    virtual void visitValue(ValueProperty<float> & property);
+    virtual void visitValue(ValueProperty<int> & property);
     virtual void visitLimited(LimitedProperty<int> & property);
 
     QWidget * retainWidget();

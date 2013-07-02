@@ -49,7 +49,7 @@ void PropertyWidgetBuilder::visitList(AbstractListProperty & listProperty)
                      });
 }
 
-void PropertyWidgetBuilder::visitGeneric(ValueProperty<float> & property)
+void PropertyWidgetBuilder::visitValue(ValueProperty<float> & property)
 {
     QSlider * slider = new QSlider(m_widget);
     slider->setOrientation(Qt::Horizontal);
@@ -66,7 +66,7 @@ void PropertyWidgetBuilder::visitGeneric(ValueProperty<float> & property)
                      });
 }
 
-void PropertyWidgetBuilder::visitGeneric(ValueProperty<bool> & property)
+void PropertyWidgetBuilder::visitValue(ValueProperty<bool> & property)
 {
     QCheckBox * checkBox = new QCheckBox(m_widget);
     if (property.value())
@@ -82,7 +82,7 @@ void PropertyWidgetBuilder::visitGeneric(ValueProperty<bool> & property)
     });
 }
 
-void PropertyWidgetBuilder::visitGeneric(ValueProperty<int> & property)
+void PropertyWidgetBuilder::visitValue(ValueProperty<int> & property)
 {
     QSpinBox * spinbox = new QSpinBox(m_widget);
     m_layout->addRow(property.description(), spinbox);

@@ -35,7 +35,7 @@ ValueProperty<Type>::~ValueProperty()
 template <typename Type>
 void ValueProperty<Type>::visit(AbstractPropertyVisitor & visitor)
 {
-    visitor.visitGeneric(*this);
+    visitor.visitValue(*this);
 }
 
 template <typename Type>

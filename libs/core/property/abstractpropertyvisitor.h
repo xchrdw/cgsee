@@ -18,14 +18,14 @@ class CGSEE_API AbstractPropertyVisitor
 {
 public:
     template <typename Type> 
-    void visitGeneric(ValueProperty<Type> & property);
+    void visitValue(ValueProperty<Type> & property);
     template <typename Type> 
     void visitLimited(LimitedProperty<Type> & property);
 
     virtual void visitList(AbstractListProperty & listProperty) = 0;
-    virtual void visitGeneric(ValueProperty<bool> & property) = 0;
-    virtual void visitGeneric(ValueProperty<float> & property) = 0;
-    virtual void visitGeneric(ValueProperty<int> & property) = 0;
+    virtual void visitValue(ValueProperty<bool> & property) = 0;
+    virtual void visitValue(ValueProperty<float> & property) = 0;
+    virtual void visitValue(ValueProperty<int> & property) = 0;
     virtual void visitLimited(LimitedProperty<int> & property) = 0;
 
 protected:
@@ -33,7 +33,7 @@ protected:
 };
 
 template <typename Type>
-void AbstractPropertyVisitor::visitGeneric(ValueProperty<Type> & property)
+void AbstractPropertyVisitor::visitValue(ValueProperty<Type> & property)
 {
     qWarning("No specialized visit method found for ValueProperty: \"%s\"", qPrintable(property.name()));
 }
