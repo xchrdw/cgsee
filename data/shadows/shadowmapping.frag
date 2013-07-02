@@ -5,9 +5,9 @@ uniform float znear;
 uniform float zfar;
 uniform vec2 samples[128];
 uniform int sample_count;
-const float lightSize = 0.05; 
-const float searchWidth = 0.005;
-const float zOffset = 0.0005;
+const float lightSize = 0.05; // make uniform
+const float searchWidth = 0.005; // make uniform
+const float zOffset = 0.0005; // make uniform
 
 uniform sampler2D shadowMap;
 
