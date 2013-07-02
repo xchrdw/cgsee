@@ -5,9 +5,10 @@ uniform float znear;
 uniform float zfar;
 uniform vec2 samples[128];
 uniform int sample_count;
+
 const float lightSize = 0.05; // make uniform
 const float searchWidth = 0.005; // make uniform
-const float zOffset = 0.0005; // make uniform
+const float zOffset = 0.002; // make uniform
 
 uniform sampler2D shadowMap;
 
@@ -50,7 +51,7 @@ void main()
     float shadow = 0.0;
     float x,y;
     for (int i=0; i<sample_count; i++) { 
-            vec2 offset = coord.st + samples[i] * (penumbra);
+            vec2 offset = coord.st + samples[i] * penumbra;
             float distanceFromLight = texture(shadowMap, offset).z;
             shadow += distanceFromLight <= z ? 0.0 : 1.0;
     }
