@@ -71,6 +71,7 @@ void PathTracer::initialize(const Program & program)
                 qDebug("Path Tracing Frame Buffer Object incomplete.");
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindTexture(GL_TEXTURE_2D, 0);
             glError();
         }
 
@@ -117,10 +118,10 @@ void PathTracer::initRandomVectorBuffer(const Program & program)
 {
     std::vector<glm::vec3> rndVecData;
 
-    pointsOnSphere(rndVecData, 100);
+    pointsOnSphere(rndVecData, 10000);
 
     m_randomVectors = new BufferObject(GL_TEXTURE_BUFFER, GL_STATIC_READ);
-    m_randomVectors->data<glm::vec3>(rndVecData.data(), sizeof(glm::vec3) * rndVecData.size(),  GL_RGB32F, sizeof(glm::vec3));
+    m_randomVectors->data<glm::vec3>(rndVecData.data(), rndVecData.size(),  GL_RGB32F, sizeof(glm::vec3));
     
     glActiveTexture(GL_TEXTURE0 + PathTracer::textureSlots["randomVectors"]);
     glGenTextures(1, &m_randomVectorTexture);
@@ -174,10 +175,11 @@ void PathTracer::draw(
     glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
     glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
 
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer[readIndex]);
+
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer[writeIndex]);
     //glClear(GL_COLOR_BUFFER_BIT);
     
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer[readIndex]);
 
     setUniforms(program);
 
