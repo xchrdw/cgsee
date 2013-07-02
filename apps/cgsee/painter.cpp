@@ -323,7 +323,7 @@ void Painter::paint()
     t_samplerByName sampler;
     m_camera->draw(*m_normalz, m_fboNormalz);
 
-    if(m_useColor && *m_fboActiveBuffer == m_fboColor)
+    if(m_useColor)
         m_camera->draw(*m_useProgram, m_fboColor);
     else
         m_fboColor->clear();
@@ -342,9 +342,10 @@ void Painter::paint()
     if(*m_fboActiveBuffer == m_fboColor) {
         sampler["shadows"] = m_fboShadows;
         sampler["ssao"] = m_fboSSAO;
-    } else { // use cleared color buffer to avoid effects
-        sampler["shadows"] = m_fboColor;
-        sampler["ssao"] = m_fboColor;
+    } else { // dont render effects
+        m_fboTemp->clear();
+        sampler["shadows"] = m_fboTemp;
+        sampler["ssao"] = m_fboTemp;
     }
 
     bindSampler(sampler, *m_flush);
@@ -450,7 +451,6 @@ void Painter::setFrameBuffer(int frameBuffer)
         case 3: m_fboActiveBuffer = &m_fboShadows; std::printf("\nShadows Buffer\n"); break;
         case 4: m_fboActiveBuffer = &m_fboShadowMap; std::printf("\nShadowMap Buffer\n"); break;
         case 5: m_fboActiveBuffer = &m_fboSSAO; std::printf("\nSSAO Buffer\n"); break;
-        case 6: m_fboActiveBuffer = &m_fboTemp; std::printf("\nTemp Buffer\n"); break;
     }
 }
 

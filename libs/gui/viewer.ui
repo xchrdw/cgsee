@@ -36,7 +36,6 @@
      <addaction name="fboShadowsAction"/>
      <addaction name="fboShadowMapAction"/>
      <addaction name="fboSSAOAction"/>
-     <addaction name="fboTempBufferAction"/>
      <addaction name="separator"/>
      <addaction name="showFrameBuffersAction"/>
     </widget>

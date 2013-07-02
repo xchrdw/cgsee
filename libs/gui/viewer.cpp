@@ -391,15 +391,6 @@ void Viewer::on_fboSSAOAction_triggered()
     m_qtCanvas->repaint();
 }
 
-void Viewer::on_fboTempBufferAction_triggered()
-{
-    uncheckFboActions();
-    m_ui->fboTempBufferAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(6);
-    m_qtCanvas->repaint();
-}
-
-
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
     m_qtCanvas->setNavigation(navigation);
