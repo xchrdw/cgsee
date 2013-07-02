@@ -1,4 +1,5 @@
 #include <random>
+#include <time.h>
 
 #include "pathtracer.h"
 
@@ -9,6 +10,7 @@
 
 static const QString TRANSFORM_UNIFORM ("transform");
 static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
+static const QString RANDOM_INT_UNIFORM("randomInt");
 
 std::mt19937 rng;
 
@@ -159,6 +161,8 @@ void PathTracer::draw(
 
     //update m_transform
     update();
+
+    program.setUniform(RANDOM_INT_UNIFORM, rng());
 
     // switch the rendering buffers for each pass
     m_whichBuffer = !m_whichBuffer;

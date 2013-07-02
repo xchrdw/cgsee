@@ -23,63 +23,68 @@ uniform samplerBuffer geometryBuffer;
 uniform samplerBuffer randomVectors;
 uniform sampler2D accumulation;
 
+uniform int randomInt;
 
-vec3 light = vec3(1000.0, 0.0, 0.0);
+
+vec3 light = vec3(0.0, 0.0, 1000.0);
 //vec3 cameraposition = vec3(1.0, 0.0, 3.0);
 float EPSILON = 0.000001;
 
-void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 intersectionPoint);
+void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint);
+vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace);
+vec4 skybox(vec3 position, vec3 direction);
 
 
-float rand =  fract(sin(dot(direction.xy ,vec2(12.9898,78.233))) * 43758.5453);
+float rand =  fract(sin(dot(direction.xy ,vec2(12.9898, 78.233))*(randomInt % 1111 + 1)) * 43758.5453);
 
 void main()
 {
     vec4 oldFragColor = texture(accumulation, v_uv);
-    // int numRnd = textureSize(randomVectors);
-    // vec3 rndVec = texelFetch(randomVectors, int(rand*numRnd)).xyz;
-    // fragColor = vec4(rndVec, 1.0);
-    // return;
-    // fragColor = vec4(cameraposition, 1.0);
+    int numRnd = textureSize(randomVectors);
+    vec3 rndVec = texelFetch(randomVectors, int(rand*numRnd)).xyz;
 
     int primaryNearestIndex;
+    vec3 primaryTriangle[3];
     vec3 primaryIntersectionPoint;
 
-    rayTriangleIntersection(cameraposition, direction, primaryNearestIndex, primaryIntersectionPoint);
+    rayTriangleIntersection(cameraposition, direction, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
 
     if (primaryNearestIndex == -1) {
-        fragColor = vec4(0,0,1,0);
+        fragColor = skybox(cameraposition, direction);
         return;
     }
+
+    mat3 primaryTangentspace;
+    vec3 primaryNormalAvg = getNormalAndTangentSpaceForTriangle(primaryTriangle, primaryTangentspace);
 
     // fragColor = vec4(primaryIntersectionPoint, 1.0);
-    fragColor = mix(vec4(primaryIntersectionPoint, 1.0), oldFragColor, 0.001);
-    return;
+    //fragColor = mix(vec4(primaryIntersectionPoint, 1.0), oldFragColor, 0.001);
+    //return;
 
     int secondaryNearestIndex;
+    vec3 secondaryTriangle[3];
     vec3 secondaryIntersectionPoint;
+    fragColor = vec4(normalize(primaryTangentspace * (rndVec + vec3(0.0, 0.000001, 0.0))), 1.0);
+    return;
 
-    rayTriangleIntersection(primaryIntersectionPoint, light - primaryIntersectionPoint, secondaryNearestIndex, secondaryIntersectionPoint);
+    rayTriangleIntersection(primaryIntersectionPoint, primaryTangentspace * normalize(rndVec + vec3(0.0, 3.0, 0.0)), secondaryNearestIndex, secondaryTriangle, secondaryIntersectionPoint);
 
-    if (secondaryNearestIndex != -1) {
-        fragColor = vec4(0,0,0,0);
+    if (secondaryNearestIndex == -1) {
+        fragColor = skybox(primaryIntersectionPoint, primaryTangentspace * rndVec);
         return;
     }
 
-    int firstVertexIndex = texelFetch(indexBuffer, primaryNearestIndex).x;
-    vec3 normalAvg = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex).x).xyz;
-    normalAvg += texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+1).x).xyz;
-    normalAvg += texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+2).x).xyz;
-    normalAvg /= 3.0;
+    mat3 secondaryTangentspace;
+    vec3 secondaryNormalAvg = getNormalAndTangentSpaceForTriangle(secondaryTriangle, secondaryTangentspace);
 
-    float cos = dot(normalize(light), normalize(normalAvg));
+    float cos = dot(normalize(light), normalize(primaryNormalAvg));
 
-    fragColor = mix(vec4(vec3(cos), 1.0), oldFragColor, 0.5);
+    fragColor = mix(vec4(vec3(cos), 1.0), oldFragColor, 0.05);
 
 }
 
 
-void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 intersectionPoint) {
+void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint) {
     int numIndices = textureSize(indexBuffer);
     nearestIndex = -1;
     float distanceOfNearest = 100000.0;
@@ -119,8 +124,26 @@ void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, 
         if (t < distanceOfNearest && t > EPSILON) {
             distanceOfNearest = t;
             nearestIndex = i;
+            triangle[0] = v0;
+            triangle[1] = v1;
+            triangle[2] = v2;
         }
     }
 
     intersectionPoint = origin + distanceOfNearest * direction;
+}
+
+vec4 skybox(vec3 position, vec3 direction) {
+    return vec4(0.09, 0.6, 0.9, 1.0);
+}
+
+vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace) {
+    vec3 e0 = triangle[1] - triangle[0];
+    vec3 e1 = triangle[2] - triangle[0];
+
+    tangentspace[0] = normalize(e0);
+    tangentspace[1] = normalize(cross(e0, e1));
+    tangentspace[2] = cross(tangentspace[0], tangentspace[1]);
+
+    return tangentspace[1];
 }
