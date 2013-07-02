@@ -79,6 +79,7 @@ protected:
 
     std::vector<glm::vec3> m_kernel;
     std::vector<glm::vec3> m_noise;
+    std::vector<glm::vec2> m_shadow_samples;
 
     glm::vec3 camPos;
 

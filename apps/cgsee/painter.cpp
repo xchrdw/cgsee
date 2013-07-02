@@ -66,6 +66,7 @@ Painter::Painter(Camera * camera)
 ,   m_blurSSAO(true)
 ,   m_kernel(128)
 ,   m_noise(16)
+,   m_shadow_samples(128)
 {
     m_lightcam = new Camera();
     m_lightcam->setViewport(camera->viewport());
@@ -90,6 +91,12 @@ Painter::Painter(Camera * camera)
             glm::linearRand(-1.0f, 1.0f),
             glm::linearRand(-1.0f, 1.0f),
             0.0f));
+    }
+
+    for (int i = 0; i < m_shadow_samples.size(); ++i) {
+        m_shadow_samples[i] = glm::vec2(
+            glm::linearRand(-1.0f, 1.0f),
+            glm::linearRand(-1.0f, 1.0f));
     }
 }
 
@@ -292,8 +299,14 @@ void Painter::setUniforms()
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
 
+    m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
+    m_shadowMapping->setUniform("samples", &m_shadow_samples[0], m_shadow_samples.size());
+    m_shadowMapping->setUniform("sample_count", 32);
+
     m_SSAO->setUniform("kernel", &m_kernel[0], m_kernel.size());
     m_SSAO->setUniform("noise", &m_noise[0], m_noise.size());
+    m_SSAO->setUniform("sample_count", 128);
+
 }
 
 glm::mat4 biasMatrix(
@@ -351,7 +364,6 @@ void Painter::createShadows()
 
     bindSampler(sampler, *m_shadowMapping);
     m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
-    m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
     m_shadowMapping->setUniform("LightSourceTransform", biasMatrix * m_lightcam->transform(), false);
     m_camera->draw(*m_shadowMapping, m_fboShadows);
     releaseSampler(sampler);
@@ -365,7 +377,6 @@ void Painter::createSSAO()
 
     bindSampler(sampler, *m_SSAO);
     m_SSAO->setUniform("viewport", m_camera->viewport());
-    m_SSAO->setUniform("sample_count", 128);
     m_quad->draw(*m_SSAO, m_fboSSAO);
     releaseSampler(sampler);
     

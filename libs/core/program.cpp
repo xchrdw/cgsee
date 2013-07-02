@@ -250,6 +250,17 @@ void Program::setUniform(
 
 void Program::setUniform(
     const QString & name
+    ,   const glm::vec2 * vec_array
+    ,   const unsigned int & count) const
+{
+    const GLint location(uniformLocation(name));
+
+    glUniform2fv(location, count, glm::value_ptr(*vec_array));
+    glError();
+}
+
+void Program::setUniform(
+    const QString & name
 ,   const glm::ivec2 & vec) const
 {
     const GLint location(uniformLocation(name));

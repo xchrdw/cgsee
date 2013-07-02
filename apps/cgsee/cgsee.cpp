@@ -22,7 +22,7 @@ CGSee::CGSee(int & argc, char ** argv)
     Camera * camera = new Camera();
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
-    camera->setZFar (30.0f);
+    camera->setZFar (20.0f);
     m_viewer->setCamera(camera);
 
     m_painter = new Painter(camera);

@@ -678,21 +678,36 @@
    </property>
   </action>
   <action name="fboColorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Color</string>
    </property>
   </action>
   <action name="fboNormalzAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>NormalZ</string>
    </property>
   </action>
   <action name="fboShadowMapAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>ShadowMap</string>
    </property>
   </action>
   <action name="fboTempBufferAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>TempBuffer</string>
    </property>
@@ -731,11 +746,17 @@
    </property>
   </action>
   <action name="fboShadowsAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Shadows</string>
    </property>
   </action>
   <action name="fboSSAOAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>SSAO</string>
    </property>

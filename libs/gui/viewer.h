@@ -66,6 +66,7 @@ public:
     void setTrackballManipulator();
     void setFpsManipulator();
     void uncheckManipulatorActions();
+    void uncheckFboActions();
 
 
 public slots:

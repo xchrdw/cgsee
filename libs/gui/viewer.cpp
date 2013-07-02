@@ -343,37 +343,58 @@ void Viewer::on_ssaoBlurAction_triggered()
     m_qtCanvas->repaint();
 }
 
+void Viewer::uncheckFboActions() {
+    m_ui->fboColorAction->setChecked(false);
+    m_ui->fboNormalzAction->setChecked(false);
+    m_ui->fboShadowMapAction->setChecked(false);
+    m_ui->fboShadowsAction->setChecked(false);
+    m_ui->fboSSAOAction->setChecked(false);
+    m_ui->fboTempBufferAction->setChecked(false);
+}
+
 void Viewer::on_fboColorAction_triggered()
 {
+    uncheckFboActions();
+    m_ui->fboColorAction->setChecked(true);
     m_qtCanvas->painter()->setFrameBuffer(1);
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_fboNormalzAction_triggered()
 {
+    uncheckFboActions();
+    m_ui->fboNormalzAction->setChecked(true);
     m_qtCanvas->painter()->setFrameBuffer(2);
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_fboShadowsAction_triggered()
 {
+    uncheckFboActions();
+    m_ui->fboShadowsAction->setChecked(true);
     m_qtCanvas->painter()->setFrameBuffer(3);
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_fboShadowMapAction_triggered()
 {
+    uncheckFboActions();
+    m_ui->fboShadowMapAction->setChecked(true);
     m_qtCanvas->painter()->setFrameBuffer(4);
     m_qtCanvas->repaint();
 }
 void Viewer::on_fboSSAOAction_triggered()
 {
+    uncheckFboActions();
+    m_ui->fboSSAOAction->setChecked(true);
     m_qtCanvas->painter()->setFrameBuffer(5);
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_fboTempBufferAction_triggered()
 {
+    uncheckFboActions();
+    m_ui->fboTempBufferAction->setChecked(true);
     m_qtCanvas->painter()->setFrameBuffer(6);
     m_qtCanvas->repaint();
 }
