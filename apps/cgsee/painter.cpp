@@ -128,6 +128,10 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
+    if(m_scene) {
+        m_camera->append(m_scene);
+    }
+
     m_quad = new ScreenQuad();
 
     // NORMALS
