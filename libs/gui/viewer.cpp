@@ -252,6 +252,7 @@ void Viewer::on_loadFile(const QString & path)
     if (!scene)
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     else {
+        this->m_qtCanvas->navigation()->rescaleScene(scene);
         this->painter()->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();

@@ -73,7 +73,6 @@ Painter::Painter(Camera * camera)
     m_lightcam->setFovy(camera->fovy());
     m_lightcam->setZFar(camera->zFar());
     m_lightcam->setZNear(camera->zNear());
-    m_lightcam->setView(glm::lookAt(glm::vec3(5.0,5.0,5.0), glm::vec3(0), glm::vec3(0.0,1.0,0.0)));
 
     for (int i = 0; i < m_kernel.size(); ++i) {
         m_kernel[i] = glm::normalize(glm::vec3(
@@ -229,6 +228,7 @@ const bool Painter::initialize()
     //set UNIFORMS for selected shader
     m_useProgram = m_flat;
     setUniforms();
+    setShaderProperties();
 
     // Post Processing Shader
     m_flush = new Program();
@@ -299,22 +299,24 @@ void Painter::setUniforms()
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
 
-    m_shadowMapping->setUniform("biasMatrix", glm::mat4(), false);
     m_shadowMapping->setUniform("samples", &m_shadow_samples[0], m_shadow_samples.size());
-    m_shadowMapping->setUniform("sample_count", 16);
-
     m_SSAO->setUniform("kernel", &m_kernel[0], m_kernel.size());
     m_SSAO->setUniform("noise", &m_noise[0], m_noise.size());
-    m_SSAO->setUniform("sample_count", 32);
-
+    
 }
 
-glm::mat4 biasMatrix(
-    0.5, 0.0, 0.0, 0.0,
-    0.0, 0.5, 0.0, 0.0,
-    0.0, 0.0, 0.5, 0.0,
-    0.5, 0.5, 0.5, 1.0
-);
+// some time in the future this may be variable properties 
+void Painter::setShaderProperties() {
+    m_shadowMapping->setUniform("lightSize", 0.015f); 
+    m_shadowMapping->setUniform("searchWidth", 0.01f); 
+    m_shadowMapping->setUniform("zOffset",  0.002f); 
+    m_shadowMapping->setUniform("sample_count", 16); // usefull range: 0-128
+    
+    m_SSAO->setUniform("sample_count", 32); // usefull range: 0-128
+    m_SSAO->setUniform("zOffset", 0.005f); 
+    m_SSAO->setUniform("filterRadius", 0.05f);
+}
+
 
 void Painter::paint()
 {
@@ -354,6 +356,13 @@ void Painter::paint()
 
 
 }
+
+glm::mat4 biasMatrix(
+    0.5, 0.0, 0.0, 0.0,
+    0.0, 0.5, 0.0, 0.0,
+    0.0, 0.0, 0.5, 0.0,
+    0.5, 0.5, 0.5, 1.0
+);
 
 void Painter::createShadows()
 {
@@ -505,4 +514,8 @@ void Painter::sceneChanged(Group * scene)
     if(m_scene)
         m_lightcam->remove(m_scene);
     m_lightcam->append(scene);
+
+    AxisAlignedBoundingBox bb = scene->boundingBox();
+    m_lightcam->setView(glm::lookAt(glm::vec3(4.0,7.0, 6.5)+bb.center(), bb.center(), glm::vec3(0.0,1.0,0.0)));
+
 }

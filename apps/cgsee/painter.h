@@ -51,6 +51,7 @@ protected:
     static void releaseSampler(
         const t_samplerByName & sampler);
     void sceneChanged(Group * scene);
+    void setShaderProperties();
 protected:
     ScreenQuad * m_quad;
 

@@ -2,18 +2,18 @@
 
 // source http://john-chapman-graphics.blogspot.de/2013/01/ssao-tutorial.html
 
-uniform ivec2 viewport;
 
 uniform sampler2D normalz;
 
+uniform ivec2 viewport;
 uniform vec3 kernel[128];
 uniform vec3 noise[16];
 uniform int sample_count;
-const float zOffset = 0.005; // make uniform
-const float filterRadius = 0.05; // make uniform
+uniform float zOffset;
+uniform float filterRadius;
 
-out vec4 fragcolor;
 in vec2 v_uv;
+out vec4 fragcolor;
 
 
 int calcNoiseCoord(vec2 v, int width, int height) {
