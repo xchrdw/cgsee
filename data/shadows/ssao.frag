@@ -58,12 +58,6 @@ void main()
         // range check & accumulate:
         float rangeCheck = abs(origin.z - sampleDepth) < filterRadius ? 1.0 : 0.0;
         occlusion += (sampleDepth <= sample.z - zOffset ? 1.0 : 0.0) * rangeCheck;
-        //fragcolor = vec4(vec3((sampleDepth <= sample.z ? 1.0 : 0.0)), 1.0);
-        //fragcolor = vec4(kernel[i]/2 + 0.5, 1.0);
     }
-
-    //fragcolor = vec4(normal/2 +0.5, 1.0);
-    //fragcolor = vec4(vec3(kernel[calcNoiseCoord(v_uv, 16, 8)])/2.0 + 0.5, 1.0); 
     fragcolor = vec4(1.0 - (occlusion / sample_count));
-    //fragcolor = vec4(rvec/2+0.5, 1.0);
 }
