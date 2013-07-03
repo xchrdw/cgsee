@@ -8,6 +8,7 @@
 
 class Program;
 class FrameBufferObject;
+class ViewFrustum;
 
 class CGSEE_API Camera : public Group
 {
@@ -40,6 +41,8 @@ public:
     void setZFar(const float z);
 
     const float aspect() const;
+	
+	ViewFrustum *viewFrustum() const;
 
     // updates camera matrices
     void update();
@@ -52,6 +55,8 @@ protected:
 
     glm::mat4 m_view;
     glm::mat4 m_projection;
+
+    ViewFrustum *m_viewFrustum;
 
     float m_fovy;
     float m_zNear;

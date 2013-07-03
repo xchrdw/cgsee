@@ -44,6 +44,9 @@ set(SOURCES
     scenegraph/ISceneVisitor.h
     scenegraph/drawvisitor.h
     scenegraph/drawvisitor.cpp
+
+    scenegraph/cullingvisitor.h
+    scenegraph/cullingvisitor.cpp
     
     abstracttimer.h
     autotimer.h
@@ -76,6 +79,11 @@ set(SOURCES
     shader.cpp
     timer.h
     timer.cpp
+
+    plane.h
+    plane.cpp
+    viewfrustum.h
+    viewfrustum.cpp
 )
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$|\\\\.inl$" 
