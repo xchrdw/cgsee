@@ -62,6 +62,7 @@ Painter::Painter(Camera * camera)
 ,   m_camera(camera)
 ,   m_useColor(true)
 ,   m_useShadows(true)
+,   m_blurShadows(true)
 ,   m_useSSAO(true)
 ,   m_blurSSAO(true)
 ,   m_kernel(128)
@@ -311,9 +312,9 @@ void Painter::setUniforms()
 
 // some time in the future this may be variable properties 
 void Painter::setShaderProperties() {
-    m_shadowMapping->setUniform("lightSize", 0.015f); 
-    m_shadowMapping->setUniform("searchWidth", 0.01f); 
-    m_shadowMapping->setUniform("zOffset",  0.002f); 
+    m_shadowMapping->setUniform("lightSize", 0.03f); 
+    m_shadowMapping->setUniform("searchWidth", 0.02f); 
+    m_shadowMapping->setUniform("zOffset",  0.0015f); 
     m_shadowMapping->setUniform("sample_count", 16); // usefull range: 0-128
     
     m_SSAO->setUniform("sample_count", 32); // usefull range: 0-128
@@ -336,12 +337,16 @@ void Painter::paint()
 
     if(m_useShadows)
         createShadows();
-        
+    
+    if(m_useShadows && m_blurShadows)
+        addBlur(m_fboShadows);
+
     if(m_useSSAO)
         createSSAO();
 
-    if(m_blurSSAO)
+    if(m_useSSAO && m_blurSSAO) 
         addBlur(m_fboSSAO);
+    
 
     sampler.clear();
     sampler["source"] = *m_fboActiveBuffer;
@@ -473,8 +478,9 @@ void Painter::setEffect( int effect, bool active )
     {
         case 1: m_useColor = active; std::printf("\nColor toggled\n"); break;
         case 2: m_useShadows = active; std::printf("\nShadow toggled\n"); break;
-        case 3: m_useSSAO = active; std::printf("\nSSAO toggled\n"); break;
-        case 4: m_blurSSAO = active; std::printf("\nSSAO blur toggled\n"); break;
+        case 3: m_blurShadows = active; std::printf("\nShadow blur toggled\n"); break;
+        case 4: m_useSSAO = active; std::printf("\nSSAO toggled\n"); break;
+        case 5: m_blurSSAO = active; std::printf("\nSSAO blur toggled\n"); break;
     }
 
     m_fboShadows->clear();
@@ -520,6 +526,6 @@ void Painter::sceneChanged(Group * scene)
     m_lightcam->append(scene);
 
     AxisAlignedBoundingBox bb = scene->boundingBox();
-    m_lightcam->setView(glm::lookAt(glm::vec3(4.0,7.0, 6.5)+bb.center(), bb.center(), glm::vec3(0.0,1.0,0.0)));
+    m_lightcam->setView(glm::lookAt(glm::vec3(3.5, 5.0, 5.5)+bb.center(), bb.center(), glm::vec3(0.0,1.0,0.0)));
 
 }

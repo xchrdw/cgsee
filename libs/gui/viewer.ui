@@ -148,6 +148,7 @@
     <addaction name="separator"/>
     <addaction name="colorRenderingAction"/>
     <addaction name="shadowMappingAction"/>
+    <addaction name="shadowBlurAction"/>
     <addaction name="ssaoAction"/>
     <addaction name="ssaoBlurAction"/>
    </widget>
@@ -769,6 +770,17 @@
    </property>
    <property name="text">
     <string>SSAO blur</string>
+   </property>
+  </action>
+  <action name="shadowBlurAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Shadow blur</string>
    </property>
   </action>
  </widget>

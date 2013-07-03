@@ -5,6 +5,7 @@
 
 #include "declspec.h"
 
+
 class CGSEE_API AxisAlignedBoundingBox
 {
 public:

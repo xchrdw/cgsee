@@ -90,6 +90,7 @@ protected:
     Camera * m_lightcam;
     bool m_useColor;
     bool m_useShadows;
+    bool m_blurShadows;
     bool m_useSSAO;
     bool m_blurSSAO;
 };

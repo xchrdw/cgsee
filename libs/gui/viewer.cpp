@@ -332,15 +332,21 @@ void Viewer::on_shadowMappingAction_triggered()
     m_qtCanvas->repaint();
 }
 
+void Viewer::on_shadowBlurAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(3, m_ui->shadowBlurAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
 void Viewer::on_ssaoAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(3, m_ui->ssaoAction->isChecked());
+    m_qtCanvas->painter()->setEffect(4, m_ui->ssaoAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_ssaoBlurAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(4, m_ui->ssaoBlurAction->isChecked());
+    m_qtCanvas->painter()->setEffect(5, m_ui->ssaoBlurAction->isChecked());
     m_qtCanvas->repaint();
 }
 
