@@ -34,10 +34,9 @@ float average_blocker_depth(vec2 coord, float zReceiver) {
 void main()
 {
     vec2 uv = gl_FragCoord.xy / viewport;
-    
+
 	vec4 coord = shadowCoord / shadowCoord.w;
     
-    // Used to lower moiré pattern and self-shadowing
     float z = coord.z - zOffset;
     z = - znear * z / (zfar * z - zfar - znear * z);
 
