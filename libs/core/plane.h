@@ -6,9 +6,10 @@
 
 class CGSEE_API Plane {
 public:
-	Plane::Plane(glm::vec4 normal, float distance);
-	Plane::Plane(glm::vec4 normal, glm::vec4 supportVector);
-	Plane::Plane(glm::vec4 normal, float distance, glm::mat4 transform);
+	Plane();
+	Plane(glm::vec4 normal, float distance);
+	Plane(glm::vec4 normal, glm::vec4 supportVector);
+	Plane(glm::vec4 normal, float distance, glm::mat4 transform);
 	virtual Plane::~Plane();
 
 	Plane transformed(glm::mat4 transform);

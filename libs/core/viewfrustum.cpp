@@ -9,6 +9,7 @@
 
 ViewFrustum::ViewFrustum(Camera *camera) :
 	m_camera(camera),
+	m_planes(),
 	m_dirty(true)
 {
 }
@@ -21,7 +22,7 @@ ViewFrustum::e_insideFrustum ViewFrustum::contains(const AxisAlignedBoundingBox 
 		// distance of center to plane =
 		//   < point - plane_origin_dist * normal ; normal > = 
 		//   < point ; normal > - plane_origin_dist
-		float centerDist = glm::dot(glm::vec4(aabb.center()), plane.normal()) - plane.distance();
+		float centerDist = glm::dot(glm::vec4(aabb.center(), 1.0), plane.normal()) - plane.distance();
 		if (centerDist <= aabb.radius()) {
 			return OUTSIDE_FRUSTUM;
 		} else if (centerDist >= -aabb.radius()) {
@@ -30,8 +31,8 @@ ViewFrustum::e_insideFrustum ViewFrustum::contains(const AxisAlignedBoundingBox 
 			//return INTERSECTS_FRUSTUM;
 			// we don't do this because we continue with a more precise test 
 			// against the bounding box
-			// TODO: is this efficient? Maybe do the test against the bounding box 
-			// only if the corresponding node does not have subnodes or if the quotient
+			// TODO: is this efficient? Maybe we should do only the test against the bounding box 
+			// if the corresponding node does not have subnodes or if the quotient
 			// volume / radius is small
 		}
 	}
@@ -40,7 +41,7 @@ ViewFrustum::e_insideFrustum ViewFrustum::contains(const AxisAlignedBoundingBox 
 	bool contains_at_least_1_point = false;
 	bool contains_at_most_7_points = false;
 	for (auto aabbVertex : aabb.allVertices()) {
-		if (this->contains(transform * glm::vec4(aabbVertex))) {
+		if (this->contains(transform * glm::vec4(aabbVertex, 1.0))) {
 			contains_at_least_1_point = true;
 			if (contains_at_most_7_points) {
 				return INTERSECTS_FRUSTUM;

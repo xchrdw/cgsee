@@ -2,6 +2,12 @@
 
 #include "plane.h"
 
+Plane::Plane() :
+	m_distance(1.0),
+	m_normal(glm::vec4(1.0, 0.0, 0.0, 1.0))
+{
+}
+
 Plane::Plane(glm::vec4 normal, float distance) :
 	m_distance(distance),
 	m_normal(glm::normalize(normal))
