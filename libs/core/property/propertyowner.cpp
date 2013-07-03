@@ -2,7 +2,8 @@
 #include "propertyowner.h"
 
 PropertyOwner::PropertyOwner()
-:   m_properties(new QHash<QString, AbstractProperty *>())
+:   m_properties(nullptr)
+,   m_properties_map(nullptr)
 {
 }
 
@@ -11,38 +12,68 @@ PropertyOwner::~PropertyOwner()
     // qDeleteAll(*m_properties); 
     // ... leads to "*** error for object 0x1088adb70: pointer being freed was not allocated"
     delete m_properties;
+    delete m_properties_map;
 }
+
+
+/** Public **/
 
 bool PropertyOwner::propertyExists(QString name)
 {
-    return m_properties->value(name, nullptr);
+    return propertiesMap()->value(name, nullptr);
 }
 
 bool PropertyOwner::addProperty(AbstractProperty * property)
 {
-    if (!this->propertyExists(property->name())) {
-        m_properties->insert(property->name(), property);
+    if (!propertyExists(property->name())) {
+        properties()->push_back(property);
+        propertiesMap()->insert(property->name(), property);
         return true;
-    } else
+    } else {
         return false;
+    }
 }
 
 bool PropertyOwner::removeProperty(QString name)
 {
-    delete this->property(name);
-    return m_properties->remove(name);
+    if (propertyExists(name)) {
+        AbstractProperty * property = property(name);
+        properties()->removeAll(property);
+        propertiesMap()->remove(name);
+        delete property;
+        return true;  
+    } else {
+        return false;
+    }
 }
 
 AbstractProperty * PropertyOwner::property(QString name)
 {
-    AbstractProperty * property = m_properties->value(name, nullptr);
+    AbstractProperty * property = this->propertiesMap().value(name, nullptr);
     if (!property)
         qFatal("Requested Property \"%s\" not found", qPrintable(name));
 
     return property;
 }
 
-const QList<AbstractProperty *> PropertyOwner::properties() const
+QList<AbstractProperty *> PropertyOwner::properties() const
 {
-    return m_properties->values();
+    return *(this->properties());
+}
+
+
+/** Protected **/
+
+QList<AbstractProperty *> * PropertyOwner::properties()
+{
+    if (!m_properties)
+        m_properties = new QList<AbstractProperty *>();
+    return m_properties;
+}
+
+QHash<QString, AbstractProperty *> * PropertyOwner::propertiesMap()
+{
+    if (!m_properties_map)
+        m_properties_map = new QHash<QString, AbstractProperty *>();
+    return m_properties_map;
 }

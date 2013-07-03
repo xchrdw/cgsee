@@ -5,10 +5,11 @@
 #include <QObject>
 #include <QString>
 #include <core/declspec.h>
+#include "propertyowner.h"
 
 class AbstractPropertyVisitor;
 
-class CGSEE_API AbstractProperty : public QObject
+class CGSEE_API AbstractProperty : public PropertyOwner, public QObject, 
 {
     Q_OBJECT
 
@@ -39,6 +40,7 @@ PropertyClass * AbstractProperty::to()
 {
     PropertyClass * property = dynamic_cast<PropertyClass *>(this);
     if (!property)
-        qFatal("Requested Property \"%s\" is not of Type \"%s\"", qPrintable(this->name()), typeid(PropertyClass).name());
+        qFatal("Requested Property \"%s\" is not of Type \"%s\"", 
+            qPrintable(this->name()), typeid(PropertyClass).name());
     return property;
 }

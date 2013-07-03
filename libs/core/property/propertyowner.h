@@ -20,8 +20,15 @@ public:
     
     template <class PainterProperty>
     PainterProperty * property(QString name);
+
 protected:
-    QHash<QString, AbstractProperty *> * m_properties;
+    QList<AbstractProperty *> * properties();
+    QHash<QString, AbstractProperty *> * propertiesMap();
+
+private:
+    QList<AbstractProperty *> * m_properties;
+    QHash<QString, AbstractProperty *> * m_properties_map;
+
 };
 
 template <class PainterProperty>
