@@ -23,6 +23,7 @@ namespace {
         textureSlots["geometryBuffer"] = 3;
         textureSlots["randomVectors"] = 4;
         textureSlots["accumulation"] = 5;
+        textureSlots["testTex"] = 6;
         return textureSlots;
     }
 }
@@ -37,9 +38,9 @@ PathTracer::PathTracer(const QString & name)
 ,   m_vertexBO(nullptr)
 ,   m_randomVectorTexture(-1)
 ,   m_randomVectors(nullptr)
+,   m_accuFramebuffer(-1)
 {
     m_accuTexture[0] = m_accuTexture[1] = -1;
-    m_accuFramebuffer[0] = m_accuFramebuffer[1] = -1;
 }
 
 PathTracer::~PathTracer()
@@ -52,28 +53,57 @@ void PathTracer::initialize(const Program & program)
         initVertexBuffer(program);
     if (-1 == m_randomVectorTexture)
         initRandomVectorBuffer(program);
-    if (m_accuFramebuffer[0] == -1) {
+    if (m_accuFramebuffer == -1) {
+
         glGenTextures(2, m_accuTexture);
-        glGenFramebuffers(2, m_accuFramebuffer);
 
-        for (int i=0; i<2; ++i) {
-            glBindTexture(GL_TEXTURE_2D, m_accuTexture[i]);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
-            glError();
-   
-            glBindFramebuffer(GL_FRAMEBUFFER, m_accuFramebuffer[i]);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_accuTexture[i], 0);
-            glError();
-
-            const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-            glError();
-            if(GL_FRAMEBUFFER_COMPLETE != status)
-                qDebug("Path Tracing Frame Buffer Object incomplete.");
-
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glError();
+        float *red = new float[4*m_viewport.x*m_viewport.y];
+        float *blue = new float[4*m_viewport.x*m_viewport.y];
+        float *green = new float[4*m_viewport.x*m_viewport.y];
+        for (int i=0; i < 4*m_viewport.x*m_viewport.y; i+=4){
+            red[i+0] = 1.0f; red[i+1] = 0.0f; red[i+2] = 0.0f; red[i+3] = 1.0f;
+            blue[i+0] = 0.0f; blue[i+1] = 0.0f; blue[i+2] = 1.0f; blue[i+3] = 1.0f;
+            green[i+0] = 0.0f; green[i+1] = 1.0f; green[i+2] = 0.0f; green[i+3] = 1.0f;
         }
+
+        glGenTextures(1, &m_testTex);
+        glBindTexture(GL_TEXTURE_2D, m_testTex);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, green);
+
+        glBindTexture(GL_TEXTURE_2D, m_accuTexture[0]);
+        // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, red); // <-- test attached color filled array
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+        glBindTexture(GL_TEXTURE_2D, m_accuTexture[1]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, blue);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glError();
+   
+        glGenFramebuffers(1, &m_accuFramebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_accuFramebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_accuTexture[0], 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_accuTexture[1], 0);
+        // use only one framebuffer -> color attachment 0, 1, two textures
+        // 1test: fill with blue/read -> test switching
+        // 2test: ++green, accu
+        // -!-
+        glError();
+
+        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        glError();
+        if(GL_FRAMEBUFFER_COMPLETE != status)
+            qDebug("Path Tracing Frame Buffer Object incomplete.");
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glError();
 
         for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
             program.setUniform(it.key(), it.value());
@@ -87,10 +117,10 @@ void PathTracer::initVertexBuffer(const Program & program)
 
     static const GLfloat vertices[] =
     {
-        -1.f, +1.f
-    ,   -1.f, -1.f
+        +1.f, -1.f
     ,   +1.f, +1.f
-    ,   +1.f, -1.f
+    ,   -1.f, -1.f
+    ,   -1.f, +1.f
     };
 
     glGenVertexArrays(1, &m_vao);
@@ -172,12 +202,16 @@ void PathTracer::draw(
     
     program.use();
 
+    glActiveTexture(GL_TEXTURE0 + textureSlots["testTex"]);
+    glBindTexture(GL_TEXTURE_2D, m_testTex);
+
     glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
     glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer);
+    GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + writeIndex };
+    glDrawBuffers(1, writebuffers);
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer[readIndex]);
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer[writeIndex]);
     //glClear(GL_COLOR_BUFFER_BIT);
     
 
@@ -210,14 +244,17 @@ void PathTracer::draw(
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
     // copy written buffer to screen/output framebuffer
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer[writeIndex]);
-    if(target)
-        target->bind();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
+    glReadBuffer(GL_COLOR_ATTACHMENT0 + writeIndex );
+
+    //if(target)
+    //    target->bind();
     glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
-    if(target)
-        target->release();
+    //if(target)
+    //    target->release();
 
     program.release();
 }

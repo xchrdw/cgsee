@@ -22,6 +22,7 @@ uniform samplerBuffer normalBuffer;
 uniform samplerBuffer geometryBuffer;
 uniform samplerBuffer randomVectors;
 uniform sampler2D accumulation;
+uniform sampler2D testTex;
 
 uniform int randomInt;
 
@@ -35,11 +36,18 @@ vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace
 vec4 skybox(vec3 position, vec3 direction);
 
 
-float rand =  fract(sin(dot(direction.xy ,vec2(12.9898, 78.233))*(randomInt % 1111 + 1)) * 43758.5453);
+float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt%1111)) * 43758.5453);
 
 void main()
 {
-    vec4 oldFragColor = texture(accumulation, v_uv);
+    vec4 oldFragColor/*  = texture(accumulation, v_uv) */;
+    // fragColor = mix(oldFragColor, vec4(1.0), 0.1);
+    // fragColor = oldFragColor;
+    fragColor = texture(testTex, v_uv);
+    return;
+    
+    
+    
     int numRnd = textureSize(randomVectors);
     vec3 rndVec = texelFetch(randomVectors, int(rand*numRnd)).xyz;
 
@@ -64,10 +72,11 @@ void main()
     int secondaryNearestIndex;
     vec3 secondaryTriangle[3];
     vec3 secondaryIntersectionPoint;
-    fragColor = vec4(normalize(primaryTangentspace * (rndVec + vec3(0.0, 0.000001, 0.0))), 1.0);
+    fragColor = mix(oldFragColor, vec4(normalize(primaryTangentspace * rndVec)/2.0 + 0.5, 1.0), 0.5);
+    // fragColor = mix(oldFragColor, vec4(normalize(rndVec)/2.0 + 0.5, 1.0), 0.9);
     return;
 
-    rayTriangleIntersection(primaryIntersectionPoint, primaryTangentspace * normalize(rndVec + vec3(0.0, 3.0, 0.0)), secondaryNearestIndex, secondaryTriangle, secondaryIntersectionPoint);
+    rayTriangleIntersection(primaryIntersectionPoint, normalize(primaryTangentspace * normalize(rndVec + vec3(0.0, 3.0, 0.0))), secondaryNearestIndex, secondaryTriangle, secondaryIntersectionPoint);
 
     if (secondaryNearestIndex == -1) {
         fragColor = skybox(primaryIntersectionPoint, primaryTangentspace * rndVec);
@@ -143,7 +152,7 @@ vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace
 
     tangentspace[0] = normalize(e0);
     tangentspace[1] = normalize(cross(e0, e1));
-    tangentspace[2] = cross(tangentspace[0], tangentspace[1]);
+    tangentspace[2] = normalize(cross(tangentspace[0], tangentspace[1]));
 
     return tangentspace[1];
 }

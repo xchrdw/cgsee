@@ -61,6 +61,7 @@ protected:
 
     // two Framebuffers for "pingPong" rendering -> reuse result of last previous draw call
     bool m_whichBuffer;
+    GLuint m_testTex;
     GLuint m_accuTexture[2];
-    GLuint m_accuFramebuffer[2];
+    GLuint m_accuFramebuffer;
 };
