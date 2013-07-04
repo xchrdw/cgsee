@@ -48,6 +48,9 @@ set(SOURCES
     scenegraph/ISceneVisitor.h
     scenegraph/drawvisitor.h
     scenegraph/drawvisitor.cpp
+
+    scenegraph/cullingvisitor.h
+    scenegraph/cullingvisitor.cpp
     
     abstracttimer.h
     assimploader.h
@@ -92,6 +95,10 @@ set(SOURCES
     shader.cpp
     timer.h
     timer.cpp
+    plane.h
+    plane.cpp
+    viewfrustum.h
+    viewfrustum.cpp
     vertexcacheoptimizer.h
     vertexcacheoptimizer.cpp
     vertexreuse.h
