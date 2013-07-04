@@ -40,10 +40,14 @@ float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (r
 
 void main()
 {
-    vec4 oldFragColor/*  = texture(accumulation, v_uv) */;
+    vec4 oldFragColor = texture(accumulation, v_uv);
+    vec4 testFragColor = texture(testTex, v_uv);
     // fragColor = mix(oldFragColor, vec4(1.0), 0.1);
-    // fragColor = oldFragColor;
-    fragColor = texture(testTex, v_uv);
+    if (rand < 0.5)
+        fragColor = oldFragColor;
+    else
+        fragColor = testFragColor;
+    // fragColor = texture(testTex, v_uv);
     return;
     
     

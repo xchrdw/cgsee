@@ -59,16 +59,18 @@ void PathTracer::initialize(const Program & program)
 
         float *red = new float[4*m_viewport.x*m_viewport.y];
         float *blue = new float[4*m_viewport.x*m_viewport.y];
-        float *green = new float[4*m_viewport.x*m_viewport.y];
+        float *green = new float[4];
         for (int i=0; i < 4*m_viewport.x*m_viewport.y; i+=4){
             red[i+0] = 1.0f; red[i+1] = 0.0f; red[i+2] = 0.0f; red[i+3] = 1.0f;
             blue[i+0] = 0.0f; blue[i+1] = 0.0f; blue[i+2] = 1.0f; blue[i+3] = 1.0f;
-            green[i+0] = 0.0f; green[i+1] = 1.0f; green[i+2] = 0.0f; green[i+3] = 1.0f;
+            //green[i+0] = 0.0f; green[i+1] = 1.0f; green[i+2] = 0.0f; green[i+3] = 1.0f;
         }
+        green[0] = 0.0f; green[1] = 1.0f; green[2] = 0.0f; green[3] = 1.0f;
 
         glGenTextures(1, &m_testTex);
         glBindTexture(GL_TEXTURE_2D, m_testTex);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, green);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1, 1, 0, GL_RGBA, GL_FLOAT, green);
+        glError();
 
         glBindTexture(GL_TEXTURE_2D, m_accuTexture[0]);
         // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
@@ -148,7 +150,7 @@ void PathTracer::initRandomVectorBuffer(const Program & program)
 {
     std::vector<glm::vec3> rndVecData;
 
-    pointsOnSphere(rndVecData, 10000);
+    pointsOnSphere(rndVecData, 1000);
 
     m_randomVectors = new BufferObject(GL_TEXTURE_BUFFER, GL_STATIC_READ);
     m_randomVectors->data<glm::vec3>(rndVecData.data(), rndVecData.size(),  GL_RGB32F, sizeof(glm::vec3));
@@ -182,7 +184,7 @@ void PathTracer::draw(
 ,   FrameBufferObject * target)
 {
     // call group draw with initOnly, to initialize all needed buffer objects
-    Group::draw(program, glm::mat4(), true);
+    Group::draw(program, glm::mat4(), true); // includes call "program.use()"
 
     initialize(program);
 
@@ -194,28 +196,26 @@ void PathTracer::draw(
     update();
 
     program.setUniform(RANDOM_INT_UNIFORM, rng());
+    setUniforms(program);
 
     // switch the rendering buffers for each pass
     m_whichBuffer = !m_whichBuffer;
     unsigned short readIndex = m_whichBuffer ? 0 : 1;
     unsigned short writeIndex = m_whichBuffer ? 1 : 0;
-    
-    program.use();
 
     glActiveTexture(GL_TEXTURE0 + textureSlots["testTex"]);
     glBindTexture(GL_TEXTURE_2D, m_testTex);
+    glError();
 
     glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
     glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
+    glError();
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer);
     GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + writeIndex };
     glDrawBuffers(1, writebuffers);
 
 
     //glClear(GL_COLOR_BUFFER_BIT);
-    
-
-    setUniforms(program);
 
     glBindVertexArray(m_vao);                                                                  
     glError();
@@ -247,6 +247,7 @@ void PathTracer::draw(
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + writeIndex );
+    glError();
 
     //if(target)
     //    target->bind();
