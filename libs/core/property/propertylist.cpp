@@ -1,13 +1,13 @@
 
-#include "propertyowner.h"
+#include "propertylist.h"
 
-PropertyOwner::PropertyOwner()
+PropertyList::PropertyList()
 :   m_properties(nullptr)
 ,   m_properties_map(nullptr)
 {
 }
 
-PropertyOwner::~PropertyOwner()
+PropertyList::~PropertyList()
 {
     // qDeleteAll(*m_properties); 
     // ... leads to "*** error for object 0x1088adb70: pointer being freed was not allocated"
@@ -18,14 +18,14 @@ PropertyOwner::~PropertyOwner()
 
 /** Public **/
 
-bool PropertyOwner::propertyExists(QString name)
+bool PropertyList::exists(QString name)
 {
     return propertiesMap()->value(name, nullptr);
 }
 
-bool PropertyOwner::addProperty(AbstractProperty * property)
+bool PropertyList::add(AbstractProperty * property)
 {
-    if (!propertyExists(property->name())) {
+    if (!exists(property->name())) {
         properties()->push_back(property);
         propertiesMap()->insert(property->name(), property);
         return true;
@@ -34,10 +34,10 @@ bool PropertyOwner::addProperty(AbstractProperty * property)
     }
 }
 
-bool PropertyOwner::removeProperty(QString name)
+bool PropertyList::remove(QString name)
 {
-    if (propertyExists(name)) {
-        AbstractProperty * property = property(name);
+    if (exists(name)) {
+        AbstractProperty * property = this->value(name);
         properties()->removeAll(property);
         propertiesMap()->remove(name);
         delete property;
@@ -47,16 +47,16 @@ bool PropertyOwner::removeProperty(QString name)
     }
 }
 
-AbstractProperty * PropertyOwner::property(QString name)
+AbstractProperty * PropertyList::value(QString name)
 {
-    AbstractProperty * property = this->propertiesMap().value(name, nullptr);
+    AbstractProperty * property = this->propertiesMap()->value(name, nullptr);
     if (!property)
         qFatal("Requested Property \"%s\" not found", qPrintable(name));
 
     return property;
 }
 
-QList<AbstractProperty *> PropertyOwner::properties() const
+QList<AbstractProperty *> PropertyList::list()
 {
     return *(this->properties());
 }
@@ -64,14 +64,14 @@ QList<AbstractProperty *> PropertyOwner::properties() const
 
 /** Protected **/
 
-QList<AbstractProperty *> * PropertyOwner::properties()
+QList<AbstractProperty *> * PropertyList::properties()
 {
     if (!m_properties)
         m_properties = new QList<AbstractProperty *>();
     return m_properties;
 }
 
-QHash<QString, AbstractProperty *> * PropertyOwner::propertiesMap()
+QHash<QString, AbstractProperty *> * PropertyList::propertiesMap()
 {
     if (!m_properties_map)
         m_properties_map = new QHash<QString, AbstractProperty *>();

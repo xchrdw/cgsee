@@ -5,11 +5,10 @@
 #include <QObject>
 #include <QString>
 #include <core/declspec.h>
-#include "propertyowner.h"
 
 class AbstractPropertyVisitor;
 
-class CGSEE_API AbstractProperty : public PropertyOwner, public QObject, 
+class CGSEE_API AbstractProperty : public QObject
 {
     Q_OBJECT
 

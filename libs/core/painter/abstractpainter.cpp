@@ -10,10 +10,11 @@
 #include "abstractglparent.h"
 #include <core/camera.h>
 #include <core/gpuquery.h>
+#include <core/property/propertylist.h>
 
 AbstractPainter::AbstractPainter()
-:   PropertyOwner()
-,   m_initialized(false)
+:   m_initialized(false)
+,   m_propertylist(new PropertyList())
 {
 }
  

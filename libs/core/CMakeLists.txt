@@ -27,8 +27,8 @@ set(SOURCES
     property/abstractproperty.cpp
     property/valueproperty.h
     property/limitedproperty.h
-    property/propertyowner.h
-    property/propertyowner.cpp
+    property/propertylist.h
+    property/propertylist.cpp
     property/listproperty.h
     property/listproperty.cpp
     property/abstractlistproperty.h

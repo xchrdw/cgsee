@@ -3,13 +3,13 @@
 
 #include <core/declspec.h>
 #include <core/glformat.h>
-#include <core/property/propertyowner.h>
 
 class QKeyEvent;
 class Camera;
 class AbstractGLParent;
+class PropertyList;
 
-class CGSEE_API AbstractPainter : public PropertyOwner
+class CGSEE_API AbstractPainter
 {
 public:
     AbstractPainter(void);
@@ -36,4 +36,5 @@ protected:
 
 protected:
     bool m_initialized;
+    PropertyList * m_propertylist;
 };

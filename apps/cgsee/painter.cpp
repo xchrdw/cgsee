@@ -23,6 +23,7 @@
 #include <core/property/genericlistproperty.h>
 #include <core/property/valueproperty.h>
 #include <core/property/limitedproperty.h>
+#include <core/property/propertylist.h>
 #include <gui/propertywidgetbuilder.h>
 
 
@@ -40,8 +41,8 @@ static const QString WARMCOLDCOLOR_UNIFORM ("warmcoldcolor");
 Painter::Painter(Camera * camera)
 :   AbstractScenePainter()
 ,   m_quad(nullptr)
-,   m_normals(nullptr)
 ,   m_normalz(nullptr)
+,   m_normals(nullptr)
 ,   m_wireframe(nullptr)
 ,   m_primitiveWireframe(nullptr)
 ,   m_solidWireframe(nullptr)
@@ -128,11 +129,11 @@ const bool Painter::initialize()
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
     shaders->insert("rainbow", rainbow);
-    this->addProperty(intprop);
-    this->addProperty(boolprop);
-    this->addProperty(shaders);
-    this->addProperty(apples);
-    this->addProperty(derplevel);
+    m_propertylist->add(intprop);
+    m_propertylist->add(boolprop);
+    m_propertylist->add(derplevel);
+    m_propertylist->add(apples);
+    m_propertylist->add(shaders);
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
@@ -201,7 +202,7 @@ const bool Painter::initialize()
          new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
     //set UNIFORMS for selected shader
-    this->property<GenericListProperty<Program>>("shaders")->select("normals");
+    m_propertylist->value<GenericListProperty<Program>>("shaders")->select("normals");
     m_useProgram = m_flat;
     setUniforms();
 
@@ -218,7 +219,7 @@ const bool Painter::initialize()
 
 
     PropertyWidgetBuilder builder;
-    builder.buildWidget(this->properties());
+    builder.buildWidget(m_propertylist->list());
 
     builder.retainWidget()->show();
 
@@ -278,7 +279,7 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    m_camera->draw(*(this->property<GenericListProperty<Program>>("shaders")->selectedValue()), m_fboNormalz);
+    m_camera->draw(*(m_propertylist->value<GenericListProperty<Program>>("shaders")->selectedValue()), m_fboNormalz);
     sampler.clear();
     sampler["source"] = m_fboNormalz;
 
