@@ -21,7 +21,8 @@ CullingVisitor::CullingVisitor(Camera *camera, Program *program, glm::mat4 trans
 	m_camera(camera),
 	m_program(program),
 	m_transform(transform),
-	m_viewFrustum(camera->viewFrustum())
+	m_viewFrustum(camera->viewFrustum()),
+	m_cull(true)
 {
 }
 
