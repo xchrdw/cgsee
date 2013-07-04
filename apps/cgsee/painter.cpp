@@ -17,12 +17,11 @@
 #include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
-#include "core/arcballnavigation.h"
-#include "core/flightnavigation.h"
+#include "core/navigation/arcballnavigation.h"
+#include "core/navigation/flightnavigation.h"
 
 
 //for phong, flat and gouraud
-static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
 static const QString LIGHTDIR_UNIFORM ("lightdir");
 static const QString LIGHTDIR_UNIFORM2 ("lightdir2");
 static const QString LIGHTAMBIENTGLOBAL_UNIFORM ("lightambientglobal");
@@ -52,20 +51,9 @@ Painter::Painter(Camera * camera)
 {
 }
 
-Painter::Painter(Group * scene)
-:   AbstractScenePainter(scene)
-,   m_quad(nullptr)
-,   m_normalz(nullptr)
-,   m_fboNormalz(nullptr)
-,   m_flush(nullptr)
-,   m_camera(nullptr)
-{
-}
-
 Painter::~Painter()
 {
     delete m_quad;
-
     delete m_normals;
     delete m_normalz;
     delete m_flat;
@@ -83,20 +71,11 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    if (m_scene) {
-        glm::mat4 transform(1.f);
-        
-        transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
-        transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
-        transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
-        transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
-        
-        m_scene->setTransform(transform);
+    if(m_scene) {
         m_camera->append(m_scene);
-    } 
+    }
 
     m_quad = new ScreenQuad();
-
 
     // NORMALS
     m_normals = new Program();
@@ -208,7 +187,6 @@ void Painter::setUniforms()
 {
     if(m_useProgram == m_flat || m_useProgram == m_gouraud || m_useProgram == m_phong)
     {
-        m_useProgram->setUniform(CAMERAPOSITION_UNIFORM, camPos);
         m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
         m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,-8.0,7.5));
 
@@ -249,11 +227,6 @@ void Painter::setUniforms()
         warmColdColor[2] = glm::vec4(0.0, 0.0, 0.6, 0.0);    //cold color
         warmColdColor[3] = glm::vec4(0.45,0.45,0,0);            //Diffuse Warm, DiffuseCool
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
-    }
-
-    else if(m_useProgram == m_pathTracing)
-    {
-        // this is done in PathTracer
     }
 }
 

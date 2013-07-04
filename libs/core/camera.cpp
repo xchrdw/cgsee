@@ -55,10 +55,11 @@ void Camera::draw(
     program.setUniform(VIEWPORT_UNIFORM, m_viewport);
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
-    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
-        
+
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
+
+    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
     
     Group::draw(program, glm::mat4());
 
