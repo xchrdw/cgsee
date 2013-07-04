@@ -51,9 +51,8 @@ protected:
     ,   std::vector<glm::vec3> & points
     ,   std::hash_map<glm::highp_uint, glm::uint> & cache);
 
-    void invalidateGeometry();
-
     bool m_invalidatedGeometry;
+    bool m_needAccuReset;
 
     GLuint m_vao;
     BufferObject * m_vertexBO;
@@ -63,7 +62,6 @@ protected:
     // two Framebuffers for "pingPong" rendering -> reuse result of last previous draw call
     bool m_whichBuffer;
     unsigned int m_frameCounter;
-    //GLuint m_testTex;
     GLuint m_accuTexture[2];
     GLuint m_accuFramebuffer;
 };

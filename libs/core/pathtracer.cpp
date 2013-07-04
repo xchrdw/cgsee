@@ -1,12 +1,10 @@
 #include <random>
-#include <time.h>
+#include <ctime>
 
 #include "pathtracer.h"
 
 #include "program.h"
 #include "bufferobject.h"
-#include "framebufferobject.h"
-//#include "gpuquery.h"
 
 static const QString TRANSFORM_UNIFORM ("transform");
 static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
@@ -24,7 +22,6 @@ namespace {
         textureSlots["geometryBuffer"] = 3;
         textureSlots["randomVectors"] = 4;
         textureSlots["accumulation"] = 5;
-        //textureSlots["testTex"] = 6;
         return textureSlots;
     }
 }
@@ -35,6 +32,7 @@ const QMap<QString, GLuint> PathTracer::textureSlots(initTextureSlots());
 PathTracer::PathTracer(const QString & name)
 :   Camera(name)
 ,   m_invalidatedGeometry(true)
+,   m_needAccuReset(true)
 ,   m_vao(-1)
 ,   m_vertexBO(nullptr)
 ,   m_randomVectorTexture(-1)
@@ -59,30 +57,14 @@ void PathTracer::initialize(const Program & program)
 
         glGenTextures(2, m_accuTexture);
 
-        float *red = new float[4*m_viewport.x*m_viewport.y];
-        float *blue = new float[4*m_viewport.x*m_viewport.y];
-        //float *green = new float[4];
-        for (int i=0; i < 4*m_viewport.x*m_viewport.y; i+=4){
-            red[i+0] = 1.0f; red[i+1] = 0.0f; red[i+2] = 0.0f; red[i+3] = 1.0f;
-            blue[i+0] = 0.0f; blue[i+1] = 0.0f; blue[i+2] = 1.0f; blue[i+3] = 1.0f;
-            //green[i+0] = 0.0f; green[i+1] = 1.0f; green[i+2] = 0.0f; green[i+3] = 1.0f;
-        }
-        //green[0] = 0.0f; green[1] = 1.0f; green[2] = 0.0f; green[3] = 1.0f;
-
-        //glGenTextures(1, &m_testTex);
-        //glBindTexture(GL_TEXTURE_2D, m_testTex);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1, 1, 0, GL_RGBA, GL_FLOAT, green);
-        //glError();
-
         glBindTexture(GL_TEXTURE_2D, m_accuTexture[0]);
-        // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, red); // <-- test attached color filled array
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
         glBindTexture(GL_TEXTURE_2D, m_accuTexture[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, blue);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
@@ -94,10 +76,6 @@ void PathTracer::initialize(const Program & program)
         glBindFramebuffer(GL_FRAMEBUFFER, m_accuFramebuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_accuTexture[0], 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_accuTexture[1], 0);
-        // use only one framebuffer -> color attachment 0, 1, two textures
-        // 1test: fill with blue/read -> test switching
-        // 2test: ++green, accu
-        // -!-
         glError();
 
         const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -173,6 +151,7 @@ void PathTracer::setUniforms(const Program & program)
     program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
     program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
     program.setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
+    program.setUniform(RANDOM_INT_UNIFORM, rng());
 }
 
 void PathTracer::draw(
@@ -193,21 +172,25 @@ void PathTracer::draw(
 
     ++m_frameCounter;
     
-    if (m_invalidated || m_invalidatedGeometry) {
+    if (m_needAccuReset || m_invalidated) {
         m_frameCounter = 1;
-        m_invalidated = true;
+        //glClear(GL_COLOR_BUFFER_BIT);
+        m_needAccuReset = false;
     }
 
+    // TODO: fetch geometry data from m_children
+    //       atm geometry data is attached to the shader by PolygonalDrawable
+    //     -> requieres new SceneGraph + Iterators
     if (m_invalidatedGeometry) {
         buildBoundingVolumeHierarchy();
-        glClear(GL_COLOR_BUFFER_BIT);
+        //glClear(GL_COLOR_BUFFER_BIT);
     }
 
 
-    //update m_transform
-    update();
+    // update m_transform, reset m_invalidated
+    if (m_invalidated)
+        update();
 
-    program.setUniform(RANDOM_INT_UNIFORM, rng());
     setUniforms(program);
 
     // switch the rendering buffers for each pass
@@ -215,16 +198,13 @@ void PathTracer::draw(
     unsigned short readIndex = m_whichBuffer ? 0 : 1;
     unsigned short writeIndex = m_whichBuffer ? 1 : 0;
 
-    /*glActiveTexture(GL_TEXTURE0 + textureSlots["testTex"]);
-    glBindTexture(GL_TEXTURE_2D, m_testTex);
-    glError();*/
-
     glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
     glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
     glError();
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer);
     GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + writeIndex };
     glDrawBuffers(1, writebuffers);
+    glError();
 
 
     glBindVertexArray(m_vao);                                                                  
@@ -234,12 +214,7 @@ void PathTracer::draw(
     glEnable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
 
-
     glViewport(0, 0, m_viewport.x, m_viewport.y);
-    
-    // TODO: fetch geometry data from m_children
-    //       atm geometry data is attached to the shader by PolygonalDrawable
-    //     -> requieres new SceneGraph + Iterators
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glError();
@@ -272,24 +247,22 @@ void PathTracer::draw(
 
 void PathTracer::buildBoundingVolumeHierarchy()
 {
+    // iterate over m_children, when sceengraph is merged
     m_invalidatedGeometry = false;
-}
-
-void PathTracer::invalidateGeometry()
-{
-    m_invalidatedGeometry = true;
 }
 
 void PathTracer::prepend(Node * node)
 {
     Group::prepend(node);
     m_invalidatedGeometry = true;
+    m_needAccuReset = true;
 }
 
 void PathTracer::append(Node * node)
 {
     Group::append(node);
     m_invalidatedGeometry = true;
+    m_needAccuReset = true;
 }
 
 void PathTracer::setViewport(
@@ -297,9 +270,9 @@ void PathTracer::setViewport(
     ,   const int height)
 {
     Camera::setViewport(width, height);
-    m_invalidated = false;
+    m_needAccuReset = true;
 
-    if (m_accuTexture[0] == -1)
+    if (m_accuFramebuffer == -1)
         return;
     for (int i=0; i<2; ++i) {
         glBindTexture(GL_TEXTURE_2D, m_accuTexture[i]);
