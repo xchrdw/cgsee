@@ -7,9 +7,9 @@
 #include <QBasicTimer>
 
 #include "canvas.h"
-#include "core/abstractnavigation.h"
-#include "core/flightnavigation.h"
-#include "core/arcballnavigation.h"
+#include "core/navigation/abstractnavigation.h"
+#include "core/navigation/flightnavigation.h"
+#include "core/navigation/arcballnavigation.h"
 
 #include <core/painter/abstractscenepainter.h>
 #include <core/gpuquery.h>
@@ -190,10 +190,15 @@ AbstractNavigation * Canvas::navigation()
 
 void Canvas::setNavigation( AbstractNavigation * navigation )
 {
-    if (m_navigation)
+    float bbRadius = 0;
+    if (m_navigation){
+        bbRadius = m_navigation->getBBRadius();
         delete m_navigation;
+    }
     m_navigation = navigation;
     m_navigation->setCanvas(this);
+    if (bbRadius != 0)
+        m_navigation->setBBRadius(bbRadius);
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )

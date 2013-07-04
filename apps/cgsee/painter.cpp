@@ -17,8 +17,8 @@
 #include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
-#include "core/arcballnavigation.h"
-#include "core/flightnavigation.h"
+#include "core/navigation/arcballnavigation.h"
+#include "core/navigation/flightnavigation.h"
 
 #include <core/property/genericlistproperty.h>
 #include <core/property/valueproperty.h>
@@ -57,20 +57,9 @@ Painter::Painter(Camera * camera)
 {
 }
 
-Painter::Painter(Group * scene)
-:   AbstractScenePainter(scene)
-,   m_quad(nullptr)
-,   m_normalz(nullptr)
-,   m_fboNormalz(nullptr)
-,   m_flush(nullptr)
-,   m_camera(nullptr)
-{
-}
-
 Painter::~Painter()
 {
     delete m_quad;
-
     delete m_normals;
     delete m_normalz;
     delete m_flat;
@@ -88,20 +77,11 @@ const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
-    if (m_scene) {
-        glm::mat4 transform(1.f);
-
-        transform *= glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
-        transform *= glm::rotate(glm::mat4(1.f), 180.f, glm::vec3(0.f, 1.f, 0.f));
-        transform *= glm::rotate(glm::mat4(1.f), -90.f, glm::vec3(1.f, 0.f, 0.f));
-        transform *= glm::rotate(glm::mat4(1.f), 25.f, glm::vec3(0.f, 0.f, 1.f));
-
-        m_scene->setTransform(transform);
+    if(m_scene) {
         m_camera->append(m_scene);
     }
 
     m_quad = new ScreenQuad();
-
 
     // NORMALS
     LimitedProperty<int> * intprop = new LimitedProperty<int>("intprop", "How much int?", 12, 1, 13);
