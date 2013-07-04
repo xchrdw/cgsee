@@ -10,7 +10,7 @@ public:
     Plane(glm::vec4 normal, float distance);
     Plane(glm::vec4 normal, glm::vec4 supportVector);
     Plane(glm::vec4 normal, float distance, glm::mat4 transform);
-    virtual Plane::~Plane();
+    virtual ~Plane();
 
     Plane transformed(glm::mat4 transform);
     
