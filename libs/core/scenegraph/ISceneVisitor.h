@@ -1,10 +1,6 @@
 #pragma once
 
-#ifndef ISceneVisitor_H
-#define ISceneVisitor_H
-
 #include <core/declspec.h>
-
 
 class Node;
 
@@ -14,5 +10,3 @@ public:
     virtual ~ISceneVisitor() {}
     virtual bool operator() ( Node & node ) =0;
 };
-
-#endif // ISceneVisitor_H

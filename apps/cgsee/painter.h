@@ -49,11 +49,6 @@ protected:
         const t_samplerByName & sampler);
    
 protected:
-// <<<<<<< HEAD
-//     std::shared_ptr<DataBlockRegistry> m_registry;
-//     Group * m_group;
-// =======
-// >>>>>>> master
     ScreenQuad * m_quad;
 
     Program * m_normalz;
