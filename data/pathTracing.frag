@@ -41,6 +41,7 @@ float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (r
 void main()
 {
     vec4 oldFragColor = texture(accumulation, v_uv);
+    vec4 addedColor = vec4(0.0);
     // vec4 testFragColor = texture(testTex, v_uv);
     // // fragColor = mix(oldFragColor, vec4(1.0), 0.1);
     // if (rand < 0.5)
@@ -72,29 +73,60 @@ void main()
     // fragColor = vec4(primaryIntersectionPoint, 1.0);
     // fragColor = mix(vec4(primaryIntersectionPoint, 1.0), oldFragColor, 0.9);
     // return;
+    fragColor = mix(oldFragColor, vec4(normalize(primaryTangentspace * rndVec)/2.0 + 0.5, 1.0), 1.0/frameCounter);
+    //return;
 
-    int secondaryNearestIndex;
-    vec3 secondaryTriangle[3];
-    vec3 secondaryIntersectionPoint;
-    float fC = frameCounter+0.0000001;
-    fragColor = mix(oldFragColor, vec4(normalize(primaryTangentspace * rndVec)/2.0 + 0.5, 1.0), 1.0/fC);
-    // fragColor = mix(oldFragColor, vec4(normalize(rndVec)/2.0 + 0.5, 1.0), 0.9);
-    return;
+    //check the light
+    int lightNearestIndex;
+    vec3 lightTriangle[3];
+    vec3 lightIntersectionPoint;
 
-    rayTriangleIntersection(primaryIntersectionPoint, normalize(primaryTangentspace * normalize(rndVec + vec3(0.0, 3.0, 0.0))), secondaryNearestIndex, secondaryTriangle, secondaryIntersectionPoint);
+    rayTriangleIntersection(primaryIntersectionPoint, light - primaryIntersectionPoint, lightNearestIndex, lightTriangle, lightIntersectionPoint);
 
-    if (secondaryNearestIndex == -1) {
-        fragColor = skybox(primaryIntersectionPoint, primaryTangentspace * rndVec);
-        return;
+    if (lightNearestIndex == -1) {
+        //fragColor = skybox(primaryIntersectionPoint, primaryTangentspace * rndVec);
+        //return;
     }
-
-    mat3 secondaryTangentspace;
-    vec3 secondaryNormalAvg = getNormalAndTangentSpaceForTriangle(secondaryTriangle, secondaryTangentspace);
 
     float cos = dot(normalize(light), normalize(primaryNormalAvg));
 
-    fragColor = mix(vec4(vec3(cos), 1.0), oldFragColor, 0.05);
+    addedColor += cos;
 
+
+
+    //one random diffuse bounce
+    int secondaryNearestIndex;
+    vec3 secondaryTriangle[3];
+    vec3 secondaryIntersectionPoint;
+
+    rayTriangleIntersection(primaryIntersectionPoint, normalize(primaryTangentspace * (rndVec)), secondaryNearestIndex, secondaryTriangle, secondaryIntersectionPoint);
+
+    if (secondaryNearestIndex == -1) {
+    }
+    else {
+        mat3 secondaryTangentspace;
+        vec3 secondaryNormalAvg = getNormalAndTangentSpaceForTriangle(secondaryTriangle, secondaryTangentspace);
+
+        int secondlightNearestIndex;
+        vec3 secondlightTriangle[3];
+        vec3 secondlightIntersectionPoint;
+
+        rayTriangleIntersection(secondaryIntersectionPoint, light - secondaryIntersectionPoint, secondlightNearestIndex, secondlightTriangle, secondlightIntersectionPoint);
+
+        if (secondlightNearestIndex == -1) {
+            //fragColor = skybox(primaryIntersectionPoint, primaryTangentspace * rndVec);
+            //return;
+        }
+        else {
+            float cos2 = dot(normalize(light), normalize(secondaryNormalAvg));
+            addedColor += cos2;
+        }
+
+    }
+
+
+    fragColor = mix(oldFragColor, addedColor, 1.0/frameCounter);
+    return;
 }
 
 
