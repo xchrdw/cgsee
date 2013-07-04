@@ -10,11 +10,19 @@ set(SOURCES
 
     aabb.h
     aabb.cpp
+    abstractnavigation.h
+    abstractnavigation.cpp
+    arcballnavigation.h
+    arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstractglparent.h
+    abstractmodelloader.cpp
+    abstractmodelloader.h
     abstractpainter.h
     abstractpainter.cpp
+    abstractscenepainter.h
+    abstractscenepainter.cpp
 
     datacore/datablock.h
     datacore/datablock.cpp
@@ -49,6 +57,8 @@ set(SOURCES
     scenegraph/cullingvisitor.cpp
     
     abstracttimer.h
+    assimploader.h
+    assimploader.cpp
     autotimer.h
     autotimer.cpp
     bufferobject.h
@@ -58,10 +68,15 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+    flightnavigation.h
+    flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
+    fpsnavigation.h
+    fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
+    geometryoptimizer.h
     glformat.h
     glformat.cpp
     gpuquery.h
@@ -69,8 +84,10 @@ set(SOURCES
     messagehandler.h
     messagehandler.cpp
     mathmacros.h
-    objio.h
-    objio.cpp
+
+    objloader.h
+    objloader.cpp
+
     program.h
     program.cpp
     screenquad.h
@@ -79,11 +96,14 @@ set(SOURCES
     shader.cpp
     timer.h
     timer.cpp
-
     plane.h
     plane.cpp
     viewfrustum.h
     viewfrustum.cpp
+    vertexcacheoptimizer.h
+    vertexcacheoptimizer.cpp
+    vertexreuse.h
+    vertexreuse.cpp
 )
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$|\\\\.inl$" 
@@ -99,6 +119,7 @@ add_library(${target} SHARED ${HEADERS} ${SOURCES})
 qt5_use_modules(${target} Widgets OpenGL)
 
 target_link_libraries(${target}
+    ${ASSIMP_LIBRARY}
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}
     ${EXTRA_LIBS}
@@ -117,3 +138,4 @@ set_target_properties(${target}
     DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
 
 add_definitions("-DCGSEE_EXPORTS")
+add_definitions("-DGLM_SWIZZLE")

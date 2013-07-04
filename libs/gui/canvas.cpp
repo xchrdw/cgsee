@@ -7,10 +7,14 @@
 #include <QBasicTimer>
 
 #include "canvas.h"
+#include "core/abstractnavigation.h"
+#include "core/flightnavigation.h"
+#include "core/arcballnavigation.h"
 
-#include <core/abstractpainter.h>
+#include <core/abstractscenepainter.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
+#include "core/timer.h"
 
 
 Canvas::Canvas(
@@ -19,6 +23,7 @@ Canvas::Canvas(
 
 :   QGLWidget(format.asQGLFormat(), parent)
 ,   m_painter(nullptr)
+,   m_navigation(nullptr)
 ,   m_timer(nullptr)
 ,   m_format(format)
 {
@@ -28,8 +33,7 @@ Canvas::Canvas(
     setMinimumSize(1, 1);
 
     // Important for overdraw, not occluding the scene.
-    setAutoFillBackground(false);
-    //setUpdatesEnabled(false);
+    setAutoFillBackground(false); 
 }
 
 Canvas::~Canvas()
@@ -86,6 +90,9 @@ void Canvas::resizeGL(
 {
     if(m_painter)
         m_painter->resize(width, height);
+    if(m_navigation)
+        m_navigation->setViewPort(width, height);
+
 }
 
 
@@ -120,7 +127,6 @@ void Canvas::resizeGL(
 void Canvas::paintGL()
 {
     glError();  
-
     if(m_painter)
         m_painter->paint();
     else 
@@ -138,7 +144,7 @@ void Canvas::timerEvent(QTimerEvent *event)
     update();
 }
 
-void Canvas::setPainter(AbstractPainter * painter)
+void Canvas::setPainter(AbstractScenePainter * painter)
 {
     if(m_painter == painter)
         return;
@@ -147,7 +153,7 @@ void Canvas::setPainter(AbstractPainter * painter)
     update();
 }
 
-AbstractPainter * Canvas::painter()
+AbstractScenePainter * Canvas::painter()
 {
     return m_painter;
 }
@@ -175,4 +181,37 @@ const QImage Canvas::capture(
 void Canvas::resize(int width, int height)
 {
     QGLWidget::resize(width, height);
+}
+
+AbstractNavigation * Canvas::navigation()
+{
+    return m_navigation;
+}
+
+void Canvas::setNavigation( AbstractNavigation * navigation )
+{
+    if (m_navigation)
+        delete m_navigation;
+    m_navigation = navigation;
+    m_navigation->setCanvas(this);
+}
+
+void Canvas::mousePressEvent( QMouseEvent * event )
+{
+    m_navigation->mousePressEvent(event);
+}
+
+void Canvas::mouseReleaseEvent( QMouseEvent * event )
+{
+    m_navigation->mouseReleaseEvent(event);
+}
+
+void Canvas::mouseMoveEvent( QMouseEvent * event )
+{
+    m_navigation->mouseMoveEvent(event);
+}
+
+void Canvas::wheelEvent(QWheelEvent * event)
+{
+    m_navigation->wheelEvent(event);
 }

@@ -7,7 +7,8 @@
 #include <QString>
 #include <QMap>
 
-#include <core/abstractpainter.h>
+#include <core/abstractscenepainter.h>
+
 
 
 class DataBlockRegistry;
@@ -17,10 +18,11 @@ class ScreenQuad;
 class Program;
 class FrameBufferObject;
 
-class Painter : public AbstractPainter
+class Painter : public AbstractScenePainter
 {
 public:
-    Painter();
+    Painter(Camera * camera);
+    Painter(Group * scene);
     virtual ~Painter();
 
     virtual void paint();
@@ -30,10 +32,9 @@ public:
     virtual void resize(
         const int width
     ,   const int height);
-
 protected:
-    virtual const bool initialize();
-    virtual Camera * camera();
+    virtual const bool initialize() override;
+    virtual Camera * camera() override;
 
 protected:
     void postShaderRelinked();
@@ -47,10 +48,13 @@ protected:
 
     static void releaseSampler(
         const t_samplerByName & sampler);
-
+   
 protected:
-    std::shared_ptr<DataBlockRegistry> m_registry;
-    Group * m_group;
+// <<<<<<< HEAD
+//     std::shared_ptr<DataBlockRegistry> m_registry;
+//     Group * m_group;
+// =======
+// >>>>>>> master
     ScreenQuad * m_quad;
 
     Program * m_normalz;
@@ -69,5 +73,6 @@ protected:
     glm::vec3 camPos;
 
     Program * m_flush;
+
     Camera * m_camera;
 };

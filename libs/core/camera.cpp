@@ -71,7 +71,7 @@ void Camera::update()
 
     m_invalidated = false;
 
-	m_viewFrustum->update();
+    m_viewFrustum->update();
 }
 
 const glm::ivec2 & Camera::viewport() const
@@ -154,7 +154,7 @@ void Camera::setZFar(const float z)
 }
 
 ViewFrustum *Camera::viewFrustum() const {
-	return m_viewFrustum;
+    return m_viewFrustum;
 }
 
 Camera * Camera::asCamera()

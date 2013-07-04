@@ -2,6 +2,7 @@ CMakeLists.txt.user
 
 build/
 codeblocks/
+3rdparty/
 
 *.sublime-project
 *.sublime-workspace
@@ -14,6 +15,6 @@ codeblocks/
 *.vcproj.*.user
 *.vcxproj.user
 
-*_configure.bat
-*_open-project.bat
-*_start-cmake-gui.bat
+_configure.bat
+_open-project.bat
+_start-cmake-gui.bat

@@ -41,8 +41,8 @@ public:
     void setZFar(const float z);
 
     const float aspect() const;
-	
-	ViewFrustum *viewFrustum() const;
+    
+    ViewFrustum *viewFrustum() const;
 
     // updates camera matrices
     void update();

@@ -21,14 +21,14 @@ class CGSEE_API CullingVisitor final : public ISceneVisitor
 public:
     typedef std::vector<std::shared_ptr<Node> >::iterator t_nodeIter;
     
-	CullingVisitor(Camera *camera, Program *program, glm::mat4 transform);
+    CullingVisitor(Camera *camera, Program *program, glm::mat4 transform);
     ~CullingVisitor();
-	bool operator() (Node &node);
+    bool operator() (Node &node);
 
 private:
-	Camera *m_camera;
-	Program *m_program;
-	glm::mat4 m_transform;
-	ViewFrustum *m_viewFrustum;
-	bool m_cull;
+    Camera *m_camera;
+    Program *m_program;
+    glm::mat4 m_transform;
+    ViewFrustum *m_viewFrustum;
+    bool m_cull;
 };

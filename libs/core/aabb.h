@@ -19,7 +19,7 @@ public:
 
     const glm::vec3 & llf() const;
     const glm::vec3 & urb() const;
-	const std::array<glm::vec3, 8> allVertices() const;
+    const std::array<glm::vec3, 8> allVertices() const;
 
     const bool inside(const glm::vec3 & vertex) const;
     const bool outside(const glm::vec3 & vertex) const;

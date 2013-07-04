@@ -12,6 +12,7 @@
 #include "gpuquery.h"
 
 
+
 AbstractPainter::AbstractPainter()
 :   m_initialized(false)
 {
@@ -44,13 +45,6 @@ void AbstractPainter::resize(
         qFatal("Painter initialization failed.");
 }
 
-void AbstractPainter::keyPress(QKeyEvent * event)
-{
-}
-
-void AbstractPainter::keyRelease(QKeyEvent * event)
-{
-}
 
 const QImage AbstractPainter::capture(
     AbstractGLParent & parent
@@ -113,3 +107,4 @@ const QImage AbstractPainter::capture(
 
     return frame.mirrored(false, true); // flip vertically
 }
+

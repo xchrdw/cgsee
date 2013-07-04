@@ -7,21 +7,29 @@
 #include <QString>
 
 #include "declspec.h"
-
 #include "common.h"
+#include "abstractmodelloader.h"
 
 
 class DataBlockRegistry;
 class Group;
 class PolygonalDrawable;
 
-class CGSEE_API ObjIO
+class CGSEE_API ObjLoader : public AbstractModelLoader
 {
 public:
-    static Group * groupFromObjFile(const QString & filePath, std::shared_ptr<DataBlockRegistry> registry);
+    ObjLoader( std::shared_ptr<DataBlockRegistry> registry );
+    virtual ~ObjLoader();
+
+    virtual QStringList namedLoadableTypes() const override;
+    virtual Group * importFromFile(const QString & filePath) const override;
 
 protected:
+    virtual QStringList loadableExtensions() const override;
 
+protected:
+    std::shared_ptr<DataBlockRegistry> m_registry;
+    
     struct ObjGroup
     {
         std::string name;
@@ -89,7 +97,7 @@ protected:
     ,   t_objects & objects);
     static void parseG(
         std::istringstream & line
-    ,   ObjObject & object); 
+    ,   ObjObject & object);
 
     static const e_FaceFormat parseFaceFormat(const std::istringstream & line);
 };
