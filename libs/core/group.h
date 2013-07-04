@@ -52,8 +52,8 @@ public:
     virtual const AxisAlignedBoundingBox boundingBox() const;
 
 protected:
-    void prepend(Node * node);
-    void append(Node * node);
+    virtual void prepend(Node * node);
+    virtual void append(Node * node);
 
     void insert(
         const t_nodes::iterator & before

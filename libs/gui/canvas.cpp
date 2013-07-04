@@ -28,7 +28,7 @@ Canvas::Canvas(
 ,   m_format(format)
 {
     m_timer = new QBasicTimer();
-    m_timer->start( 100, this);
+    m_timer->start( 1, this);
 
     setMinimumSize(1, 1);
 

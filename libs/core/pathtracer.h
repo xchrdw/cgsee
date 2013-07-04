@@ -28,10 +28,11 @@ public:
     virtual void draw(
         const Program & program
         ,   const glm::mat4 & transform) override;
-    
-    void append(Group * group);
 
 protected:
+    virtual void prepend(Node * node) override;
+    virtual void append(Node * node) override;
+
     void initialize(const Program & program);
     void initVertexBuffer(const Program & program);
     void initRandomVectorBuffer(const Program & program);
@@ -61,7 +62,8 @@ protected:
 
     // two Framebuffers for "pingPong" rendering -> reuse result of last previous draw call
     bool m_whichBuffer;
-    GLuint m_testTex;
+    unsigned int m_frameCounter;
+    //GLuint m_testTex;
     GLuint m_accuTexture[2];
     GLuint m_accuFramebuffer;
 };

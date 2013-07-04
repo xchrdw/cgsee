@@ -11,6 +11,7 @@
 static const QString TRANSFORM_UNIFORM ("transform");
 static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
 static const QString RANDOM_INT_UNIFORM("randomInt");
+static const QString FRAMECOUNTER_UNIFORM("frameCounter");
 
 std::mt19937 rng;
 
@@ -23,7 +24,7 @@ namespace {
         textureSlots["geometryBuffer"] = 3;
         textureSlots["randomVectors"] = 4;
         textureSlots["accumulation"] = 5;
-        textureSlots["testTex"] = 6;
+        //textureSlots["testTex"] = 6;
         return textureSlots;
     }
 }
@@ -38,6 +39,7 @@ PathTracer::PathTracer(const QString & name)
 ,   m_vertexBO(nullptr)
 ,   m_randomVectorTexture(-1)
 ,   m_randomVectors(nullptr)
+,   m_frameCounter(-1)
 ,   m_accuFramebuffer(-1)
 {
     m_accuTexture[0] = m_accuTexture[1] = -1;
@@ -59,18 +61,18 @@ void PathTracer::initialize(const Program & program)
 
         float *red = new float[4*m_viewport.x*m_viewport.y];
         float *blue = new float[4*m_viewport.x*m_viewport.y];
-        float *green = new float[4];
+        //float *green = new float[4];
         for (int i=0; i < 4*m_viewport.x*m_viewport.y; i+=4){
             red[i+0] = 1.0f; red[i+1] = 0.0f; red[i+2] = 0.0f; red[i+3] = 1.0f;
             blue[i+0] = 0.0f; blue[i+1] = 0.0f; blue[i+2] = 1.0f; blue[i+3] = 1.0f;
             //green[i+0] = 0.0f; green[i+1] = 1.0f; green[i+2] = 0.0f; green[i+3] = 1.0f;
         }
-        green[0] = 0.0f; green[1] = 1.0f; green[2] = 0.0f; green[3] = 1.0f;
+        //green[0] = 0.0f; green[1] = 1.0f; green[2] = 0.0f; green[3] = 1.0f;
 
-        glGenTextures(1, &m_testTex);
-        glBindTexture(GL_TEXTURE_2D, m_testTex);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1, 1, 0, GL_RGBA, GL_FLOAT, green);
-        glError();
+        //glGenTextures(1, &m_testTex);
+        //glBindTexture(GL_TEXTURE_2D, m_testTex);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1, 1, 0, GL_RGBA, GL_FLOAT, green);
+        //glError();
 
         glBindTexture(GL_TEXTURE_2D, m_accuTexture[0]);
         // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
@@ -170,6 +172,7 @@ void PathTracer::setUniforms(const Program & program)
     program.setUniform(TRANSFORM_UNIFORM, m_transform);
     program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
     program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
+    program.setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
 }
 
 void PathTracer::draw(
@@ -188,8 +191,17 @@ void PathTracer::draw(
 
     initialize(program);
 
-    if(m_invalidatedGeometry)
+    ++m_frameCounter;
+    
+    if (m_invalidated || m_invalidatedGeometry) {
+        m_frameCounter = 1;
+        m_invalidated = true;
+    }
+
+    if (m_invalidatedGeometry) {
         buildBoundingVolumeHierarchy();
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
 
 
     //update m_transform
@@ -203,9 +215,9 @@ void PathTracer::draw(
     unsigned short readIndex = m_whichBuffer ? 0 : 1;
     unsigned short writeIndex = m_whichBuffer ? 1 : 0;
 
-    glActiveTexture(GL_TEXTURE0 + textureSlots["testTex"]);
+    /*glActiveTexture(GL_TEXTURE0 + textureSlots["testTex"]);
     glBindTexture(GL_TEXTURE_2D, m_testTex);
-    glError();
+    glError();*/
 
     glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
     glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
@@ -214,8 +226,6 @@ void PathTracer::draw(
     GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + writeIndex };
     glDrawBuffers(1, writebuffers);
 
-
-    //glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(m_vao);                                                                  
     glError();
@@ -262,7 +272,7 @@ void PathTracer::draw(
 
 void PathTracer::buildBoundingVolumeHierarchy()
 {
-
+    m_invalidatedGeometry = false;
 }
 
 void PathTracer::invalidateGeometry()
@@ -270,9 +280,16 @@ void PathTracer::invalidateGeometry()
     m_invalidatedGeometry = true;
 }
 
-void PathTracer::append(Group * group)
+void PathTracer::prepend(Node * node)
 {
-    Group::append(group);
+    Group::prepend(node);
+    m_invalidatedGeometry = true;
+}
+
+void PathTracer::append(Node * node)
+{
+    Group::append(node);
+    m_invalidatedGeometry = true;
 }
 
 void PathTracer::setViewport(
@@ -280,6 +297,8 @@ void PathTracer::setViewport(
     ,   const int height)
 {
     Camera::setViewport(width, height);
+    m_invalidated = false;
+
     if (m_accuTexture[0] == -1)
         return;
     for (int i=0; i<2; ++i) {

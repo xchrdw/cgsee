@@ -22,10 +22,10 @@ uniform samplerBuffer normalBuffer;
 uniform samplerBuffer geometryBuffer;
 uniform samplerBuffer randomVectors;
 uniform sampler2D accumulation;
-uniform sampler2D testTex;
+// uniform sampler2D testTex;
 
 uniform int randomInt;
-
+uniform int frameCounter;
 
 vec3 light = vec3(0.0, 0.0, 1000.0);
 //vec3 cameraposition = vec3(1.0, 0.0, 3.0);
@@ -41,14 +41,14 @@ float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (r
 void main()
 {
     vec4 oldFragColor = texture(accumulation, v_uv);
-    vec4 testFragColor = texture(testTex, v_uv);
-    // fragColor = mix(oldFragColor, vec4(1.0), 0.1);
-    if (rand < 0.5)
-        fragColor = oldFragColor;
-    else
-        fragColor = testFragColor;
-    // fragColor = texture(testTex, v_uv);
-    return;
+    // vec4 testFragColor = texture(testTex, v_uv);
+    // // fragColor = mix(oldFragColor, vec4(1.0), 0.1);
+    // if (rand < 0.5)
+        // fragColor = oldFragColor;
+    // else
+        // fragColor = testFragColor;
+    // // fragColor = texture(testTex, v_uv);
+    // return;
     
     
     
@@ -70,13 +70,14 @@ void main()
     vec3 primaryNormalAvg = getNormalAndTangentSpaceForTriangle(primaryTriangle, primaryTangentspace);
 
     // fragColor = vec4(primaryIntersectionPoint, 1.0);
-    //fragColor = mix(vec4(primaryIntersectionPoint, 1.0), oldFragColor, 0.001);
-    //return;
+    // fragColor = mix(vec4(primaryIntersectionPoint, 1.0), oldFragColor, 0.9);
+    // return;
 
     int secondaryNearestIndex;
     vec3 secondaryTriangle[3];
     vec3 secondaryIntersectionPoint;
-    fragColor = mix(oldFragColor, vec4(normalize(primaryTangentspace * rndVec)/2.0 + 0.5, 1.0), 0.5);
+    float fC = frameCounter+0.0000001;
+    fragColor = mix(oldFragColor, vec4(normalize(primaryTangentspace * rndVec)/2.0 + 0.5, 1.0), 1.0/fC);
     // fragColor = mix(oldFragColor, vec4(normalize(rndVec)/2.0 + 0.5, 1.0), 0.9);
     return;
 
