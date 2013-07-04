@@ -5,7 +5,7 @@
 #include <gui/canvas.h>
 #include <gui/viewer.h>
 #include <core/camera.h>
-#include <core/arcballnavigation.h>
+#include <core/navigation/arcballnavigation.h>
 #include "core/convergentCamera.h"
 #include "core/parallelCamera.h"
 
@@ -25,7 +25,7 @@ CGSee::CGSee(int & argc, char ** argv)
     ConvergentCamera * camera = new ConvergentCamera();
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
-    camera->setZFar (10.0f);
+    camera->setZFar (300.0f);
     m_viewer->setCamera(camera);
 
     m_painter = new Painter(camera);
@@ -35,12 +35,11 @@ CGSee::CGSee(int & argc, char ** argv)
     navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
 
+    m_viewer->show();
+
     // AssimpLoader loader;
     // m_painter->assignScene(loader.importFromFile("data/mario.dae"));
 
-    // Start
-
-    m_viewer->show();
 }
 
 CGSee::~CGSee()

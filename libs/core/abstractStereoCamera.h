@@ -14,7 +14,7 @@ public:
     virtual void virtualCameraPosition(glm::vec3 virtualCameraPosition);
     virtual void activateRightCamera();
     virtual void activateLeftCamera();
-    void setFromMatrix(const glm::mat4 & view);
+    void setFromMatrix();
 protected:
     float m_cameraSeparation;
     //for lookat calculation

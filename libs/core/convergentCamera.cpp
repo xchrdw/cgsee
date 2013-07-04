@@ -102,7 +102,7 @@ void ConvergentCamera::draw(
     glViewport(0, 0, m_viewport.x , m_viewport.y);
     glError();
 
-    setFromMatrix(m_view);
+    setFromMatrix();
 
     m_cameraSeparationVector = glm::cross(m_center-m_virtualCameraPosition , m_up);
     glm::normalize(m_cameraSeparationVector);

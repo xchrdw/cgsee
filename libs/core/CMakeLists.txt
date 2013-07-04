@@ -10,10 +10,6 @@ set(SOURCES
 
     aabb.h
     aabb.cpp
-    abstractnavigation.h
-    abstractnavigation.cpp
-    arcballnavigation.h
-    arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstractglparent.h
@@ -54,12 +50,10 @@ set(SOURCES
     common.h
     convergentCamera.h
     convergentCamera.cpp
-    flightnavigation.h
-    flightnavigation.cpp
+    navigation/flightnavigation.h
+    navigation/flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
-    fpsnavigation.h
-    fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
     geometryoptimizer.h
@@ -72,6 +66,14 @@ set(SOURCES
     messagehandler.h
     messagehandler.cpp
     mathmacros.h
+    navigation/abstractnavigation.h
+    navigation/abstractnavigation.cpp
+    navigation/arcballnavigation.h
+    navigation/arcballnavigation.cpp
+    navigation/flightnavigation.h
+    navigation/flightnavigation.cpp
+    navigation/fpsnavigation.h
+    navigation/fpsnavigation.cpp
     node.h
     node.cpp
     objloader.h

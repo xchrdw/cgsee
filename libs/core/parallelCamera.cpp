@@ -99,7 +99,7 @@ void ParallelCamera::draw(
 
     program.setUniform(VIEWPORT_UNIFORM, m_viewport);
 
-    setFromMatrix(m_view);
+    setFromMatrix();
 
     m_cameraSeparationVector = glm::cross(m_center-m_virtualCameraPosition , m_up);
     glm::normalize(m_cameraSeparationVector);
