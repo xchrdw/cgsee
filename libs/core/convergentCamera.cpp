@@ -5,6 +5,12 @@
 #include "gpuquery.h"
 #include "framebufferobject.h"
 
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/random.hpp>
+#include <QDebug>
+
+
 //#include <core/fileassociatedshader.h>
 
 static const QString VIEWPORT_UNIFORM   ("viewport");
@@ -82,17 +88,13 @@ void ConvergentCamera::draw(
     return draw(program);
 }
 
-void ConvergentCamera::draw(
+/*void ConvergentCamera::draw(
     const Program & program
 ,   FrameBufferObject * target)
 {
     if(m_invalidated)
         update();
-    
-    FrameBufferObject *fboLeftCamera = new FrameBufferObject(
-        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    FrameBufferObject *fboRightCamera = new FrameBufferObject(
-        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+   
 
     if(target)
         target->bind();
@@ -107,7 +109,60 @@ void ConvergentCamera::draw(
     m_cameraSeparationVector = glm::cross(m_center-m_virtualCameraPosition , m_up);
     glm::normalize(m_cameraSeparationVector);
 
+    activateLeftCamera(program,target);
+    activateRightCamera(program,target);
+    
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+
+    setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
+   
+
+    if(target)
+        target->release();
+}*/
+
+void ConvergentCamera::draw(
+    const Program & program
+,   FrameBufferObject * target)
+{
+    if(m_invalidated)
+        update();
+    
+    setFromMatrix();
+    m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
+    
+    FrameBufferObject *fboLeftCamera = new FrameBufferObject(
+        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+    FrameBufferObject *fboRightCamera = new FrameBufferObject(
+        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+    //leftCamera
+
+   t_samplerByName samplerLeft;
+   samplerLeft["leftTexture"] = fboLeftCamera;
+    
+
+    GLenum info = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    glError();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glViewport(0, 0, m_viewport.x , m_viewport.y);
+    glError();
+    bindSampler(samplerLeft, program);
+    if(fboLeftCamera)
+    {    fboLeftCamera->bind();}
+       
     activateLeftCamera(program,fboLeftCamera);
+    releaseSampler(samplerLeft);
+
+    //rightCamera
+     if(fboRightCamera)
+        fboRightCamera->bind();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glViewport(0, 0, m_viewport.x , m_viewport.y);
+    glError();
+
     activateRightCamera(program,fboRightCamera);
     
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
