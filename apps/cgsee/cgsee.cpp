@@ -8,7 +8,7 @@
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/pathtracer.h>
-#include <core/arcballnavigation.h>
+#include <core/navigation/arcballnavigation.h>
 
 
 CGSee::CGSee(int & argc, char ** argv)
@@ -26,7 +26,7 @@ CGSee::CGSee(int & argc, char ** argv)
     PathTracer * camera = new PathTracer();
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
-    camera->setZFar (10.0f);
+    camera->setZFar (300.0f);
     m_viewer->setCamera(camera);
 
     m_painter = new Painter(camera);
@@ -36,12 +36,11 @@ CGSee::CGSee(int & argc, char ** argv)
     navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
 
+    m_viewer->show();
+
     // AssimpLoader loader;
     // m_painter->assignScene(loader.importFromFile("data/mario.dae"));
 
-    // Start
-
-    m_viewer->show();
 }
 
 CGSee::~CGSee()

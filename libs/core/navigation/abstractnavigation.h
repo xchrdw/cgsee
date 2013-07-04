@@ -9,10 +9,11 @@
 #include <QMouseEvent>
 #include <QBasicTimer>
 
-#include "declspec.h"
+#include "../declspec.h"
 
 class Camera;
 class QWidget;
+class Group;
 
 class CGSEE_API AbstractNavigation : QObject {
     
@@ -41,6 +42,7 @@ public:
 
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
+    void sceneChanged(Group * scene);
 
     glm::mat4 defaultView();
     glm::mat4 frontview();
@@ -50,7 +52,9 @@ public:
     glm::mat4 topview();
     glm::mat4 bottomview();
     glm::mat4 topRightView();
-
+    
+    float getBBRadius();
+    void setBBRadius(float radius);
 
 protected:
     void startTimer();
@@ -67,6 +71,9 @@ protected:
 protected:
     int m_width;
     int m_height;
+    
+    float m_BBRadius;
+
     float m_fovy;
     glm::mat4 m_viewmatrix;
 
@@ -88,4 +95,5 @@ private:
     glm::vec3 m_new_pos;
     glm::quat m_old_rotation;
     glm::quat m_new_rotation;
+    glm::mat4 m_frontView;
 };

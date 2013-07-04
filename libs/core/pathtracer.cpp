@@ -86,9 +86,6 @@ void PathTracer::initialize(const Program & program)
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glError();
-
-        for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
-            program.setUniform(it.key(), it.value());
     }
 }
 
@@ -144,14 +141,18 @@ void PathTracer::initRandomVectorBuffer(const Program & program)
 
 void PathTracer::setUniforms(const Program & program)
 {
+    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
     program.setUniform(VIEWPORT_UNIFORM, m_viewport);
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
     program.setUniform(TRANSFORM_UNIFORM, m_transform);
     program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
-    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
+
     program.setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
     program.setUniform(RANDOM_INT_UNIFORM, rng());
+
+    for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
+        program.setUniform(it.key(), it.value());
 }
 
 void PathTracer::draw(
