@@ -33,6 +33,7 @@ float EPSILON = 0.000001;
 
 void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint);
 vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace);
+float getLight(vec3 pos, vec3 normal);
 vec4 skybox(vec3 position, vec3 direction);
 
 
@@ -77,20 +78,9 @@ void main()
     //return;
 
     //check the light
-    int lightNearestIndex;
-    vec3 lightTriangle[3];
-    vec3 lightIntersectionPoint;
+    float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
 
-    rayTriangleIntersection(primaryIntersectionPoint, light - primaryIntersectionPoint, lightNearestIndex, lightTriangle, lightIntersectionPoint);
-
-    if (lightNearestIndex == -1) {
-        //fragColor = skybox(primaryIntersectionPoint, primaryTangentspace * rndVec);
-        //return;
-    }
-
-    float cos = dot(normalize(light), normalize(primaryNormalAvg));
-
-    addedColor += cos;
+    addedColor += primaryLight;
 
 
 
@@ -107,26 +97,31 @@ void main()
         mat3 secondaryTangentspace;
         vec3 secondaryNormalAvg = getNormalAndTangentSpaceForTriangle(secondaryTriangle, secondaryTangentspace);
 
-        int secondlightNearestIndex;
-        vec3 secondlightTriangle[3];
-        vec3 secondlightIntersectionPoint;
-
-        rayTriangleIntersection(secondaryIntersectionPoint, light - secondaryIntersectionPoint, secondlightNearestIndex, secondlightTriangle, secondlightIntersectionPoint);
-
-        if (secondlightNearestIndex == -1) {
-            //fragColor = skybox(primaryIntersectionPoint, primaryTangentspace * rndVec);
-            //return;
-        }
-        else {
-            float cos2 = dot(normalize(light), normalize(secondaryNormalAvg));
-            addedColor += cos2;
-        }
+        float secondaryLight = getLight(secondaryIntersectionPoint, secondaryNormalAvg);
+        addedColor += secondaryLight;
 
     }
 
 
     fragColor = mix(oldFragColor, addedColor, 1.0/frameCounter);
     return;
+}
+
+float getLight(vec3 pos, vec3 normal) {
+    int lightNearestIndex;
+    vec3 lightTriangle[3];
+    vec3 lightIntersectionPoint;
+
+    rayTriangleIntersection(pos, light - pos, lightNearestIndex, lightTriangle, lightIntersectionPoint);
+
+    float cos = 0.0;
+    if (lightNearestIndex == -1) {
+        //no light :(
+    }
+    else 
+        cos = dot(normalize(light), normalize(normal));
+
+    return cos;
 }
 
 
