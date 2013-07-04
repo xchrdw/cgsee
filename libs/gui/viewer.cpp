@@ -22,10 +22,10 @@
 #include "fileNavigator.h"
 #include "fileExplorer.h"
 
-#include <core/abstractnavigation.h>
-#include <core/flightnavigation.h>
-#include <core/fpsnavigation.h>
-#include <core/arcballnavigation.h>
+#include <core/navigation/abstractnavigation.h>
+#include <core/navigation/flightnavigation.h>
+#include <core/navigation/fpsnavigation.h>
+#include <core/navigation/arcballnavigation.h>
 
 #include <core/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
@@ -51,10 +51,10 @@ Viewer::Viewer(
 ,   m_qtCanvas(nullptr)
 ,   m_saved_views(4)
 
-,   m_dockLeft(new QDockWidget(tr("Navigator")))
-,   m_dockBottom(new QDockWidget(tr("Explorer")))
-,   m_navigator(new FileNavigator(m_dockLeft))
-,   m_explorer(new FileExplorer(m_dockBottom))
+,   m_dockNavigator(new QDockWidget(tr("Navigator")))
+,   m_dockExplorer(new QDockWidget(tr("Explorer")))
+,   m_navigator(new FileNavigator(m_dockNavigator))
+,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_loader(new AssimpLoader( registry ))
 {
 
@@ -72,10 +72,10 @@ Viewer::Viewer(
 
 void Viewer::initializeExplorer()
 {
-    m_dockLeft->setObjectName("fileNavigator");
-    m_dockBottom->setObjectName("fileExplorer");
-    this->initializeDockWidgets(m_dockLeft, m_navigator, Qt::LeftDockWidgetArea);
-    this->initializeDockWidgets(m_dockBottom, m_explorer, Qt::BottomDockWidgetArea);
+    m_dockNavigator->setObjectName("fileNavigator");
+    m_dockExplorer->setObjectName("fileExplorer");
+    this->initializeDockWidgets(m_dockNavigator, m_navigator, Qt::LeftDockWidgetArea);
+    this->initializeDockWidgets(m_dockExplorer, m_explorer, Qt::BottomDockWidgetArea);
 
     m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
         
@@ -190,8 +190,8 @@ Viewer::~Viewer()
 
     delete m_qtCanvas;
 
-    delete m_dockLeft;
-    delete m_dockBottom;
+    delete m_dockNavigator;
+    delete m_dockExplorer;
     delete m_loader;
 }
 
@@ -214,7 +214,7 @@ AbstractScenePainter * Viewer::painter()
 
 void Viewer::on_captureAsImageAction_triggered()
 {
-    m_dockLeft->show();
+    m_dockNavigator->show();
     assert(m_qtCanvas);
     CanvasExporter::save(*m_qtCanvas, this);
 }
@@ -253,20 +253,21 @@ void Viewer::on_loadFile(const QString & path)
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     else {
         this->painter()->assignScene(scene);
+        this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
     }
 }
 
 void Viewer::on_toggleNavigator_triggered()
 {
-    bool visible = m_dockLeft->isVisible();
-    m_dockLeft->setVisible(!visible);
+    bool visible = m_dockNavigator->isVisible();
+    m_dockNavigator->setVisible(!visible);
 }
 
 void Viewer::on_toggleExplorer_triggered()
 {
-    bool visible = m_dockBottom->isVisible();
-    m_dockBottom->setVisible(!visible);
+    bool visible = m_dockExplorer->isVisible();
+    m_dockExplorer->setVisible(!visible);
 }
 
 void Viewer::on_phongShadingAction_triggered()

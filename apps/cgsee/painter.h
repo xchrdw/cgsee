@@ -22,7 +22,6 @@ class Painter : public AbstractScenePainter
 {
 public:
     Painter(Camera * camera);
-    Painter(Group * scene);
     virtual ~Painter();
 
     virtual void paint();
