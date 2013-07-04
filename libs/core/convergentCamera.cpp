@@ -39,10 +39,6 @@ void ConvergentCamera::activateRightCamera(const Program & program
     setTransform(m_projection * m_view);
     glm::mat4 transform = m_projection * m_view;
 
-    printf("view Direction: %f %f %f \n", viewDirection.x,viewDirection.y,viewDirection.z);
-    printf("virt cam pos: %f %f %f \n", m_virtualCameraPosition.x,m_virtualCameraPosition.y,m_virtualCameraPosition.z);
-    printf("focusCenter: %f %f %f \n\n", focusCenter.x,focusCenter.y,focusCenter.z);
-
     update();
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
@@ -92,33 +88,27 @@ void ConvergentCamera::draw(
 {
     if(m_invalidated)
         update();
+    
+    FrameBufferObject *fboLeftCamera = new FrameBufferObject(
+        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+    FrameBufferObject *fboRightCamera = new FrameBufferObject(
+        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
     if(target)
         target->bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    float sqrt2 = 1.41421356;
-
-   // glViewport(0, 0, m_viewport.x / sqrt2 , m_viewport.y);
-   // glError();
+    glViewport(0, 0, m_viewport.x , m_viewport.y);
+    glError();
 
     setFromMatrix(m_view);
 
     m_cameraSeparationVector = glm::cross(m_center-m_virtualCameraPosition , m_up);
     glm::normalize(m_cameraSeparationVector);
 
-    glViewport(0, 0, m_viewport.x / sqrt2, m_viewport.y);
-    glError();
-    update();
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    activateLeftCamera(program,target);
-
-    glViewport(m_viewport.x / sqrt2, 0, m_viewport.x / sqrt2, m_viewport.y);
-    glError();
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    update();
-    activateRightCamera(program,target);
+    activateLeftCamera(program,fboLeftCamera);
+    activateRightCamera(program,fboRightCamera);
     
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
