@@ -21,10 +21,6 @@ public:
     template <class PainterProperty>
     PainterProperty * value(QString name);
 
-protected:
-    QList<AbstractProperty *> * properties();
-    QHash<QString, AbstractProperty *> * propertiesMap();
-
 private:
     QList<AbstractProperty *> * m_properties;
     QHash<QString, AbstractProperty *> * m_properties_map;

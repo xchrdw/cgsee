@@ -2,8 +2,8 @@
 #include "propertylist.h"
 
 PropertyList::PropertyList()
-:   m_properties(nullptr)
-,   m_properties_map(nullptr)
+:   m_properties(new QList<AbstractProperty *>())
+,   m_properties_map(new QHash<QString, AbstractProperty *>())
 {
 }
 
@@ -20,14 +20,14 @@ PropertyList::~PropertyList()
 
 bool PropertyList::exists(QString name)
 {
-    return propertiesMap()->value(name, nullptr);
+    return m_properties_map->value(name, nullptr);
 }
 
 bool PropertyList::add(AbstractProperty * property)
 {
     if (!exists(property->name())) {
-        properties()->push_back(property);
-        propertiesMap()->insert(property->name(), property);
+        m_properties->push_back(property);
+        m_properties_map->insert(property->name(), property);
         return true;
     } else {
         return false;
@@ -38,8 +38,8 @@ bool PropertyList::remove(QString name)
 {
     if (exists(name)) {
         AbstractProperty * property = this->value(name);
-        properties()->removeAll(property);
-        propertiesMap()->remove(name);
+        m_properties->removeAll(property);
+        m_properties_map->remove(name);
         delete property;
         return true;  
     } else {
@@ -49,7 +49,7 @@ bool PropertyList::remove(QString name)
 
 AbstractProperty * PropertyList::value(QString name)
 {
-    AbstractProperty * property = this->propertiesMap()->value(name, nullptr);
+    AbstractProperty * property = m_properties_map->value(name, nullptr);
     if (!property)
         qFatal("Requested Property \"%s\" not found", qPrintable(name));
 
@@ -58,22 +58,5 @@ AbstractProperty * PropertyList::value(QString name)
 
 QList<AbstractProperty *> PropertyList::list()
 {
-    return *(this->properties());
-}
-
-
-/** Protected **/
-
-QList<AbstractProperty *> * PropertyList::properties()
-{
-    if (!m_properties)
-        m_properties = new QList<AbstractProperty *>();
-    return m_properties;
-}
-
-QHash<QString, AbstractProperty *> * PropertyList::propertiesMap()
-{
-    if (!m_properties_map)
-        m_properties_map = new QHash<QString, AbstractProperty *>();
-    return m_properties_map;
+    return *m_properties;
 }

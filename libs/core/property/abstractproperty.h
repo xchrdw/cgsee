@@ -7,6 +7,7 @@
 #include <core/declspec.h>
 
 class AbstractPropertyVisitor;
+class PropertyList;
 
 class CGSEE_API AbstractProperty : public QObject
 {
@@ -26,12 +27,15 @@ public:
     template <class PropertyClass>
     PropertyClass * to();
 
+    PropertyList * children();
+
 signals:
     void changed(AbstractProperty & me);
 
 protected:
     QString m_name;
     QString m_description;
+    PropertyList * m_children;
 };
 
 template <class PropertyClass>
