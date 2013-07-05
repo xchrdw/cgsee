@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef DrawVisitor_H
-#define DrawVisitor_H
-
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <core/declspec.h>
@@ -23,6 +20,3 @@ private:
     Program * m_program;
     glm::mat4 m_transform;
 };
-
-
-#endif // DrawVisitor_H

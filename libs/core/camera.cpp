@@ -26,7 +26,6 @@ Camera::Camera(const QString & name)
 ,   m_zFar (0.f)
 ,   m_invalidated(true)
 {
-    // TODO: Sinn und Unsinn der Camera als Node (d.h. als Teil des Graphen)...
     m_rf = RF_Absolute;
 //     m_rf = RF_Relative;
 }

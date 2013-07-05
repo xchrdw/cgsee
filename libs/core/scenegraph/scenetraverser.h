@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef SceneTraverser_H
-#define SceneTraverser_H
-
 #include <functional>
 
 #include <core/declspec.h>
@@ -22,5 +19,3 @@ struct CGSEE_API ConstSceneTraverser final
 public:
     void traverse(const Node & node, std::function<bool (const Node &)> visitor);
 };
-
-#endif // SceneTraverser_H
