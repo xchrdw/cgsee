@@ -6,12 +6,11 @@
 #include "scenegraph/polygonaldrawable.h"
 
 AssimpLoader::AssimpLoader(std::shared_ptr<DataBlockRegistry> registry)
-: AbstractModelLoader()
+: AbstractModelLoader(registry)
 , m_registry(registry)
 , m_importer(new Assimp::Importer())
 {
-    if( m_registry == nullptr )
-        m_registry = std::make_shared<DataBlockRegistry>();
+
 }
 
 AssimpLoader::~AssimpLoader()
