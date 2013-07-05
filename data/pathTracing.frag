@@ -27,7 +27,7 @@ uniform sampler2D accumulation;
 uniform int randomInt;
 uniform int frameCounter;
 
-vec3 light = vec3(0.0, 0.0, 1000.0);
+vec3 light = vec3(0.0, 0.0, -1000.0);
 //vec3 cameraposition = vec3(1.0, 0.0, 3.0);
 float EPSILON = 0.000001;
 
@@ -67,6 +67,14 @@ void main()
         mat3 primaryTangentspace;
         vec3 primaryNormalAvg = getNormalAndTangentSpaceForTriangle(primaryTriangle, primaryTangentspace);
 
+
+        //cornellbox has broken triangle orientations, so use these 
+        vec3 normals[3];
+        normals[0] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+0).x).xyz;
+        normals[1] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+1).x).xyz;
+        normals[2] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+2).x).xyz;
+        primaryNormalAvg =  (normals[0] + normals[1] + normals[2]) / 3;
+
         //check the light
         float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
 
@@ -90,10 +98,8 @@ float getLight(vec3 pos, vec3 normal) {
 
     float cos = 0.0;
     if (lightNearestIndex == -1) {
-        //no light :(
-    }
-    else 
         cos = dot(normalize(light), normalize(normal));
+    }
 
     return cos;
 }
