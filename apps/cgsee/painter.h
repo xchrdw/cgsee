@@ -45,6 +45,7 @@ protected:
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 
+    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
     void createShadows();
     void createSSAO();
     void addBlur(FrameBufferObject * fbo);
@@ -57,7 +58,7 @@ protected:
         const t_samplerByName & sampler);
     void sceneChanged(Group * scene);
     void setShaderProperties();
-protected:
+protected:  
     ScreenQuad * m_quad;
 
     Program * m_normalz;
@@ -98,4 +99,7 @@ protected:
     bool m_blurShadows;
     bool m_useSSAO;
     bool m_blurSSAO;
+
+    static const glm::mat4 Painter::biasMatrix;
+
 };
