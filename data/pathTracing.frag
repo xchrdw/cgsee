@@ -60,7 +60,7 @@ void main()
         rayTriangleIntersection(origin, ray, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
 
         if (primaryNearestIndex == -1) {
-            addedColor += skybox(origin, ray) / pow((i+1), 20); //no lighting from the skybox yet
+            addedColor += skybox(ray) / pow((i+1), 20); //no lighting from the skybox yet
             break;
         }
 
@@ -154,7 +154,7 @@ void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, 
     intersectionPoint = origin -(direction*0.001) + distanceOfNearest * direction;
 }
 
-vec4 skybox(vec3 position, vec3 direction) {
+vec4 skybox(vec3 direction) {
     return vec4(0.09, 0.6, 0.9, 1.0);
 }
 
