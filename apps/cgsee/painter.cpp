@@ -328,6 +328,11 @@ void Painter::paint()
     AbstractPainter::paint();
 
     t_samplerByName sampler;
+
+    // camera.m_invalidated is evaluated after the call to transform(), this should be fixed!
+    // update() is called for each paint as a hot fix.
+    m_camera->update();
+
     drawScene(m_camera, m_normalz, m_fboNormalz);
 
     if(m_useColor)
@@ -369,8 +374,8 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
 {
     fbo->bind();
     SceneTraverser traverser;
-    DrawVisitor drawVisitor(program, camera->transform() );
-    traverser.traverse(*camera, drawVisitor );
+    DrawVisitor drawVisitor(program, camera->transform());
+    traverser.traverse(*camera, drawVisitor);
     fbo->release();
 }
 

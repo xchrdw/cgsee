@@ -72,7 +72,7 @@ void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) { }
 void AbstractNavigation::wheelEvent(QWheelEvent * event)
 {
     m_fovy += (event->delta() * 0.1); //sensitivity
-    m_fovy = glm::clamp(m_fovy, 0.0f, 180.0f);
+    m_fovy = glm::clamp(m_fovy, 1.0f, 180.0f);
     updateCamera();
 }
 
