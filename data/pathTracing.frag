@@ -145,7 +145,7 @@ void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, 
         }
     }
 
-    intersectionPoint = origin + distanceOfNearest * direction;
+    intersectionPoint = origin -(direction*0.001) + distanceOfNearest * direction;
 }
 
 vec4 skybox(vec3 position, vec3 direction) {
