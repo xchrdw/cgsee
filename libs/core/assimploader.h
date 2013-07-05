@@ -40,6 +40,5 @@ protected:
     PolygonalDrawable * parseMesh(const aiMesh & mesh) const;
     
 protected:
-    std::shared_ptr<DataBlockRegistry> m_registry;
     Assimp::Importer * m_importer;
 };

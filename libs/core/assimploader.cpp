@@ -7,7 +7,6 @@
 
 AssimpLoader::AssimpLoader(std::shared_ptr<DataBlockRegistry> registry)
 : AbstractModelLoader(registry)
-, m_registry(registry)
 , m_importer(new Assimp::Importer())
 {
 

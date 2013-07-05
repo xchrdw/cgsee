@@ -5,6 +5,7 @@
 #include "abstractmodelloader.h"
 
 AbstractModelLoader::AbstractModelLoader(std::shared_ptr<DataBlockRegistry> registry)
+: m_registry(registry)
 {
     if( m_registry == nullptr )
        m_registry = std::make_shared<DataBlockRegistry>();
