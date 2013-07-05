@@ -27,20 +27,20 @@ uniform sampler2D accumulation;
 uniform int randomInt;
 uniform int frameCounter;
 
-vec3 light = vec3(0.0, 0.0, 1000.0);
+vec3 light = vec3(0.0, 0.0, -1000.0);
 //vec3 cameraposition = vec3(1.0, 0.0, 3.0);
 float EPSILON = 0.000001;
 
 void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint);
 vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace);
 float getLight(vec3 pos, vec3 normal);
-vec4 skybox(vec3 position, vec3 direction);
+vec4 skybox(vec3 direction);
 
 
 float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt%1111)) * 43758.5453);
 
 void main()
- {
+{
     vec4 oldFragColor = texture(accumulation, v_uv);
     vec4 addedColor = vec4(0.0);
     
@@ -60,17 +60,25 @@ void main()
         rayTriangleIntersection(origin, ray, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
 
         if (primaryNearestIndex == -1) {
-            addedColor += skybox(origin, ray) / pow((i+1.0), 20.0); //no lighting from the skybox yet
+            addedColor += skybox(ray) / (i + 1);
             break;
         }
 
         mat3 primaryTangentspace;
         vec3 primaryNormalAvg = getNormalAndTangentSpaceForTriangle(primaryTriangle, primaryTangentspace);
 
+
+        //cornellbox has broken triangle orientations, so use these 
+        vec3 normals[3];
+        normals[0] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+0).x).xyz;
+        normals[1] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+1).x).xyz;
+        normals[2] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+2).x).xyz;
+        primaryNormalAvg =  (normals[0] + normals[1] + normals[2]) / 3;
+
         //check the light
         float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
 
-        addedColor += primaryLight;
+        addedColor += primaryLight / (i + 1);
 
         origin = primaryIntersectionPoint;
         ray = normalize(primaryTangentspace * rndVec);
@@ -90,10 +98,8 @@ float getLight(vec3 pos, vec3 normal) {
 
     float cos = 0.0;
     if (lightNearestIndex == -1) {
-        //no light :(
-    }
-    else 
         cos = dot(normalize(light), normalize(normal));
+    }
 
     return cos;
 }
@@ -148,7 +154,7 @@ void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, 
     intersectionPoint = origin -(direction*0.001) + distanceOfNearest * direction;
 }
 
-vec4 skybox(vec3 position, vec3 direction) {
+vec4 skybox(vec3 direction) {
     return vec4(0.09, 0.6, 0.9, 1.0);
 }
 
