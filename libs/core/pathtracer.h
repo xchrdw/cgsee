@@ -23,16 +23,10 @@ public:
     virtual ~PathTracer();
 
     virtual void draw(
-        const Program & program
-    ,   FrameBufferObject * target = nullptr) override;
-    virtual void draw(
-        const Program & program
-        ,   const glm::mat4 & transform) override;
+        const Program & program,
+        const glm::mat4 & transform) override;
 
 protected:
-    virtual void prepend(Node * node) override;
-    virtual void append(Node * node) override;
-
     void initialize(const Program & program);
     void initVertexBuffer(const Program & program);
     void initRandomVectorBuffer(const Program & program);
@@ -51,8 +45,12 @@ protected:
     ,   std::vector<glm::vec3> & points
     ,   std::hash_map<glm::highp_uint, glm::uint> & cache);
 
+
+    virtual void invalidate() override;
+    void invalidateGeometry();
+    void invalidateAccumulator();
     bool m_invalidatedGeometry;
-    bool m_needAccuReset;
+    bool m_invalidatedAccu;
 
     GLuint m_vao;
     BufferObject * m_vertexBO;
@@ -64,4 +62,14 @@ protected:
     unsigned int m_frameCounter;
     GLuint m_accuTexture[2];
     GLuint m_accuFramebuffer;
+
+// override Group children changes, to notice when geometry changes
+public:
+    virtual void removeFirst() override;
+    virtual void removeLast () override;
+protected:
+    virtual const void remove(Node * node, const bool deleteIfParentsEmpty = true) override;
+    virtual void prepend(Node * node) override;
+    virtual void append(Node * node) override;
+    virtual void insert(const t_children::iterator & before, Node * node);
 };

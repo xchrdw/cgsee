@@ -40,7 +40,7 @@ vec4 skybox(vec3 position, vec3 direction);
 float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt%1111)) * 43758.5453);
 
 void main()
-{
+ {
     vec4 oldFragColor = texture(accumulation, v_uv);
     vec4 addedColor = vec4(0.0);
     
@@ -60,7 +60,7 @@ void main()
         rayTriangleIntersection(origin, ray, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
 
         if (primaryNearestIndex == -1) {
-            addedColor += skybox(origin, ray) / pow((i+1), 20); //no lighting from the skybox yet
+            addedColor += skybox(origin, ray) / pow((i+1.0), 20.0); //no lighting from the skybox yet
             break;
         }
 

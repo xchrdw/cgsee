@@ -32,7 +32,7 @@ const QMap<QString, GLuint> PathTracer::textureSlots(initTextureSlots());
 PathTracer::PathTracer(const QString & name)
 :   Camera(name)
 ,   m_invalidatedGeometry(true)
-,   m_needAccuReset(true)
+,   m_invalidatedAccu(true)
 ,   m_vao(-1)
 ,   m_vertexBO(nullptr)
 ,   m_randomVectorTexture(-1)
@@ -159,38 +159,27 @@ void PathTracer::draw(
     const Program & program
     ,   const glm::mat4 & transform)
 {
-    return draw(program);
-}
-
-void PathTracer::draw(
-    const Program & program
-,   FrameBufferObject * target)
-{
     // call group draw with initOnly, to initialize all needed buffer objects
-    Group::draw(program, glm::mat4(), true); // includes call "program.use()"
+    //Group::draw(program, glm::mat4(), true); // includes call "program.use()"
 
     initialize(program);
 
     ++m_frameCounter;
     
-    if (m_needAccuReset || m_invalidated) {
+    if (m_invalidatedAccu) {
         m_frameCounter = 1;
-        //glClear(GL_COLOR_BUFFER_BIT);
-        m_needAccuReset = false;
+        m_invalidatedAccu = false;
     }
-
     // TODO: fetch geometry data from m_children
     //       atm geometry data is attached to the shader by PolygonalDrawable
     //     -> requieres new SceneGraph + Iterators
     if (m_invalidatedGeometry) {
         buildBoundingVolumeHierarchy();
-        //glClear(GL_COLOR_BUFFER_BIT);
     }
-
-
     // update m_transform, reset m_invalidated
     if (m_invalidated)
         update();
+
 
     setUniforms(program);
 
@@ -248,22 +237,29 @@ void PathTracer::draw(
 
 void PathTracer::buildBoundingVolumeHierarchy()
 {
-    // iterate over m_children, when sceengraph is merged
+    // - TODO -
+    // just copied the init texture stuff from (old) PolygonalDrawable
+
+    // Pathtracing: create data objects
+    //GLuint pathTracingGeometryID;
+    //std::vector<glm::vec3> pathTracingGeometry;
+    //GLuint geometryTextureID;
+
+    // ... fill array with geometry / aabb's ... //
+
+    //glGenBuffers(1, &pathTracingGeometryID);
+    //glBindBuffer(GL_TEXTURE_BUFFER, pathTracingGeometryID);
+    //glBufferData(GL_TEXTURE_BUFFER, pathTracingGeometry.size(), pathTracingGeometry.data(), GL_STATIC_DRAW);
+    ////glBindTexture(GL_TEXTURE_BUFFER, 0);
+    //glError();
+
+    //glGenTextures(1, &geometryTextureID);
+    //glActiveTexture(GL_TEXTURE0+PathTracer::textureSlots["geometryBuffer"]);
+    //glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
+    //glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, geometryTextureID);
+    ////glBindTexture(GL_TEXTURE_BUFFER, 0);
+    //glError();
     m_invalidatedGeometry = false;
-}
-
-void PathTracer::prepend(Node * node)
-{
-    Group::prepend(node);
-    m_invalidatedGeometry = true;
-    m_needAccuReset = true;
-}
-
-void PathTracer::append(Node * node)
-{
-    Group::append(node);
-    m_invalidatedGeometry = true;
-    m_needAccuReset = true;
 }
 
 void PathTracer::setViewport(
@@ -271,7 +267,6 @@ void PathTracer::setViewport(
     ,   const int height)
 {
     Camera::setViewport(width, height);
-    m_needAccuReset = true;
 
     if (m_accuFramebuffer == -1)
         return;
@@ -290,6 +285,59 @@ void PathTracer::setViewport(
         glBindTexture(GL_TEXTURE_2D, 0);
         glError();
     }
+}
+
+void PathTracer::invalidate()
+{
+    Camera::invalidate();
+    invalidateAccumulator();
+}
+
+void PathTracer::invalidateGeometry()
+{
+    m_invalidatedGeometry = true;
+    invalidateAccumulator();
+}
+
+void PathTracer::invalidateAccumulator()
+{
+    m_invalidatedAccu = true;
+}
+
+void PathTracer::removeFirst()
+{
+    Group::removeFirst();
+    invalidateGeometry();
+}
+
+void PathTracer::removeLast()
+{
+    Group::removeLast();
+    invalidateGeometry();
+}
+
+const void PathTracer::remove(Node * node, const bool deleteIfParentsEmpty)
+{
+    Group::remove(node, deleteIfParentsEmpty);
+    invalidateGeometry();
+}
+
+void PathTracer::prepend(Node * node)
+{
+    Group::prepend(node);
+    invalidateGeometry();
+}
+
+void PathTracer::append(Node * node)
+{
+    Group::append(node);
+    invalidateGeometry();
+}
+
+void PathTracer::insert(const t_children::iterator & before, Node * node)
+{
+    Group::insert(before, node);
+    invalidateGeometry();
 }
 
 

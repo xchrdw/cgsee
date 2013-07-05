@@ -2,6 +2,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <memory>
+
 #include <QString>
 #include <QMap>
 
@@ -9,7 +11,7 @@
 
 
 
-
+class DataBlockRegistry;
 class Camera;
 class Group;
 class ScreenQuad;

@@ -1,4 +1,3 @@
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <QDebug>
 
@@ -12,7 +11,11 @@
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
-#include <core/group.h>
+#include <core/datacore/datablock.h>
+#include <core/scenegraph/group.h>
+#include <core/scenegraph/scenetraverser.h>
+#include <core/scenegraph/drawvisitor.h>
+#include <core/scenegraph/pathtracingvisitor.h>
 #include <core/objloader.h>
 #include <core/assimploader.h>
 #include <core/program.h>
@@ -157,8 +160,12 @@ const bool Painter::initialize()
     m_gooch->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/gooch.frag"));
     m_gooch->attach(
-         new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
-    
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
+
+    //set UNIFORMS for selected shader
+    m_useProgram = m_flat;
+    setUniforms();
+
     // Post Processing Shader
 
     m_flush = new Program();
@@ -169,16 +176,15 @@ const bool Painter::initialize()
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    
+
     m_pathTracing = new Program();
     m_pathTracing->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/pathTracing.frag"));
     m_pathTracing->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/pathTracing.vert"));
 
-    //set UNIFORMS for selected shader
+    // TODO allow switching between rasterization/pathTracing to allow using other shaders
     m_useProgram = m_pathTracing;
-    setUniforms();
 
     return true;
 }
@@ -236,8 +242,14 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    if (m_useProgram != m_pathTracing){ // rasterization
-        m_camera->draw(*m_useProgram, m_fboNormalz);
+    PathTracer * pathTracer = dynamic_cast<PathTracer*>(m_camera);
+
+    if (pathTracer == nullptr){ // rasterization
+        m_fboNormalz->bind();
+        SceneTraverser traverser;
+        DrawVisitor drawVisitor( m_useProgram, m_camera->transform() );
+        traverser.traverse( *m_camera, drawVisitor );
+        m_fboNormalz->release();
 
         sampler.clear();
         sampler["source"] = m_fboNormalz;
@@ -246,8 +258,11 @@ void Painter::paint()
         m_quad->draw(*m_flush, nullptr);
         releaseSampler(sampler);
     } else {
-         //Render scene with pathtracing)
-        m_camera->draw(*m_useProgram, nullptr);
+        // Render scene with pathtracing)
+        SceneTraverser traverser;
+        PathTracingVisitor pathTracingVisitor(*m_useProgram, *pathTracer);
+        traverser.traverse(*pathTracer, pathTracingVisitor);
+        pathTracer->draw(*m_useProgram, glm::mat4());
     }
 }
 
