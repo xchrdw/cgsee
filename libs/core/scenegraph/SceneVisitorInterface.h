@@ -8,5 +8,5 @@ class CGSEE_API SceneVisitorInterface
 {
 public:
     virtual ~SceneVisitorInterface() {}
-    virtual bool operator() ( Node & node ) =0;
+    virtual bool operator() (Node & node) =0;
 };
