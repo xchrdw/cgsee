@@ -7,17 +7,17 @@
 
 #include <core/declspec.h>
 
-#include "ISceneVisitor.h"
+#include "SceneVisitorInterface.h"
 
 
 class Program;
 class Node;
 
-class CGSEE_API DrawVisitor : public ISceneVisitor
+class CGSEE_API DrawVisitor : public SceneVisitorInterface
 {
 public:
-    DrawVisitor( Program * p, glm::mat4 t );
-    virtual bool operator() ( Node & node ) override;
+    DrawVisitor(Program * p, glm::mat4 t);
+    virtual bool operator() (Node & node) override;
 
 private:
     Program * m_program;

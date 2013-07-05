@@ -4,9 +4,9 @@
 
 class Node;
 
-class CGSEE_API ISceneVisitor
+class CGSEE_API SceneVisitorInterface
 {
 public:
-    virtual ~ISceneVisitor() {}
+    virtual ~SceneVisitorInterface() {}
     virtual bool operator() ( Node & node ) =0;
 };

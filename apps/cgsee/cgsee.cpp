@@ -18,7 +18,7 @@ CGSee::CGSee(int & argc, char ** argv)
     
     m_registry = std::make_shared<DataBlockRegistry>();
     
-    m_viewer = new Viewer( m_registry );
+    m_viewer = new Viewer(m_registry);
     m_viewer->setWindowTitle(title());
     m_viewer->initialize(format());
 

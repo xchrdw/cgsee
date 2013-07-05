@@ -13,10 +13,10 @@
 #include "node.h"
 #include "core/viewfrustum.h"
 
-#include "ISceneVisitor.h"
+#include "SceneVisitorInterface.h"
 
 
-class CGSEE_API CullingVisitor final : public ISceneVisitor
+class CGSEE_API CullingVisitor final : public SceneVisitorInterface
 {
 public:
     typedef std::vector<std::shared_ptr<Node> >::iterator t_nodeIter;
