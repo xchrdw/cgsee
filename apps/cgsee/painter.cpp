@@ -179,11 +179,11 @@ const bool Painter::initialize()
 
     // Blur
     m_blurv = new Program();
-    m_blurv->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/blurv.frag"));
+    m_blurv->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/gauss_blur_5_v.frag"));
     m_blurv->attach(screenQuadShader);
 
     m_blurh = new Program();
-    m_blurh->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/blurh.frag"));
+    m_blurh->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/gauss_blur_5_h.frag"));
     m_blurh->attach(screenQuadShader);
 
     FileAssociatedShader *wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe/wireframe.vert");
