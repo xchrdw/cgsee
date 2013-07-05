@@ -34,7 +34,7 @@ float EPSILON = 0.000001;
 void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint);
 vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace);
 float getLight(vec3 pos, vec3 normal);
-vec4 skybox(vec3 position, vec3 direction);
+vec4 skybox(vec3 direction);
 
 
 float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt%1111)) * 43758.5453);
@@ -60,7 +60,7 @@ void main()
         rayTriangleIntersection(origin, ray, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
 
         if (primaryNearestIndex == -1) {
-            addedColor += skybox(ray) / pow((i+1), 20); //no lighting from the skybox yet
+            addedColor += skybox(ray) / (i + 1);
             break;
         }
 
@@ -78,7 +78,7 @@ void main()
         //check the light
         float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
 
-        addedColor += primaryLight;
+        addedColor += primaryLight / (i + 1);
 
         origin = primaryIntersectionPoint;
         ray = normalize(primaryTangentspace * rndVec);
