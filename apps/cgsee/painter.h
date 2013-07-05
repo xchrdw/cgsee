@@ -2,11 +2,16 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <memory>
+
 #include <QString>
 #include <QMap>
 
 #include <core/abstractscenepainter.h>
 
+
+
+class DataBlockRegistry;
 class Camera;
 class Group;
 class ScreenQuad;

@@ -1,5 +1,4 @@
 
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/random.hpp>
 #include <QDebug>
@@ -13,7 +12,10 @@
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
-#include <core/group.h>
+#include <core/datacore/datablock.h>
+#include <core/scenegraph/group.h>
+#include <core/scenegraph/scenetraverser.h>
+#include <core/scenegraph/drawvisitor.h>
 #include <core/objloader.h>
 #include <core/assimploader.h>
 #include <core/program.h>
