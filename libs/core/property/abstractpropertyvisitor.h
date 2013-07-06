@@ -6,7 +6,7 @@
 #include <core/declspec.h>
 
 class AbstractProperty;
-class AbstractListProperty;
+class ListProperty;
 
 template <typename Type>
 class ValueProperty;
@@ -22,7 +22,7 @@ public:
     template <typename Type> 
     void visitLimited(LimitedProperty<Type> & property);
 
-    virtual void visitList(AbstractListProperty & listProperty) = 0;
+    virtual void visitList(ListProperty & listProperty) = 0;
     virtual void visitValue(ValueProperty<bool> & property) = 0;
     virtual void visitValue(ValueProperty<float> & property) = 0;
     virtual void visitValue(ValueProperty<int> & property) = 0;

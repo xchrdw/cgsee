@@ -16,10 +16,11 @@ public:
     bool remove(QString name);
 
     AbstractProperty * value(QString name);
-    QList<AbstractProperty *> list();
     
     template <class PainterProperty>
     PainterProperty * value(QString name);
+
+    QList<AbstractProperty *> list();
 
 private:
     QList<AbstractProperty *> * m_properties;

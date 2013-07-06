@@ -27,10 +27,6 @@ set(SOURCES
     property/propertylist.cpp
     property/listproperty.h
     property/listproperty.cpp
-    property/abstractlistproperty.h
-    property/abstractlistproperty.cpp
-    property/genericlistproperty.h
-    property/genericlistproperty-inl.h
     property/abstractpropertyvisitor.h
     property/abstractpropertyvisitor.cpp
 

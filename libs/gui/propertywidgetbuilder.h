@@ -18,7 +18,7 @@ public:
 
     void buildWidget(const QList<AbstractProperty *> & properties);
 
-    virtual void visitList(AbstractListProperty & listProperty);
+    virtual void visitList(ListProperty & listProperty);
     virtual void visitValue(ValueProperty<bool> & property);
     virtual void visitValue(ValueProperty<float> & property);
     virtual void visitValue(ValueProperty<int> & property);

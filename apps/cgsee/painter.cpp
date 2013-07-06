@@ -20,7 +20,7 @@
 #include "core/navigation/arcballnavigation.h"
 #include "core/navigation/flightnavigation.h"
 
-#include <core/property/genericlistproperty.h>
+#include <core/property/listproperty.h>
 #include <core/property/valueproperty.h>
 #include <core/property/limitedproperty.h>
 #include <core/property/propertylist.h>
@@ -89,31 +89,30 @@ const bool Painter::initialize()
     boolprop->setValue(false);
     ValueProperty<int> * apples = new ValueProperty<int>("apples", "How much apples would you like?");
     ValueProperty<float> * derplevel = new ValueProperty<float>("derplevel", "Please choose a level of derpin");
-    GenericListProperty<Program> * shaders = new GenericListProperty<Program>("shaders", "Choose Rendering Shader: ");
 
-    Program * normals = new Program();
-    normals->attach(
+    m_normals = new Program();
+    m_normals->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normals.frag"));
-    normals->attach(
+    m_normals->attach(
         new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/normals.geo"));
-    normals->attach(
+    m_normals->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normals.vert"));
 
-    shaders->insert("normals", normals);
-
     // NORMALZ
-    Program * rainbow = new Program();
-    rainbow->attach(
+    m_normalz = new Program();
+    m_normalz->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
-    rainbow->attach(
+    m_normalz->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
-    shaders->insert("rainbow", rainbow);
     m_propertylist->add(intprop);
     m_propertylist->add(boolprop);
     m_propertylist->add(derplevel);
     m_propertylist->add(apples);
-    m_propertylist->add(shaders);
+
+    QStringList list = QStringList() << "Apple" << "Banana" << "Strawberry";
+    ListProperty * propertyList = new ListProperty("fruits", "Choose Fruit:", list);
+    m_propertylist->add(propertyList);
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");
@@ -182,7 +181,6 @@ const bool Painter::initialize()
          new FileAssociatedShader(GL_VERTEX_SHADER, "data/gooch.vert"));
 
     //set UNIFORMS for selected shader
-    m_propertylist->value<GenericListProperty<Program>>("shaders")->select("normals");
     m_useProgram = m_flat;
     setUniforms();
 
@@ -259,7 +257,7 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    m_camera->draw(*(m_propertylist->value<GenericListProperty<Program>>("shaders")->selectedValue()), m_fboNormalz);
+    m_camera->draw(*m_useProgram, m_fboNormalz);
     sampler.clear();
     sampler["source"] = m_fboNormalz;
 

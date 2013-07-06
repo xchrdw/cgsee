@@ -6,9 +6,9 @@
 #include <QSlider>
 #include <QSpinBox>
 #include "propertywidgetbuilder.h"
-#include <core/property/abstractlistproperty.h>
 #include <core/property/valueproperty.h>
 #include <core/property/limitedproperty.h>
+#include <core/property/listproperty.h>
 
 PropertyWidgetBuilder::PropertyWidgetBuilder()
 :   m_widget(new QWidget())
@@ -32,10 +32,10 @@ void PropertyWidgetBuilder::buildWidget(const QList<AbstractProperty *> & proper
     this->iterateOverProperties(properties);
 }
 
-void PropertyWidgetBuilder::visitList(AbstractListProperty & listProperty)
+void PropertyWidgetBuilder::visitList(ListProperty & listProperty)
 {
     QComboBox * comboBox = new QComboBox(m_widget);
-    comboBox->addItems(listProperty.descriptionList());
+    comboBox->addItems(listProperty.choices());
 
     m_layout->addRow(listProperty.description(), comboBox);
 
@@ -45,7 +45,7 @@ void PropertyWidgetBuilder::visitList(AbstractListProperty & listProperty)
                          listProperty.select(text);
                          qDebug("Painter: Set %s = %s",
                                 qPrintable(listProperty.name()),
-                                qPrintable(listProperty.selectedDescription()));
+                                qPrintable(listProperty.selectedChoice()));
                      });
 }
 

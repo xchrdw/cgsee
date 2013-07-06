@@ -4,29 +4,40 @@
 #include "abstractpropertyvisitor.h"
 
 ListProperty::ListProperty(QString name, QString description)
-:   AbstractListProperty(name, description)
-,   m_list(new QStringList())
+:   AbstractProperty(name, description)
+,   m_selection(kNoIndex)
+{
+}
+
+ListProperty::ListProperty(QString name, QString description, QStringList choices)
+:   AbstractProperty(name, description)
+,   m_choices(choices)
 ,   m_selection(kNoIndex)
 {
 }
 
 ListProperty::~ListProperty()
 {
-    delete m_list;
 }
 
-QStringList ListProperty::descriptionList() const
+void ListProperty::visit(AbstractPropertyVisitor & visitor)
 {
-    return *m_list;
-}
-QString ListProperty::selectedDescription() const
-{
-    return m_selection != kNoIndex ? m_list->at(m_selection) : "";
+    visitor.visitList(*this);
 }
 
-bool ListProperty::select(QString description)
+QString ListProperty::selectedChoice() const
 {
-    int index = m_list->indexOf(description);
+    return m_selection != kNoIndex ? m_choices[m_selection] : "";
+}
+
+int ListProperty::selection() const
+{
+    return m_selection;
+}
+
+bool ListProperty::select(QString choice)
+{
+    int index = m_choices.indexOf(choice);
     if (index != kNoIndex) {
         m_selection = index;
         return true;
@@ -34,38 +45,60 @@ bool ListProperty::select(QString description)
         return false;
 }
 
-bool ListProperty::insert(QString string)
+bool ListProperty::select(int index)
 {
-    int index = m_list->indexOf(string);
+    if (0 <= index && index < m_choices.size()) {
+        m_selection = index;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+QStringList ListProperty::choices() const
+{
+    return m_choices;
+}
+
+bool ListProperty::add(QString choice)
+{
+    int index = m_choices.indexOf(choice);
     if (index != kNoIndex) {
         return false;
     } else
-        m_list->append(string);
+        m_choices.append(choice);
         return true;
 }
 
-bool ListProperty::insertList(QStringList strings)
+bool ListProperty::addList(QStringList choices)
 {
-    bool success = true;
-
-    for (QString string : strings)
-        if (!(success = this->insert(string)))
-            break;
-
-    if (!success)
-        for (QString string : strings)
-            this->remove(string);
-
-    return success;
+    QStringList new_choices = m_choices + choices;
+    if (new_choices.removeDuplicates() == 0) {
+        m_choices = new_choices;
+        return true;
+    } else {
+        return false;
+    }
 }
 
-bool ListProperty::remove(QString string)
+bool ListProperty::remove(QString choice)
 {
-    int index = m_list->indexOf(string);
+    int index = m_choices.indexOf(choice);
     if (index != kNoIndex) {
-        m_list->removeAt(index);
+        m_choices.removeAt(index);
         m_selection = kNoIndex;
         return true;
     } else
         return false;
+}
+
+bool ListProperty::remove(int index)
+{
+    if (0 <= index && index < m_choices.size()) {
+        m_choices.removeAt(index);
+        m_selection = kNoIndex;
+        return true;
+    } else {
+        return false;
+    }
 }
