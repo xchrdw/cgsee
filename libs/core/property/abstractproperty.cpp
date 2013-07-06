@@ -12,7 +12,6 @@ AbstractProperty::AbstractProperty(QString name, QString description)
 
 AbstractProperty::~AbstractProperty()
 {
-    delete m_children;
 }
 
 QString AbstractProperty::name() const
@@ -33,11 +32,4 @@ QString AbstractProperty::description() const
 void AbstractProperty::setDescription(QString description)
 {
     m_description = description;
-}
-
-PropertyList * AbstractProperty::children()
-{
-    if (!m_children)
-        m_children = new PropertyList();
-    return m_children;
 }
