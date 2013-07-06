@@ -19,7 +19,7 @@ public:
     CoordinateProvider();
     virtual ~CoordinateProvider();
 
-    int objID(int x, int y);
+    size_t objID(int x, int y);
     glm::vec3 pointAt(int x, int y);
 
     void assignScene(Node * rootNode);
