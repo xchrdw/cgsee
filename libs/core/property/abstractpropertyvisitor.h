@@ -27,6 +27,7 @@ public:
     virtual void visitValue(ValueProperty<float> & property) = 0;
     virtual void visitValue(ValueProperty<int> & property) = 0;
     virtual void visitLimited(LimitedProperty<int> & property) = 0;
+    virtual void visitLimited(LimitedProperty<float> & property) = 0;
 
 protected:
     void iterateOverProperties(const QList<AbstractProperty *> & properties);

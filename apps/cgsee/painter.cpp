@@ -85,10 +85,10 @@ const bool Painter::initialize()
 
     // NORMALS
     LimitedProperty<int> * intprop = new LimitedProperty<int>("intprop", "How much int?", 12, 1, 13);
-    ValueProperty<bool> * boolprop = new ValueProperty<bool>("boolprop", "How much bool?");
+    ValueProperty<bool> * boolprop = new ValueProperty<bool>("boolprop", "Activate it");
     boolprop->setValue(false);
     ValueProperty<int> * apples = new ValueProperty<int>("apples", "How much apples would you like?");
-    ValueProperty<float> * derplevel = new ValueProperty<float>("derplevel", "Please choose a level of derpin");
+    ValueProperty<float> * derplevel = new LimitedProperty<float>("derplevel", "Please choose a level of derpin:", 10.3f, 4.111f, 12.3f);
 
     m_normals = new Program();
     m_normals->attach(

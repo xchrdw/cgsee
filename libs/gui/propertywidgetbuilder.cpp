@@ -5,6 +5,8 @@
 #include <QString>
 #include <QSlider>
 #include <QSpinBox>
+#include <QLabel>
+#include <QHBoxLayout>
 #include "propertywidgetbuilder.h"
 #include <core/property/valueproperty.h>
 #include <core/property/limitedproperty.h>
@@ -69,12 +71,13 @@ void PropertyWidgetBuilder::visitValue(ValueProperty<float> & property)
 void PropertyWidgetBuilder::visitValue(ValueProperty<bool> & property)
 {
     QCheckBox * checkBox = new QCheckBox(m_widget);
+    checkBox->setText(property.description());
     if (property.value())
         checkBox->setCheckState(Qt::Checked);
     else
         checkBox->setCheckState(Qt::Unchecked);
 
-    m_layout->addRow(property.description(), checkBox);
+    m_layout->addRow("", checkBox);
 
     QObject::connect(checkBox, &QCheckBox::stateChanged, [&property] (int state) {
         property.setValue(state);
@@ -112,6 +115,38 @@ void PropertyWidgetBuilder::visitLimited(LimitedProperty<int> & property)
                                 qPrintable(property.name()),
                                 i);
                      });
+}
+
+void PropertyWidgetBuilder::visitLimited(LimitedProperty<float> & property)
+{
+    
+    QLabel * minLabel = new QLabel(QString::number(property.minimum(), 'g', 2));
+    QLabel * maxLabel = new QLabel(QString::number(property.maximum(), 'g', 2));
+
+    QSlider * slider = new QSlider(m_widget);
+    slider->setOrientation(Qt::Horizontal);
+    
+    float range = property.maximum() - property.minimum();
+    float scale_factor = 100 / range;
+
+    slider->setValue((property.value() - property.minimum()) * scale_factor);
+    slider->setMinimum(0.f);
+    slider->setMaximum(100.f);
+    
+    QHBoxLayout * layout = new QHBoxLayout(m_widget);
+    layout->addWidget(minLabel);
+    layout->addWidget(slider);
+    layout->addWidget(maxLabel);
+    m_layout->addRow(property.description(), layout);
+
+    QObject::connect(slider, &QSlider::valueChanged,
+        [&property, scale_factor] (int i) {
+             float new_value = (i / scale_factor) + property.minimum();
+             property.setValue(new_value);
+             qDebug("Painter: Set %s = %.4f",
+                    qPrintable(property.name()),
+                    new_value);
+        });
 }
 
 QWidget * PropertyWidgetBuilder::retainWidget()

@@ -23,6 +23,7 @@ public:
     virtual void visitValue(ValueProperty<float> & property);
     virtual void visitValue(ValueProperty<int> & property);
     virtual void visitLimited(LimitedProperty<int> & property);
+    virtual void visitLimited(LimitedProperty<float> & property);
 
     QWidget * retainWidget();
 
