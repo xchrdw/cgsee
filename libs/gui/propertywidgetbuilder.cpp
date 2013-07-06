@@ -102,24 +102,34 @@ void PropertyWidgetBuilder::visitValue(ValueProperty<int> & property)
 
 void PropertyWidgetBuilder::visitLimited(LimitedProperty<int> & property)
 {
-    QSpinBox * spinbox = new QSpinBox(m_widget);
-    spinbox->setMinimum(property.minimum());
-    spinbox->setMaximum(property.maximum());
-    m_layout->addRow(property.description(), spinbox);
+    QHBoxLayout * layout = new QHBoxLayout(m_widget);
 
-    QObject::connect(spinbox,
-                     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                     [&property] (int i) {
-                         property.setValue(i);
-                         qDebug("Painter: Set %s = %i",
-                                qPrintable(property.name()),
-                                i);
-                     });
+    QLabel * minLabel = new QLabel(QString::number(property.minimum()), m_widget);
+    QLabel * maxLabel = new QLabel(QString::number(property.maximum()), m_widget);
+
+    QSlider * slider = new QSlider(m_widget);
+    slider->setOrientation(Qt::Horizontal);
+
+    slider->setValue(property.value());
+    slider->setMinimum(property.minimum());
+    slider->setMaximum(property.maximum());
+    
+    layout->addWidget(minLabel);
+    layout->addWidget(slider);
+    layout->addWidget(maxLabel);
+    m_layout->addRow(property.description(), layout);
+
+    QObject::connect(slider, &QSlider::valueChanged,
+        [&property] (int i) {
+             property.setValue(i);
+             qDebug("Painter: Set %s = %i",
+                    qPrintable(property.name()),
+                    i);
+        });
 }
 
 void PropertyWidgetBuilder::visitLimited(LimitedProperty<float> & property)
 {
-    
     QLabel * minLabel = new QLabel(QString::number(property.minimum(), 'g', 2));
     QLabel * maxLabel = new QLabel(QString::number(property.maximum(), 'g', 2));
 
