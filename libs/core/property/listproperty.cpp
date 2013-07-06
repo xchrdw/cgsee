@@ -20,7 +20,7 @@ ListProperty::~ListProperty()
 {
 }
 
-void ListProperty::visit(AbstractPropertyVisitor & visitor)
+void ListProperty::accept(AbstractPropertyVisitor & visitor)
 {
     visitor.visitList(*this);
 }

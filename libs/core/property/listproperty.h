@@ -12,7 +12,7 @@ public:
     ListProperty(QString name, QString description, QStringList choices);
     virtual ~ListProperty();
 
-    virtual void visit(AbstractPropertyVisitor & visitor);
+    virtual void accept(AbstractPropertyVisitor & visitor);
 
     QString selectedChoice() const;
     int selection() const;

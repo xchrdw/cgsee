@@ -11,7 +11,7 @@ public:
     ValueProperty(QString name, QString description, Type value = NULL);
     virtual ~ValueProperty();
 
-    virtual void visit(AbstractPropertyVisitor & visitor);
+    virtual void accept(AbstractPropertyVisitor & visitor);
 
     virtual Type value() const;
     virtual void setValue(Type value, bool silent = true);
@@ -33,7 +33,7 @@ ValueProperty<Type>::~ValueProperty()
 }
 
 template <typename Type>
-void ValueProperty<Type>::visit(AbstractPropertyVisitor & visitor)
+void ValueProperty<Type>::accept(AbstractPropertyVisitor & visitor)
 {
     visitor.visitValue(*this);
 }

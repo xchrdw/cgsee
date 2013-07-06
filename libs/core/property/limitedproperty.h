@@ -11,7 +11,7 @@ public:
     LimitedProperty(QString name, QString description, Type value, Type min, Type max);
     ~LimitedProperty();
 
-    virtual void visit(AbstractPropertyVisitor & visitor);
+    virtual void accept(AbstractPropertyVisitor & visitor);
 
     virtual void setValue(Type value, bool silent = true);
 
@@ -47,7 +47,7 @@ LimitedProperty<Type>::~LimitedProperty()
 }
 
 template <typename Type>
-void LimitedProperty<Type>::visit(AbstractPropertyVisitor & visitor)
+void LimitedProperty<Type>::accept(AbstractPropertyVisitor & visitor)
 {
     visitor.visitLimited(*this);
 }

@@ -17,7 +17,7 @@ public:
     AbstractProperty(QString name, QString description);
     virtual ~AbstractProperty();
 
-    virtual void visit(AbstractPropertyVisitor & visitor) = 0;
+    virtual void accept(AbstractPropertyVisitor & visitor) = 0;
 
     QString name() const;
     void setName(QString name);
