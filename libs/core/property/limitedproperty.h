@@ -11,7 +11,7 @@ signals:
 };
 
 template <typename Type>
-class LimitedProperty : public ValueProperty<Type>, public LimitedPropertySignals
+class CGSEE_API LimitedProperty : public ValueProperty<Type>, public LimitedPropertySignals
 {
 public:
     LimitedProperty(QString name, QString description, Type value = NULL);

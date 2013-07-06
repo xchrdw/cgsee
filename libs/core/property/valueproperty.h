@@ -12,7 +12,7 @@ signals:
 };
 
 template <typename Type>
-class ValueProperty : public AbstractProperty, public ValuePropertySignals
+class CGSEE_API ValueProperty : public AbstractProperty, public ValuePropertySignals
 {
 public:
     ValueProperty(QString name, QString description, Type value = NULL);

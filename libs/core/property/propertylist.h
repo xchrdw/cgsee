@@ -5,7 +5,7 @@
 #include <QList>
 #include "abstractproperty.h"
 
-class PropertyList
+class CGSEE_API PropertyList
 {
 public:
     PropertyList();
