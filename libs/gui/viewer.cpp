@@ -35,7 +35,11 @@
 #include <core/glformat.h>
 #include <core/assimploader.h>
 
+#include <core/coordinateprovider.h>
+#include <core/camera.h>
+
 #include <core/scenegraph/node.h>
+#include <core/scenegraph/group.h>
 
 
 namespace
@@ -64,6 +68,7 @@ Viewer::Viewer(
 ,   m_sceneHierarchy(new QStandardItemModel())
 ,   m_sceneHierarchyTree(new QTreeView(m_dockScene))
 ,   m_loader(new AssimpLoader())
+,   m_coordinateProvider(new CoordinateProvider())
 {
 
     m_ui->setupUi(this);
@@ -137,6 +142,15 @@ void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * parentNode)
     model->appendRow(item);
 
     fillSceneHierarchy(parentNode, item);
+
+    // size_t counter = 0;
+    // SceneTraverser traverser;
+    // traverser.traverse(*parentNode, [] (Node & node) 
+    //     {
+    //         node.setId(counter);
+    //         ++counter;
+    //         return true;
+    //     });
 }
 
 void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
@@ -149,6 +163,37 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
         fillSceneHierarchy(child, item);
     }
 }
+
+// void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * parentNode)
+// {
+//     struct SceneHierarchyFiller
+//     {
+//         SceneHierarchyFiller()
+//         :   m_item(nullptr)
+//         {
+//         }
+
+//         bool operator() (Node & node){
+//             QStandardItem * parent = m_item;
+//             m_item = new QStandardItem(node.name());
+//             m_item->setData(QVariant(node.name()), Qt::UserRole + 1);
+//             if (parent)
+//                 parent->appendRow(m_item);
+
+//             return true;
+//         }
+
+//     public:
+//         QStandardItem * m_item;
+//     };
+
+//     SceneTraverser traverser;
+//     SceneHierarchyFiller visitor;
+//     traverser.traverse(*parentNode, visitor);
+
+//     model->clear();
+//     model->appendRow(visitor.m_item);
+// }
 
 #ifdef WIN32
 const HGLRC Viewer::currentContextHandle()
@@ -228,6 +273,7 @@ Viewer::~Viewer()
     delete m_dockScene;
     delete m_sceneHierarchy;
     delete m_loader;
+    delete m_coordinateProvider;
 }
 
 void Viewer::setPainter(AbstractScenePainter * painter)
@@ -287,9 +333,10 @@ void Viewer::on_loadFile(const QString & path)
     if (!scene)
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     else {
+        this->m_coordinateProvider->assignScene(scene);
         this->painter()->assignScene(scene);
         this->m_qtCanvas->update();
-        this->createSceneHierarchy(m_sceneHierarchy, (Node*) m_camera);
+        this->createSceneHierarchy(m_sceneHierarchy, m_camera);
     }
 }
 

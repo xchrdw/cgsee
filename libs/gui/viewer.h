@@ -39,6 +39,8 @@ class Group;
 class Node;
 class DataBlockRegistry;
 
+class CoordinateProvider;
+
 
 class CGSEE_API Viewer : public QMainWindow
 {
@@ -156,4 +158,6 @@ protected:
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
+
+    CoordinateProvider * m_coordinateProvider;
 };

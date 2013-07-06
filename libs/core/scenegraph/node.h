@@ -42,6 +42,9 @@ public:
 
     const e_ReferenceFrame referenceFrame() const;
     void setReferenceFrame(const e_ReferenceFrame referenceFrame);
+
+    const size_t id() const;
+    void setId(const size_t id);
     
 //     bool isCircularDependentTo( const Node & other ) const;
 
@@ -55,5 +58,7 @@ protected:
     e_ReferenceFrame m_rf;
     glm::mat4 m_transform;
     mutable AxisAlignedBoundingBox m_aabb;
+
+    size_t m_id;
 };
 
