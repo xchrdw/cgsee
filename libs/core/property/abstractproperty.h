@@ -29,9 +29,6 @@ public:
 
     PropertyList * children();
 
-signals:
-    void changed(AbstractProperty & me);
-
 protected:
     QString m_name;
     QString m_description;

@@ -7,6 +7,7 @@
 
 class CGSEE_API ListProperty : public AbstractProperty
 {
+    Q_OBJECT
 public:
     ListProperty(QString name, QString description);
     ListProperty(QString name, QString description, QStringList choices);
@@ -26,6 +27,10 @@ public:
     bool addList(QStringList choices);
     bool remove(QString choice);
     bool remove(int index);
+
+signals:
+    void selectionChanged(ListProperty & me);
+    void choicesChanged(ListProperty & me);
 
 protected:
     static const int kNoIndex = -1;
