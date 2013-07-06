@@ -2,13 +2,16 @@
 
 #include <glm/glm.hpp>
 
+#include <QVector>
+
 #include "declspec.h"
 #include "scenegraph/group.h"
 
 
 class Program;
-class FrameBufferObject;
 class ViewFrustum;
+
+class CameraImplementation;
 
 class CGSEE_API Camera : public Group
 {
@@ -24,7 +27,7 @@ public:
     void setViewport(const glm::ivec2 & size);
     void setViewport(
         const int width
-    ,   const int height);
+        ,   const int height);
 
     const glm::mat4 & projection();
 
@@ -41,21 +44,27 @@ public:
     void setZFar(const float z);
 
     const float aspect() const;
-    
+
     ViewFrustum *viewFrustum() const;
 
     // updates camera matrices
     void update();
-    
+
     //
     glm::vec3 getEye();
     glm::vec3 getUp();
     glm::vec3 getCenter();
 
+public:
+    void selectImplementation(QString name);
+
+protected:
+    QVector<CameraImplementation*> m_implementations;
+    CameraImplementation * m_activeCamera;
+
 protected:
     void invalidate();
 
-protected:
     glm::ivec2 m_viewport;
 
     glm::mat4 m_view;
@@ -68,4 +77,14 @@ protected:
     float m_zFar;
 
     bool m_invalidated;
+
+    static const QString CAMERAPOSITION_UNIFORM;
+    static const QString VIEWPORT_UNIFORM;
+    static const QString VIEW_UNIFORM;
+    static const QString PROJECTION_UNIFORM;
+
+    static const QString ZNEAR_UNIFORM;
+    static const QString ZFAR_UNIFORM;
+
+// friend CameraImplementation;
 };
