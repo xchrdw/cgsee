@@ -22,6 +22,7 @@ public:
     virtual void visitValue(ValueProperty<bool> & property);
     virtual void visitValue(ValueProperty<float> & property);
     virtual void visitValue(ValueProperty<int> & property);
+    virtual void visitValue(ValueProperty<QString> & property);
     virtual void visitLimited(LimitedProperty<int> & property);
     virtual void visitLimited(LimitedProperty<float> & property);
 
@@ -30,4 +31,7 @@ public:
 protected:
     QWidget * m_widget;
     QFormLayout * m_layout;
+
+    QWidget * m_active_widget;
+    QFormLayout * m_active_layout;
 };

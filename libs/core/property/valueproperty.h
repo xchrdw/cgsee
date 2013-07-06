@@ -4,18 +4,15 @@
 #include "abstractproperty.h"
 #include "abstractpropertyvisitor.h"
 
-class AbstractValueProperty : public AbstractProperty
+class ValuePropertySignals : public QObject
 {
     Q_OBJECT
-public:
-    AbstractValueProperty(QString name, QString description)
-    :   AbstractProperty(name, description) {};
 signals:
     void changed(AbstractProperty & me);
 };
 
 template <typename Type>
-class ValueProperty : public AbstractValueProperty
+class ValueProperty : public AbstractProperty, public ValuePropertySignals
 {
 public:
     ValueProperty(QString name, QString description, Type value = NULL);
@@ -32,7 +29,7 @@ protected:
 
 template <typename Type>
 ValueProperty<Type>::ValueProperty(QString name, QString description, Type value)
-:   AbstractValueProperty(name, description)
+:   AbstractProperty(name, description)
 ,   m_value(value)
 {
 }

@@ -11,7 +11,8 @@ public:
     PropertyList();
     virtual ~PropertyList();
 
-    bool exists(QString name);
+    bool isEmpty() const;
+    bool exists(QString name) const;
     bool add(AbstractProperty * property);
     bool remove(QString name);
 

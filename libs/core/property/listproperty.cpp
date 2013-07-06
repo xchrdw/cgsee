@@ -2,10 +2,13 @@
 #include "listproperty.h"
 
 #include "abstractpropertyvisitor.h"
+#include "propertylist.h"
 
 ListProperty::ListProperty(QString name, QString description)
 :   AbstractProperty(name, description)
 ,   m_selection(kNoIndex)
+,   m_propertylists(new QList<PropertyList *>())
+,   m_empty_propertylist(new PropertyList())
 {
 }
 
@@ -13,11 +16,17 @@ ListProperty::ListProperty(QString name, QString description, QStringList choice
 :   AbstractProperty(name, description)
 ,   m_choices(choices)
 ,   m_selection(kNoIndex)
+,   m_propertylists(new QList<PropertyList *>())
+,   m_empty_propertylist(new PropertyList())
 {
+    for (QString choice : choices)
+        m_propertylists->append(m_empty_propertylist);
 }
 
 ListProperty::~ListProperty()
 {
+    delete m_propertylists;
+    delete m_empty_propertylist;
 }
 
 void ListProperty::accept(AbstractPropertyVisitor & visitor)
@@ -62,15 +71,27 @@ QStringList ListProperty::choices() const
     return m_choices;
 }
 
+QList<PropertyList *> ListProperty::propertyLists() const
+{
+    return *m_propertylists;
+}
+
 bool ListProperty::add(QString choice)
+{
+    return this->add(choice, m_empty_propertylist);
+}
+
+bool ListProperty::add(QString choice, PropertyList * propertyList)
 {
     int index = m_choices.indexOf(choice);
     if (index != kNoIndex) {
         return false;
-    } else
+    } else {
         m_choices.append(choice);
+        m_propertylists->append(propertyList);
         emit this->choicesChanged(*this);
         return true;
+    }
 }
 
 bool ListProperty::addList(QStringList choices)

@@ -2,6 +2,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <QDebug>
 #include <QWidget>
+#include <QColorDialog>
 
 #include "painter.h"
 
@@ -84,12 +85,6 @@ const bool Painter::initialize()
     m_quad = new ScreenQuad();
 
     // NORMALS
-    LimitedProperty<int> * intprop = new LimitedProperty<int>("intprop", "How much int?", 12, 1, 13);
-    ValueProperty<bool> * boolprop = new ValueProperty<bool>("boolprop", "Activate it");
-    boolprop->setValue(false);
-    ValueProperty<int> * apples = new ValueProperty<int>("apples", "How much apples would you like?");
-    ValueProperty<float> * derplevel = new LimitedProperty<float>("derplevel", "Please choose a level of derpin:", 10.3f, 4.111f, 12.3f);
-
     m_normals = new Program();
     m_normals->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normals.frag"));
@@ -105,14 +100,40 @@ const bool Painter::initialize()
     m_normalz->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 
-    m_propertylist->add(intprop);
+    
+    ValueProperty<bool> * boolprop = new ValueProperty<bool>("boolprop", "Activate it", false);
+    ValueProperty<int> * apples = new ValueProperty<int>("apples", "Number of Apples:");
+    ValueProperty<QString> * yourname = new ValueProperty<QString>("name", "Your name:");
+    LimitedProperty<int> * intprop = new LimitedProperty<int>("intprop", "Awesomeness:", 12, 1, 13);
+    LimitedProperty<float> * derplevel = new LimitedProperty<float>("derplevel", "Derplevel:", 10.3f, 4.111f, 12.3f);
+    
     m_propertylist->add(boolprop);
-    m_propertylist->add(derplevel);
     m_propertylist->add(apples);
 
-    QStringList list = QStringList() << "Apple" << "Banana" << "Strawberry";
-    ListProperty * propertyList = new ListProperty("fruits", "Choose Fruit:", list);
-    m_propertylist->add(propertyList);
+
+    ListProperty * listProperty = new ListProperty("fruits", "Choose Fruit:");
+
+    ValueProperty<bool> * mit_maden = new ValueProperty<bool>("mit_maden", "Mit Maden", true);
+    PropertyList * apfellist = new PropertyList();
+    apfellist->add(mit_maden);
+    listProperty->add("Apfel", apfellist);
+
+    LimitedProperty<int> * glow = new LimitedProperty<int>("glow", "Choose this:", 60, 0, 100);
+    ValueProperty<bool> * frisch = new ValueProperty<bool>("frisch", "Ist frisch", true);
+    ValueProperty<bool> * lecker = new ValueProperty<bool>("lecker", "Ist lecker", false);
+    PropertyList * bananenlist = new PropertyList();
+    bananenlist->add(glow);
+    bananenlist->add(lecker);
+    bananenlist->add(frisch);
+    listProperty->add("Banane", bananenlist);
+
+    listProperty->add("Birne");
+
+    listProperty->select(0);
+    m_propertylist->add(listProperty);
+    m_propertylist->add(yourname);
+    m_propertylist->add(intprop);
+    m_propertylist->add(derplevel);
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");

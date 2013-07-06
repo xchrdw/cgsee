@@ -18,7 +18,12 @@ PropertyList::~PropertyList()
 
 /** Public **/
 
-bool PropertyList::exists(QString name)
+bool PropertyList::isEmpty() const
+{
+    return m_properties->isEmpty();
+}
+
+bool PropertyList::exists(QString name) const
 {
     return m_properties_map->value(name, nullptr);
 }

@@ -3,8 +3,15 @@
 
 #include "valueproperty.h"
 
+class LimitedPropertySignals : public QObject
+{
+    Q_OBJECT
+signals:
+    void limitsChanged(AbstractProperty & me);
+};
+
 template <typename Type>
-class LimitedProperty : public ValueProperty<Type>
+class LimitedProperty : public ValueProperty<Type>, public LimitedPropertySignals
 {
 public:
     LimitedProperty(QString name, QString description, Type value = NULL);
@@ -73,7 +80,7 @@ void LimitedProperty<Type>::setMinimum(Type min, bool silent)
 {
     m_min = min;
     if (!silent)
-        emit this->changed(*this);
+        emit this->limitsChanged(*this);
 }
 
 template <typename Type>
@@ -87,7 +94,7 @@ void LimitedProperty<Type>::setMaximum(Type max, bool silent)
 {
     m_max = max;
     if (!silent)
-        emit this->changed(*this);
+        emit this->limitsChanged(*this);
 }
 
 
