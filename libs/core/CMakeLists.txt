@@ -76,6 +76,7 @@ set(SOURCES
     messagehandler.h
     messagehandler.cpp
     mathmacros.h
+    
     navigation/abstractnavigation.h
     navigation/abstractnavigation.cpp
     navigation/arcballnavigation.h
@@ -84,6 +85,7 @@ set(SOURCES
     navigation/flightnavigation.cpp
     navigation/fpsnavigation.h
     navigation/fpsnavigation.cpp
+    
     objloader.h
     objloader.cpp
 
@@ -97,6 +99,16 @@ set(SOURCES
     timer.cpp
     plane.h
     plane.cpp
+    
+    rendering/effect.cpp
+    rendering/effect.h
+    rendering/blureffect.cpp
+    rendering/blureffect.h
+    rendering/shadoweffect.cpp
+    rendering/shadoweffect.h
+    rendering/ssaoeffect.cpp
+    rendering/ssaoeffect.h   
+    
     viewfrustum.h
     viewfrustum.cpp
     vertexcacheoptimizer.h
