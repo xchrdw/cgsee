@@ -1,6 +1,7 @@
 #include "mesh.h"
 
-Mesh::Mesh()
+Mesh::Mesh():
+    m_posAttrName("position")
 {
 
 }
@@ -106,3 +107,12 @@ void Mesh::sourceUpdated()
     initFrom(m_indsList, m_vertexList);
 }
 
+void Mesh::s_Face::getAdjacentFaces(QList<s_Face*> & out)
+{
+    out.clear();
+    s_HalfEdge * start = m_halfEdge;
+    do {
+        out.append(start->m_pair->m_face);
+        start = start->m_next;
+    } while (start != m_halfEdge);
+}

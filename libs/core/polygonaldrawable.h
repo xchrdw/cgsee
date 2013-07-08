@@ -15,6 +15,7 @@
 class PolygonalGeometry;
 class BufferObject;
 class Program;
+class Mesh;
 
 
 class CGSEE_API PolygonalDrawable : public Node
@@ -45,6 +46,7 @@ protected:
     GLuint m_vao;
 
     PolygonalGeometry * m_geometry;
+    Mesh* m_mesh;
 
     typedef QVector<BufferObject *> t_bufferObjects;
     t_bufferObjects m_elementArrayBOs;

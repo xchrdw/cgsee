@@ -10,6 +10,8 @@
 #include "common.h"
 #include "datacore/datablock.h"
 
+class Mesh;
+
 class CGSEE_API PolygonalGeometry : public Node
 {
 public:
@@ -39,6 +41,8 @@ public:
     ,   const glm::mat4 & transform);
 
     virtual const AxisAlignedBoundingBox boundingBox() const;
+
+    Mesh* mesh();
 
     // Geometry Computation
 

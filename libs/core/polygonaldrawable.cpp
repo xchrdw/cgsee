@@ -48,7 +48,10 @@ void PolygonalDrawable::setGeometry(PolygonalGeometry * geometry)
     m_geometry = geometry;
 
     if(m_geometry)
+    {
+        m_mesh = m_geometry->mesh();
         m_geometry->parents().insert(this);
+    }
 }
 
 PolygonalGeometry * PolygonalDrawable::geometry()

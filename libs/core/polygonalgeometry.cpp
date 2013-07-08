@@ -2,6 +2,7 @@
 #include "polygonalgeometry.h"
 
 #include "aabb.h"
+#include "mesh.h"
 #include "datacore/vertexindexlist.h"  //includes vertexlist.h
 
 PolygonalGeometry::PolygonalGeometry(const QString & name)
@@ -209,4 +210,14 @@ void PolygonalGeometry::resize(unsigned int size)
 
     myVList->resize(size);
     inds->resize(size);
+}
+
+Mesh* PolygonalGeometry::mesh()
+{
+    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry.getDataBlockByName(m_indicesName));
+    assert(inds);
+    Mesh * res=new Mesh;
+    res->initFromAndTrack(inds);
+
+    return res;
 }

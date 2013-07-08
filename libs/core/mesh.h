@@ -15,6 +15,8 @@ public:
         unsigned int *m_verts;
         unsigned int size;
         s_HalfEdge* m_halfEdge;
+
+        void getAdjacentFaces(QList<s_Face*> &out);
     };
 
     struct s_HalfEdge
