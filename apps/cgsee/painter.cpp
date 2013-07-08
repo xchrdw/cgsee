@@ -177,7 +177,7 @@ const bool Painter::initialize()
     
     m_shadows = new ShadowEffect(m_camera, depth_util);
     m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows, m_fboTemp);
-    m_ssao = new SSAOEffect(m_camera, m_fboNormalz, screenQuadShader, m_quad);
+    m_ssao = new SSAOEffect(m_camera, m_quad, screenQuadShader, m_fboNormalz);
     m_ssaoBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_ssao, m_fboTemp);
 
     m_fboActiveBuffer = m_fboColor;

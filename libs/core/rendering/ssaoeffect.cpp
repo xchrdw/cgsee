@@ -6,8 +6,7 @@
 #include "../program.h"
 #include "../fileassociatedshader.h"
 
-SSAOEffect::SSAOEffect(Camera * camera, FrameBufferObject * normalz, 
-                       FileAssociatedShader * quadShader, ScreenQuad * quad)
+SSAOEffect::SSAOEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,  FrameBufferObject * normalz)
 :   Effect(camera)
 ,   m_fboNormalz(normalz)
 ,   m_quad(quad)
@@ -18,7 +17,8 @@ SSAOEffect::SSAOEffect(Camera * camera, FrameBufferObject * normalz,
         m_kernel[i] = glm::normalize(glm::vec3(
             glm::linearRand(-1.0f, 1.0f),
             glm::linearRand(-1.0f, 1.0f),
-            glm::linearRand(0.0f, 1.0f)));
+            glm::linearRand(0.0f, 1.0f))
+        );
 
         float scale = glm::linearRand(0.0f, 1.0f);
         scale = glm::mix(0.1f, 1.0f, scale * scale);
@@ -29,7 +29,8 @@ SSAOEffect::SSAOEffect(Camera * camera, FrameBufferObject * normalz,
         m_noise[i] = glm::normalize(glm::vec3(
             glm::linearRand(-1.0f, 1.0f),
             glm::linearRand(-1.0f, 1.0f),
-            0.0f));
+            0.0f)
+        );
     }
 
     m_fbo = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);

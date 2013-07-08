@@ -9,8 +9,7 @@
 class CGSEE_API SSAOEffect : public Effect
 {
 public:
-    SSAOEffect(Camera * camera, FrameBufferObject * normalz, 
-               FileAssociatedShader * quadShader, ScreenQuad * quad);
+    SSAOEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,  FrameBufferObject * normalz);
     virtual ~SSAOEffect(void);
 
     virtual void resize(const int width, const int height) override;
