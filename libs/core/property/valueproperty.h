@@ -15,7 +15,8 @@ template <typename Type>
 class CGSEE_API ValueProperty : public AbstractProperty, public ValuePropertySignals
 {
 public:
-    ValueProperty(QString name, QString description, Type value = NULL);
+    ValueProperty(QString name, QString description);
+    ValueProperty(QString name, QString description, Type value);
     virtual ~ValueProperty();
 
     virtual void accept(AbstractPropertyVisitor & visitor);
@@ -26,6 +27,12 @@ public:
 protected:
     Type m_value;
 };
+
+template <typename Type>
+ValueProperty<Type>::ValueProperty(QString name, QString description)
+:   AbstractProperty(name, description)
+{
+}
 
 template <typename Type>
 ValueProperty<Type>::ValueProperty(QString name, QString description, Type value)

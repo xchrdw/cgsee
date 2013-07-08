@@ -24,6 +24,7 @@ public:
     virtual void visitValue(ValueProperty<float> & property);
     virtual void visitValue(ValueProperty<int> & property);
     virtual void visitValue(ValueProperty<QString> & property);
+    virtual void visitValue(ValueProperty<QColor> & property);
     virtual void visitLimited(LimitedProperty<int> & property);
     virtual void visitLimited(LimitedProperty<float> & property);
 

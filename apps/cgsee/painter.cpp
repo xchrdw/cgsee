@@ -2,7 +2,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <QDebug>
 #include <QWidget>
-#include <QColorDialog>
 
 #include "painter.h"
 
@@ -132,13 +131,15 @@ const bool Painter::initialize()
     listProperty->select(0);
 
     ListProperty * listp = new ListProperty("listp", "Choose Mode", QStringList() << "low" << "normal" << "high");
-    m_propertylist->add(listp);
- 
+    
+    ValueProperty<QColor> * colorp = new ValueProperty<QColor>("colorp", "Choose Color:");
 
-    m_propertylist->add(listProperty);
+    m_propertylist->add(colorp);
+    m_propertylist->add(listp);
     m_propertylist->add(yourname);
     m_propertylist->add(intprop);
     m_propertylist->add(derplevel);
+    m_propertylist->add(listProperty);
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");

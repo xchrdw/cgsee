@@ -6,9 +6,11 @@
 #include <QGroupBox>
 #include <QSlider>
 #include <QSpinBox>
+#include <QColorDialog>
 #include <QLineEdit>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QPushButton>
 #include <QStackedWidget>
 #include "propertywidgetbuilder.h"
 #include <core/property/valueproperty.h>
@@ -34,9 +36,10 @@ void PropertyWidgetBuilder::buildWidget(const QList<AbstractProperty *> & proper
 {
     delete m_widget;
     m_widget = new QWidget();
+    m_widget->setWindowTitle("Painter Properties");
     m_layout = new QFormLayout(m_widget);
     m_layout->setSizeConstraint(QLayout::SetFixedSize);
-    m_layout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    // m_layout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
     m_widget->setLayout(m_layout);
     
     m_active_widget = m_widget;
@@ -179,6 +182,34 @@ void PropertyWidgetBuilder::visitValue(ValueProperty<QString> & property)
     );
 }
 
+void PropertyWidgetBuilder::visitValue(ValueProperty<QColor> & property)
+{
+    QHBoxLayout * layout = new QHBoxLayout(m_active_widget);
+
+    QLabel * label = new QLabel("R: 0.1 G: 0.9 B: 0.22", m_active_widget);
+    QPushButton * button = new QPushButton("Pick Color", m_active_widget);
+
+    layout->addWidget(label);
+    layout->addWidget(button);
+
+    m_active_layout->addRow(property.description(), layout);
+
+    QObject::connect(button, &QPushButton::clicked,
+        [&property, label] (bool) {
+            property.setValue(QColorDialog::getColor(property.value()));
+            QString newlabel = QString("R: %1 G: %2 B: %3")
+                                    .arg(property.value().red())
+                                    .arg(property.value().green())
+                                    .arg(property.value().blue());
+            label->setText(newlabel);
+            
+            qDebug("Set Property %s = %s",
+                   qPrintable(property.name()),
+                   qPrintable(newlabel));
+        }
+    );
+}
+
 void PropertyWidgetBuilder::visitLimited(LimitedProperty<int> & property)
 {
     QHBoxLayout * layout = new QHBoxLayout(m_active_widget);
@@ -201,7 +232,7 @@ void PropertyWidgetBuilder::visitLimited(LimitedProperty<int> & property)
     QObject::connect(slider, &QSlider::valueChanged,
         [&property] (int i) {
             property.setValue(i);
-            qDebug("Painter: Set %s = %i", 
+            qDebug("Set Property %s = %i", 
                    qPrintable(property.name()), 
                    i);
         }
@@ -233,7 +264,7 @@ void PropertyWidgetBuilder::visitLimited(LimitedProperty<float> & property)
         [&property, scale_factor] (int i) {
             float new_value = (i / scale_factor) + property.minimum();
             property.setValue(new_value);
-            qDebug("Painter: Set %s = %.4f", 
+            qDebug("Set Property %s = %.4f", 
                    qPrintable(property.name()), 
                    new_value);
         }
@@ -243,7 +274,6 @@ void PropertyWidgetBuilder::visitLimited(LimitedProperty<float> & property)
 QWidget * PropertyWidgetBuilder::retainWidget()
 {
     QWidget * widget = m_widget;
-    widget->setWindowTitle("Painter Properties");
     m_widget = nullptr;
     return widget;
 }
