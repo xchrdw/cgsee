@@ -10,7 +10,7 @@ class ScreenQuad;
 class CGSEE_API BlurEffect : public Effect
 {
 public:
-    BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader, FrameBufferObject * fbo, FrameBufferObject * temp);
+    BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader, Effect * target, FrameBufferObject * temp);
     virtual ~BlurEffect(void);
 
     virtual void resize(const int width, const int height) override;
@@ -27,7 +27,7 @@ private:
     Program * m_blurv;
     Program * m_blurh;
     ScreenQuad * m_quad;
+    Effect * m_target;
     FrameBufferObject * m_fboTemp;
-    FrameBufferObject * m_fbo;
 };
 

@@ -176,9 +176,9 @@ const bool Painter::initialize()
     m_fboTemp = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     
     m_shadows = new ShadowEffect(m_camera, depth_util);
-    m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows->output(), m_fboTemp);
+    m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows, m_fboTemp);
     m_ssao = new SSAOEffect(m_camera, m_fboNormalz, screenQuadShader, m_quad);
-    m_ssaoBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_ssao->output(), m_fboTemp);
+    m_ssaoBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_ssao, m_fboTemp);
 
     m_fboActiveBuffer = m_fboColor;
 
@@ -252,14 +252,10 @@ void Painter::paint()
     else
         m_fboColor->clear();
 
-     m_shadows->applyIfActive();
-    
-    if(m_shadows->isActive()) 
-        m_shadowBlur->applyIfActive();
+    m_shadows->applyIfActive();
+    m_shadowBlur->applyIfActive();
 
-    if(m_ssao->isActive())
-        m_ssao->applyIfActive();
-
+    m_ssao->applyIfActive();
     m_ssaoBlur->applyIfActive();
     
 

@@ -7,10 +7,10 @@
 
 
 BlurEffect::BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader, 
-                       FrameBufferObject * fbo, FrameBufferObject * temp)
+                       Effect * target, FrameBufferObject * temp)
 :   Effect(camera)
 ,   m_quad(quad)
-,   m_fbo(fbo)
+,   m_target(target)
 ,   m_fboTemp(temp)
 {
     m_blurv = new Program();
@@ -36,7 +36,7 @@ void BlurEffect::resize( const int width, const int height )
 
 FrameBufferObject * BlurEffect::output()
 {
-    throw std::exception("The method or operation is not implemented.");
+    return m_target->output();
 }
 
 void BlurEffect::clearFbos()
@@ -45,14 +45,17 @@ void BlurEffect::clearFbos()
 
 void BlurEffect::render()
 {
-    m_fbo->bindTexture2D(*m_blurv, "source", 0);
+    if (!m_target->isActive())
+        return;
+
+    m_target->output()->bindTexture2D(*m_blurv, "source", 0);
     m_blurv->setUniform("viewport", m_camera->viewport());
     m_quad->draw(*m_blurv, m_fboTemp);
-    m_fbo->releaseTexture2D();
+    m_target->output()->releaseTexture2D();
 
     m_fboTemp->bindTexture2D(*m_blurh, "source", 0);
     m_blurh->setUniform("viewport", m_camera->viewport());
-    m_quad->draw(*m_blurh, m_fbo);
+    m_quad->draw(*m_blurh, m_target->output());
     m_fboTemp->releaseTexture2D();
 }
 
