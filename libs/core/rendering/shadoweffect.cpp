@@ -112,8 +112,8 @@ void ShadowEffect::setUniforms()
     m_shadowMapping->setUniform("samples", &m_shadow_samples[0], m_shadow_samples.size());
 
     // should be variable properties in the future
-    m_shadowMapping->setUniform("lightSize", 0.03f);
-    m_shadowMapping->setUniform("searchWidth", 0.02f);
+    m_shadowMapping->setUniform("lightSize", 15.0f); 
+    m_shadowMapping->setUniform("searchWidth", 10.0f);
     m_shadowMapping->setUniform("zOffset",  0.0015f);
     m_shadowMapping->setUniform("sample_count", 24); // usefull range: 0-128
 }

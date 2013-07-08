@@ -3,6 +3,7 @@
 
 #include "effect.h"
 #include <vector>
+#include "Effect.h"
 
 class FileAssociatedShader;
 class Group;
@@ -21,10 +22,10 @@ public:
     FrameBufferObject * shadowMap();
     virtual void clearFbos() override;
     virtual void setUniforms() override;
+
 protected:
     virtual void render() override;
-
-
+    
 private:
     Camera * m_lightcam;
 
