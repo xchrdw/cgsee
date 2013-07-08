@@ -60,7 +60,7 @@ Painter::Painter(Camera * camera)
 ,   m_shadows(nullptr)
 ,   m_camera(camera)
 ,   m_useColor(true)
-,   m_effects()
+,   m_passes()
 {
 
 }
@@ -176,12 +176,12 @@ const bool Painter::initialize()
     m_ssao = new SSAOEffect(m_camera, m_quad, screenQuadShader, m_normalz->output());
     m_ssaoBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_ssao, m_fboTemp);
     
-    m_effects.append(m_normalz);
-    m_effects.append(m_lightsource);
-    m_effects.append(m_shadows);
-    m_effects.append(m_shadowBlur);
-    m_effects.append(m_ssao);
-    m_effects.append(m_ssaoBlur);
+    m_passes.append(m_normalz);
+    m_passes.append(m_lightsource);
+    m_passes.append(m_shadows);
+    m_passes.append(m_shadowBlur);
+    m_passes.append(m_ssao);
+    m_passes.append(m_ssaoBlur);
 
 
     m_fboActiveBuffer = m_fboColor;
@@ -254,7 +254,7 @@ void Painter::paint()
     else
         m_fboColor->clear();
 
-    for (RenderingPass * effect : m_effects) {
+    for (RenderingPass * effect : m_passes) {
         effect->applyIfActive();
     }
 
@@ -288,7 +288,7 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
 void Painter::resize(const int width, const int height)
 {
     AbstractPainter::resize(width, height);
-    for (RenderingPass * effect : m_effects) {
+    for (RenderingPass * effect : m_passes) {
         effect->resize(width, height);
     }
     m_camera->setViewport(width, height);
@@ -296,9 +296,7 @@ void Painter::resize(const int width, const int height)
     m_fboColor->resize(width, height);
     m_fboTemp->resize(width, height);
 
-
     postShaderRelinked();
-
 }
 
 void Painter::setShading(char shader)
@@ -381,7 +379,8 @@ Camera * Painter::camera()
 
 void Painter::sceneChanged(Group * scene)
 {
-    for (RenderingPass * effect : m_effects) {
+    for (RenderingPass * effect : m_passes) 
+    {
         effect->sceneChanged(scene);
     }
 }

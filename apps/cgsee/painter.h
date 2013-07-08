@@ -71,7 +71,7 @@ protected:
     RenderingPass * m_shadowBlur;
     RenderingPass * m_ssao;
     RenderingPass * m_ssaoBlur;
-    QList<RenderingPass*> m_effects;
+    QList<RenderingPass*> m_passes;
 
     Camera * m_camera;
     bool m_useColor;
