@@ -67,14 +67,6 @@ void main()
         mat3 primaryTangentspace;
         vec3 primaryNormalAvg = getNormalAndTangentSpaceForTriangle(primaryTriangle, primaryTangentspace);
 
-
-        //cornellbox has broken triangle orientations, so use these 
-        vec3 normals[3];
-        normals[0] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+0).x).xyz;
-        normals[1] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+1).x).xyz;
-        normals[2] = texelFetch(normalBuffer, texelFetch(indexBuffer, primaryNearestIndex+2).x).xyz;
-        primaryNormalAvg =  (normals[0] + normals[1] + normals[2]) / 3;
-
         //check the light
         float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
 
