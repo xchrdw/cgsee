@@ -154,9 +154,13 @@ vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace
     vec3 e0 = triangle[1] - triangle[0];
     vec3 e1 = triangle[2] - triangle[0];
 
-    tangentspace[0] = normalize(e0);
-    tangentspace[1] = normalize(cross(e0, e1));
-    tangentspace[2] = normalize(cross(tangentspace[0], tangentspace[1]));
+    vec3 normal = normalize(cross(e0, e1));
+    vec3 anotherone = normalize(vec3(rand+0.5, rand, rand));
+
+
+    tangentspace[0] = cross(normal, anotherone);
+    tangentspace[1] = normal;
+    tangentspace[2] = (cross(tangentspace[0], tangentspace[1]));
 
     return tangentspace[1];
 }
