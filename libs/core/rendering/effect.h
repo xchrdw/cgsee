@@ -17,8 +17,9 @@ public:
     bool isActive();
     void setActive(bool value);
 
-    void apply();
+    void applyIfActive();
 
+    virtual void setUniforms() = 0;
     virtual void resize(const int width, const int height) = 0;
 
     virtual FrameBufferObject * output() = 0;

@@ -34,17 +34,10 @@ SSAOEffect::SSAOEffect(Camera * camera, FrameBufferObject * normalz,
 
     m_fbo = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
-
     m_program = new Program();
     m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/ssao.frag"));
     m_program->attach(quadShader);
 
-    m_program->setUniform("kernel", &m_kernel[0], m_kernel.size());
-    m_program->setUniform("noise", &m_noise[0], m_noise.size());
-
-    m_program->setUniform("sample_count", 32); // usefull range: 0-128
-    m_program->setUniform("zOffset", 0.005f); 
-    m_program->setUniform("filterRadius", 0.05f);
 }
 
 SSAOEffect::~SSAOEffect(void)
@@ -76,4 +69,14 @@ FrameBufferObject * SSAOEffect::output()
 void SSAOEffect::resize(const int width, const int height)
 {
     m_fbo->resize(width, height);
+}
+
+void SSAOEffect::setUniforms()
+{
+    m_program->setUniform("kernel", &m_kernel[0], m_kernel.size());
+    m_program->setUniform("noise", &m_noise[0], m_noise.size());
+
+    m_program->setUniform("sample_count", 32); // usefull range: 0-128
+    m_program->setUniform("zOffset", 0.005f); 
+    m_program->setUniform("filterRadius", 0.05f);
 }

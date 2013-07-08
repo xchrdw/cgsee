@@ -15,9 +15,8 @@ class Group;
 class ScreenQuad;
 class Program;
 class FrameBufferObject;
+class Effect;
 class ShadowEffect;
-class BlurEffect;
-class SSAOEffect;
 
 class Painter : public AbstractScenePainter
 {
@@ -31,31 +30,24 @@ public:
     virtual void setFrameBuffer(int frameBuffer);
     virtual void setEffect( int effect, bool active );
 
-
-    virtual void resize(
-        const int width
-    ,   const int height);
+    virtual void resize(const int width, const int height);
+    virtual void postShaderRelinked() override;
+    
 protected:
     virtual const bool initialize() override;
     virtual Camera * camera() override;
 
 protected:
-    void postShaderRelinked();
-    
     void setUniforms();
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 
     void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
 
-    static void bindSampler(
-        const t_samplerByName & sampler
-    ,   const Program & program);
+    static void bindSampler(const t_samplerByName & sampler, const Program & program);
 
-    static void releaseSampler(
-        const t_samplerByName & sampler);
+    static void releaseSampler(const t_samplerByName & sampler);
     void sceneChanged(Group * scene);
-    void setShaderProperties();
 
 protected:  
     ScreenQuad * m_quad;
@@ -69,21 +61,18 @@ protected:
     Program * m_phong;
     Program * m_gooch;
     Program * m_useProgram;
+    Program * m_flush;
     FrameBufferObject * m_fboColor;
     FrameBufferObject * m_fboTemp;
     FrameBufferObject * m_fboNormalz;
     FrameBufferObject * m_fboActiveBuffer;
 
-    BlurEffect * m_blur;
     ShadowEffect * m_shadows;
-    SSAOEffect * m_ssao;
-
-    glm::vec3 camPos;
-
-    Program * m_flush;
+    Effect * m_shadowBlur;
+    Effect * m_ssao;
+    Effect * m_ssaoBlur;
 
     Camera * m_camera;
     bool m_useColor;
-    bool m_blurShadows;
-    bool m_blurSSAO;
+
 };

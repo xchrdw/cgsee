@@ -59,8 +59,6 @@ Painter::Painter(Camera * camera)
 ,   m_shadows(nullptr)
 ,   m_camera(camera)
 ,   m_useColor(true)
-,   m_blurShadows(true)
-,   m_blurSSAO(true)
 {
 
 }
@@ -71,7 +69,9 @@ Painter::~Painter()
     delete m_normals;
     delete m_normalz;
     delete m_shadows;
-    delete m_blur;
+    delete m_shadowBlur;
+    delete m_ssao;
+    delete m_ssaoBlur;
     delete m_flat;
     delete m_gouraud;
     delete m_phong;
@@ -111,8 +111,6 @@ const bool Painter::initialize()
     
 
     FileAssociatedShader * screenQuadShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert");
-        
-
 
     FileAssociatedShader *wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe/wireframe.vert");
     FileAssociatedShader *wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe/wireframe.geo");
@@ -167,7 +165,6 @@ const bool Painter::initialize()
     //set UNIFORMS for selected shader
     m_useProgram = m_flat;
     setUniforms();
-    setShaderProperties();
 
     // Post Processing Shader
     m_flush = new Program();
@@ -179,8 +176,9 @@ const bool Painter::initialize()
     m_fboTemp = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     
     m_shadows = new ShadowEffect(m_camera, depth_util);
+    m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows->output(), m_fboTemp);
     m_ssao = new SSAOEffect(m_camera, m_fboNormalz, screenQuadShader, m_quad);
-    m_blur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_fboTemp);
+    m_ssaoBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_ssao->output(), m_fboTemp);
 
     m_fboActiveBuffer = m_fboColor;
 
@@ -237,12 +235,6 @@ void Painter::setUniforms()
     
 }
 
-// some time in the future this may be variable properties 
-void Painter::setShaderProperties() {   
-   
-}
-
-
 void Painter::paint()
 {
     AbstractPainter::paint();
@@ -260,22 +252,15 @@ void Painter::paint()
     else
         m_fboColor->clear();
 
-    if(m_shadows->isActive())
-        m_shadows->apply();
+     m_shadows->applyIfActive();
     
-    if(m_shadows->isActive() && m_blurShadows) {
-        m_blur->setInput(m_shadows->output());
-        m_blur->apply();
-    }
-        
+    if(m_shadows->isActive()) 
+        m_shadowBlur->applyIfActive();
 
     if(m_ssao->isActive())
-        m_ssao->apply();
+        m_ssao->applyIfActive();
 
-    if(m_ssao->isActive() && m_blurSSAO) {
-        m_blur->setInput(m_ssao->output());
-        m_blur->apply();
-    }
+    m_ssaoBlur->applyIfActive();
     
 
     sampler.clear();
@@ -305,9 +290,7 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
 }
 
 
-void Painter::resize(  //probably never called anywhere?
-    const int width
-,   const int height)
+void Painter::resize(const int width, const int height)
 {
     AbstractPainter::resize(width, height);
     m_shadows->resize(width, height);
@@ -354,27 +337,28 @@ void Painter::setFrameBuffer(int frameBuffer)
     }
 }
 
-void Painter::setEffect( int effect, bool active )
+void Painter::setEffect(int effect, bool value)
 {
     switch(effect) 
     {
-        case 1: m_useColor = active; std::printf("\nColor toggled\n"); break;
-        case 2: m_shadows->setActive(active); std::printf("\nShadow toggled\n"); break;
-        case 3: m_blurShadows = active; std::printf("\nShadow blur toggled\n"); break;
-        case 4: m_ssao->setActive(active); std::printf("\nSSAO toggled\n"); break;
-        case 5: m_blurSSAO = active; std::printf("\nSSAO blur toggled\n"); break;
+        case 1: m_useColor = value; std::printf("\nColor toggled\n"); break;
+        case 2: m_shadows->setActive(value); std::printf("\nShadow toggled\n"); break;
+        case 3: m_shadowBlur->setActive(value); std::printf("\nShadow blur toggled\n"); break;
+        case 4: m_ssao->setActive(value); std::printf("\nSSAO toggled\n"); break;
+        case 5: m_ssaoBlur->setActive(value); std::printf("\nSSAO blur toggled\n"); break;
     }
-
-    m_shadows->clearFbos();
-    m_ssao->clearFbos();
 }
 
 void Painter::postShaderRelinked()
 {
+    setUniforms();
+    m_shadows->setUniforms();
+    m_shadowBlur->setUniforms();
+    m_ssao->setUniforms();
+    m_ssaoBlur->setUniforms();
 }
 
 void Painter::bindSampler(
-
     const t_samplerByName & sampler
 ,   const Program & program)
 {

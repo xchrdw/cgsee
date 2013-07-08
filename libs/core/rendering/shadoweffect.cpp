@@ -46,13 +46,6 @@ ShadowEffect::ShadowEffect(Camera * camera, FileAssociatedShader * depth_util)
     m_fboShadows = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboShadowMap = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
-    m_shadowMapping->setUniform("samples", &m_shadow_samples[0], m_shadow_samples.size());
-
-    // should be variable properties in the future
-    m_shadowMapping->setUniform("lightSize", 0.03f); 
-    m_shadowMapping->setUniform("searchWidth", 0.02f); 
-    m_shadowMapping->setUniform("zOffset",  0.0015f); 
-    m_shadowMapping->setUniform("sample_count", 24); // usefull range: 0-128
 }
 
 
@@ -112,4 +105,15 @@ void ShadowEffect::clearFbos()
 {
     m_fboShadowMap->clear();
     m_fboShadows->clear();
+}
+
+void ShadowEffect::setUniforms()
+{
+    m_shadowMapping->setUniform("samples", &m_shadow_samples[0], m_shadow_samples.size());
+
+    // should be variable properties in the future
+    m_shadowMapping->setUniform("lightSize", 0.03f); 
+    m_shadowMapping->setUniform("searchWidth", 0.02f); 
+    m_shadowMapping->setUniform("zOffset",  0.0015f); 
+    m_shadowMapping->setUniform("sample_count", 24); // usefull range: 0-128
 }

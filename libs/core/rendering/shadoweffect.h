@@ -19,8 +19,8 @@ public:
 
     virtual FrameBufferObject * output() override;
     FrameBufferObject * shadowMap();
-    virtual void clearFbos()  override;
-
+    virtual void clearFbos() override;
+    virtual void setUniforms() override;
 protected:
     virtual void render() override;
 

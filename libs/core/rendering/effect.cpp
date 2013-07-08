@@ -25,9 +25,11 @@ bool Effect::isActive()
 void Effect::setActive(bool value)
 {
     m_active = value;
+    if (!value)
+        clearFbos();
 }
 
-void Effect::apply()
+void Effect::applyIfActive()
 {
     if (m_active)
     {
