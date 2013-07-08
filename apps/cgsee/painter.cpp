@@ -21,9 +21,9 @@
 #include <core/screenquad.h>
 #include "core/navigation/arcballnavigation.h"
 #include "core/navigation/flightnavigation.h"
-#include "core/rendering/ShadowEffect.h"
-#include "core/rendering/SSAOEffect.h"
-#include "core/rendering/BlurEffect.h"
+#include "core/rendering/shadoweffect.h"
+#include "core/rendering/ssaoeffect.h"
+#include "core/rendering/blureffect.h"
 
 
 //for phong, flat and gouraud
@@ -108,7 +108,7 @@ const bool Painter::initialize()
     m_normalz->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
     m_normalz->attach(depth_util);
     m_normalz->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
-    
+
 
     FileAssociatedShader * screenQuadShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert");
 
@@ -170,11 +170,11 @@ const bool Painter::initialize()
     m_flush = new Program();
     m_flush->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
     m_flush->attach(screenQuadShader);
-    
+
     m_fboNormalz = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboColor = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboTemp = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    
+
     m_shadows = new ShadowEffect(m_camera, depth_util);
     m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows, m_fboTemp);
     m_ssao = new SSAOEffect(m_camera, m_fboNormalz, screenQuadShader, m_quad);
@@ -231,8 +231,8 @@ void Painter::setUniforms()
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
 
-   
-    
+
+
 }
 
 void Painter::paint()
@@ -257,7 +257,7 @@ void Painter::paint()
 
     m_ssao->applyIfActive();
     m_ssaoBlur->applyIfActive();
-    
+
 
     sampler.clear();
     sampler["source"] = m_fboActiveBuffer;
@@ -297,7 +297,7 @@ void Painter::resize(const int width, const int height)
     m_fboNormalz->resize(width, height);
     m_fboColor->resize(width, height);
     m_fboTemp->resize(width, height);
-    
+
 
     postShaderRelinked();
 
@@ -323,7 +323,7 @@ void Painter::setShading(char shader)
 
 void Painter::setFrameBuffer(int frameBuffer)
 {
-    switch(frameBuffer) 
+    switch(frameBuffer)
     {
         case 1: m_fboActiveBuffer = m_fboColor; std::printf("\nColor Buffer\n"); break;
         case 2: m_fboActiveBuffer = m_fboNormalz; std::printf("\nNormal Buffer\n"); break;
@@ -335,7 +335,7 @@ void Painter::setFrameBuffer(int frameBuffer)
 
 void Painter::setEffect(int effect, bool value)
 {
-    switch(effect) 
+    switch(effect)
     {
         case 1: m_useColor = value; std::printf("\nColor toggled\n"); break;
         case 2: m_shadows->setActive(value); std::printf("\nShadow toggled\n"); break;

@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "Effect.h"
+#include "effect.h"
 #include <vector>
 
 class FileAssociatedShader;
@@ -36,7 +36,7 @@ private:
 
     std::vector<glm::vec2> m_shadow_samples;
 
-    static const glm::mat4 ShadowEffect::biasMatrix;
+    static const glm::mat4 biasMatrix;
 
     Group * m_scene;
 };

@@ -3,13 +3,13 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "Effect.h"
+#include "effect.h"
 #include "../screenquad.h"
 
 class CGSEE_API SSAOEffect : public Effect
 {
 public:
-    SSAOEffect(Camera * camera, FrameBufferObject * normalz, 
+    SSAOEffect(Camera * camera, FrameBufferObject * normalz,
                FileAssociatedShader * quadShader, ScreenQuad * quad);
     virtual ~SSAOEffect(void);
 
