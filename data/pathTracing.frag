@@ -27,17 +27,24 @@ uniform sampler2D accumulation;
 uniform int randomInt;
 uniform int frameCounter;
 
-vec3 light = vec3(0.0, 0.0, -1000.0);
+vec3 light = vec3(0.0, 0.0, .0);
+vec3 arealight[4] = { vec3(343.0, 547.8, 227.0),
+        vec3(343.0, 547.8, 282.0),
+        vec3(213.0, 547.8, 332.0),
+        vec3(213.0, 547.8, 227.0)};
 //vec3 cameraposition = vec3(1.0, 0.0, 3.0);
 float EPSILON = 0.000001;
 
 void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint);
+bool rayTriangleIntersectionBool(vec3 origin, vec3 target);
 vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace);
 float getLight(vec3 pos, vec3 normal);
 vec4 skybox(vec3 direction);
 
 
 float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt%1111)) * 43758.5453);
+
+float rand2 =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt+123%1111)) * 43758.5453); // :)
 
 void main()
 {
@@ -52,7 +59,7 @@ void main()
     vec3 origin = cameraposition;
     vec3 ray = direction;
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 3; ++i) {
         int primaryNearestIndex;
         vec3 primaryTriangle[3];
         vec3 primaryIntersectionPoint;
@@ -82,18 +89,29 @@ void main()
 }
 
 float getLight(vec3 pos, vec3 normal) {
-    int lightNearestIndex;
-    vec3 lightTriangle[3];
-    vec3 lightIntersectionPoint;
+    vec3 randomLightPos = (mix(arealight[2], arealight[3], rand2) + mix(arealight[0], arealight[1], rand)) / 2;
 
-    rayTriangleIntersection(pos, light - pos, lightNearestIndex, lightTriangle, lightIntersectionPoint);
+    bool lightShines = rayTriangleIntersectionBool(pos, randomLightPos);
 
     float cos = 0.0;
-    if (lightNearestIndex == -1) {
-        cos = dot(normalize(light), normalize(normal));
+    if (lightShines) {
+        cos = dot(normalize(randomLightPos - pos), normalize(normal))*0.6;
     }
 
     return cos;
+}
+
+
+bool rayTriangleIntersectionBool(vec3 origin, vec3 target) {
+    vec3 direction = target - origin;
+
+    int nearestIndex;
+    vec3 triangle[3];
+    vec3 intersectionPoint;
+
+    rayTriangleIntersection(origin, direction, nearestIndex, triangle, intersectionPoint);
+
+    return length(target-origin) < length(intersectionPoint-origin);
 }
 
 
