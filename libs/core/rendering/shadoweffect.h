@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "Effect.h"
 #include <vector>
+#include "Effect.h"
 
 class FileAssociatedShader;
 class Group;
@@ -21,10 +21,10 @@ public:
     FrameBufferObject * shadowMap();
     virtual void clearFbos() override;
     virtual void setUniforms() override;
+
 protected:
     virtual void render() override;
-
-
+    
 private:
     Camera * m_lightcam;
 
@@ -36,7 +36,7 @@ private:
 
     std::vector<glm::vec2> m_shadow_samples;
 
-    static const glm::mat4 ShadowEffect::biasMatrix;
+    static const glm::mat4 biasMatrix;
 
     Group * m_scene;
 };

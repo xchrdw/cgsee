@@ -1,10 +1,10 @@
 
-#include "Effect.h"
-#include "..\camera.h"
-#include "..\program.h"
-#include "..\framebufferobject.h"
-#include "..\scenegraph\scenetraverser.h"
-#include "..\scenegraph\drawvisitor.h"
+#include "effect.h"
+#include "../camera.h"
+#include "../program.h"
+#include "../framebufferobject.h"
+#include "../scenegraph/scenetraverser.h"
+#include "../scenegraph/drawvisitor.h"
 
 
 Effect::Effect(Camera * camera)

@@ -1,4 +1,4 @@
-#include "BlurEffect.h"
+#include "blureffect.h"
 #include "..\program.h"
 #include "..\fileassociatedshader.h"
 #include "..\framebufferobject.h"

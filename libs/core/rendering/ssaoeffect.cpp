@@ -1,7 +1,7 @@
 
 #include <glm/gtx/random.hpp>
 
-#include "SSAOEffect.h"
+#include "ssaoeffect.h"
 #include "../framebufferobject.h"
 #include "../program.h"
 #include "../fileassociatedshader.h"
