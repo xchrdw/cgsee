@@ -9,37 +9,37 @@
 
 #include <QFile>
 
-#include "objio.h"
+#include "datacore/datablock.h"
+#include "scenegraph/group.h"
+#include "scenegraph/polygonaldrawable.h"
+#include "scenegraph/polygonalgeometry.h"
 
-#include "group.h"
-#include "polygonaldrawable.h"
-#include "polygonalgeometry.h"
+#include "objloader.h"
 
 
 using namespace std;
 
-// http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
-
-// trim from start
-static inline void trim(std::string & str) 
+ObjLoader::ObjLoader( std::shared_ptr<DataBlockRegistry> registry )
+: AbstractModelLoader()
+, m_registry( registry )
 {
-    // trim trailing spaces
-    const size_t endpos = str.find_last_not_of(" \t");
-    if(string::npos != endpos)
-        str.substr(0, endpos + 1).swap(str);
-
-    // trim leading spaces
-    const size_t startpos = str.find_first_not_of(" \t");
-    if(string::npos != startpos)
-        str.substr(startpos).swap(str);
 }
 
-ObjIO::ObjObject::~ObjObject()
+ObjLoader::~ObjLoader()
 {
-    groups.clear();
 }
 
-Group * ObjIO::groupFromObjFile(const QString & filePath)
+QStringList ObjLoader::namedLoadableTypes() const
+{
+    return QStringList("Wavefront Object (*.obj)");
+}
+
+QStringList ObjLoader::loadableExtensions() const
+{
+    return QStringList("obj");
+}
+
+Group * ObjLoader::importFromFile(const QString & filePath) const
 {
     // http://en.wikipedia.org/wiki/Wavefront_.obj_file
     // http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Load_OBJ
@@ -105,13 +105,34 @@ Group * ObjIO::groupFromObjFile(const QString & filePath)
     }
     stream.close();
 
-    Group * group = toGroup(objects);
+    Group * group = toGroup(objects, m_registry);
     group->setName(filePath);
 
     return group;
 }
 
-inline void ObjIO::parseV(
+// http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
+
+// trim from start
+static inline void trim(std::string & str)
+{
+    // trim trailing spaces
+    const size_t endpos = str.find_last_not_of(" \t");
+    if(string::npos != endpos)
+        str.substr(0, endpos + 1).swap(str);
+
+    // trim leading spaces
+    const size_t startpos = str.find_first_not_of(" \t");
+    if(string::npos != startpos)
+        str.substr(startpos).swap(str);
+}
+
+ObjLoader::ObjObject::~ObjObject()
+{
+    groups.clear();
+}
+
+inline void ObjLoader::parseV(
     istringstream & line
 ,   ObjObject & object)
 {
@@ -129,7 +150,7 @@ inline void ObjIO::parseV(
     object.vs.push_back(v);
 }
 
-inline void ObjIO::parseVT(
+inline void ObjLoader::parseVT(
     istringstream & line
 ,   ObjObject & object)
 {
@@ -145,7 +166,7 @@ inline void ObjIO::parseVT(
     object.vts.push_back(vt);
 }
 
-inline void ObjIO::parseVN(
+inline void ObjLoader::parseVN(
     istringstream & line
 ,   ObjObject & object)
 {
@@ -158,7 +179,7 @@ inline void ObjIO::parseVN(
     object.vns.push_back(vn);
 }
 
-inline const ObjIO::e_FaceFormat ObjIO::parseFaceFormat(const istringstream & line)
+inline const ObjLoader::e_FaceFormat ObjLoader::parseFaceFormat(const istringstream & line)
 {
     string s(line.str());
     trim(s);
@@ -183,7 +204,7 @@ inline const ObjIO::e_FaceFormat ObjIO::parseFaceFormat(const istringstream & li
         return FF_VN;
 }
 
-inline void ObjIO::parseF(
+inline void ObjLoader::parseF(
     istringstream & line
 ,   ObjObject & object)
 {
@@ -212,7 +233,7 @@ inline void ObjIO::parseF(
             group.vtis.push_back(--i);
 
             break;
-             
+
         case FF_VN: // v0//vn0 v1//vn1 ...
 
             line.ignore(2); // ignore slashes
@@ -237,9 +258,9 @@ inline void ObjIO::parseF(
     }
 }
 
-inline void ObjIO::parseO(
+inline void ObjLoader::parseO(
     istringstream & line
-,   ObjIO::t_objects & objects)
+,   ObjLoader::t_objects & objects)
 {
     ObjObject * object(new ObjObject);
     line >> object->name;
@@ -247,7 +268,7 @@ inline void ObjIO::parseO(
     objects.push_back(object);
 }
 
-inline void ObjIO::parseG(
+inline void ObjLoader::parseG(
     istringstream & line
 ,   ObjObject & object)
 {
@@ -257,7 +278,7 @@ inline void ObjIO::parseG(
     object.groups.push_back(group);
 }
 
-Group * ObjIO::toGroup(const t_objects & objects)
+Group * ObjLoader::toGroup(const t_objects & objects, std::shared_ptr<DataBlockRegistry> registry)
 {
     std::vector<Group *> groups;
 
@@ -272,7 +293,7 @@ Group * ObjIO::toGroup(const t_objects & objects)
         groups.push_back(group);
 
         if(!oobject.vis.empty())
-            group->append(createPolygonalDrawable(oobject, oobject));
+            group->append(createPolygonalDrawable(oobject, oobject, registry));
 
         t_groups::const_iterator ig(oobject.groups.cbegin());
         const t_groups::const_iterator igEnd(oobject.groups.cend());
@@ -282,7 +303,7 @@ Group * ObjIO::toGroup(const t_objects & objects)
             const ObjGroup & ogroup(**ig);
 
             assert(!ogroup.vis.empty());
-            group->append(createPolygonalDrawable(oobject, ogroup));
+            group->append(createPolygonalDrawable(oobject, ogroup, registry));
         }
     }
 
@@ -302,9 +323,11 @@ Group * ObjIO::toGroup(const t_objects & objects)
     return group;
 }
 
-PolygonalDrawable * ObjIO::createPolygonalDrawable(
+PolygonalDrawable * ObjLoader::createPolygonalDrawable(
     const ObjObject & object
-,   const ObjGroup & group)
+,   const ObjGroup & group
+,   std::shared_ptr<DataBlockRegistry> registry
+)
 {
     if(group.vis.empty())
         return nullptr;
@@ -320,7 +343,7 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
     const bool usesTexCoordIndices(!group.vtis.empty());
     const bool usesNormalIndices(!group.vnis.empty());
 
-    PolygonalGeometry * geom(new PolygonalGeometry(object.qname() + " geometry"));
+    auto geom = make_shared<PolygonalGeometry>( registry );
 
     const GLuint size(static_cast<GLuint>(group.vis.size()));
     geom->resize(size);
@@ -342,14 +365,13 @@ PolygonalDrawable * ObjIO::createPolygonalDrawable(
             geom->setNormal(i, object.vns[group.vnis[i]]);
     }
 
-    // TODO: support other modes here!
-    geom->setMode(GL_TRIANGLES);
-
     if(!usesNormalIndices)
         geom->retrieveNormals();
 
     PolygonalDrawable * drawable(new PolygonalDrawable(object.qname()));
     drawable->setGeometry(geom);
+    // TODO: support other modes here!
+    drawable->setMode(GL_TRIANGLES);
 
     return drawable;
 }

@@ -10,15 +10,15 @@ set(SOURCES
 
     aabb.h
     aabb.cpp
-    abstractnavigation.h
-    abstractnavigation.cpp
-    arcballnavigation.h
-    arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstractglparent.h
+    abstractmodelloader.cpp
+    abstractmodelloader.h
     abstractpainter.h
     abstractpainter.cpp
+    abstractscenepainter.h
+    abstractscenepainter.cpp
 
     datacore/datablock.h
     datacore/datablock.cpp
@@ -34,7 +34,27 @@ set(SOURCES
     datacore/registertypeshere.h
     datacore/vertexlist_impl.inl
     datacore/datablock_impl.inl
+    
+    scenegraph/node.h
+    scenegraph/node.cpp
+    scenegraph/group.h
+    scenegraph/group.cpp
+    scenegraph/polygonaldrawable.h
+    scenegraph/polygonaldrawable.cpp
+    scenegraph/polygonalgeometry.h
+    scenegraph/polygonalgeometry.cpp
+    scenegraph/scenetraverser.h
+    scenegraph/scenetraverser.cpp
+    scenegraph/SceneVisitorInterface.h
+    scenegraph/drawvisitor.h
+    scenegraph/drawvisitor.cpp
+
+    scenegraph/cullingvisitor.h
+    scenegraph/cullingvisitor.cpp
+    
     abstracttimer.h
+    assimploader.h
+    assimploader.cpp
     autotimer.h
     autotimer.cpp
     bufferobject.h
@@ -44,33 +64,31 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
-    flightnavigation.h
-    flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
-    fpsnavigation.h
-    fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
+    geometryoptimizer.h
     glformat.h
     glformat.cpp
     gpuquery.h
     gpuquery.cpp
-    group.h
-    group.cpp
     mesh.h
     mesh.cpp
     messagehandler.h
     messagehandler.cpp
     mathmacros.h
-    node.h
-    node.cpp
-    objio.h
-    objio.cpp
-    polygonaldrawable.h
-    polygonaldrawable.cpp
-    polygonalgeometry.h
-    polygonalgeometry.cpp
+    navigation/abstractnavigation.h
+    navigation/abstractnavigation.cpp
+    navigation/arcballnavigation.h
+    navigation/arcballnavigation.cpp
+    navigation/flightnavigation.h
+    navigation/flightnavigation.cpp
+    navigation/fpsnavigation.h
+    navigation/fpsnavigation.cpp
+    objloader.h
+    objloader.cpp
+
     program.h
     program.cpp
     screenquad.h
@@ -79,10 +97,14 @@ set(SOURCES
     shader.cpp
     timer.h
     timer.cpp
-	vertexcacheoptimizer.h
-	vertexcacheoptimizer.cpp
-	vertexreuse.h
-	vertexreuse.cpp
+    plane.h
+    plane.cpp
+    viewfrustum.h
+    viewfrustum.cpp
+    vertexcacheoptimizer.h
+    vertexcacheoptimizer.cpp
+    vertexreuse.h
+    vertexreuse.cpp
 )
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$|\\\\.inl$" 
@@ -98,6 +120,7 @@ add_library(${target} SHARED ${HEADERS} ${SOURCES})
 qt5_use_modules(${target} Widgets OpenGL)
 
 target_link_libraries(${target}
+    ${ASSIMP_LIBRARY}
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}
     ${EXTRA_LIBS}

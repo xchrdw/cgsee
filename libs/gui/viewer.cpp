@@ -1,4 +1,3 @@
-
 #include <GL/glew.h>
 
 #include <cassert>
@@ -9,20 +8,29 @@
 #include <QOpenGLContext>
 #include <QSettings>
 #include <QTextStream>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QDockWidget>
+#include <QMenu>
+#include <QFileSystemModel>
+#include <QDir>
 
 #include "ui_viewer.h"
 #include "viewer.h"
 #include "canvas.h"
 #include "canvasexporter.h"
+#include "fileNavigator.h"
+#include "fileExplorer.h"
 
-#include <core/abstractnavigation.h>
-#include <core/flightnavigation.h>
-#include <core/fpsnavigation.h>
-#include <core/arcballnavigation.h>
+#include <core/navigation/abstractnavigation.h>
+#include <core/navigation/flightnavigation.h>
+#include <core/navigation/fpsnavigation.h>
+#include <core/navigation/arcballnavigation.h>
 
-#include <core/abstractpainter.h>
+#include <core/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
+#include <core/assimploader.h>
 
 
 namespace
@@ -34,6 +42,7 @@ namespace
 
 
 Viewer::Viewer(
+    std::shared_ptr<DataBlockRegistry> registry,
     QWidget  * parent,
     Qt::WindowFlags flags)
 
@@ -41,20 +50,72 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
 ,   m_saved_views(4)
+
+,   m_dockNavigator(new QDockWidget(tr("Navigator")))
+,   m_dockExplorer(new QDockWidget(tr("Explorer")))
+,   m_navigator(new FileNavigator(m_dockNavigator))
+,   m_explorer(new FileExplorer(m_dockExplorer))
+,   m_loader(new AssimpLoader( registry ))
 {
+
     m_ui->setupUi(this);
     
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings s;
-
+    
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
-
+    
     restoreViews(s);
-
-
+    initializeExplorer();
 };
 
+void Viewer::initializeExplorer()
+{
+    m_dockNavigator->setObjectName("fileNavigator");
+    m_dockExplorer->setObjectName("fileExplorer");
+    this->initializeDockWidgets(m_dockNavigator, m_navigator, Qt::LeftDockWidgetArea);
+    this->initializeDockWidgets(m_dockExplorer, m_explorer, Qt::BottomDockWidgetArea);
+
+    m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
+        
+    QObject::connect(
+        m_navigator, SIGNAL(clickedDirectory(const QString &)),
+        m_explorer, SLOT(setRoot(const QString &)));
+
+    QObject::connect(
+        m_explorer, SIGNAL(activatedItem(const QString &)),
+        this, SLOT(on_loadFile(const QString &)));
+
+    QObject::connect(
+        m_explorer, SIGNAL(activatedDir(const QString &)),
+        m_navigator, SLOT(on_activatedDir(const QString &)));
+
+    QObject::connect(
+        m_ui->openFileDialogAction, SIGNAL(changed()),
+        this, SLOT(on_openFileDialogAction_triggered()));
+
+    m_explorer->emitActivatedItem(m_explorer->model()->index(QDir::currentPath()));
+}
+
+void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
+{
+    dockWidget->setWidget(widget);
+    this->addDockWidget(area, dockWidget);
+    
+#ifdef __APPLE__
+    /** 
+     THIS IS A BUG WORKAROUND
+     The bug lies somewhere in Canvas::Canvas().
+     When called in Viewer::createQtContext(), the widgets get messed up.
+    **/
+    static int count = 0;
+    dockWidget->setFloating(true);
+    dockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
+    
+    dockWidget->move(QPoint(20, 40 + count++ * (dockWidget->height() + 35)));
+#endif
+}
 
 #ifdef WIN32
 const HGLRC Viewer::currentContextHandle()
@@ -128,9 +189,13 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_STATE, saveState());
 
     delete m_qtCanvas;
+
+    delete m_dockNavigator;
+    delete m_dockExplorer;
+    delete m_loader;
 }
 
-void Viewer::setPainter(AbstractPainter * painter)
+void Viewer::setPainter(AbstractScenePainter * painter)
 {
     if(!m_qtCanvas)
         return;
@@ -138,7 +203,7 @@ void Viewer::setPainter(AbstractPainter * painter)
     m_qtCanvas->setPainter(painter);
 }
 
-AbstractPainter * Viewer::painter()
+AbstractScenePainter * Viewer::painter()
 {
     if(!m_qtCanvas)
         return nullptr;
@@ -149,6 +214,7 @@ AbstractPainter * Viewer::painter()
 
 void Viewer::on_captureAsImageAction_triggered()
 {
+    m_dockNavigator->show();
     assert(m_qtCanvas);
     CanvasExporter::save(*m_qtCanvas, this);
 }
@@ -162,6 +228,49 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+    painter()->setShading(' ');
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_openFileDialogAction_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
+        QDir::homePath(), m_loader->namedLoadableTypes().join(";;"), 
+        0, QFileDialog::HideNameFilterDetails);
+    if (fileName.isEmpty())
+        return;
+    
+    on_loadFile(fileName);
+}
+    
+void Viewer::on_quitAction_triggered()
+{
+    QApplication::quit();
+}
+
+void Viewer::on_loadFile(const QString & path)
+{
+    Group * scene = m_loader->importFromFile(path);
+    if (!scene)
+        QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
+    else {
+        this->m_qtCanvas->navigation()->rescaleScene(scene);
+        this->painter()->assignScene(scene);
+        this->m_qtCanvas->navigation()->sceneChanged(scene);
+        this->m_qtCanvas->update();
+    }
+}
+
+void Viewer::on_toggleNavigator_triggered()
+{
+    bool visible = m_dockNavigator->isVisible();
+    m_dockNavigator->setVisible(!visible);
+}
+
+void Viewer::on_toggleExplorer_triggered()
+{
+    bool visible = m_dockExplorer->isVisible();
+    m_dockExplorer->setVisible(!visible);
 }
 
 void Viewer::on_phongShadingAction_triggered()
@@ -212,6 +321,84 @@ void Viewer::on_normalsAction_triggered()
     m_qtCanvas->repaint();
 }
 
+
+void Viewer::on_colorRenderingAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(1, m_ui->colorRenderingAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_shadowMappingAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(2, m_ui->shadowMappingAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_shadowBlurAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(3, m_ui->shadowBlurAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_ssaoAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(4, m_ui->ssaoAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_ssaoBlurAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(5, m_ui->ssaoBlurAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::uncheckFboActions() {
+    m_ui->fboColorAction->setChecked(false);
+    m_ui->fboNormalzAction->setChecked(false);
+    m_ui->fboShadowMapAction->setChecked(false);
+    m_ui->fboShadowsAction->setChecked(false);
+    m_ui->fboSSAOAction->setChecked(false);
+    m_ui->fboTempBufferAction->setChecked(false);
+}
+
+void Viewer::on_fboColorAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboColorAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(1);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboNormalzAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboNormalzAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(2);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboShadowsAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboShadowsAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(3);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboShadowMapAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboShadowMapAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(4);
+    m_qtCanvas->repaint();
+}
+void Viewer::on_fboSSAOAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboSSAOAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(5);
+    m_qtCanvas->repaint();
+}
 
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {

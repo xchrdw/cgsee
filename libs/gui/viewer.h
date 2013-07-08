@@ -5,13 +5,16 @@
 #include <windows.h>
 #else
 #include <GL/glx.h>  // for GLXContext
+#undef None
 #endif
-
-#include <memory>
 
 #include <QMainWindow>
 
+#include <memory>
+
+
 #include <glm/glm.hpp>
+
 
 #include <core/declspec.h>
 
@@ -21,9 +24,17 @@ class QSettings;
 
 class Ui_Viewer;
 class Canvas;
-class AbstractPainter;
 class AbstractNavigation;
 class Camera;
+class AbstractScenePainter;
+
+class FileNavigator;
+class FileExplorer;
+class Viewer;
+class AbstractModelLoader;
+class Group;
+class DataBlockRegistry;
+
 
 class CGSEE_API Viewer : public QMainWindow
 {
@@ -31,6 +42,7 @@ class CGSEE_API Viewer : public QMainWindow
 
 public:
     Viewer(
+        std::shared_ptr<DataBlockRegistry> registry = nullptr,
         QWidget * parent = nullptr
     ,   Qt::WindowFlags flags = nullptr);
 
@@ -43,8 +55,8 @@ public:
    void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
     
-    void setPainter(AbstractPainter * painter);
-    AbstractPainter * painter();
+    void setPainter(AbstractScenePainter * painter);
+    AbstractScenePainter * painter();
 
     void setCamera(Camera * camera);
     Camera * camera();
@@ -56,6 +68,7 @@ public:
     void setTrackballManipulator();
     void setFpsManipulator();
     void uncheckManipulatorActions();
+    void uncheckFboActions();
 
 
 public slots:
@@ -93,8 +106,30 @@ protected slots:
     void on_solidWireframeShadingAction_triggered();
     void on_primitiveWireframeShadingAction_triggered();
     void on_normalsAction_triggered();
+    void on_colorRenderingAction_triggered();
+    void on_shadowMappingAction_triggered();
+    void on_shadowBlurAction_triggered();
+    void on_ssaoAction_triggered();
+    void on_ssaoBlurAction_triggered();
+   
+    void on_fboColorAction_triggered();
+    void on_fboNormalzAction_triggered();
+    void on_fboShadowsAction_triggered();
+    void on_fboSSAOAction_triggered();
+    void on_fboShadowMapAction_triggered();
 
+    void on_openFileDialogAction_triggered();
+    void on_quitAction_triggered();
+
+    void on_loadFile(const QString & path);
+    
+    void on_toggleNavigator_triggered();
+    void on_toggleExplorer_triggered();
 protected:
+
+    void initializeExplorer();
+    void initializeDockWidgets(QDockWidget * dockWidget,
+        QWidget * widget, Qt::DockWidgetArea area);
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -110,7 +145,6 @@ protected:
     void saveView(int i);
     void loadView(int i);
 
-
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
 
@@ -118,4 +152,10 @@ protected:
     Camera * m_camera;
     QVector<glm::mat4> m_saved_views;
 
+    QDockWidget * m_dockNavigator;
+    QDockWidget * m_dockExplorer;
+
+    FileNavigator * m_navigator;
+    FileExplorer * m_explorer;
+    AbstractModelLoader * m_loader;
 };

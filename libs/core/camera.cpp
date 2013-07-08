@@ -1,10 +1,12 @@
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_access.hpp>
 
 #include "camera.h"
 
 #include "program.h"
 #include "gpuquery.h"
 #include "framebufferobject.h"
+#include "core/viewfrustum.h"
 
 static const QString VIEWPORT_UNIFORM   ("viewport");
 static const QString VIEW_UNIFORM       ("view");
@@ -13,37 +15,29 @@ static const QString PROJECTION_UNIFORM ("projection");
 static const QString ZNEAR_UNIFORM      ("znear");
 static const QString ZFAR_UNIFORM       ("zfar");
 
+static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
+
 
 Camera::Camera(const QString & name)
 :   Group(name)
+,   m_viewFrustum(new ViewFrustum(this))
 ,   m_fovy(0.f)
 ,   m_zNear(0.f)
 ,   m_zFar (0.f)
 ,   m_invalidated(true)
 {
     m_rf = RF_Absolute;
+//     m_rf = RF_Relative;
 }
 
 Camera::~Camera()
 {
 }
 
-void Camera::draw(
-    const Program & program
-,   const glm::mat4 & transform)
-{
-    return draw(program);
-}
-
-void Camera::draw(
-    const Program & program
-,   FrameBufferObject * target)
+void Camera::draw( const Program & program, const glm::mat4 & transform )
 {
     if(m_invalidated)
         update();
-
-    if(target)
-        target->bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -56,11 +50,8 @@ void Camera::draw(
         
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
+    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
     
-    Group::draw(program, glm::mat4());
-
-    if(target)
-        target->release();
 }
 
 void Camera::invalidate()
@@ -83,6 +74,8 @@ void Camera::update()
     setTransform(m_projection * m_view);
 
     m_invalidated = false;
+
+    m_viewFrustum->update();
 }
 
 const glm::ivec2 & Camera::viewport() const
@@ -164,7 +157,49 @@ void Camera::setZFar(const float z)
     invalidate();
 }
 
+ViewFrustum *Camera::viewFrustum() const {
+    return m_viewFrustum;
+}
+
 Camera * Camera::asCamera()
 {
     return this;
+}
+
+glm::vec3 Camera::getEye(){
+    //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
+
+    glm::mat4 modelViewT = glm::transpose(m_view);
+    
+    // Get plane normals
+    glm::vec3 n1(modelViewT[0]);
+    glm::vec3 n2(modelViewT[1]);
+    glm::vec3 n3(modelViewT[2]);
+    
+    // Get plane distances
+    float d1(modelViewT[0].w);
+    float d2(modelViewT[1].w);
+    float d3(modelViewT[2].w);
+    
+    // Get the intersection of these 3 planes
+    // (using math from RealTime Collision Detection by Christer Ericson)
+    glm::vec3 n2n3 = glm::cross(n2, n3);
+    float denom = glm::dot(n1, n2n3);
+    
+    glm::vec3 eye = (n2n3 * d1) + glm::cross(n1, (d3*n2) - (d2*n3));
+    eye /= -denom;
+    
+    return eye;
+}
+
+glm::vec3 Camera::getCenter(){
+    glm::vec3 lookat = glm::row(m_view, 2).xyz;
+    glm::vec3 eye = getEye();
+    
+    return eye - lookat;
+    
+}
+
+glm::vec3 Camera::getUp(){
+    return glm::row(m_view, 1).xyz;
 }
