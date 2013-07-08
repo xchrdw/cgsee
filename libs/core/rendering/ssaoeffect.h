@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "Effect.h"
+#include "effect.h"
 #include "../screenquad.h"
 
 class CGSEE_API SSAOEffect : public Effect

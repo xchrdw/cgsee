@@ -50,7 +50,7 @@ SSAOEffect::~SSAOEffect(void)
 void SSAOEffect::render()
 {
     m_fboNormalz->bindTexture2D(*m_program, "normalz", 0);
-   
+
     m_program->setUniform("viewport", m_camera->viewport());
     m_quad->draw(*m_program, m_fbo);
 
@@ -78,6 +78,6 @@ void SSAOEffect::setUniforms()
     m_program->setUniform("noise", &m_noise[0], m_noise.size());
 
     m_program->setUniform("sample_count", 32); // usefull range: 0-128
-    m_program->setUniform("zOffset", 0.005f); 
+    m_program->setUniform("zOffset", 0.005f);
     m_program->setUniform("filterRadius", 25.0f);
 }

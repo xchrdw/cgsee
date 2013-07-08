@@ -86,7 +86,7 @@ void ShadowEffect::resize( const int width, const int height )
 {
     m_lightcam->setViewport(width, height);
     m_lightcam->update();
-    
+
     m_fboShadows->resize(width, height);
     m_fboShadowMap->resize(width, height);
 }
@@ -114,6 +114,6 @@ void ShadowEffect::setUniforms()
     // should be variable properties in the future
     m_shadowMapping->setUniform("lightSize", 15.0f); 
     m_shadowMapping->setUniform("searchWidth", 10.0f);
-    m_shadowMapping->setUniform("zOffset",  0.0015f); 
+    m_shadowMapping->setUniform("zOffset",  0.0015f);
     m_shadowMapping->setUniform("sample_count", 24); // usefull range: 0-128
 }

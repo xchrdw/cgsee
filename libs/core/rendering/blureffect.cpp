@@ -1,12 +1,12 @@
 #include "blureffect.h"
-#include "..\program.h"
-#include "..\fileassociatedshader.h"
-#include "..\framebufferobject.h"
-#include "..\screenquad.h"
+#include "../program.h"
+#include "../fileassociatedshader.h"
+#include "../framebufferobject.h"
+#include "../screenquad.h"
 
 
 
-BlurEffect::BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader, 
+BlurEffect::BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,
                        Effect * target, FrameBufferObject * temp)
 :   Effect(camera)
 ,   m_quad(quad)
@@ -24,7 +24,7 @@ BlurEffect::BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader 
 
 
 BlurEffect::~BlurEffect(void)
-{    
+{
     // there needs to be a way to get instances of existing FileAssociatedShader
     //delete m_blurv;
     //delete m_blurh;

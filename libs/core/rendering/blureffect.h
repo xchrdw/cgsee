@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Effect.h"
+#include "effect.h"
 #include <vector>
 
 class ScreenQuad;

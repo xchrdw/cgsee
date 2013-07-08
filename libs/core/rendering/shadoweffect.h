@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "effect.h"
 #include <vector>
 #include "Effect.h"
 

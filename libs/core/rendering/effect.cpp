@@ -1,4 +1,3 @@
-
 #include "effect.h"
 #include "../camera.h"
 #include "../program.h"
