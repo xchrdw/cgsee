@@ -4,15 +4,16 @@
 #include "../declspec.h"
 #include "../camera.h"
 
+class Group;
 class Program;
 class FrameBufferObject;
 class FileAssociatedShader;
 
-class CGSEE_API Effect
+class CGSEE_API RenderingPass
 {
 public:
-    Effect(Camera * camera);
-    virtual ~Effect(void);
+    RenderingPass(Camera * camera);
+    virtual ~RenderingPass(void);
 
     bool isActive();
     void setActive(bool value);
@@ -24,6 +25,7 @@ public:
 
     virtual FrameBufferObject * output() = 0;
     virtual void clearFbos() = 0;
+    virtual void sceneChanged(Group * scene);
 
 protected:
     void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);

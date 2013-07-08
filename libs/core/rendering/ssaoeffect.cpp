@@ -7,7 +7,7 @@
 #include "../fileassociatedshader.h"
 
 SSAOEffect::SSAOEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,  FrameBufferObject * normalz)
-:   Effect(camera)
+:   DefaultPass(camera)
 ,   m_fboNormalz(normalz)
 ,   m_quad(quad)
 ,   m_kernel(128)
@@ -33,9 +33,6 @@ SSAOEffect::SSAOEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader 
         );
     }
 
-    m_fbo = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-
-    m_program = new Program();
     m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/ssao.frag"));
     m_program->attach(quadShader);
 
@@ -43,8 +40,6 @@ SSAOEffect::SSAOEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader 
 
 SSAOEffect::~SSAOEffect(void)
 {
-    delete m_program;
-    delete m_fbo;
 }
 
 void SSAOEffect::render()
@@ -55,21 +50,6 @@ void SSAOEffect::render()
     m_quad->draw(*m_program, m_fbo);
 
     m_fboNormalz->release();
-}
-
-void SSAOEffect::clearFbos()
-{
-    m_fbo->clear();
-}
-
-FrameBufferObject * SSAOEffect::output()
-{
-    return m_fbo;
-}
-
-void SSAOEffect::resize(const int width, const int height)
-{
-    m_fbo->resize(width, height);
 }
 
 void SSAOEffect::setUniforms()

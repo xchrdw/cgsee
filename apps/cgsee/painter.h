@@ -15,8 +15,8 @@ class Group;
 class ScreenQuad;
 class Program;
 class FrameBufferObject;
-class Effect;
-class ShadowEffect;
+class RenderingPass;
+class LightSourcePass;
 
 class Painter : public AbstractScenePainter
 {
@@ -51,7 +51,6 @@ protected:
 
 protected:  
     ScreenQuad * m_quad;
-    Program * m_normalz;
     Program * m_normals;
     Program * m_wireframe;
     Program * m_primitiveWireframe;
@@ -64,13 +63,15 @@ protected:
     Program * m_flush;
     FrameBufferObject * m_fboColor;
     FrameBufferObject * m_fboTemp;
-    FrameBufferObject * m_fboNormalz;
     FrameBufferObject * m_fboActiveBuffer;
 
-    ShadowEffect * m_shadows;
-    Effect * m_shadowBlur;
-    Effect * m_ssao;
-    Effect * m_ssaoBlur;
+    RenderingPass * m_normalz;
+    LightSourcePass * m_lightsource;
+    RenderingPass * m_shadows;
+    RenderingPass * m_shadowBlur;
+    RenderingPass * m_ssao;
+    RenderingPass * m_ssaoBlur;
+    QList<RenderingPass*> m_effects;
 
     Camera * m_camera;
     bool m_useColor;

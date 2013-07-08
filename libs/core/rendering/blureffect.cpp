@@ -7,8 +7,8 @@
 
 
 BlurEffect::BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,
-                       Effect * target, FrameBufferObject * temp)
-:   Effect(camera)
+                       RenderingPass * target, FrameBufferObject * temp)
+:   RenderingPass(camera)
 ,   m_quad(quad)
 ,   m_target(target)
 ,   m_fboTemp(temp)

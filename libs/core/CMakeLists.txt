@@ -100,12 +100,18 @@ set(SOURCES
     plane.h
     plane.cpp
     
-    rendering/effect.cpp
-    rendering/effect.h
+    rendering/renderingpass.cpp
+    rendering/renderingpass.h
+    rendering/defaultpass.cpp
+    rendering/defaultpass.h   
+    rendering/normalzpass.cpp
+    rendering/normalzpass.h   
     rendering/blureffect.cpp
     rendering/blureffect.h
-    rendering/shadoweffect.cpp
-    rendering/shadoweffect.h
+    rendering/shadowmapping.cpp
+    rendering/shadowmapping.h
+    rendering/lightsource.cpp
+    rendering/lightsource.h
     rendering/ssaoeffect.cpp
     rendering/ssaoeffect.h   
     

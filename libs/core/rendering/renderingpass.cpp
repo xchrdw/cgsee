@@ -1,4 +1,4 @@
-#include "effect.h"
+#include "renderingpass.h"
 #include "../camera.h"
 #include "../program.h"
 #include "../framebufferobject.h"
@@ -6,29 +6,29 @@
 #include "../scenegraph/drawvisitor.h"
 
 
-Effect::Effect(Camera * camera)
+RenderingPass::RenderingPass(Camera * camera)
 :   m_active(true)
 ,   m_camera(camera)
 {
 }
 
-Effect::~Effect(void)
+RenderingPass::~RenderingPass(void)
 {
 }
 
-bool Effect::isActive()
+bool RenderingPass::isActive()
 {
     return m_active;
 }
 
-void Effect::setActive(bool value)
+void RenderingPass::setActive(bool value)
 {
     m_active = value;
     if (!value)
         clearFbos();
 }
 
-void Effect::applyIfActive()
+void RenderingPass::applyIfActive()
 {
     if (m_active)
     {
@@ -36,11 +36,15 @@ void Effect::applyIfActive()
     }
 }
 
-void Effect::drawScene(Camera * camera, Program * program,  FrameBufferObject * fbo)
+void RenderingPass::drawScene(Camera * camera, Program * program,  FrameBufferObject * fbo)
 {
     fbo->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, camera->transform());
     traverser.traverse(*camera, drawVisitor);
     fbo->release();
+}
+
+void RenderingPass::sceneChanged(Group * scene)
+{
 }
