@@ -78,5 +78,5 @@ void SSAOEffect::setUniforms()
 
     m_program->setUniform("sample_count", 32); // usefull range: 0-128
     m_program->setUniform("zOffset", 0.005f); 
-    m_program->setUniform("filterRadius", 0.05f);
+    m_program->setUniform("filterRadius", 25.0f);
 }

@@ -31,7 +31,7 @@ void main()
         return;
     }
 
-    float radius = filterRadius * 500 / ((viewport.x+viewport.y)/2.0);
+    float radius = filterRadius / ((viewport.x+viewport.y)/2.0);
 
     vec3 origin = vec3(v_uv, normalz_value.a);
     vec3 normal = normalize(normalz_value.xyz * 2.0 - 1.0);
