@@ -21,7 +21,7 @@
 #include "core/navigation/arcballnavigation.h"
 #include "core/navigation/flightnavigation.h"
 
-#include <core/property/listproperty.h>
+#include <core/property/advancedlistproperty.h>
 #include <core/property/valueproperty.h>
 #include <core/property/limitedproperty.h>
 #include <core/property/propertylist.h>
@@ -111,7 +111,7 @@ const bool Painter::initialize()
     m_propertylist->add(apples);
 
 
-    ListProperty * listProperty = new ListProperty("fruits", "Choose Fruit:");
+    AdvancedListProperty * listProperty = new AdvancedListProperty("fruits", "Choose Fruit:");
 
     ValueProperty<bool> * mit_maden = new ValueProperty<bool>("mit_maden", "Mit Maden", true);
     PropertyList * apfellist = new PropertyList();
@@ -130,6 +130,11 @@ const bool Painter::initialize()
     listProperty->add("Birne");
 
     listProperty->select(0);
+
+    ListProperty * listp = new ListProperty("listp", "Choose Mode", QStringList() << "low" << "normal" << "high");
+    m_propertylist->add(listp);
+ 
+
     m_propertylist->add(listProperty);
     m_propertylist->add(yourname);
     m_propertylist->add(intprop);

@@ -27,6 +27,8 @@ set(SOURCES
     property/propertylist.cpp
     property/listproperty.h
     property/listproperty.cpp
+    property/advancedlistproperty.h
+    property/advancedlistproperty.cpp
     property/abstractpropertyvisitor.h
     property/abstractpropertyvisitor.cpp
 

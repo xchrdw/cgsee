@@ -13,7 +13,7 @@
 #include "propertywidgetbuilder.h"
 #include <core/property/valueproperty.h>
 #include <core/property/limitedproperty.h>
-#include <core/property/listproperty.h>
+#include <core/property/advancedlistproperty.h>
 #include <core/property/propertylist.h>
 
 PropertyWidgetBuilder::PropertyWidgetBuilder()
@@ -45,17 +45,35 @@ void PropertyWidgetBuilder::buildWidget(const QList<AbstractProperty *> & proper
     this->iterateOverProperties(properties);
 }
 
-void PropertyWidgetBuilder::visitList(ListProperty & listProperty)
+void PropertyWidgetBuilder::visitList(ListProperty & property)
 {
     QComboBox * comboBox = new QComboBox(m_active_widget);
-    comboBox->addItems(listProperty.choices());
+    comboBox->addItems(property.choices());
 
-    m_active_layout->addRow(listProperty.description(), comboBox);
+    m_active_layout->addRow(property.description(), comboBox);
+
+    QObject::connect(comboBox, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+        [&property] (const QString & text) {
+            property.select(text);
+        
+            qDebug("Set Property %s = \"%s\"",
+                   qPrintable(property.name()),
+                   qPrintable(property.selectedChoice()));
+        }
+    );
+}
+
+void PropertyWidgetBuilder::visitAdvancedList(AdvancedListProperty & property)
+{
+    QComboBox * comboBox = new QComboBox(m_active_widget);
+    comboBox->addItems(property.choices());
+
+    m_active_layout->addRow(property.description(), comboBox);
     
     QStackedWidget * groupBoxesStack = new QStackedWidget(m_active_widget);
     m_active_layout->addRow(groupBoxesStack);
 
-    for (PropertyList * propertyList : listProperty.propertyLists()) {
+    for (PropertyList * propertyList : property.propertyLists()) {
         QGroupBox * groupBox = new QGroupBox(m_active_widget);
         groupBox->setAlignment(Qt::AlignVCenter);
         QFormLayout * groupboxlayout = new QFormLayout(groupBox);
@@ -82,13 +100,13 @@ void PropertyWidgetBuilder::visitList(ListProperty & listProperty)
     }
 
     QObject::connect(comboBox, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-        [&listProperty, groupBoxesStack] (const QString & text) {
-            listProperty.select(text);
-            groupBoxesStack->setCurrentIndex(listProperty.selection());
+        [&property, groupBoxesStack] (const QString & text) {
+            property.select(text);
+            groupBoxesStack->setCurrentIndex(property.selection());
         
-            qDebug("Painter: Set %s = \"%s\"",
-                   qPrintable(listProperty.name()),
-                   qPrintable(listProperty.selectedChoice()));
+            qDebug("Set Property %s = \"%s\"",
+                   qPrintable(property.name()),
+                   qPrintable(property.selectedChoice()));
         }
     );
 }
