@@ -28,10 +28,10 @@ uniform int randomInt;
 uniform int frameCounter;
 
 vec3 light = vec3(0.0, 0.0, .0);
-vec3 arealight[4] = { vec3(343.0, 547.8, 227.0),
+vec3 arealight[4] = vec3[]( vec3(343.0, 547.8, 227.0),
         vec3(343.0, 547.8, 282.0),
         vec3(213.0, 547.8, 332.0),
-        vec3(213.0, 547.8, 227.0)};
+        vec3(213.0, 547.8, 227.0));
 //vec3 cameraposition = vec3(1.0, 0.0, 3.0);
 float EPSILON = 0.000001;
 
