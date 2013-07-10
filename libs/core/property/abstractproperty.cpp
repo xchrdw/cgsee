@@ -6,7 +6,6 @@
 AbstractProperty::AbstractProperty(QString name, QString description)
 :   m_name(name)
 ,   m_description(description)
-,   m_children(nullptr)
 {
 }
 

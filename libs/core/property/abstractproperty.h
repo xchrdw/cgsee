@@ -32,7 +32,6 @@ public:
 protected:
     QString m_name;
     QString m_description;
-    PropertyList * m_children;
 };
 
 template <class PropertyClass>
