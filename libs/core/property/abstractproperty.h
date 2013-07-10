@@ -4,11 +4,10 @@
 #include <typeinfo>
 #include <QString>
 #include <core/declspec.h>
-#include <announcer.h>
+#include "announcer.h"
 
 class AbstractPropertyVisitor;
 class PropertyList;
-class Announcer;
 
 class CGSEE_API AbstractProperty
 {

@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <QList>
+#include <QHash>
 #include <core/declspec.h>
 
 class AbstractProperty;
@@ -21,9 +22,9 @@ public:
     void notify(int event);
 
 protected:
-    QList<std::function<void(AbstractProperty &)>> & subscriptons(int event);
+    QList<std::function<void(AbstractProperty &)>> & subscriptions(int event);
 
-    QList<QList<std::function<void(AbstractProperty &)>> *> * m_subscriptions;
+    QHash<int, QList<std::function<void(AbstractProperty &)>> *> * m_subscriptions;
     AbstractProperty * m_property;
 };
 

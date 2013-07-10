@@ -79,13 +79,13 @@ template <typename Type>
 Type LimitedProperty<Type>::maximum() const
 {
     return m_max;
-    this->announcer().notify(kLimitsChanged);
 }
 
 template <typename Type>
 void LimitedProperty<Type>::setMaximum(Type max)
 {
     m_max = max;
+    this->announcer().notify(kLimitsChanged);
 }
 
 
