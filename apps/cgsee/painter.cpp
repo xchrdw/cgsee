@@ -74,7 +74,7 @@ Painter::~Painter()
     delete m_flush;
 }
 
-void Painter::helloWord()
+void Painter::helloWord(Painter & painter)
 {
     qDebug("hello world!");
 }
@@ -152,11 +152,11 @@ const bool Painter::initialize()
         kLimitsChanged
     };
     
-    Announcer<events> announcer;
+    Announcer<events, Painter> announcer(this);
 
     announcer.subscribe(kChanged, this, &Painter::helloWord);
     announcer.subscribe(kLimitsChanged, this, &Painter::helloWord);
-    announcer.subscribe(kChanged, [] () {
+    announcer.subscribe(kChanged, [] (Painter & painter) {
         qDebug("hello Lambda!");
     });
 
