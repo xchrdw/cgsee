@@ -20,6 +20,8 @@ public:
     void notify(EventsEnum event);
 
 protected:
+    QList<std::function<void()>> & subscriptons(EventsEnum event);
+
     QHash<EventsEnum, QList<std::function<void()>> *> * m_subscriptions;
 };
 
@@ -49,15 +51,21 @@ void Announcer<EventsEnum>::subscribe(EventsEnum event, ObjectClass * object,
 template <typename EventsEnum>
 void Announcer<EventsEnum>::subscribe(EventsEnum event, std::function<void()> lambda)
 {
-    if (!m_subscriptions->value(event, nullptr))
-        m_subscriptions->insert(event, new QList<std::function<void()>>());
-
-    m_subscriptions->value(event)->append(lambda);
+    this->subscriptons(event).append(lambda);
 }
 
 template <typename EventsEnum>
 void Announcer<EventsEnum>::notify(EventsEnum event) {
-    for (std::function<void()> & lambda : *m_subscriptions->value(event)) {
+    for (std::function<void()> & lambda : this->subscriptons(event)) {
         lambda();
     }
+}
+
+template <typename EventsEnum>
+QList<std::function<void()>> & Announcer<EventsEnum>::subscriptons(EventsEnum event)
+{
+    if (!m_subscriptions->value(event, nullptr))
+        m_subscriptions->insert(event, new QList<std::function<void()>>());
+
+    return *m_subscriptions->value(event);
 }
