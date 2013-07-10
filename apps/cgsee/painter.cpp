@@ -147,15 +147,24 @@ const bool Painter::initialize()
     m_propertylist->add(derplevel);
     m_propertylist->add(listProperty);
 
-    Announcer announcer;
+    enum events {
+        kChanged,
+        kLimitsChanged
+    };
+    
+    Announcer<events> announcer;
 
-    announcer.subscribe(this, &Painter::helloWord);
-    announcer.subscribe(this, &Painter::helloWord);
-    announcer.subscribe([] () {
+    announcer.subscribe(kChanged, this, &Painter::helloWord);
+    announcer.subscribe(kLimitsChanged, this, &Painter::helloWord);
+    announcer.subscribe(kChanged, [] () {
         qDebug("hello Lambda!");
     });
 
-    announcer.notify();
+    announcer.notify(kChanged);
+    
+    QHash<events, QString> hash;
+    
+    hash.insert(kChanged, "hallo Welt!");
 
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
