@@ -18,8 +18,8 @@ public:
 
     AbstractProperty * value(QString name);
     
-    template <class PainterProperty>
-    PainterProperty * value(QString name);
+    template <class Property>
+    Property * value(QString name);
 
     QList<AbstractProperty *> list();
 
@@ -28,8 +28,8 @@ private:
     QHash<QString, AbstractProperty *> * m_properties_map;
 };
 
-template <class PainterProperty>
-PainterProperty * PropertyList::value(QString name)
+template <class Property>
+Property * PropertyList::value(QString name)
 {
-    return this->value(name)->to<PainterProperty>();
+    return this->value(name)->to<Property>();
 }
