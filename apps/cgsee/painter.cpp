@@ -147,18 +147,12 @@ const bool Painter::initialize()
     m_propertylist->add(derplevel);
     m_propertylist->add(listProperty);
 
-    enum events {
-        kChanged,
-        kLimitsChanged
-    };
-
-    mit_maden->announcer().subscribe(kChanged, this, &Painter::helloWord);
-    mit_maden->announcer().subscribe(kLimitsChanged, this, &Painter::helloWord);
-    mit_maden->announcer().subscribe(kChanged, [] (AbstractProperty & property) {
+    mit_maden->announcer().subscribe(ValueProperty<bool>::kValueChanged, this, &Painter::helloWord);
+    mit_maden->announcer().subscribe(ValueProperty<bool>::kValueChanged, [] (AbstractProperty & property) {
         qDebug("hello Lambda!");
     });
-
-    mit_maden->announcer().notify(kChanged);
+    
+    mit_maden->setValue(false);
 
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");

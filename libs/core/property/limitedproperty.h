@@ -7,6 +7,8 @@ template <typename Type>
 class CGSEE_API LimitedProperty : public ValueProperty<Type>
 {
 public:
+    typedef enum { kValueChanged, kLimitsChanged } Events;
+
     LimitedProperty(QString name, QString description, Type value = NULL);
     LimitedProperty(QString name, QString description, Type value, Type min, Type max);
     ~LimitedProperty();
@@ -70,12 +72,14 @@ template <typename Type>
 void LimitedProperty<Type>::setMinimum(Type min)
 {
     m_min = min;
+    this->announcer().notify(kLimitsChanged);
 }
 
 template <typename Type>
 Type LimitedProperty<Type>::maximum() const
 {
     return m_max;
+    this->announcer().notify(kLimitsChanged);
 }
 
 template <typename Type>

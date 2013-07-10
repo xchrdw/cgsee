@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include <QString>
 #include <core/declspec.h>
+#include <announcer.h>
 
 class AbstractPropertyVisitor;
 class PropertyList;

@@ -38,6 +38,7 @@ bool ListProperty::select(QString choice)
     int index = m_choices.indexOf(choice);
     if (index != kNoIndex) {
         m_selection = index;
+        this->announcer().notify(kSelectionChanged);
         return true;
     } else
         return false;
@@ -47,6 +48,7 @@ bool ListProperty::select(int index)
 {
     if (0 <= index && index < m_choices.size()) {
         m_selection = index;
+        this->announcer().notify(kSelectionChanged);
         return true;
     } else {
         return false;
@@ -65,6 +67,7 @@ bool ListProperty::add(QString choice)
         return false;
     } else {
         m_choices.append(choice);
+        this->announcer().notify(kChoicesChanged);
         return true;
     }
 }
@@ -74,6 +77,7 @@ bool ListProperty::addList(QStringList choices)
     QStringList new_choices = m_choices + choices;
     if (new_choices.removeDuplicates() == 0) {
         m_choices = new_choices;
+        this->announcer().notify(kChoicesChanged);
         return true;
     } else {
         return false;
@@ -95,6 +99,7 @@ bool ListProperty::remove(int index)
     if (0 <= index && index < m_choices.size()) {
         m_choices.removeAt(index);
         m_selection = kNoIndex;
+        this->announcer().notify(kChoicesChanged);
         return true;
     } else {
         return false;

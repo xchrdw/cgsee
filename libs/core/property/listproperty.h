@@ -7,6 +7,8 @@
 class CGSEE_API ListProperty : public AbstractProperty
 {
 public:
+    typedef enum { kSelectionChanged, kChoicesChanged } Events;
+
     ListProperty(QString name, QString description);
     ListProperty(QString name, QString description, QStringList choices);
     virtual ~ListProperty();

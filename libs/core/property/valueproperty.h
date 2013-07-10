@@ -8,7 +8,7 @@ template <typename Type>
 class CGSEE_API ValueProperty : public AbstractProperty
 {
 public:
-    typedef enum Events { kChanged };
+    typedef enum { kValueChanged } Events;
 
     ValueProperty(QString name, QString description);
     ValueProperty(QString name, QString description, Type value);
@@ -57,4 +57,5 @@ template <typename Type>
 void ValueProperty<Type>::setValue(Type value)
 {
     m_value = value;
+    this->announcer().notify(kValueChanged);
 }
