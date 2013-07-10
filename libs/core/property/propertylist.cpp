@@ -9,8 +9,7 @@ PropertyList::PropertyList()
 
 PropertyList::~PropertyList()
 {
-    // qDeleteAll(*m_properties); 
-    // ... leads to "*** error for object 0x1088adb70: pointer being freed was not allocated"
+    qDeleteAll(*m_properties); 
     delete m_properties;
     delete m_properties_map;
 }

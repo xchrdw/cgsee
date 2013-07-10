@@ -24,6 +24,7 @@
 #include <core/property/valueproperty.h>
 #include <core/property/limitedproperty.h>
 #include <core/property/propertylist.h>
+#include <core/property/announcer.h>
 #include <gui/propertywidgetbuilder.h>
 
 
@@ -71,6 +72,11 @@ Painter::~Painter()
     delete m_solidWireframe;
     delete m_fboNormalz;
     delete m_flush;
+}
+
+void Painter::helloWord()
+{
+    qDebug("hello world!");
 }
 
 const bool Painter::initialize()
@@ -140,6 +146,17 @@ const bool Painter::initialize()
     m_propertylist->add(intprop);
     m_propertylist->add(derplevel);
     m_propertylist->add(listProperty);
+
+    Announcer announcer;
+
+    announcer.subscribe(this, &Painter::helloWord);
+    announcer.subscribe(this, &Painter::helloWord);
+    announcer.subscribe([] () {
+        qDebug("hello Lambda!");
+    });
+
+    announcer.notify();
+
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");
     FileAssociatedShader *m_wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe.geo");

@@ -21,6 +21,7 @@ AdvancedListProperty::AdvancedListProperty(QString name, QString description, QS
 
 AdvancedListProperty::~AdvancedListProperty()
 {
+    qDeleteAll(*m_propertylists);
     delete m_propertylists;
     delete m_empty_propertylist;
 }

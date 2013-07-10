@@ -24,6 +24,8 @@ public:
 
     virtual void paint();
 
+    void helloWord();
+
     virtual void setShading(char shader);
 
     virtual void resize(

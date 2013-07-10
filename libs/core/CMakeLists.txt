@@ -31,6 +31,7 @@ set(SOURCES
     property/advancedlistproperty.cpp
     property/abstractpropertyvisitor.h
     property/abstractpropertyvisitor.cpp
+    property/announcer.h
 
     datacore/datablock.h
     datacore/datablock.cpp
