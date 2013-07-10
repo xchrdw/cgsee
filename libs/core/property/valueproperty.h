@@ -8,6 +8,8 @@ template <typename Type>
 class CGSEE_API ValueProperty : public AbstractProperty
 {
 public:
+    typedef enum Events { kChanged };
+
     ValueProperty(QString name, QString description);
     ValueProperty(QString name, QString description, Type value);
     virtual ~ValueProperty();

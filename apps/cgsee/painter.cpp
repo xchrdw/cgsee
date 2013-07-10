@@ -74,7 +74,7 @@ Painter::~Painter()
     delete m_flush;
 }
 
-void Painter::helloWord(Painter & painter)
+void Painter::helloWord(AbstractProperty & property)
 {
     qDebug("hello world!");
 }
@@ -151,20 +151,14 @@ const bool Painter::initialize()
         kChanged,
         kLimitsChanged
     };
-    
-    Announcer<events, Painter> announcer(this);
 
-    announcer.subscribe(kChanged, this, &Painter::helloWord);
-    announcer.subscribe(kLimitsChanged, this, &Painter::helloWord);
-    announcer.subscribe(kChanged, [] (Painter & painter) {
+    mit_maden->announcer().subscribe(kChanged, this, &Painter::helloWord);
+    mit_maden->announcer().subscribe(kLimitsChanged, this, &Painter::helloWord);
+    mit_maden->announcer().subscribe(kChanged, [] (AbstractProperty & property) {
         qDebug("hello Lambda!");
     });
 
-    announcer.notify(kChanged);
-    
-    QHash<events, QString> hash;
-    
-    hash.insert(kChanged, "hallo Welt!");
+    mit_maden->announcer().notify(kChanged);
 
 
     FileAssociatedShader *m_wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe.vert");

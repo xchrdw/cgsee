@@ -7,14 +7,12 @@
 
 #include <core/painter/abstractscenepainter.h>
 
-
-
-
 class Camera;
 class Group;
 class ScreenQuad;
 class Program;
 class FrameBufferObject;
+class AbstractProperty;
 
 class Painter : public AbstractScenePainter
 {
@@ -24,7 +22,7 @@ public:
 
     virtual void paint();
 
-    void helloWord(Painter & painter);
+    void helloWord(AbstractProperty & property);
 
     virtual void setShading(char shader);
 

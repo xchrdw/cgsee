@@ -29,5 +29,5 @@ public:
 protected:
     static const int kNoIndex = -1;
     QStringList m_choices;
-    int m_selection;   
+    int m_selection;
 };

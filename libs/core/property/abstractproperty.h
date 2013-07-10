@@ -7,6 +7,7 @@
 
 class AbstractPropertyVisitor;
 class PropertyList;
+class Announcer;
 
 class CGSEE_API AbstractProperty
 {
@@ -24,11 +25,12 @@ public:
     template <class PropertyClass>
     PropertyClass * to();
 
-    PropertyList * children();
+    Announcer & announcer();
 
 protected:
     QString m_name;
     QString m_description;
+    Announcer * m_announcer;
 };
 
 template <class PropertyClass>

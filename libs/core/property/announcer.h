@@ -3,71 +3,35 @@
 
 #include <functional>
 #include <QList>
-#include <QHash>
+#include <core/declspec.h>
 
-template <typename EventsEnum, typename PropertyClass>
-class Announcer
+class AbstractProperty;
+
+class CGSEE_API Announcer
 {
 public:
-    Announcer(PropertyClass * property);
+    Announcer(AbstractProperty * property);
     virtual ~Announcer();
 
     template <typename ObjectClass>
-    void subscribe(EventsEnum event, ObjectClass * object,
-        void (ObjectClass::*method_pointer)(PropertyClass &));
+    void subscribe(int event, ObjectClass * object,
+        void (ObjectClass::*method_pointer)(AbstractProperty &));
 
-    void subscribe(EventsEnum event, std::function<void(PropertyClass &)> lambda);
-    void notify(EventsEnum event);
+    void subscribe(int event, std::function<void(AbstractProperty &)> lambda);
+    void notify(int event);
 
 protected:
-    QList<std::function<void(PropertyClass &)>> & subscriptons(EventsEnum event);
+    QList<std::function<void(AbstractProperty &)>> & subscriptons(int event);
 
-    QHash<EventsEnum, QList<std::function<void(PropertyClass &)>> *> * m_subscriptions;
-    PropertyClass * m_property;
+    QList<QList<std::function<void(AbstractProperty &)>> *> * m_subscriptions;
+    AbstractProperty * m_property;
 };
 
-template <typename EventsEnum, typename PropertyClass>
-Announcer<EventsEnum, PropertyClass>::Announcer(PropertyClass * property)
-:   m_subscriptions(new QHash<EventsEnum, QList<std::function<void(PropertyClass &)>> *>())
-,   m_property(property)
-{
-}
-
-template <typename EventsEnum, typename PropertyClass>
-Announcer<EventsEnum, PropertyClass>::~Announcer()
-{
-    qDeleteAll(*m_subscriptions);
-    delete m_subscriptions;
-}
-
-template <typename EventsEnum, typename PropertyClass>
 template <typename ObjectClass>
-void Announcer<EventsEnum, PropertyClass>::subscribe(EventsEnum event, ObjectClass * object,
-    void (ObjectClass::*method_pointer)(PropertyClass &))
+void Announcer::subscribe(int event, ObjectClass * object,
+    void (ObjectClass::*method_pointer)(AbstractProperty &))
 {
-    this->subscribe(event, [object, method_pointer] (PropertyClass & property) {
+    this->subscribe(event, [object, method_pointer] (AbstractProperty & property) {
         (object->*method_pointer)(property);
     });
-}
-
-template <typename EventsEnum, typename PropertyClass>
-void Announcer<EventsEnum, PropertyClass>::subscribe(EventsEnum event, std::function<void(PropertyClass &)> lambda)
-{
-    this->subscriptons(event).append(lambda);
-}
-
-template <typename EventsEnum, typename PropertyClass>
-void Announcer<EventsEnum, PropertyClass>::notify(EventsEnum event) {
-    for (std::function<void(PropertyClass &)> & lambda : this->subscriptons(event)) {
-        lambda(*m_property);
-    }
-}
-
-template <typename EventsEnum, typename PropertyClass>
-QList<std::function<void(PropertyClass &)>> & Announcer<EventsEnum, PropertyClass>::subscriptons(EventsEnum event)
-{
-    if (!m_subscriptions->value(event, nullptr))
-        m_subscriptions->insert(event, new QList<std::function<void(PropertyClass &)>>());
-
-    return *m_subscriptions->value(event);
 }
