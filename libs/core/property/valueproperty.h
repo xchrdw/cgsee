@@ -4,15 +4,8 @@
 #include "abstractproperty.h"
 #include "abstractpropertyvisitor.h"
 
-class ValuePropertySignals : public QObject
-{
-    Q_OBJECT
-signals:
-    void changed(AbstractProperty & me);
-};
-
 template <typename Type>
-class CGSEE_API ValueProperty : public AbstractProperty, public ValuePropertySignals
+class CGSEE_API ValueProperty : public AbstractProperty
 {
 public:
     ValueProperty(QString name, QString description);
@@ -22,7 +15,7 @@ public:
     virtual void accept(AbstractPropertyVisitor & visitor);
 
     virtual Type value() const;
-    virtual void setValue(Type value, bool silent = true);
+    virtual void setValue(Type value);
 
 protected:
     Type m_value;
@@ -59,9 +52,7 @@ Type ValueProperty<Type>::value() const
 }
 
 template <typename Type>
-void ValueProperty<Type>::setValue(Type value, bool silent)
+void ValueProperty<Type>::setValue(Type value)
 {
     m_value = value;
-    if (!silent)
-        emit this->changed(*this);
 }

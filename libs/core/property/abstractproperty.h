@@ -2,17 +2,14 @@
 #pragma once
 
 #include <typeinfo>
-#include <QObject>
 #include <QString>
 #include <core/declspec.h>
 
 class AbstractPropertyVisitor;
 class PropertyList;
 
-class CGSEE_API AbstractProperty : public QObject
+class CGSEE_API AbstractProperty
 {
-    Q_OBJECT
-
 public:
     AbstractProperty(QString name, QString description);
     virtual ~AbstractProperty();

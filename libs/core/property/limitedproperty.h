@@ -3,15 +3,8 @@
 
 #include "valueproperty.h"
 
-class LimitedPropertySignals : public QObject
-{
-    Q_OBJECT
-signals:
-    void limitsChanged(AbstractProperty & me);
-};
-
 template <typename Type>
-class CGSEE_API LimitedProperty : public ValueProperty<Type>, public LimitedPropertySignals
+class CGSEE_API LimitedProperty : public ValueProperty<Type>
 {
 public:
     LimitedProperty(QString name, QString description, Type value = NULL);
@@ -20,12 +13,12 @@ public:
 
     virtual void accept(AbstractPropertyVisitor & visitor);
 
-    virtual void setValue(Type value, bool silent = true);
+    virtual void setValue(Type value);
 
     Type minimum() const;
-    void setMinimum(Type min, bool silent = true);
+    void setMinimum(Type min);
     Type maximum() const;
-    void setMaximum(Type max, bool silent = true);
+    void setMaximum(Type max);
 
 protected:
     Type m_min;
@@ -60,12 +53,10 @@ void LimitedProperty<Type>::accept(AbstractPropertyVisitor & visitor)
 }
 
 template <typename Type>
-void LimitedProperty<Type>::setValue(Type value, bool silent)
+void LimitedProperty<Type>::setValue(Type value)
 {
     if ((m_min <= value) && (value <= m_max)) {
         this->m_value = value;
-        if (!silent)
-            emit this->changed(*this);
     }
 }
 
@@ -76,11 +67,9 @@ Type LimitedProperty<Type>::minimum() const
 }
 
 template <typename Type>
-void LimitedProperty<Type>::setMinimum(Type min, bool silent)
+void LimitedProperty<Type>::setMinimum(Type min)
 {
     m_min = min;
-    if (!silent)
-        emit this->limitsChanged(*this);
 }
 
 template <typename Type>
@@ -90,11 +79,9 @@ Type LimitedProperty<Type>::maximum() const
 }
 
 template <typename Type>
-void LimitedProperty<Type>::setMaximum(Type max, bool silent)
+void LimitedProperty<Type>::setMaximum(Type max)
 {
     m_max = max;
-    if (!silent)
-        emit this->limitsChanged(*this);
 }
 
 
