@@ -7,7 +7,7 @@
 #include <QString>
 #include <QSize>
 
-#include <core/declspec.h>
+#include "declspec.h"
 
 #include "canvasexportconfig.h"
 
@@ -22,7 +22,7 @@ class QSettings;
 
 class Ui_CanvasExporter;
 
-class CGSEE_API CanvasExporter : public QDialog
+class CGSEE_GUI_API CanvasExporter : public QDialog
 {
     Q_OBJECT
 

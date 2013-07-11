@@ -10,7 +10,7 @@ class QKeyEvent;
 class Camera;
 class AbstractGLParent;
 
-class CGSEE_API AbstractPainter
+class CGSEE_CORE_API AbstractPainter
 {
 public:
     AbstractPainter(void);

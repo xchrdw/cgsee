@@ -9,8 +9,9 @@
 
 
 class Program;
+class PolygonalDrawable;
 
-class CGSEE_API Node
+class CGSEE_CORE_API Node
 {
 public:
     typedef QList<Node *> t_children;
@@ -28,6 +29,7 @@ public:
 
     virtual void draw(const Program & program, const glm::mat4 & transform) = 0;
     virtual const AxisAlignedBoundingBox boundingBox() const = 0;
+    virtual PolygonalDrawable* asPolygonalDrawable();
 
     const QString name() const;
     void setName(const QString & name);

@@ -17,7 +17,7 @@ void globalMessageHandler(
     const QString & message);
 
 
-class CGSEE_API MessageHandler : public QObject
+class CGSEE_CORE_API MessageHandler : public QObject
 {
     Q_OBJECT
 

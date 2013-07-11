@@ -9,7 +9,7 @@
 class DataBlockRegistry;
 class Group;
 
-class CGSEE_API AbstractModelLoader
+class CGSEE_CORE_API AbstractModelLoader
 {
 public:
     AbstractModelLoader(std::shared_ptr<DataBlockRegistry> registry = nullptr);

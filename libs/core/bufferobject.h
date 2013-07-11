@@ -7,7 +7,7 @@
 #include "gpuquery.h"
 
 
-class CGSEE_API BufferObject
+class CGSEE_CORE_API BufferObject
 {
 public:
     BufferObject(

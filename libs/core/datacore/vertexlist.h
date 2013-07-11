@@ -36,7 +36,7 @@ typedef struct AttributeDescriptor
     bool used;
 } t_AttrDesc;
 
-struct CGSEE_API AttributeSpec
+struct CGSEE_CORE_API AttributeSpec
 {
     QString attrName;
     QString attrType;
@@ -47,7 +47,7 @@ struct CGSEE_API AttributeSpec
 typedef QHash<QString, t_AttrDesc> t_AttrMap;
 template <typename T> class AttributeIterator;
 
-class CGSEE_API VertexList: public DataBlock
+class CGSEE_CORE_API VertexList: public DataBlock
 {
     Q_OBJECT
 public:
@@ -57,7 +57,7 @@ public:
     // A vertex (and everything really) can be described by its attributes.
     // This class provides a storage for them, but it doesn't memorize the right layout.
     // Which is not needed anyway, as most of the times many vertices have same attribute types.
-    class CGSEE_API AttributeStorage final
+    class CGSEE_CORE_API AttributeStorage final
     {
     public:
         typedef unsigned char t_StorageType[StaticAttributeStorageSize];

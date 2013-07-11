@@ -10,10 +10,13 @@ set(SOURCES
     canvasexporter.ui
     canvasexportconfig.h
     canvasexportconfig.cpp
+    declspec.h
     fileExplorer.h
     fileExplorer.cpp
     fileNavigator.h
     fileNavigator.cpp
+    stpatchviewer.h
+    stpatchviewer.cpp
     viewer.h
     viewer.cpp
     viewer.ui
@@ -57,4 +60,4 @@ set_target_properties(${target}
     FOLDER ${CGSEE_LIB_FOLDER}
     DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
 
-add_definitions("-DCGSEE_EXPORTS")
+add_definitions("-DCGSEE_GUI_EXPORTS")

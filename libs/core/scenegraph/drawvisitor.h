@@ -10,7 +10,7 @@
 class Program;
 class Node;
 
-class CGSEE_API DrawVisitor : public SceneVisitorInterface
+class CGSEE_CORE_API DrawVisitor : public SceneVisitorInterface
 {
 public:
     DrawVisitor(Program * p, glm::mat4 t);

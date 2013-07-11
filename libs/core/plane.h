@@ -4,7 +4,7 @@
 
 #include "declspec.h"
 
-class CGSEE_API Plane {
+class CGSEE_CORE_API Plane {
 public:
     Plane();
     Plane(glm::vec4 normal, float distance);

@@ -11,7 +11,7 @@
 
 class Program;
 
-class CGSEE_API Shader
+class CGSEE_CORE_API Shader
 {
 public:
     typedef QSet<Program *> t_programs;

@@ -14,14 +14,15 @@ class AxisAlignedBoundingBox;
 class BufferObject;
 class Program;
 class GeometryOptimizer;
+class Mesh;
 
-class CGSEE_API PolygonalGeometry final
+class CGSEE_CORE_API PolygonalGeometry final
 {
 public:
     typedef QVector<BufferObject *> t_bufferObjects;
     typedef QMap<QString, BufferObject *> t_bufferObjectsByAttribute;
     
-    PolygonalGeometry( std::shared_ptr<DataBlockRegistry> registry );
+    PolygonalGeometry( QString name, std::shared_ptr<DataBlockRegistry> registry );
     ~PolygonalGeometry();
 
     t_VertexListP vertices() const;
@@ -49,6 +50,7 @@ public:
     // Geometry Computation
 
     void applyOptimizer(GeometryOptimizer *opt);
+    Mesh* mesh(); //retrieve mesh object for topology algorithms.
     
     // TODO:
     // * generate triangle strip (update: can probably not be combined with Forsyths vertexCacheOpt algorythm
@@ -65,7 +67,11 @@ protected:
     GLuint m_vao;
     QString m_vertListHandle;
     QString m_indicesHandle;
+    QString m_name;
+    Mesh* m_mesh;
 
     t_bufferObjects m_elementArrayBOs;
     t_bufferObjectsByAttribute m_arrayBOsByAttribute;
+
+    PolygonalGeometry(const PolygonalGeometry &);
 };

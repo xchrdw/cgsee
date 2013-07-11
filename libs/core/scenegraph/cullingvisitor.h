@@ -16,7 +16,7 @@
 #include "SceneVisitorInterface.h"
 
 
-class CGSEE_API CullingVisitor final : public SceneVisitorInterface
+class CGSEE_CORE_API CullingVisitor final : public SceneVisitorInterface
 {
 public:
     typedef std::vector<std::shared_ptr<Node> >::iterator t_nodeIter;

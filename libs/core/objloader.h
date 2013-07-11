@@ -15,7 +15,7 @@ class DataBlockRegistry;
 class Group;
 class PolygonalDrawable;
 
-class CGSEE_API ObjLoader : public AbstractModelLoader
+class CGSEE_CORE_API ObjLoader : public AbstractModelLoader
 {
 public:
     ObjLoader( std::shared_ptr<DataBlockRegistry> registry );

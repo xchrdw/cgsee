@@ -4,7 +4,7 @@
 #include <QGLWidget>
 
 #include <core/abstractglparent.h>
-#include <core/declspec.h>
+#include "declspec.h"
 #include <core/glformat.h>
 
 class QBasicTimer;
@@ -13,7 +13,7 @@ class Timer;
 
 class AbstractScenePainter;
 class AbstractNavigation;
-class CGSEE_API Canvas : public QGLWidget, public AbstractGLParent
+class CGSEE_GUI_API Canvas : public QGLWidget, public AbstractGLParent
 {
 public:
     Canvas(

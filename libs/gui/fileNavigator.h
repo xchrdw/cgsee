@@ -6,13 +6,13 @@
 #include <QTreeView>
 #include <QDir>
 
-#include <core/declspec.h>
+#include "declspec.h"
 
 
 class QFileSystemModel;
 
 
-class CGSEE_API FileNavigator : public QTreeView
+class CGSEE_GUI_API FileNavigator : public QTreeView
 {
 	Q_OBJECT
 

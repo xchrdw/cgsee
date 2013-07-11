@@ -8,7 +8,7 @@
 #include "declspec.h"
 
 
-class CGSEE_API GPUQuery
+class CGSEE_CORE_API GPUQuery
 {
 public:
     static const GLint   queryi(const GLenum penum);

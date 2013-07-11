@@ -2,7 +2,7 @@
 
 #include "abstractnavigation.h"
 
-class CGSEE_API FlightNavigation : public AbstractNavigation
+class CGSEE_CORE_API FlightNavigation : public AbstractNavigation
 {
 public:
     FlightNavigation(Camera * camera);

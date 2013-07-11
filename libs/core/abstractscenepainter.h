@@ -4,7 +4,7 @@
 
 class Group;
 
-class CGSEE_API AbstractScenePainter : public AbstractPainter
+class CGSEE_CORE_API AbstractScenePainter : public AbstractPainter
 {
 public:
     AbstractScenePainter();

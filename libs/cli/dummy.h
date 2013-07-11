@@ -1,10 +1,8 @@
 
 #pragma once
 
-#include <core/declspec.h>
 
-
-class CGSEE_API Dummy
+class Dummy
 {
 public:
     Dummy();

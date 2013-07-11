@@ -18,7 +18,7 @@ struct aiNode;
 struct aiScene;
 struct aiMesh;
 
-class CGSEE_API AssimpLoader : public AbstractModelLoader
+class CGSEE_CORE_API AssimpLoader : public AbstractModelLoader
 {
 public:
     AssimpLoader(std::shared_ptr<DataBlockRegistry> registry = nullptr);

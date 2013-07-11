@@ -4,7 +4,7 @@
 
 class Node;
 
-class CGSEE_API SceneVisitorInterface
+class CGSEE_CORE_API SceneVisitorInterface
 {
 public:
     virtual ~SceneVisitorInterface() {}

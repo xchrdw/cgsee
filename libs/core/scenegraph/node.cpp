@@ -78,3 +78,8 @@ void Node::setReferenceFrame(const e_ReferenceFrame referenceFrame)
     m_rf = referenceFrame;
     invalidateBoundingBox();
 }
+
+PolygonalDrawable* Node::asPolygonalDrawable()
+{
+    return nullptr;
+}

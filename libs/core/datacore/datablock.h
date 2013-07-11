@@ -19,7 +19,7 @@ class DataBlockRegistry;
 // - the data blocks can be wrapped in smart pointers, and they will be eventually
 // - If something exceptional happens, we can simply return nullptr.
 
-class CGSEE_API DataBlock: public QObject
+class CGSEE_CORE_API DataBlock: public QObject
 {
     Q_OBJECT
 public:
@@ -68,7 +68,7 @@ protected:
 
 typedef DataBlock::t_StandardPointer t_DataBlockP;
 
-class CGSEE_API DataBlockRegistry: public QObject
+class CGSEE_CORE_API DataBlockRegistry: public QObject
 {
     Q_OBJECT
 public:

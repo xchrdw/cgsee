@@ -13,7 +13,7 @@ class ChronoTimer;
 // stopwatch. The time updates have to be requested explicitly, thus
 // simplifying usage between multiple recipients.
 
-class CGSEE_API Timer : public AbstractTimer
+class CGSEE_CORE_API Timer : public AbstractTimer
 {
 public:
     Timer(

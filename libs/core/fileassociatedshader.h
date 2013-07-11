@@ -10,7 +10,7 @@
 
 // TODO: QFileSystemWatcher could be added for automated update.
 
-class CGSEE_API FileAssociatedShader : public Shader
+class CGSEE_CORE_API FileAssociatedShader : public Shader
 {
 public:
     FileAssociatedShader(

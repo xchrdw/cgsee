@@ -19,6 +19,7 @@ set(SOURCES
     abstractpainter.cpp
     abstractscenepainter.h
     abstractscenepainter.cpp
+    abstractunwrapper.h
 
     datacore/datablock.h
     datacore/datablock.cpp
@@ -91,10 +92,14 @@ set(SOURCES
 
     program.h
     program.cpp
+    projectiveunwrapper.h
+    projectiveunwrapper.cpp
     screenquad.h
     screenquad.cpp
     shader.h
     shader.cpp
+    stpatch.h
+    stpatch.cpp
     timer.h
     timer.cpp
     plane.h
@@ -138,5 +143,5 @@ set_target_properties(${target}
     FOLDER ${CGSEE_LIB_FOLDER}
     DEBUG_POSTFIX "d${DEBUG_POSTFIX}")
 
-add_definitions("-DCGSEE_EXPORTS")
+add_definitions("-DCGSEE_CORE_EXPORTS")
 add_definitions("-DGLM_SWIZZLE")

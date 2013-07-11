@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QFileSystemModel>
 #include <QDir>
+#include <QInputDialog>
 
 #include "ui_viewer.h"
 #include "viewer.h"
@@ -21,6 +22,7 @@
 #include "canvasexporter.h"
 #include "fileNavigator.h"
 #include "fileExplorer.h"
+#include "stpatchviewer.h"
 
 #include <core/navigation/abstractnavigation.h>
 #include <core/navigation/flightnavigation.h>
@@ -31,6 +33,14 @@
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
+#include "core/scenegraph/scenetraverser.h"
+#include "core/scenegraph/node.h"
+#include "core/scenegraph/group.h"
+#include "core/scenegraph/polygonaldrawable.h"
+#include "core/scenegraph/polygonalgeometry.h"
+#include "core/mesh.h"
+#include "core/projectiveunwrapper.h"
+#include "core/stpatch.h"
 
 
 namespace
@@ -552,4 +562,51 @@ void Viewer::on_actionSave_1_triggered() { saveView(0); }
 void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
+
+void Viewer::on_unwrapMeshAction_triggered()
+{
+    Group& centralGroup = m_qtCanvas->painter()->getScene();
+    QStringList namesList;
+    QVector<PolygonalDrawable*> items;
+    SceneTraverser t;
+    bool okClicked = false;
+
+    t.traverse(centralGroup, [&](Node &currNode)->bool
+        {
+            PolygonalDrawable* myMesh = currNode.asPolygonalDrawable();
+            if (myMesh)
+            {
+                items.push_back(myMesh);
+                int facetsCount = myMesh->geometry()->mesh()->getFaces().size();
+                namesList.append(tr("%2: A mesh with %1 facets").arg(facetsCount).arg(items.size()));
+            }
+            return true;
+        });
+
+    QString chosenMesh=QInputDialog::getItem(this
+        , tr("Choose the mesh to unwrap")
+        , tr("Choose the item that you wish to be unwrapped")
+        , namesList, 0, false, &okClicked);
+
+    if (!okClicked)
+        return;
+
+    int meshIndex = namesList.indexOf(chosenMesh, 0);
+    assert(meshIndex >= 0 && meshIndex < items.size());
+    Mesh const* meshObj = items[meshIndex]->geometry()->mesh();
+
+    // create the patches for unwrap
+    AbstractUnwrapper* worker = new ProjectiveUnwrapper;
+    QList<StPatch> texIslands;
+    worker->generateTexturePatchesFrom(meshObj, texIslands);
+
+    int count = 0;
+    for (StPatch const& island: texIslands)
+    {
+        if (++count > 10)
+            break;
+        StPatchViewer *viewer = new StPatchViewer(island);
+        viewer->show();
+    }
+}
 

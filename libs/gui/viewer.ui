@@ -129,6 +129,7 @@
     <addaction name="runBenchmarksAction"/>
     <addaction name="separator"/>
     <addaction name="preferencesAction"/>
+    <addaction name="unwrapMeshAction"/>
    </widget>
    <widget class="QMenu" name="shadingMenu">
     <property name="title">
@@ -781,6 +782,11 @@
    </property>
    <property name="text">
     <string>Shadow blur</string>
+   </property>
+  </action>
+  <action name="unwrapMeshAction">
+   <property name="text">
+    <string>Unwrap a mesh...</string>
    </property>
   </action>
  </widget>

@@ -7,7 +7,7 @@
 class PolygonalDrawable;
 class Program;
 
-class CGSEE_API Group : public Node
+class CGSEE_CORE_API Group : public Node
 {
 public:
     Group(const QString & name = "unnamed");

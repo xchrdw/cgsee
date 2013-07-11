@@ -11,7 +11,7 @@ class GLFormat;
 // Application initializes Application strings from CMake generated Meta.
 // It furhter installs a Message Handler for extended logging capabilities.
 
-class CGSEE_API AbstractApplication : public QApplication
+class CGSEE_CORE_API AbstractApplication : public QApplication
 {
 public:
     AbstractApplication(

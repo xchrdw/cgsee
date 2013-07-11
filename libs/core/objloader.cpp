@@ -343,7 +343,7 @@ PolygonalDrawable * ObjLoader::createPolygonalDrawable(
     const bool usesTexCoordIndices(!group.vtis.empty());
     const bool usesNormalIndices(!group.vnis.empty());
 
-    auto geom = make_shared<PolygonalGeometry>( registry );
+    auto geom = make_shared<PolygonalGeometry>( "noname", registry );
 
     const GLuint size(static_cast<GLuint>(group.vis.size()));
     geom->resize(size);

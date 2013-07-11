@@ -15,7 +15,7 @@ class Camera;
 class QWidget;
 class Group;
 
-class CGSEE_API AbstractNavigation : QObject {
+class CGSEE_CORE_API AbstractNavigation : QObject {
     
 public:
 

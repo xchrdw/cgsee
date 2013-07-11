@@ -7,19 +7,23 @@
 #include <core/program.h>
 #include <core/vertexcacheoptimizer.h>
 #include <core/vertexreuse.h>
+#include "../mesh.h"
+#include "../stpatch.h"
+#include "../projectiveunwrapper.h"
 
-PolygonalGeometry::PolygonalGeometry(std::shared_ptr<DataBlockRegistry> registry)
+PolygonalGeometry::PolygonalGeometry(QString name, std::shared_ptr<DataBlockRegistry> registry)
 :   m_registry( registry )
 ,   m_datablock( nullptr )
 ,   m_vao( -1 )
 ,   m_vertListHandle( "VERTICES" )
 ,   m_indicesHandle( "INDICES" )
+,   m_name(name)
+,   m_mesh(new Mesh)
 ,   m_elementArrayBOs()
 ,   m_arrayBOsByAttribute()
 {
     m_datablock = DataBlock::createDataBlockWithName<VertexList>(m_vertListHandle, *m_registry);
     DataBlock::createDataBlockWithName<VertexIndexList>(m_indicesHandle, *m_registry, m_datablock);
-
     QList<AttributeSpec> attrSpec;
     attrSpec.append(AttributeSpec("position", "glm::vec3"));
     attrSpec.append(AttributeSpec("normal", "glm::vec3"));
@@ -29,6 +33,7 @@ PolygonalGeometry::PolygonalGeometry(std::shared_ptr<DataBlockRegistry> registry
 
 PolygonalGeometry::~PolygonalGeometry()
 {
+    delete m_mesh;
     DataBlock::destroyDataBlock<VertexList>(m_datablock);
     deleteBuffers();
 }
@@ -175,6 +180,10 @@ void PolygonalGeometry::initialize(const Program & program)
     // Apply Vertex Cache Optimization
     applyOptimizer(new VertexCacheOptimizer()); // TODO: That's just bad!
 
+    t_VertexIndexListP inds = qobject_cast<VertexIndexList*>(m_registry->getDataBlockByName(m_indicesHandle));
+    assert(inds);
+    m_mesh->initFrom(inds);
+
     // setup element array buffers
 
     BufferObject * indexBO = new BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
@@ -232,4 +241,9 @@ void PolygonalGeometry::applyOptimizer( GeometryOptimizer * opt )
         assert(indices);
         assert(vertexData);
         opt->applyOn(indices, vertexData);
+}
+
+Mesh* PolygonalGeometry::mesh()
+{
+    return m_mesh;
 }

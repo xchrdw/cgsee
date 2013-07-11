@@ -10,7 +10,7 @@ class BufferObject;
 class Program;
 class FrameBufferObject;
 
-class CGSEE_API ScreenQuad
+class CGSEE_CORE_API ScreenQuad
 {
 public:
     ScreenQuad();

@@ -2,7 +2,7 @@
 
 #include "abstractnavigation.h"
 
-class CGSEE_API ArcballNavigation : public AbstractNavigation
+class CGSEE_CORE_API ArcballNavigation : public AbstractNavigation
 {
 public:
     ArcballNavigation(Camera * camera);

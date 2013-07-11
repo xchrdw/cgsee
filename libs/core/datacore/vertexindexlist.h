@@ -6,7 +6,7 @@
 class VertexList;
 typedef VertexList* t_VertexListP;
 
-class CGSEE_API VertexIndexList : public DataBlock
+class CGSEE_CORE_API VertexIndexList : public DataBlock
 {
     Q_OBJECT
 public:

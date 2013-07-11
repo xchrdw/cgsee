@@ -7,7 +7,7 @@
 // This interface is modeled as a stopwatch. The time updates can be 
 // requested explicitly, thus simplifying usage between multiple recipients.
 
-class CGSEE_API AbstractTimer
+class CGSEE_CORE_API AbstractTimer
 {
 public:
     virtual void setAutoUpdating(const bool auto_update) = 0;

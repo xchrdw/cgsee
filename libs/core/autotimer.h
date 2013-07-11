@@ -21,7 +21,7 @@ class Timer;
 // using Timer directly.
 
 
-class CGSEE_API AutoTimer
+class CGSEE_CORE_API AutoTimer
 {
 public:
     explicit AutoTimer(const QString & info = QString());

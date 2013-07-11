@@ -10,7 +10,7 @@
 
 class Program;
 
-class CGSEE_API FrameBufferObject
+class CGSEE_CORE_API FrameBufferObject
 {
 public:
     FrameBufferObject(

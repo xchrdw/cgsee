@@ -16,7 +16,7 @@ class DataBlockRegistry;
 class Program;
 
 
-class CGSEE_API PolygonalDrawable : public Node
+class CGSEE_CORE_API PolygonalDrawable : public Node
 {
 public:
     typedef std::shared_ptr<PolygonalGeometry> t_geometryP;
@@ -35,9 +35,12 @@ public:
 
     void setMode(const GLenum mode) { m_mode = mode; }
     inline const GLenum mode() const { return m_mode; }
+
+    virtual PolygonalDrawable* asPolygonalDrawable();
     
 protected:
     virtual void invalidateBoundingBox() override;
+
 
 protected:
     t_geometryP m_geometry;

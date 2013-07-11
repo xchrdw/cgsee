@@ -10,7 +10,7 @@
 
 class QGLFormat;
 
-class CGSEE_API GLFormat
+class CGSEE_CORE_API GLFormat
 {
 public:
     enum e_Profile

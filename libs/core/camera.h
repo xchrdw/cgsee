@@ -10,7 +10,7 @@ class Program;
 class FrameBufferObject;
 class ViewFrustum;
 
-class CGSEE_API Camera : public Group
+class CGSEE_CORE_API Camera : public Group
 {
 public:
     Camera(const QString & name = "unnamed");

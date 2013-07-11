@@ -4,14 +4,14 @@
 #include <QListView>
 #include <QDir>
 
-#include <core/declspec.h>
+#include "declspec.h"
 
 
 class QFileSystemModel;
 class QMenu;
 
 
-class CGSEE_API FileExplorer : public QListView
+class CGSEE_GUI_API FileExplorer : public QListView
 {
 	Q_OBJECT
 	

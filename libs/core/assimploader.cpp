@@ -130,7 +130,7 @@ void AssimpLoader::parseMeshes(aiMesh **meshes,
 
 PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
 {
-    auto geometry = std::make_shared<PolygonalGeometry>(m_registry);
+    auto geometry = std::make_shared<PolygonalGeometry>(QString(mesh.mName.C_Str()), m_registry);
     
     const bool usesNormalIndices(mesh.mNormals != NULL);
     

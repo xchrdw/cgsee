@@ -16,7 +16,7 @@
 #include <glm/glm.hpp>
 
 
-#include <core/declspec.h>
+#include "declspec.h"
 
 
 class GLFormat;
@@ -36,7 +36,7 @@ class Group;
 class DataBlockRegistry;
 
 
-class CGSEE_API Viewer : public QMainWindow
+class CGSEE_GUI_API Viewer : public QMainWindow
 {
     Q_OBJECT
 
@@ -96,6 +96,7 @@ public slots:
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
+    void on_unwrapMeshAction_triggered();
 
     void on_reloadAllShadersAction_triggered();
     void on_phongShadingAction_triggered();

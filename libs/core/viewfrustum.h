@@ -9,7 +9,7 @@
 class Camera;
 class AxisAlignedBoundingBox;
 
-class CGSEE_API ViewFrustum
+class CGSEE_CORE_API ViewFrustum
 {
 public:
     ViewFrustum(Camera *camera);

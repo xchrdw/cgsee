@@ -86,3 +86,8 @@ void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transfor
 
     program.release();
 }
+
+PolygonalDrawable* PolygonalDrawable::asPolygonalDrawable()
+{
+    return this;
+}
