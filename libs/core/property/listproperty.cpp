@@ -36,7 +36,7 @@ void ListProperty::accept(AbstractPropertyVisitor & visitor)
 bool ListProperty::select(QString choice)
 {
     int index = m_choices.indexOf(choice);
-    if (index != kNoIndex) {
+    if (m_selection != index && index != kNoIndex) {
         m_selection = index;
         this->announcer().notify(kSelectionChanged);
         return true;
@@ -46,7 +46,7 @@ bool ListProperty::select(QString choice)
 
 bool ListProperty::select(int index)
 {
-    if (0 <= index && index < m_choices.size()) {
+    if (m_selection != index && 0 <= index && index < m_choices.size()) {
         m_selection = index;
         this->announcer().notify(kSelectionChanged);
         return true;

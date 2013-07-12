@@ -61,8 +61,7 @@ template <typename Type>
 void LimitedProperty<Type>::setValue(Type value)
 {
     if ((m_min <= value) && (value <= m_max)) {
-        this->m_value = value;
-        this->announcer().notify(kValueChanged);
+        this->setValue(value);
     }
 }
 
@@ -75,7 +74,7 @@ Type LimitedProperty<Type>::minimum() const
 template <typename Type>
 void LimitedProperty<Type>::setMinimum(Type min)
 {
-    if (min <= m_max) {
+    if (m_min != min && min <= m_max) {
         m_min = min;
 
         if (m_min > this->m_value)
@@ -94,7 +93,7 @@ Type LimitedProperty<Type>::maximum() const
 template <typename Type>
 void LimitedProperty<Type>::setMaximum(Type max)
 {
-    if (m_min >= max) {
+    if (m_max != max && m_min >= max) {
         m_max = max;
 
         if (m_max < this->m_value)

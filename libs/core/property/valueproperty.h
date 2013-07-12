@@ -56,6 +56,8 @@ Type ValueProperty<Type>::value() const
 template <typename Type>
 void ValueProperty<Type>::setValue(Type value)
 {
-    m_value = value;
-    this->announcer().notify(kValueChanged);
+    if (m_value != value) {
+        m_value = value;
+        this->announcer().notify(kValueChanged);
+    }
 }
