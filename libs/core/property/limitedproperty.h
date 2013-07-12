@@ -41,6 +41,9 @@ LimitedProperty<Type>::LimitedProperty(QString name, QString description, Type v
 ,   m_min(min)
 ,   m_max(max)
 {
+    if (m_min > m_max) {
+        std::swap(m_min, m_max);
+    }
 }
 
 template <typename Type>
@@ -59,6 +62,7 @@ void LimitedProperty<Type>::setValue(Type value)
 {
     if ((m_min <= value) && (value <= m_max)) {
         this->m_value = value;
+        this->announcer().notify(kValueChanged);
     }
 }
 
@@ -71,8 +75,14 @@ Type LimitedProperty<Type>::minimum() const
 template <typename Type>
 void LimitedProperty<Type>::setMinimum(Type min)
 {
-    m_min = min;
-    this->announcer().notify(kLimitsChanged);
+    if (min <= m_max) {
+        m_min = min;
+
+        if (m_min > this->m_value)
+            this->m_value = m_min;
+
+        this->announcer().notify(kLimitsChanged);
+    }
 }
 
 template <typename Type>
@@ -84,8 +94,14 @@ Type LimitedProperty<Type>::maximum() const
 template <typename Type>
 void LimitedProperty<Type>::setMaximum(Type max)
 {
-    m_max = max;
-    this->announcer().notify(kLimitsChanged);
+    if (m_min >= max) {
+        m_max = max;
+
+        if (m_max < this->m_value)
+            this->m_value = m_max;
+
+        this->announcer().notify(kLimitsChanged);
+    }
 }
 
 

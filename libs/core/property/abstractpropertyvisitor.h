@@ -13,7 +13,6 @@ class AdvancedListProperty;
 
 template <typename Type>
 class ValueProperty;
-
 template <typename Type>
 class LimitedProperty;
 

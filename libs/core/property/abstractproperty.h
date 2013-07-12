@@ -25,13 +25,26 @@ public:
     template <class PropertyClass>
     PropertyClass * to();
 
-    Announcer & announcer();
+    template <typename ObjectClass>
+    void subscribe(int event, ObjectClass * object,
+        void (ObjectClass::*method_pointer)(AbstractProperty &));
+
+    void subscribe(int event, std::function<void(AbstractProperty &)> functor);
 
 protected:
+    Announcer & announcer() const;
+
     QString m_name;
     QString m_description;
     Announcer * m_announcer;
 };
+
+template <class ObjectClass>
+void AbstractProperty::subscribe(int event, ObjectClass * object,
+    void (ObjectClass::*method_pointer)(AbstractProperty &))
+{
+    m_announcer->subscribe(event, object, method_pointer);
+}
 
 template <class PropertyClass>
 PropertyClass * AbstractProperty::to()

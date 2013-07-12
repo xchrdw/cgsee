@@ -18,7 +18,7 @@ public:
     void subscribe(int event, ObjectClass * object,
         void (ObjectClass::*method_pointer)(AbstractProperty &));
 
-    void subscribe(int event, std::function<void(AbstractProperty &)> lambda);
+    void subscribe(int event, std::function<void(AbstractProperty &)> functor);
     void notify(int event);
 
 protected:

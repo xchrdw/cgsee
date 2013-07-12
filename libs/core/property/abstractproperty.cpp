@@ -36,7 +36,12 @@ void AbstractProperty::setDescription(QString description)
     m_description = description;
 }
 
-Announcer & AbstractProperty::announcer()
+void AbstractProperty::subscribe(int event, std::function<void(AbstractProperty &)> functor)
+{
+    m_announcer->subscribe(event, functor);
+}
+
+Announcer & AbstractProperty::announcer() const
 {
     return *m_announcer;
 }

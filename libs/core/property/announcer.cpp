@@ -14,15 +14,15 @@ Announcer::~Announcer()
     delete m_subscriptions;
 }
 
-void Announcer::subscribe(int event, std::function<void(AbstractProperty &)> lambda)
+void Announcer::subscribe(int event, std::function<void(AbstractProperty &)> functor)
 {
-    this->subscriptions(event).append(lambda);
+    this->subscriptions(event).append(functor);
 }
 
 void Announcer::notify(int event)
 {
-    for (std::function<void(AbstractProperty &)> lambda : this->subscriptions(event)) {
-        lambda(*m_property);
+    for (std::function<void(AbstractProperty &)> functor : this->subscriptions(event)) {
+        functor(*m_property);
     }
 }
 
@@ -31,6 +31,5 @@ QList<std::function<void(AbstractProperty &)>> & Announcer::subscriptions(int ev
     if (!m_subscriptions->value(event, nullptr))
         m_subscriptions->insert(event, new QList<std::function<void(AbstractProperty &)>>());
     
-    auto sub = m_subscriptions->value(event);
-    return *sub;
+    return *m_subscriptions->value(event);
 }
