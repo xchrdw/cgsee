@@ -8,10 +8,13 @@
 
 static const QString TRANSFORM_UNIFORM ("transform");
 static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
-static const QString RANDOM_INT_UNIFORM("randomInt");
+static const QString RANDOM_INT_UNIFORM0("randomInt0");
+static const QString RANDOM_INT_UNIFORM1("randomInt1");
 static const QString FRAMECOUNTER_UNIFORM("frameCounter");
+static const QString ANTIALIASING_OFFSET_UNIFORM("antialiasingOffset");
 
 std::mt19937 rng;
+std::uniform_real_distribution<float> aaOffsetDistribution(-1.0f, 1.0f);
 
 namespace {
     QMap<QString, GLuint> initTextureSlots() {
@@ -149,7 +152,12 @@ void PathTracer::setUniforms(const Program & program)
     program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
 
     program.setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
-    program.setUniform(RANDOM_INT_UNIFORM, rng());
+    program.setUniform(RANDOM_INT_UNIFORM0, rng());
+    program.setUniform(RANDOM_INT_UNIFORM1, rng());
+
+    glm::vec2 offset(aaOffsetDistribution(rng), aaOffsetDistribution(rng));
+    offset /= viewport();
+    program.setUniform(ANTIALIASING_OFFSET_UNIFORM, offset);
 
     for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
         program.setUniform(it.key(), it.value());

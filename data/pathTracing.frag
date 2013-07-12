@@ -24,7 +24,8 @@ uniform samplerBuffer randomVectors;
 uniform sampler2D accumulation;
 // uniform sampler2D testTex;
 
-uniform int randomInt;
+uniform int randomInt0;
+uniform int randomInt1;
 uniform int frameCounter;
 
 vec3 light = vec3(0.0, 0.0, .0);
@@ -42,9 +43,9 @@ float getLight(vec3 pos, vec3 normal);
 vec4 skybox(vec3 direction);
 
 
-float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt%1111)) * 43758.5453);
+float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt0%1111)) * 43758.5453);
 
-float rand2 =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt+123%1111)) * 43758.5453); // :)
+float rand2 =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt1%1111)) * 43758.5453); // :)
 
 void main()
 {
