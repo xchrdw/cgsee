@@ -61,7 +61,7 @@ template <typename Type>
 void LimitedProperty<Type>::setValue(Type value)
 {
     if ((m_min <= value) && (value <= m_max)) {
-        this->setValue(value);
+        ValueProperty<Type>::setValue(value);
     }
 }
 
