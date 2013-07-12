@@ -16,12 +16,12 @@ public:
     bool add(AbstractProperty * property);
     bool remove(QString name);
 
-    AbstractProperty * value(QString name);
+    AbstractProperty * value(QString name) const;
     
     template <class Property>
-    Property * value(QString name);
+    Property * value(QString name) const;
 
-    QList<AbstractProperty *> list();
+    QList<AbstractProperty *> list() const;
 
 private:
     QList<AbstractProperty *> * m_properties;
@@ -29,7 +29,7 @@ private:
 };
 
 template <class Property>
-Property * PropertyList::value(QString name)
+Property * PropertyList::value(QString name) const
 {
     return this->value(name)->to<Property>();
 }

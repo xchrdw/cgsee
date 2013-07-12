@@ -51,7 +51,7 @@ bool PropertyList::remove(QString name)
     }
 }
 
-AbstractProperty * PropertyList::value(QString name)
+AbstractProperty * PropertyList::value(QString name) const
 {
     AbstractProperty * property = m_properties_map->value(name, nullptr);
     if (!property)
@@ -60,7 +60,7 @@ AbstractProperty * PropertyList::value(QString name)
     return property;
 }
 
-QList<AbstractProperty *> PropertyList::list()
+QList<AbstractProperty *> PropertyList::list() const
 {
     return *m_properties;
 }

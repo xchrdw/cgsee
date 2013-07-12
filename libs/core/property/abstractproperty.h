@@ -22,12 +22,12 @@ public:
     QString description() const;
     void setDescription(QString name);
 
-    template <class PropertyClass>
-    PropertyClass * to();
+    template <class Property>
+    Property * to();
 
-    template <typename ObjectClass>
-    void subscribe(int event, ObjectClass * object,
-        void (ObjectClass::*method_pointer)(AbstractProperty &));
+    template <typename Object>
+    void subscribe(int event, Object * object,
+        void (Object::*method_pointer)(AbstractProperty &));
 
     void subscribe(int event, std::function<void(AbstractProperty &)> functor);
 
@@ -39,19 +39,19 @@ protected:
     Announcer * m_announcer;
 };
 
-template <class ObjectClass>
-void AbstractProperty::subscribe(int event, ObjectClass * object,
-    void (ObjectClass::*method_pointer)(AbstractProperty &))
+template <class Object>
+void AbstractProperty::subscribe(int event, Object * object,
+    void (Object::*method_pointer)(AbstractProperty &))
 {
     m_announcer->subscribe(event, object, method_pointer);
 }
 
-template <class PropertyClass>
-PropertyClass * AbstractProperty::to()
+template <class Property>
+Property * AbstractProperty::to()
 {
-    PropertyClass * property = dynamic_cast<PropertyClass *>(this);
+    Property * property = dynamic_cast<Property *>(this);
     if (!property)
         qFatal("Requested Property \"%s\" is not of Type \"%s\"", 
-            qPrintable(this->name()), typeid(PropertyClass).name());
+            qPrintable(this->name()), typeid(Property).name());
     return property;
 }

@@ -14,9 +14,9 @@ public:
     Announcer(AbstractProperty * property);
     virtual ~Announcer();
 
-    template <typename ObjectClass>
-    void subscribe(int event, ObjectClass * object,
-        void (ObjectClass::*method_pointer)(AbstractProperty &));
+    template <typename Object>
+    void subscribe(int event, Object * object,
+        void (Object::*method_pointer)(AbstractProperty &));
 
     void subscribe(int event, std::function<void(AbstractProperty &)> functor);
     void notify(int event);
@@ -28,9 +28,9 @@ protected:
     AbstractProperty * m_property;
 };
 
-template <typename ObjectClass>
-void Announcer::subscribe(int event, ObjectClass * object,
-    void (ObjectClass::*method_pointer)(AbstractProperty &))
+template <typename Object>
+void Announcer::subscribe(int event, Object * object,
+    void (Object::*method_pointer)(AbstractProperty &))
 {
     this->subscribe(event, [object, method_pointer] (AbstractProperty & property) {
         (object->*method_pointer)(property);
