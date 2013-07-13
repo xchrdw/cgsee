@@ -147,8 +147,8 @@ const bool Painter::initialize()
     m_propertylist->add(derplevel);
     m_propertylist->add(listProperty);
 
-    mit_maden->announcer().subscribe(ValueProperty<bool>::kValueChanged, this, &Painter::helloWord);
-    mit_maden->announcer().subscribe(ValueProperty<bool>::kValueChanged, [] (AbstractProperty & property) {
+    mit_maden->subscribe(ValueProperty<bool>::kValueChanged, this, &Painter::helloWord);
+    mit_maden->subscribe(ValueProperty<bool>::kValueChanged, [] (AbstractProperty & property) {
         qDebug("hello Lambda!");
     });
     
