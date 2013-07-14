@@ -1,10 +1,10 @@
-#include "renderingpass.h"
-#include "../camera.h"
-#include "../program.h"
-#include "../framebufferobject.h"
-#include "../scenegraph/scenetraverser.h"
-#include "../scenegraph/drawvisitor.h"
 
+#include <core/camera.h>
+#include <core/framebufferobject.h>
+#include <core/scenegraph/scenetraverser.h>
+#include <core/scenegraph/drawvisitor.h>
+
+#include "renderingpass.h"
 
 RenderingPass::RenderingPass(Camera * camera)
 :   m_active(true)

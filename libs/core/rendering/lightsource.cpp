@@ -1,13 +1,12 @@
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/random.hpp>
+#include "glm/gtc/matrix_transform.hpp"
+
+#include <core/camera.h>
+#include <core/program.h>
+#include <core/fileassociatedshader.h>
+#include <core/scenegraph/group.h>
 
 #include "lightsource.h"
-
-#include "../program.h"
-#include "../framebufferobject.h"
-#include "../fileassociatedshader.h"
-#include "../scenegraph/group.h"
 
 LightSourcePass::LightSourcePass(Camera * camera, FileAssociatedShader * depth_util)
 :   DefaultPass(camera)
@@ -41,12 +40,12 @@ void LightSourcePass::sceneChanged(Group * scene)
     m_lightcam->append(scene);
 
     AxisAlignedBoundingBox bb = scene->boundingBox();
-    m_lightcam->setView(glm::lookAt(glm::vec3(3.5, 5.0, 5.5)+bb.center(),
-                                    bb.center(), glm::vec3(0.0,1.0,0.0)));
+    m_lightcam->setView(glm::lookAt(glm::vec3(4.0f, 5.5f, 6.0f) + bb.center(),
+                                    bb.center(), glm::vec3(0.0f,1.0f,0.0f)));
     m_scene = scene;
 }
 
-void LightSourcePass::resize( const int width, const int height )
+void LightSourcePass::resize(const int width, const int height)
 {
     m_lightcam->setViewport(width, height);
     m_lightcam->update();

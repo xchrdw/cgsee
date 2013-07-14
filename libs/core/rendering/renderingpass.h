@@ -1,9 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include "../declspec.h"
-#include "../camera.h"
+#include <core/declspec.h>
 
+class Camera;
 class Group;
 class Program;
 class FrameBufferObject;
@@ -28,10 +27,10 @@ public:
     virtual void sceneChanged(Group * scene);
 
 protected:
-    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
-    
     virtual void render() = 0;
+    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
 
+protected:
     Camera * m_camera;
 
 private:

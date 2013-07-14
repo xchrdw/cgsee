@@ -1,10 +1,11 @@
+
+#include <core/camera.h>
+#include <core/program.h>
+#include <core/fileassociatedshader.h>
+#include <core/framebufferobject.h>
+#include <core/screenquad.h>
+
 #include "blureffect.h"
-#include "../program.h"
-#include "../fileassociatedshader.h"
-#include "../framebufferobject.h"
-#include "../screenquad.h"
-
-
 
 BlurEffect::BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,
                        RenderingPass * target, FrameBufferObject * temp)
@@ -32,6 +33,8 @@ BlurEffect::~BlurEffect(void)
 
 void BlurEffect::resize( const int width, const int height )
 {
+    m_blurv->setUniform("viewport", m_camera->viewport());
+    m_blurh->setUniform("viewport", m_camera->viewport());
 }
 
 FrameBufferObject * BlurEffect::output()
@@ -48,17 +51,19 @@ void BlurEffect::render()
     if (!m_target->isActive())
         return;
 
-    m_target->output()->bindTexture2D(*m_blurv, "source", 0);
-    m_blurv->setUniform("viewport", m_camera->viewport());
-    m_quad->draw(*m_blurv, m_fboTemp);
-    m_target->output()->releaseTexture2D();
+    blurPass(m_target->output(), m_fboTemp, m_blurv);
 
-    m_fboTemp->bindTexture2D(*m_blurh, "source", 0);
-    m_blurh->setUniform("viewport", m_camera->viewport());
-    m_quad->draw(*m_blurh, m_target->output());
-    m_fboTemp->releaseTexture2D();
+    blurPass(m_fboTemp, m_target->output(), m_blurh);
 }
 
 void BlurEffect::setUniforms()
 {
 }
+
+void BlurEffect::blurPass(FrameBufferObject * in, FrameBufferObject * out, Program * program)
+{
+    in->bindTexture2D(*program, "source", 0);
+    m_quad->draw(*program, out);
+    in->releaseTexture2D();
+}
+

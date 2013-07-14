@@ -1,10 +1,13 @@
 
 #include <glm/gtx/random.hpp>
 
+#include <core/camera.h>
+#include <core/program.h>
+#include <core/screenquad.h>
+#include <core/framebufferobject.h>
+#include <core/fileassociatedshader.h>
+
 #include "ssaoeffect.h"
-#include "../framebufferobject.h"
-#include "../program.h"
-#include "../fileassociatedshader.h"
 
 SSAOEffect::SSAOEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,  FrameBufferObject * normalz)
 :   DefaultPass(camera)
@@ -46,7 +49,6 @@ void SSAOEffect::render()
 {
     m_fboNormalz->bindTexture2D(*m_program, "normalz", 0);
 
-    m_program->setUniform("viewport", m_camera->viewport());
     m_quad->draw(*m_program, m_fbo);
 
     m_fboNormalz->release();
@@ -60,4 +62,10 @@ void SSAOEffect::setUniforms()
     m_program->setUniform("sample_count", 32); // usefull range: 0-128
     m_program->setUniform("zOffset", 0.005f);
     m_program->setUniform("filterRadius", 25.0f);
+}
+
+void SSAOEffect::resize( const int width, const int height )
+{
+    m_program->setUniform("viewport", glm::ivec2(width, height));
+    DefaultPass::resize(width, height);
 }

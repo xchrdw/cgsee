@@ -1,10 +1,8 @@
 
-#include <glm/gtx/random.hpp>
+#include <core/program.h>
+#include <core/fileassociatedshader.h>
 
 #include "normalzpass.h"
-#include "../framebufferobject.h"
-#include "../program.h"
-#include "../fileassociatedshader.h"
 
 NormalzPass::NormalzPass(Camera * camera, FileAssociatedShader * depth_util)
 :   DefaultPass(camera)

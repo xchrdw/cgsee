@@ -1,8 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <vector>
-
 #include "renderingpass.h"
 
 // provides a program, a fbo and default implementations for resize(), output(), clear() and render()

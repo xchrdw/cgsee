@@ -2,9 +2,6 @@
 
 #include "defaultpass.h"
 
-class FileAssociatedShader;
-class Group;
-
 class CGSEE_API  LightSourcePass : public DefaultPass
 {
 public:

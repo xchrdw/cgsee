@@ -1,18 +1,19 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <vector>
 
-#include "../screenquad.h"
 #include "defaultpass.h"
+
+class ScreenQuad;
 
 class CGSEE_API SSAOEffect : public DefaultPass
 {
 public:
     SSAOEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,  FrameBufferObject * normalz);
     virtual ~SSAOEffect(void);
-
+    
     virtual void setUniforms() override;
+    virtual void resize(const int width, const int height) override;
 
 protected:
     virtual void render() override;

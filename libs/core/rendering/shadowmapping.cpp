@@ -2,20 +2,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/random.hpp>
 
+#include <core/camera.h>
+#include <core/program.h>
+#include <core/framebufferobject.h>
+#include <core/fileassociatedshader.h>
+#include <core/scenegraph/group.h>
+
 #include "shadowmapping.h"
 #include "lightsource.h"
-
-#include "../program.h"
-#include "../framebufferobject.h"
-#include "../fileassociatedshader.h"
-#include "../scenegraph/group.h"
 
 const glm::mat4 ShadowMappingPass::biasMatrix (
     0.5, 0.0, 0.0, 0.0,
     0.0, 0.5, 0.0, 0.0,
     0.0, 0.0, 0.5, 0.0,
     0.5, 0.5, 0.5, 1.0
-    );
+);
 
 ShadowMappingPass::ShadowMappingPass(Camera * camera, FileAssociatedShader * depth_util, LightSourcePass * lightsource)
 :   DefaultPass(camera)

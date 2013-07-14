@@ -254,8 +254,8 @@ void Painter::paint()
     else
         m_fboColor->clear();
 
-    for (RenderingPass * effect : m_passes) {
-        effect->applyIfActive();
+    for (RenderingPass * pass : m_passes) {
+        pass->applyIfActive();
     }
 
     sampler.clear();
@@ -288,8 +288,8 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
 void Painter::resize(const int width, const int height)
 {
     AbstractPainter::resize(width, height);
-    for (RenderingPass * effect : m_passes) {
-        effect->resize(width, height);
+    for (RenderingPass * pass : m_passes) {
+        pass->resize(width, height);
     }
     m_camera->setViewport(width, height);
 
@@ -379,8 +379,8 @@ Camera * Painter::camera()
 
 void Painter::sceneChanged(Group * scene)
 {
-    for (RenderingPass * effect : m_passes) 
+    for (RenderingPass * pass : m_passes) 
     {
-        effect->sceneChanged(scene);
+        pass->sceneChanged(scene);
     }
 }

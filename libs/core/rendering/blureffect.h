@@ -1,9 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include "renderingpass.h"
-#include <vector>
 
 class ScreenQuad;
 
@@ -20,6 +17,8 @@ public:
 
 protected:
     virtual void render() override;
+
+    void blurPass(FrameBufferObject * in, FrameBufferObject * out, Program * program);
 
 private:
     Program * m_blurv;

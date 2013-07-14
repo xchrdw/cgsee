@@ -1,10 +1,8 @@
 
-#include <glm/gtx/random.hpp>
+#include <core/framebufferobject.h>
+#include <core/program.h>
 
 #include "defaultpass.h"
-#include "../framebufferobject.h"
-#include "../program.h"
-#include "../fileassociatedshader.h"
 
 DefaultPass::DefaultPass(Camera * camera)
 :   RenderingPass(camera)
