@@ -6,22 +6,21 @@
 #include "polygonalgeometry.h"
 #include "core/aabb.h"
 #include "core/bufferobject.h"
+#include "pathtracingbvh.h"
 
-#include "pathtracinggeometry.h"
 
-
-PathTracingGeometry::PathTracingGeometry() : 
+PathTracingBVH::PathTracingBVH() : 
     m_geometry(new std::vector<glm::vec4>())
 {
 
 }
 
-PathTracingGeometry::~PathTracingGeometry() {
+PathTracingBVH::~PathTracingBVH() {
     delete m_geometry;
 }
 
 
-void PathTracingGeometry::buildTriangleList(Node *node) {
+void PathTracingBVH::buildTriangleList(Node *node) {
     m_geometry->clear();
     
     // depth first linearization //
@@ -42,7 +41,7 @@ void PathTracingGeometry::buildTriangleList(Node *node) {
 
 }
 
-void PathTracingGeometry::geometryToTexture(GLuint textureSlot) {
+void PathTracingBVH::geometryToTexture(GLuint textureSlot) {
     BufferObject *geometryBuffer = new BufferObject(GL_TEXTURE_BUFFER, GL_STATIC_READ);
     geometryBuffer->data<glm::vec4>(m_geometry->data(), m_geometry->size(), GL_RGBA32F, sizeof(glm::vec4));
     glActiveTexture(textureSlot);
@@ -54,10 +53,9 @@ void PathTracingGeometry::geometryToTexture(GLuint textureSlot) {
 }
 
 //TODO: parameterize with function + merge into scenegraph
-void PathTracingGeometry::traverseNodeWithAdding(Node *node) {
+void PathTracingBVH::traverseNodeWithAdding(Node *node) {
     //add triangles
-    QList<Node *> children = node->children();
-    for (auto child : children) {
+    for (auto child : node->children()) {
         //TODO: does this leaf test work?
         if (child->children().size() == 0) { //leaf = polygonal drawable
             // AAAAAAAAAAAAAAHHHHH god save me! This is so inconvenient and ugly! :§ :0 ...
@@ -75,25 +73,25 @@ void PathTracingGeometry::traverseNodeWithAdding(Node *node) {
                 m_geometry->push_back(glm::vec4(vertices[indices[metaindex]],   0.0f)); // data3
             }
         } else { //internal node
-            traverseNodeWithAdding(node);
+            traverseNodeWithAdding(child);
         }
     }
 }
 
 
 
-void PathTracingGeometry::buildBVHFromObjectsHierarchy(Node *node) {
+void PathTracingBVH::buildBVHFromObjectsHierarchy(Node *node) {
     //simple
 }
 
-void PathTracingGeometry::buildBVHFromObjectsHierarchyWithSplitting(Node *node) {
+void PathTracingBVH::buildBVHFromObjectsHierarchyWithSplitting(Node *node) {
     //TODO
 }
 
-void PathTracingGeometry::buildBVHOnlyWithSplitting(Node *node) {
+void PathTracingBVH::buildBVHOnlyWithSplitting(Node *node) {
     //TODO
 }
 
-std::vector<glm::vec4> *PathTracingGeometry::geometry() {
+std::vector<glm::vec4> *PathTracingBVH::geometry() {
     return m_geometry;
 }

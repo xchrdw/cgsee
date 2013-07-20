@@ -5,6 +5,7 @@
 
 #include "program.h"
 #include "bufferobject.h"
+#include "scenegraph/pathtracingbvh.h"
 
 static const QString TRANSFORM_UNIFORM ("transform");
 static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
@@ -36,6 +37,7 @@ PathTracer::PathTracer(const QString & name)
 :   Camera(name)
 ,   m_invalidatedGeometry(true)
 ,   m_invalidatedAccu(true)
+,   m_bvh(nullptr)
 ,   m_vao(-1)
 ,   m_vertexBO(nullptr)
 ,   m_randomVectorTexture(-1)
@@ -48,10 +50,14 @@ PathTracer::PathTracer(const QString & name)
 
 PathTracer::~PathTracer()
 {
+    delete m_bvh;
 }
 
 void PathTracer::initialize(const Program & program)
 {
+    if (m_bvh == nullptr) {
+        m_bvh = new PathTracingBVH();
+    }
     if(-1 == m_vao)
         initVertexBuffer(program);
     if (-1 == m_randomVectorTexture)
@@ -245,28 +251,8 @@ void PathTracer::draw(
 
 void PathTracer::buildBoundingVolumeHierarchy()
 {
-    // - TODO -
-    // just copied the init texture stuff from (old) PolygonalDrawable
-
-    // Pathtracing: create data objects
-    //GLuint pathTracingGeometryID;
-    //std::vector<glm::vec3> pathTracingGeometry;
-    //GLuint geometryTextureID;
-
-    // ... fill array with geometry / aabb's ... //
-
-    //glGenBuffers(1, &pathTracingGeometryID);
-    //glBindBuffer(GL_TEXTURE_BUFFER, pathTracingGeometryID);
-    //glBufferData(GL_TEXTURE_BUFFER, pathTracingGeometry.size(), pathTracingGeometry.data(), GL_STATIC_DRAW);
-    ////glBindTexture(GL_TEXTURE_BUFFER, 0);
-    //glError();
-
-    //glGenTextures(1, &geometryTextureID);
-    //glActiveTexture(GL_TEXTURE0+PathTracer::textureSlots["geometryBuffer"]);
-    //glBindTexture(GL_TEXTURE_BUFFER, geometryTextureID);
-    //glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, geometryTextureID);
-    ////glBindTexture(GL_TEXTURE_BUFFER, 0);
-    //glError();
+    //m_bvh->buildTriangleList(this);
+    //m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
     m_invalidatedGeometry = false;
 }
 

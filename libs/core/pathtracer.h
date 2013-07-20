@@ -13,6 +13,7 @@
 class BufferObject;
 class Program;
 class FrameBufferObject;
+class PathTracingBVH;
 
 class CGSEE_API PathTracer : public Camera
 {
@@ -45,6 +46,7 @@ protected:
     ,   std::vector<glm::vec3> & points
     ,   std::hash_map<glm::highp_uint, glm::uint> & cache);
 
+    PathTracingBVH *m_bvh;
 
     virtual void invalidate() override;
     void invalidateGeometry();

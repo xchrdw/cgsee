@@ -86,6 +86,9 @@ void main()
 
     
     fragColor = mix(oldFragColor, addedColor, 1.0/frameCounter);
+
+    //fragColor = vec4(0.1 + 0.0013 * vec3(texelFetch(geometryBuffer, 57).xyz), 0.5);
+
     return;
 }
 

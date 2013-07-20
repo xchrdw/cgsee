@@ -6,11 +6,11 @@
 
 class Group;
 
-class CGSEE_API PathTracingGeometry
+class CGSEE_API PathTracingBVH
 {
 public:
-    PathTracingGeometry();
-    ~PathTracingGeometry();
+    PathTracingBVH();
+    ~PathTracingBVH();
 
     void buildTriangleList(Node *node);
     void buildBVHFromObjectsHierarchy(Node *node);

@@ -54,8 +54,8 @@ set(SOURCES
     
     scenegraph/pathtracingvisitor.h
     scenegraph/pathtracingvisitor.cpp
-    scenegraph/pathtracinggeometry.h
-    scenegraph/pathtracinggeometry.cpp
+    scenegraph/pathtracingbvh.h
+    scenegraph/pathtracingbvh.cpp
     
     abstracttimer.h
     assimploader.h
