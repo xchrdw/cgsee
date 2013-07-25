@@ -1,3 +1,5 @@
+#include <qdebug.h>
+
 #include <qlist.h>
 #include <glm/glm.hpp>
 
@@ -8,6 +10,7 @@
 #include "core/bufferobject.h"
 #include "pathtracingbvh.h"
 
+//TODO: pass float.infinity to shader
 
 PathTracingBVH::PathTracingBVH() : 
     m_geometry(new std::vector<glm::vec4>())
@@ -19,6 +22,7 @@ PathTracingBVH::~PathTracingBVH() {
     delete m_geometry;
 }
 
+//TODO: (pathtracer.cpp) empty bvh
 
 void PathTracingBVH::buildTriangleList(Node *node) {
     m_geometry->clear();
@@ -33,12 +37,15 @@ void PathTracingBVH::buildTriangleList(Node *node) {
 
     AxisAlignedBoundingBox aabb = node->boundingBox();
     m_geometry->push_back(glm::vec4(aabb.llf(), 0.0f)); //data1
-    m_geometry->push_back(glm::vec4(aabb.urb(), 100000000000000000000000000.0f)); //data2 //there is no next aabb
-
+    m_geometry->push_back(glm::vec4(aabb.urb(), 10000000.0f)); //data2 //there is no next aabb //TODO: INT_MAX
+    
     //add triangles
     //TODO: use iterator / traverser of scenegraph + use settings of gui (e.g. culling)
     traverseNodeWithAdding(node);
 
+    /*for (auto vec : *m_geometry) {
+        qDebug() << vec.x << " " << vec.y << " " << vec.z << " " << vec.w;
+    }*/
 }
 
 void PathTracingBVH::geometryToTexture(GLuint textureSlot) {
@@ -52,21 +59,24 @@ void PathTracingBVH::geometryToTexture(GLuint textureSlot) {
     glError();
 }
 
+//TODO: can't deal with empty vertex / index lists (leaf child can't be casted to PolygonalDrawable), see #*#*#
+
 //TODO: parameterize with function + merge into scenegraph
 void PathTracingBVH::traverseNodeWithAdding(Node *node) {
+    glm::vec4 dtemp;
     //add triangles
     for (auto child : node->children()) {
         //TODO: does this leaf test work?
         if (child->children().size() == 0) { //leaf = polygonal drawable
             // AAAAAAAAAAAAAAHHHHH god save me! This is so inconvenient and ugly! :§ :0 ...
-            PolygonalDrawable *poly = dynamic_cast<PolygonalDrawable *>(child);
+            PolygonalDrawable *poly = dynamic_cast<PolygonalDrawable *>(child); // #*#*#: poly becomes nullptr
             QVector<glm::vec3> vertices = poly->geometry()->copyVertices();
             QVector<uint> indices = poly->geometry()->indices();
-            for (int metaindex = 2; metaindex < indices.size(); ++metaindex) {
+            for (int metaindex = 2; metaindex < indices.size(); metaindex += 3) {
                 //add triangle + meta data
                 //        data1                data2                data3        
                 // #### #### #### ####  #### #### #### ####  #### #### #### #### 
-                // <--vertex 1--> istri <--vertex 1--> empty <--vertex 1--> empty
+                // <--vertex 1--> istri <--vertex 2--> empty <--vertex 3--> empty
                 /*improvement: global (not per-object) index, normal and vertex lists (but how?)*/
                 m_geometry->push_back(glm::vec4(vertices[indices[metaindex-2]], 3.0f)); // data1
                 m_geometry->push_back(glm::vec4(vertices[indices[metaindex-1]], 0.0f)); // data2

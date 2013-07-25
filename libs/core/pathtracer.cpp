@@ -46,6 +46,9 @@ PathTracer::PathTracer(const QString & name)
 ,   m_accuFramebuffer(-1)
 {
     m_accuTexture[0] = m_accuTexture[1] = -1;
+    this->setZFar(300.0);
+    this->setZNear(1.0);
+    this->setFovy(45.0f);
 }
 
 PathTracer::~PathTracer()
@@ -166,7 +169,10 @@ void PathTracer::setUniforms(const Program & program)
     program.setUniform(ANTIALIASING_OFFSET_UNIFORM, offset);
 
     for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
+    {
+        //qDebug() << "setting uniform: " << it.key();
         program.setUniform(it.key(), it.value());
+    }
 }
 
 void PathTracer::draw(
@@ -203,7 +209,7 @@ void PathTracer::draw(
     unsigned short writeIndex = m_whichBuffer ? 1 : 0;
 
     glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
-    glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
+    glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]); //GL_ERROR!!!
     glError();
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer);
     GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + writeIndex };
@@ -236,7 +242,6 @@ void PathTracer::draw(
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + writeIndex );
-    glError();
 
     //if(target)
     //    target->bind();
@@ -251,8 +256,8 @@ void PathTracer::draw(
 
 void PathTracer::buildBoundingVolumeHierarchy()
 {
-    //m_bvh->buildTriangleList(this);
-    //m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
+    m_bvh->buildTriangleList(this);
+    m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
     m_invalidatedGeometry = false;
 }
 
