@@ -9,8 +9,10 @@
 
 
 
-class AbstractPainter;
+class AbstractScenePainter;
+class Camera;
 class Node;
+class Group;
 
 
 class CGSEE_API CoordinateProvider
@@ -19,16 +21,17 @@ public:
     CoordinateProvider();
     virtual ~CoordinateProvider();
 
-    size_t objID(int x, int y);
+    unsigned int objID(int x, int y);
     glm::vec3 pointAt(int x, int y);
 
-    void assignScene(Node * rootNode);
+    void assignCamera(Camera * camera);
+    void assignScene(Group * rootNode);
 
 protected:
     void initialize();
 
-    AbstractPainter * m_painter;
-    Node * m_rootNode;
+    AbstractScenePainter * m_painter;
+    Group * m_rootNode;
 
     QVector<Node *> m_nodes;
 };

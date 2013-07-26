@@ -79,12 +79,12 @@ void Node::setReferenceFrame(const e_ReferenceFrame referenceFrame)
     invalidateBoundingBox();
 }
 
-const size_t Node::id() const
+const unsigned int Node::id() const
 {
     return m_id;
 }
 
-void Node::setId(const size_t id)
+void Node::setId(const unsigned int id)
 {
     m_id = id;
 }

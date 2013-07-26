@@ -9,6 +9,7 @@
 #include "polygonalgeometry.h"
 
 static const QString TRANSFORM_UNIFORM( "transform" );
+static const QString ID_UNIFORM( "u_id" );
 
 // TODO: wieder rueckgaengig machen...
 // PolygonalDrawable::PolygonalDrawable( DataBlockRegistry & registry, const QString & name )
@@ -70,6 +71,9 @@ void PolygonalDrawable::draw(
     program.use();
     program.setUniform(TRANSFORM_UNIFORM, transform);
 
+    glm::uvec4 id_vec = colorVectorFromId(m_id);
+    program.setUniform(ID_UNIFORM, id_vec);
+
     glBindVertexArray( m_geometry->vao() );
     glError();
 
@@ -87,4 +91,15 @@ void PolygonalDrawable::draw(
     glError();
 
     program.release();
+}
+
+glm::uvec4 PolygonalDrawable::colorVectorFromId(const unsigned int & id)
+{
+    glm::uvec4 id_vec;
+    id_vec.r = id % 256;
+    id_vec.g = (id >> 8) % 256;
+    id_vec.b = (id >> 16) % 256;
+    id_vec.a = (id >> 24) % 256; 
+
+    return id_vec;
 }

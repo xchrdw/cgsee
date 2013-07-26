@@ -333,6 +333,7 @@ void Viewer::on_loadFile(const QString & path)
     if (!scene)
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     else {
+        this->m_coordinateProvider->assignCamera(m_camera);
         this->m_coordinateProvider->assignScene(scene);
         this->painter()->assignScene(scene);
         this->m_qtCanvas->update();

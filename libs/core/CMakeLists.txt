@@ -84,6 +84,9 @@ set(SOURCES
     messagehandler.cpp
     mathmacros.h
 
+    idpainter.h
+    idpainter.cpp
+
     objloader.h
     objloader.cpp
 
