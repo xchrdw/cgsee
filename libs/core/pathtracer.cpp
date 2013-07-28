@@ -256,7 +256,9 @@ void PathTracer::draw(
 
 void PathTracer::buildBoundingVolumeHierarchy()
 {
-    m_bvh->buildTriangleList(this);
+    //works:
+    //m_bvh->buildFlatBVH(this);
+    m_bvh->buildBVHFromObjectsHierarchy(this);
     m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
     m_invalidatedGeometry = false;
 }

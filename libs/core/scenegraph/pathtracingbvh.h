@@ -12,12 +12,13 @@ public:
     PathTracingBVH();
     ~PathTracingBVH();
 
-    void buildTriangleList(Node *node);
+    void buildFlatBVH(Node *node);
     void buildBVHFromObjectsHierarchy(Node *node);
     void buildBVHFromObjectsHierarchyWithSplitting(Node *node);
     void buildBVHOnlyWithSplitting(Node *node);
 
     void traverseNodeWithAdding(Node *node);
+    void traverseNodeWithAddingAndSubNodes(Node *node);
 
     void geometryToTexture(GLuint textureSlot);
 

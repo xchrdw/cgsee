@@ -47,7 +47,7 @@ struct Ray {
     int sign[3];
 };
 
-Ray makeRay(in vec3 origin, in vec3 direction) {
+Ray makeRay(in vec3 origin, in vec3 direction) { //TODO: normalize direction?
     vec3 inv_direction = vec3(1.0) / direction;
     return Ray(
         origin,
@@ -60,11 +60,10 @@ Ray makeRay(in vec3 origin, in vec3 direction) {
 
 void rayBVHIntersection(
     in Ray ray, 
-    out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint,
-    out float dist);
-float rayBoxIntersectionDistance(
-    in Ray ray, 
-    in vec3 aabb[2]);
+    out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint);
+void rayBoxIntersectionDistances(
+    in Ray ray, in vec3 aabb[2],
+    out float tmin, out float tmax);
 float rayTriangleIntersectionDistance(
     in Ray ray, 
     in vec3 v0, in vec3 v1, in vec3 v2);
@@ -79,6 +78,9 @@ vec4 skybox(vec3 direction);
 float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt0%1111)) * 43758.5453);
 
 float rand2 =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt1%1111)) * 43758.5453); // :)
+
+//TODO: artifacts at the outside of the cornell box even for first order rays (maybe something like aabb-room-flickering))
+//TODO: more artifacts for higher order rays
 
 void main()
 {
@@ -97,14 +99,13 @@ void main()
     vec3 primaryTriangle[3];
     vec3 primaryIntersectionPoint;
 
-    float dist;
-
+    
     for (int i = 0; i < 3; ++i) {
 
         //TODO: problems in both implementations: some strange rendering artifacts, 
         //different colors for the same object from different angles
         //works for 1 x aabb + triangles
-        rayBVHIntersection(currentRay, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint, dist);
+        rayBVHIntersection(currentRay, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
         //works:
         //rayTriangleIntersection(currentRay.origin, currentRay.direction, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
 
@@ -121,16 +122,17 @@ void main()
 
         addedColor += primaryLight / (i + 1);
 
+        //TODO: check if the ray can go through walls
         currentRay = makeRay(primaryIntersectionPoint, normalize(primaryTangentspace * rndVec));
     }
 
     fragColor = mix(oldFragColor, addedColor, 1.0/frameCounter);
-    //fragColor = vec4(vec3(-1.0 + dist / 750.0), 0.5);
+    
     //fragColor = vec4(vec3(float(primaryNearestIndex) * 0.01 + 0.01), 0.0);
     
     // }}}
     
-    /* works
+    /*
     // test rayTriangleIntersectionDistance {{{
     float dist = rayTriangleIntersectionDistance(
         currentRay, 
@@ -140,13 +142,26 @@ void main()
     // }}}
     */
 
-    /* works
-    // test rayBoxIntersectionDistance {{{
-    float dist = rayBoxIntersectionDistance(
-        currentRay, 
-        vec3[2] (vec3(-3.0, -7.0, 20.0), vec3(5.0, -5.0, 30.0))
+    /*
+    // test rayBoxIntersectionDistances {{{
+    float tmin;
+    float tmax;
+    rayBoxIntersectionDistances(
+        makeRay(
+            vec3(-2.0, 2.0, -3.0), 
+            normalize(vec3((v_uv.x - 0.5 + 0.5) * 2.0, (v_uv.y - 0.5 - 0.5) * 2.0, 1.0))
+        ), 
+        vec3[2] (
+            vec3(-1.0, -1.0, -1.0), 
+            vec3(1.0, 1.0, 1.0)
+        ),
+        tmin, tmax
     );
-    fragColor = vec4(vec3(-1.4 + 0.07 * dist), 0.5);
+    if (tmin < tmax) {
+        fragColor = vec4(0.0, tmin * 0.15, tmax * 0.15, 0.5);
+    } else {
+        fragColor = vec4(1.0, 0.0, 0.0, 0.5);
+    }
     // }}}
     */
 
@@ -158,21 +173,19 @@ void main()
 
 //compiles, tested
     // {{{ ray box intersection
-float rayBoxIntersectionDistance(in Ray ray, in vec3 aabb[2]) {
-    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+void rayBoxIntersectionDistances(
+    in Ray ray, in vec3 aabb[2],
+    out float tmin, out float tmax)
+{
+    float tymin, tymax, tzmin, tzmax;
     tmin = (aabb[ray.sign[0]].x - ray.origin.x) * ray.inv_direction.x;
     tmax = (aabb[1-ray.sign[0]].x - ray.origin.x) * ray.inv_direction.x;
     tymin = (aabb[ray.sign[1]].y - ray.origin.y) * ray.inv_direction.y;
     tymax = (aabb[1-ray.sign[1]].y - ray.origin.y) * ray.inv_direction.y;
-    if ( (tmin > tymax) || (tymin > tmax) ) return INFINITY;
-    tmin = max(tmin, tymin);
-    tmax = min(tmax, tymax);
     tzmin = (aabb[ray.sign[2]].z - ray.origin.z) * ray.inv_direction.z;
     tzmax = (aabb[1-ray.sign[2]].z - ray.origin.z) * ray.inv_direction.z;
-    if ( (tmin > tzmax) || (tzmin > tmax) ) return INFINITY;
-    tmin = max(tmin, tzmin);
-    //tmax = min(tmay, tzmax); //not needed
-    return tmin;
+    tmin = max(max(tmin, tymin), tzmin);
+    tmax = min(min(tmax, tymax), tzmax);
 }
     // }}} ray box intersection
 
@@ -214,22 +227,24 @@ float rayTriangleIntersectionDistance(
 //TODO: test
 void rayBVHIntersection(
     in Ray ray,
-    out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint,
-    out float dist)
+    out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint)
 {
     int numIndices;
     float distanceOfNearest;
-    float distanceOfCurrent;
+    //float distanceOfCurrent;
+    float tmin;
+    float tmax;
     int datapos;
     
 
     numIndices = textureSize(geometryBuffer);
     nearestIndex = -1;
     distanceOfNearest = INFINITY;
-    distanceOfCurrent = INFINITY;
+    //distanceOfCurrent = INFINITY;
     datapos = 0;
-    /*
+    
     //TODO
+    
     while (datapos < numIndices)
     {
         
@@ -237,15 +252,18 @@ void rayBVHIntersection(
         ++datapos;
         vec4 data_b = texelFetch(geometryBuffer, datapos);
         ++datapos;
+        //algorithm only works for non-intersection bounding boxes!
         if (data_a.w == 0.0) // current node is an aabb
         {
-            //TODO: overlapping boxes: we need a list of distanceOfCurrent variables
-            //TODO!!!!!!!!!!: when ray is inside box?!?
-            distanceOfCurrent = rayBoxIntersectionDistance(ray, vec3[2] (data_a.xyz, data_b.xyz) );
+            //TODO: overlapping boxes: we need a list of tmin variables
+            //TODO!!!!!!!!!!: if ray is inside box?!?
+            rayBoxIntersectionDistances(ray, vec3[2] (data_a.xyz, data_b.xyz), tmin, tmax );
             //TODO: replace if with mix()
-            if (!(distanceOfCurrent > EPSILON && distanceOfCurrent < distanceOfNearest)) {
+            if (!(      tmin < tmax //ray intersects bounding box
+                    &&  tmax > EPSILON //intersection point with backside of bounding box is in the direction the ray points to (we use the backside to handle rays inside the bounding box correctly)
+                    )) {
                 datapos = int(data_b.w);
-                // TODO: data_b.w should be an integer. Problem: some integer operations are not officialy 
+                // TODO: data_b.w should be an integer. Problem: some integer operations are not officially 
                 // supported in OpenGL 3.2 core context (e.g. modulo, floatBitsToInt(f))
                 // float32 has a 23bit mantissa
                 //   ==> 2^23 = 8 388 608 (33.5 MB of float32-datafields addressable) 
@@ -257,45 +275,25 @@ void rayBVHIntersection(
         {
             vec4 data_c = texelFetch(geometryBuffer, datapos);
             ++datapos;
-            distanceOfCurrent = rayTriangleIntersectionDistance(
+            tmin = rayTriangleIntersectionDistance(
                 ray,
                 data_a.xyz, data_b.xyz, data_c.xyz);
             //if -> mix() ?
-            if (distanceOfCurrent > EPSILON && distanceOfCurrent < distanceOfNearest) {
+            if (    tmin > EPSILON //intersection point lies in the direction the ray points
+                &&  tmin < distanceOfNearest //intersection point lies before the triangles tested yet
+                ) {
                 nearestIndex = datapos - 3;
-                distanceOfNearest = distanceOfCurrent;
+                distanceOfNearest = tmin;
             }
         }
     }
-    */
-    
-    datapos = 2;
-    while (datapos < numIndices) {//TODO: verify numIndices / replace with, let's say 30
-        
-        vec4 data_a = texelFetch(geometryBuffer, datapos);
-        ++datapos;
-        vec4 data_b = texelFetch(geometryBuffer, datapos);
-        ++datapos;
-        vec4 data_c = texelFetch(geometryBuffer, datapos);
-        ++datapos;
 
-        distanceOfCurrent = rayTriangleIntersectionDistance(
-            ray,
-            data_a.xyz, data_b.xyz, data_c.xyz);
-        if (distanceOfCurrent > EPSILON && distanceOfCurrent < distanceOfNearest) {
-            nearestIndex = datapos - 3;
-            distanceOfNearest = distanceOfCurrent;
-        }
-    }
-    
     triangle = vec3[3] (
         texelFetch(geometryBuffer, nearestIndex).xyz, 
         texelFetch(geometryBuffer, nearestIndex+1).xyz, 
         texelFetch(geometryBuffer, nearestIndex+2).xyz);
     //intersectionPoint = ray.origin + (distanceOfNearest - 0.001) * ray.direction;
     intersectionPoint = ray.origin -(ray.direction*0.001) + distanceOfNearest * ray.direction;
-
-    dist = distanceOfNearest;
 }
 
     // }}} ray bvh intersection

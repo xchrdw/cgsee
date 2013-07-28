@@ -35,17 +35,16 @@ void PathTracingBVH::buildTriangleList(Node *node) {
     // <--llf-------> isbox <--urb-------> *next
     /*improvement: data.w <= 0.0f ==> has sub-boxes / data.w > 0.0f ==> has data.w triangles --> less cond. branching and iteration overhead on gpu*/
 
+    glm::vec3 antiAABBFlickeringEpsilon = glm::vec3(0.00001f, 0.00001f, 0.00001f);
+
     AxisAlignedBoundingBox aabb = node->boundingBox();
-    m_geometry->push_back(glm::vec4(aabb.llf(), 0.0f)); //data1
-    m_geometry->push_back(glm::vec4(aabb.urb(), 10000000.0f)); //data2 //there is no next aabb //TODO: INT_MAX
+    m_geometry->push_back(glm::vec4(aabb.llf() - antiAABBFlickeringEpsilon, 0.0f)); //data1
+    m_geometry->push_back(glm::vec4(aabb.urb() + antiAABBFlickeringEpsilon, 10000000.0f)); //data2 //there is no next aabb //TODO: INT_MAX or even better: bytes of int to float and backwards on gpu (support bigger models)
     
     //add triangles
     //TODO: use iterator / traverser of scenegraph + use settings of gui (e.g. culling)
     traverseNodeWithAdding(node);
 
-    /*for (auto vec : *m_geometry) {
-        qDebug() << vec.x << " " << vec.y << " " << vec.z << " " << vec.w;
-    }*/
 }
 
 void PathTracingBVH::geometryToTexture(GLuint textureSlot) {
@@ -59,17 +58,16 @@ void PathTracingBVH::geometryToTexture(GLuint textureSlot) {
     glError();
 }
 
-//TODO: can't deal with empty vertex / index lists (leaf child can't be casted to PolygonalDrawable), see #*#*#
+//TODO: can't deal with empty vertex / index lists (leaf child can't be dynamically casted to PolygonalDrawable), see #*#*#
 
 //TODO: parameterize with function + merge into scenegraph
 void PathTracingBVH::traverseNodeWithAdding(Node *node) {
-    glm::vec4 dtemp;
     //add triangles
     for (auto child : node->children()) {
-        //TODO: does this leaf test work?
+        //TODO: does this leaf test always work?
         if (child->children().size() == 0) { //leaf = polygonal drawable
             // AAAAAAAAAAAAAAHHHHH god save me! This is so inconvenient and ugly! :§ :0 ...
-            PolygonalDrawable *poly = dynamic_cast<PolygonalDrawable *>(child); // #*#*#: poly becomes nullptr
+            PolygonalDrawable *poly = dynamic_cast<PolygonalDrawable *>(child); // #*#*#: poly becomes nullptr if we load the "null-model" with zero triangles
             QVector<glm::vec3> vertices = poly->geometry()->copyVertices();
             QVector<uint> indices = poly->geometry()->indices();
             for (int metaindex = 2; metaindex < indices.size(); metaindex += 3) {
@@ -77,7 +75,7 @@ void PathTracingBVH::traverseNodeWithAdding(Node *node) {
                 //        data1                data2                data3        
                 // #### #### #### ####  #### #### #### ####  #### #### #### #### 
                 // <--vertex 1--> istri <--vertex 2--> empty <--vertex 3--> empty
-                /*improvement: global (not per-object) index, normal and vertex lists (but how?)*/
+                //(maybe an) improvement: global (not per-object) index, normal and vertex lists (but how to do that?)
                 m_geometry->push_back(glm::vec4(vertices[indices[metaindex-2]], 3.0f)); // data1
                 m_geometry->push_back(glm::vec4(vertices[indices[metaindex-1]], 0.0f)); // data2
                 m_geometry->push_back(glm::vec4(vertices[indices[metaindex]],   0.0f)); // data3
@@ -91,7 +89,55 @@ void PathTracingBVH::traverseNodeWithAdding(Node *node) {
 
 
 void PathTracingBVH::buildBVHFromObjectsHierarchy(Node *node) {
-    //simple
+    m_geometry->clear();
+    
+    // depth first linearization //
+
+    //add triangles
+    //TODO: use iterator / traverser of scenegraph + use settings of gui (e.g. culling)
+    traverseNodeWithAddingAndSubNodes(node);
+
+}
+
+//TODO: parameterize with function + merge into scenegraph
+void PathTracingBVH::traverseNodeWithAddingAndSubNodes(Node *node) {
+    glm::vec3 antiAABBFlickeringEpsilon = glm::vec3(0.00001f, 0.00001f, 0.00001f);
+
+    AxisAlignedBoundingBox aabb = node->boundingBox();
+    int aabbIndex = m_geometry->size();
+    m_geometry->push_back(glm::vec4(0.0f)); //data1
+    m_geometry->push_back(glm::vec4(0.0f)); //data2
+
+    //add triangles
+    for (auto child : node->children()) {
+        //TODO: does this leaf test work?
+        if (child->children().size() == 0) { //leaf = polygonal drawable
+            PolygonalDrawable *poly = dynamic_cast<PolygonalDrawable *>(child); // poly becomes nullptr if we load the "null-model" with zero triangles
+            QVector<glm::vec3> vertices = poly->geometry()->copyVertices();
+            QVector<uint> indices = poly->geometry()->indices();
+            for (int metaindex = 2; metaindex < indices.size(); metaindex += 3) {
+                //add triangle + meta data
+                //        data1                data2                data3        
+                // #### #### #### ####  #### #### #### ####  #### #### #### #### 
+                // <--vertex 1--> istri <--vertex 2--> empty <--vertex 3--> empty
+                //(maybe an) improvement: global (not per-object) index, normal and vertex lists (but how to do that?)
+                m_geometry->push_back(glm::vec4(vertices[indices[metaindex-2]], 3.0f)); // data1
+                m_geometry->push_back(glm::vec4(vertices[indices[metaindex-1]], 0.0f)); // data2
+                m_geometry->push_back(glm::vec4(vertices[indices[metaindex]],   0.0f)); // data3
+            }
+        } else { //internal node
+            traverseNodeWithAddingAndSubNodes(child);
+        }
+    }
+    //add bounding box + meta data
+    //        data1                data2
+    // #### #### #### ####  #### #### #### ####
+    // <--llf-------> isbox <--urb-------> *next
+    /*improvement: data.w <= 0.0f ==> has sub-boxes / data.w > 0.0f ==> has data.w triangles --> less cond. branching and iteration overhead on gpu*/
+
+    m_geometry->at(aabbIndex) = glm::vec4(aabb.llf() - antiAABBFlickeringEpsilon, 0.0f); //data1
+    m_geometry->at(aabbIndex + 1) = glm::vec4(aabb.urb() + antiAABBFlickeringEpsilon, float(m_geometry->size())); //data2
+
 }
 
 void PathTracingBVH::buildBVHFromObjectsHierarchyWithSplitting(Node *node) {
