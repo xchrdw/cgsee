@@ -77,6 +77,8 @@ void Viewer::initializeExplorer()
     this->initializeDockWidgets(m_dockNavigator, m_navigator, Qt::LeftDockWidgetArea);
     this->initializeDockWidgets(m_dockExplorer, m_explorer, Qt::BottomDockWidgetArea);
 
+    this->setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+
     m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
         
     QObject::connect(
