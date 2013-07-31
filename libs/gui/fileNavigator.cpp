@@ -9,10 +9,14 @@ FileNavigator::FileNavigator(
 :	QTreeView(parent)
 ,	m_model(new QFileSystemModel)
 {
-	this->setModel(m_model);
+    this->setModel(m_model);
+    m_model->setRootPath(QDir::currentPath());
 
-	setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
-	setRoot(QDir::rootPath());
+    expandAll();
+    
+    setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+    
+    // setRoot(QDir::rootPath());
 
 	this->setColumnHidden(1, true);
 	this->setColumnHidden(2, true);
