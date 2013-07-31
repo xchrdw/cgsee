@@ -31,7 +31,6 @@ public slots:
     void on_activatedDir(const QString & path);
 
 protected:
-	void setRoot(const QString & rootPath);
 
 	QFileSystemModel * m_model;
 };

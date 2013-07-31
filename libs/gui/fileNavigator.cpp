@@ -13,11 +13,9 @@ FileNavigator::FileNavigator(
     m_model->setRootPath(QDir::currentPath());
 
     expandAll();
-    
+
     setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
     
-    // setRoot(QDir::rootPath());
-
 	this->setColumnHidden(1, true);
 	this->setColumnHidden(2, true);
 	this->setColumnHidden(3, true);
@@ -31,10 +29,6 @@ FileNavigator::FileNavigator(
         this, SLOT(emitClickedDirectory(const QModelIndex &)));
 };
 
-void FileNavigator::setRoot(const QString & rootPath)
-{
-	this->setRootIndex(m_model->setRootPath(rootPath));
-}
 
 void FileNavigator::setFilter(const QDir::Filters & filters)
 {
