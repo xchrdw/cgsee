@@ -6,12 +6,10 @@
 #include "scenegraph/polygonaldrawable.h"
 
 AssimpLoader::AssimpLoader(std::shared_ptr<DataBlockRegistry> registry)
-: AbstractModelLoader()
-, m_registry(registry)
+: AbstractModelLoader(registry)
 , m_importer(new Assimp::Importer())
 {
-    if( m_registry == nullptr )
-        m_registry = std::make_shared<DataBlockRegistry>();
+
 }
 
 AssimpLoader::~AssimpLoader()
@@ -114,10 +112,10 @@ Group * AssimpLoader::parseNode(const aiScene & scene,
     );
     group->setTransform(transform);
 
-    for (int i = 0; i < node.mNumChildren; i++)
+    for (unsigned int i = 0; i < node.mNumChildren; i++)
         group->append(parseNode(scene, drawables, *(node.mChildren[i])));
 
-    for (int i = 0; i < node.mNumMeshes; i++)
+    for (unsigned int i = 0; i < node.mNumMeshes; i++)
         group->append(drawables[node.mMeshes[i]]);
 
     return group;
@@ -126,7 +124,7 @@ Group * AssimpLoader::parseNode(const aiScene & scene,
 void AssimpLoader::parseMeshes(aiMesh **meshes,
     const unsigned int numMeshes, QList<PolygonalDrawable *> &drawables) const
 {
-    for (int i = 0; i < numMeshes; i++)
+    for (unsigned int i = 0; i < numMeshes; i++)
         drawables.insert(i, parseMesh(*meshes[i]));
 }
 
@@ -136,7 +134,7 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
     
     const bool usesNormalIndices(mesh.mNormals != NULL);
     
-    for (int i = 0; i < mesh.mNumVertices; i++) {
+    for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
         glm::vec3 vector(
                          mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z
                          );
@@ -144,7 +142,7 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
     }
     
     if (usesNormalIndices) {
-        for (int i = 0; i < mesh.mNumVertices; i++) {
+        for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
             glm::vec3 vector(
                              mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z
                              );
@@ -153,11 +151,11 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
     }
     
     unsigned int currentIndex = 0;
-    for (int i = 0; i < mesh.mNumFaces; i++) {
+    for (unsigned int i = 0; i < mesh.mNumFaces; i++) {
         if (mesh.mFaces[i].mNumIndices != 3)
             qCritical("Ignore polygon with num vertices != 3 (only triangles are supported).");
         else
-            for (int j = 0; j < mesh.mFaces[i].mNumIndices; j++)
+            for (unsigned int j = 0; j < mesh.mFaces[i].mNumIndices; j++)
                 geometry->setIndex(currentIndex++, mesh.mFaces[i].mIndices[j]);
     }
     

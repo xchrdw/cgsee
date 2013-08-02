@@ -23,17 +23,17 @@ public:
     
     // TODO: wieder rueckgaengig machen...
 //     PolygonalDrawable( DataBlockRegistry & registry, const QString & name );
-    PolygonalDrawable( const QString & name );
+    PolygonalDrawable(const QString & name);
     virtual ~PolygonalDrawable();
 
-    virtual void draw( const Program & program, const glm::mat4 & transform ) override;
+    virtual void draw(const Program & program, const glm::mat4 & transform) override;
 
     virtual const AxisAlignedBoundingBox boundingBox() const override;
     
-    void setGeometry( t_geometryP geometry );
+    void setGeometry(t_geometryP geometry);
     t_geometryP geometry() { return m_geometry; }
 
-    void setMode( const GLenum mode ) { m_mode = mode; }
+    void setMode(const GLenum mode) { m_mode = mode; }
     inline const GLenum mode() const { return m_mode; }
     
 protected:

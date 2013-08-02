@@ -22,12 +22,15 @@ class IdPainter : public AbstractScenePainter
 {
 public:
     IdPainter(Camera * camera);
-    IdPainter(Group * scene);
     virtual ~IdPainter();
 
     virtual void paint();
 
     virtual void setShading(char shader);
+    virtual void setFrameBuffer(int frameBuffer);
+    virtual void setEffect(int effect, bool active);
+    
+    virtual void postShaderRelinked() override;
 
     virtual void resize(
         const int width
@@ -37,7 +40,6 @@ protected:
     virtual Camera * camera() override;
 
 protected:
-    void postShaderRelinked();
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 

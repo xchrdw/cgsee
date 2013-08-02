@@ -18,13 +18,12 @@
 #include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
-#include "core/arcballnavigation.h"
-#include "core/flightnavigation.h"
+#include "core/navigation/arcballnavigation.h"
+#include "core/navigation/flightnavigation.h"
 
 
 IdPainter::IdPainter(Camera * camera)
-:   AbstractScenePainter()
-,   m_quad(nullptr)
+:   m_quad(nullptr)
 ,   m_program(nullptr)
 ,   m_fbo(nullptr)
 ,   m_flush(nullptr)
@@ -32,14 +31,6 @@ IdPainter::IdPainter(Camera * camera)
 {
 }
 
-IdPainter::IdPainter(Group * scene)
-:   AbstractScenePainter(scene)
-,   m_quad(nullptr)
-,   m_fbo(nullptr)
-,   m_flush(nullptr)
-,   m_camera(nullptr)
-{
-}
 
 IdPainter::~IdPainter()
 {
@@ -111,9 +102,6 @@ void IdPainter::resize(  //probably never called anywhere?
 
 }
 
-void IdPainter::postShaderRelinked()
-{
-}
 
 // void IdPainter::bindSampler(
 
@@ -141,6 +129,21 @@ void IdPainter::postShaderRelinked()
 void IdPainter::setShading(char shader)
 {
     
+}
+
+void IdPainter::setFrameBuffer(int frameBuffer)
+{
+
+}
+
+void IdPainter::setEffect(int effect, bool value)
+{
+
+}
+
+void IdPainter::postShaderRelinked()
+{
+
 }
 
 Camera * IdPainter::camera()

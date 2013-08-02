@@ -9,12 +9,6 @@ AbstractScenePainter::AbstractScenePainter()
 {
 }
 
-AbstractScenePainter::AbstractScenePainter(Group * scene)
-: AbstractPainter()
-, m_scene(scene)
-{
-}
-
 AbstractScenePainter::~AbstractScenePainter()
 {
     delete m_scene;
@@ -22,6 +16,7 @@ AbstractScenePainter::~AbstractScenePainter()
 
 void AbstractScenePainter::assignScene(Group * scene)
 {
+    this->sceneChanged(scene);
     if (m_scene)
         delete retainScene();
 
@@ -42,3 +37,9 @@ Group & AbstractScenePainter::getScene() const
 {
     return *m_scene;
 }
+
+void AbstractScenePainter::sceneChanged(Group * scene)
+{
+}
+
+

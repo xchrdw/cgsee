@@ -13,7 +13,7 @@ static const QString ID_UNIFORM( "u_id" );
 
 // TODO: wieder rueckgaengig machen...
 // PolygonalDrawable::PolygonalDrawable( DataBlockRegistry & registry, const QString & name )
-PolygonalDrawable::PolygonalDrawable( const QString & name )
+PolygonalDrawable::PolygonalDrawable(const QString & name)
 :   Node( name )
 ,   m_geometry( nullptr )
 ,   m_mode( GL_TRIANGLES )
@@ -24,17 +24,17 @@ PolygonalDrawable::~PolygonalDrawable()
 {
 }
 
-void PolygonalDrawable::setGeometry( t_geometryP geometry )
+void PolygonalDrawable::setGeometry(t_geometryP geometry)
 {
     m_geometry = geometry;
 }
 
 const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
 {
-    if(m_aabb.valid())
+    if( m_aabb.valid() )
         return m_aabb;
 
-    if(m_geometry == nullptr)
+    if( m_geometry == nullptr )
         return AxisAlignedBoundingBox();
 
     // TODO: Hier muss was effizienteres her! vertices() legt jedes mal eine Kopie an.
@@ -59,14 +59,12 @@ void PolygonalDrawable::invalidateBoundingBox()
     return Node::invalidateBoundingBox();
 }
 
-void PolygonalDrawable::draw(
-    const Program & program
-,   const glm::mat4 & transform)
+void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transform)
 {
-    if(!m_geometry || m_geometry->indices().empty())
+    if( !m_geometry || m_geometry->indices().empty() )
         return;
 
-    m_geometry->initialize( program );
+    m_geometry->initialize(program);
 
     program.use();
     program.setUniform(TRANSFORM_UNIFORM, transform);
@@ -74,7 +72,7 @@ void PolygonalDrawable::draw(
     glm::vec4 id_vec = colorVectorFromId(m_id);
     program.setUniform(ID_UNIFORM, id_vec);
 
-    glBindVertexArray( m_geometry->vao() );
+    glBindVertexArray(m_geometry->vao());
     glError();
 
     glEnable(GL_DEPTH_TEST);

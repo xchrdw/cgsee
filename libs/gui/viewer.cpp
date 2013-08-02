@@ -25,10 +25,10 @@
 #include "fileNavigator.h"
 #include "fileExplorer.h"
 
-#include <core/abstractnavigation.h>
-#include <core/flightnavigation.h>
-#include <core/fpsnavigation.h>
-#include <core/arcballnavigation.h>
+#include <core/navigation/abstractnavigation.h>
+#include <core/navigation/flightnavigation.h>
+#include <core/navigation/fpsnavigation.h>
+#include <core/navigation/arcballnavigation.h>
 
 #include <core/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
@@ -67,8 +67,8 @@ Viewer::Viewer(
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
 ,   m_sceneHierarchyTree(new QTreeView(m_dockScene))
-,   m_loader(new AssimpLoader())
 ,   m_coordinateProvider(new CoordinateProvider())
+,   m_loader(new AssimpLoader( registry ))
 {
 
     m_ui->setupUi(this);
@@ -309,6 +309,8 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+    painter()->postShaderRelinked();
+    m_qtCanvas->repaint();
 }
 
 void Viewer::on_openFileDialogAction_triggered()
@@ -333,9 +335,11 @@ void Viewer::on_loadFile(const QString & path)
     if (!scene)
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     else {
+        this->m_qtCanvas->navigation()->rescaleScene(scene);
         this->m_coordinateProvider->assignCamera(m_camera);
         this->m_coordinateProvider->assignScene(scene);
         this->painter()->assignScene(scene);
+        this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
         this->createSceneHierarchy(m_sceneHierarchy, m_camera);
     }
@@ -401,6 +405,84 @@ void Viewer::on_normalsAction_triggered()
     m_qtCanvas->repaint();
 }
 
+
+void Viewer::on_colorRenderingAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(1, m_ui->colorRenderingAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_shadowMappingAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(2, m_ui->shadowMappingAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_shadowBlurAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(3, m_ui->shadowBlurAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_ssaoAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(4, m_ui->ssaoAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_ssaoBlurAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(5, m_ui->ssaoBlurAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::uncheckFboActions() {
+    m_ui->fboColorAction->setChecked(false);
+    m_ui->fboNormalzAction->setChecked(false);
+    m_ui->fboShadowMapAction->setChecked(false);
+    m_ui->fboShadowsAction->setChecked(false);
+    m_ui->fboSSAOAction->setChecked(false);
+    m_ui->fboTempBufferAction->setChecked(false);
+}
+
+void Viewer::on_fboColorAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboColorAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(1);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboNormalzAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboNormalzAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(2);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboShadowsAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboShadowsAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(3);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboShadowMapAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboShadowMapAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(4);
+    m_qtCanvas->repaint();
+}
+void Viewer::on_fboSSAOAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboSSAOAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(5);
+    m_qtCanvas->repaint();
+}
 
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {

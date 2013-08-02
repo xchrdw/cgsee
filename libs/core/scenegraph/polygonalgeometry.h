@@ -28,27 +28,27 @@ public:
     t_vec3s copyVertices() const; // TODO: Temporary solution.
     
     //t_vec3s & vertices();  
-    void setVertex( int i, glm::vec3 const & data );
+    void setVertex(int i, glm::vec3 const & data);
     t_vec3s normals() const;
     //t_vec3s & normals();
-    void setNormal( int i, glm::vec3 const & data );
+    void setNormal(int i, glm::vec3 const & data);
     t_vec2s texcs() const;
     //t_vec2s & texcs();
-    void setTexC( int i, glm::vec2 const & data );
+    void setTexC(int i, glm::vec2 const & data);
     t_uints indices() const;
     //t_uints & indices();
-    void setIndex( int i, unsigned int data );
+    void setIndex(int i, unsigned int data);
 
-    void resize( unsigned int size );
+    void resize(unsigned int size);
 
-    void initialize( const Program & program );
+    void initialize(const Program & program);
     
     inline GLuint vao() { return m_vao; }
     t_bufferObjects & elementArrayBOs() { return m_elementArrayBOs; } // TODO: perhaps as const.
     
     // Geometry Computation
 
-    void applyOptimizer( GeometryOptimizer *opt );
+    void applyOptimizer(GeometryOptimizer *opt);
     
     // TODO:
     // * generate triangle strip (update: can probably not be combined with Forsyths vertexCacheOpt algorythm

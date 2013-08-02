@@ -10,10 +10,6 @@ set(SOURCES
 
     aabb.h
     aabb.cpp
-    abstractnavigation.h
-    abstractnavigation.cpp
-    arcballnavigation.h
-    arcballnavigation.cpp
     abstractapplication.h
     abstractapplication.cpp
     abstractglparent.h
@@ -49,9 +45,12 @@ set(SOURCES
     scenegraph/polygonalgeometry.cpp
     scenegraph/scenetraverser.h
     scenegraph/scenetraverser.cpp
-    scenegraph/ISceneVisitor.h
+    scenegraph/SceneVisitorInterface.h
     scenegraph/drawvisitor.h
     scenegraph/drawvisitor.cpp
+
+    scenegraph/cullingvisitor.h
+    scenegraph/cullingvisitor.cpp
     
     abstracttimer.h
     assimploader.h
@@ -67,12 +66,8 @@ set(SOURCES
     common.h
     coordinateprovider.h
     coordinateprovider.cpp
-    flightnavigation.h
-    flightnavigation.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
-    fpsnavigation.h
-    fpsnavigation.cpp
     framebufferobject.h
     framebufferobject.cpp
     geometryoptimizer.h
@@ -87,6 +82,16 @@ set(SOURCES
     idpainter.h
     idpainter.cpp
 
+    
+    navigation/abstractnavigation.h
+    navigation/abstractnavigation.cpp
+    navigation/arcballnavigation.h
+    navigation/arcballnavigation.cpp
+    navigation/flightnavigation.h
+    navigation/flightnavigation.cpp
+    navigation/fpsnavigation.h
+    navigation/fpsnavigation.cpp
+    
     objloader.h
     objloader.cpp
 
@@ -98,6 +103,26 @@ set(SOURCES
     shader.cpp
     timer.h
     timer.cpp
+    plane.h
+    plane.cpp
+    
+    rendering/blureffect.h
+    rendering/blureffect.cpp
+    rendering/defaultpass.h   
+    rendering/defaultpass.cpp
+    rendering/lightsource.h
+    rendering/lightsource.cpp
+    rendering/normalzpass.h   
+    rendering/normalzpass.cpp
+    rendering/renderingpass.h
+    rendering/renderingpass.cpp
+    rendering/shadowmapping.h
+    rendering/shadowmapping.cpp
+    rendering/ssaoeffect.h   
+    rendering/ssaoeffect.cpp
+    
+    viewfrustum.h
+    viewfrustum.cpp
     vertexcacheoptimizer.h
     vertexcacheoptimizer.cpp
     vertexreuse.h
