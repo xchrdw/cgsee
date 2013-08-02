@@ -39,7 +39,7 @@ public:
 protected:
     virtual void invalidateBoundingBox() override;
 
-    glm::uvec4 colorVectorFromId(const unsigned int & id);
+    glm::vec4 colorVectorFromId(const unsigned int & id);
 
 protected:
     t_geometryP m_geometry;

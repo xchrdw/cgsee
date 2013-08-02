@@ -33,6 +33,7 @@ void CoordinateProvider::assignScene(Group * rootNode)
     m_painter->assignScene(rootNode);
 }
 
+// #include <iostream>
 void CoordinateProvider::initialize()
 {
     m_nodes.clear();
@@ -44,6 +45,8 @@ void CoordinateProvider::initialize()
             {
                 node.setId(this->m_nodes.size());
                 this->m_nodes.push_back(&node);
+                // std::cout << m_nodes.size() << std::endl;
+                // std::cout << node.id() << std::endl;
             }
             return true;
         });
