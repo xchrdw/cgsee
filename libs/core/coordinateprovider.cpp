@@ -43,7 +43,7 @@ void CoordinateProvider::initialize()
         {
             if (PolygonalDrawable * drawable = dynamic_cast <PolygonalDrawable *> (& node))
             {
-                node.setId(this->m_nodes.size());
+                node.setId(this->m_nodes.size()*100);
                 this->m_nodes.push_back(&node);
                 // std::cout << m_nodes.size() << std::endl;
                 // std::cout << node.id() << std::endl;

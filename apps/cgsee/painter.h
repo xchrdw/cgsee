@@ -59,7 +59,6 @@ protected:
     Program * m_gouraud;
     Program * m_phong;
     Program * m_gooch;
-    Program * m_colorId;
     Program * m_useProgram;
     Program * m_flush;
     FrameBufferObject * m_fboColor;
@@ -72,6 +71,7 @@ protected:
     RenderingPass * m_shadowBlur;
     RenderingPass * m_ssao;
     RenderingPass * m_ssaoBlur;
+    RenderingPass * m_colorId;
     QList<RenderingPass*> m_passes;
 
     Camera * m_camera;

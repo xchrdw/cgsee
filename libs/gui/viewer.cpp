@@ -405,12 +405,6 @@ void Viewer::on_normalsAction_triggered()
     m_qtCanvas->repaint();
 }
 
-void Viewer::on_colorIdShadingAction_triggered()
-{
-    m_qtCanvas->painter()->setShading('c');
-    m_qtCanvas->repaint();
-}
-
 
 void Viewer::on_colorRenderingAction_triggered()
 {
@@ -448,6 +442,7 @@ void Viewer::uncheckFboActions() {
     m_ui->fboShadowMapAction->setChecked(false);
     m_ui->fboShadowsAction->setChecked(false);
     m_ui->fboSSAOAction->setChecked(false);
+    m_ui->fboColorIdAction->setChecked(false);
     m_ui->fboTempBufferAction->setChecked(false);
 }
 
@@ -482,11 +477,20 @@ void Viewer::on_fboShadowMapAction_triggered()
     m_qtCanvas->painter()->setFrameBuffer(4);
     m_qtCanvas->repaint();
 }
+
 void Viewer::on_fboSSAOAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboSSAOAction->setChecked(true);
     m_qtCanvas->painter()->setFrameBuffer(5);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboColorIdAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboColorIdAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(6);
     m_qtCanvas->repaint();
 }
 

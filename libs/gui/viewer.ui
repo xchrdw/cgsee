@@ -36,6 +36,7 @@
      <addaction name="fboShadowsAction"/>
      <addaction name="fboShadowMapAction"/>
      <addaction name="fboSSAOAction"/>
+     <addaction name="fboColorIdAction"/>
      <addaction name="separator"/>
      <addaction name="showFrameBuffersAction"/>
     </widget>
@@ -145,9 +146,6 @@
     <addaction name="primitiveWireframeShadingAction"/>
     <addaction name="separator"/>
     <addaction name="normalsAction"/>
-    <addaction name="separator"/>
-    <addaction name="separator"/>
-    <addaction name="colorIdShadingAction"/>
     <addaction name="separator"/>
     <addaction name="colorRenderingAction"/>
     <addaction name="shadowMappingAction"/>
@@ -680,14 +678,6 @@
     <string>Normals</string>
    </property>
   </action>
-  <action name="colorIdShadingAction">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Color Id</string>
-   </property>
-  </action>
   <action name="fboColorAction">
    <property name="checkable">
     <bool>true</bool>
@@ -770,6 +760,14 @@
    </property>
    <property name="text">
     <string>SSAO</string>
+   </property>
+  </action>
+  <action name="fboColorIdAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ColorId</string>
    </property>
   </action>
   <action name="ssaoBlurAction">

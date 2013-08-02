@@ -110,6 +110,8 @@ set(SOURCES
     rendering/blureffect.cpp
     rendering/defaultpass.h   
     rendering/defaultpass.cpp
+    rendering/coloridpass.h   
+    rendering/coloridpass.cpp
     rendering/lightsource.h
     rendering/lightsource.cpp
     rendering/normalzpass.h   
