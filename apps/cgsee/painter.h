@@ -59,6 +59,7 @@ protected:
     Program * m_gouraud;
     Program * m_phong;
     Program * m_gooch;
+    Program * m_colorId;
     Program * m_useProgram;
     Program * m_flush;
     FrameBufferObject * m_fboColor;

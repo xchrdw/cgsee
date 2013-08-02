@@ -146,6 +146,9 @@
     <addaction name="separator"/>
     <addaction name="normalsAction"/>
     <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="colorIdShadingAction"/>
+    <addaction name="separator"/>
     <addaction name="colorRenderingAction"/>
     <addaction name="shadowMappingAction"/>
     <addaction name="shadowBlurAction"/>
@@ -675,6 +678,14 @@
    </property>
    <property name="text">
     <string>Normals</string>
+   </property>
+  </action>
+  <action name="colorIdShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Color Id</string>
    </property>
   </action>
   <action name="fboColorAction">

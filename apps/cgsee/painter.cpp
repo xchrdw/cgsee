@@ -52,6 +52,7 @@ Painter::Painter(Camera * camera)
 ,   m_gouraud(nullptr)
 ,   m_phong(nullptr)
 ,   m_gooch(nullptr)
+,   m_colorId(nullptr)
 ,   m_useProgram(nullptr)
 ,   m_fboColor(nullptr)
 ,   m_fboTemp(nullptr)
@@ -78,6 +79,7 @@ Painter::~Painter()
     delete m_gouraud;
     delete m_phong;
     delete m_gooch;
+    delete m_colorId;
     delete m_wireframe;
     delete m_primitiveWireframe;
     delete m_solidWireframe;
@@ -156,6 +158,11 @@ const bool Painter::initialize()
     m_gooch = new Program();
     m_gooch->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/gooch.frag"));
     m_gooch->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/gooch.vert"));
+
+    //COLORID
+    m_colorId = new Program();
+    m_colorId->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/colorId.frag"));
+    m_colorId->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/colorId.vert"));
 
     //set UNIFORMS for selected shader
     m_useProgram = m_flat;
@@ -307,6 +314,7 @@ void Painter::setShading(char shader)
         case 'g': m_useProgram = m_gouraud; std::printf("\nGouraud Shading\n"); break;
         case 'f': m_useProgram = m_flat; std::printf("\nFlat Shading\n"); break;
         case 'o': m_useProgram = m_gooch; std::printf("\nGooch Shading\n\n"); break;
+        case 'c': m_useProgram = m_colorId; std::printf("\nColor Id Shading\n\n"); break;
         case 'w': m_useProgram = m_wireframe; std::printf("\nWireframe Shading\n\n"); break;
         case 's': m_useProgram = m_solidWireframe; std::printf("\nWireframeSolid Shading\n\n"); break;
         case 'r': m_useProgram = m_primitiveWireframe; std::printf("\nprimitive Wireframe Shading\n\n"); break;

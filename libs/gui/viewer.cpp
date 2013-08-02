@@ -405,6 +405,12 @@ void Viewer::on_normalsAction_triggered()
     m_qtCanvas->repaint();
 }
 
+void Viewer::on_colorIdShadingAction_triggered()
+{
+    m_qtCanvas->painter()->setShading('c');
+    m_qtCanvas->repaint();
+}
+
 
 void Viewer::on_colorRenderingAction_triggered()
 {

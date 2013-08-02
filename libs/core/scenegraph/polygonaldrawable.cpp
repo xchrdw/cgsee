@@ -94,10 +94,10 @@ void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transfor
 glm::vec4 PolygonalDrawable::colorVectorFromId(const unsigned int & id)
 {
     glm::vec4 id_vec;
-    id_vec.r = id % 256;
-    id_vec.g = (id >> 8) % 256;
-    id_vec.b = (id >> 16) % 256;
-    id_vec.a = (id >> 24) % 256; 
+    id_vec.r = float(id % 256)/255.0;
+    id_vec.g = float((id >> 8) % 256)/255.0;
+    id_vec.b = float((id >> 16) % 256)/255.0;
+    id_vec.a = float((id >> 24) % 256)/255.0;
 
     return id_vec;
 }

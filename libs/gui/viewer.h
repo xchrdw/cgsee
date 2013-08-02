@@ -112,6 +112,7 @@ protected slots:
     void on_solidWireframeShadingAction_triggered();
     void on_primitiveWireframeShadingAction_triggered();
     void on_normalsAction_triggered();
+    void on_colorIdShadingAction_triggered();
     void on_colorRenderingAction_triggered();
     void on_shadowMappingAction_triggered();
     void on_shadowBlurAction_triggered();
