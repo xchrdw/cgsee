@@ -67,7 +67,7 @@ Viewer::Viewer(
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
 ,   m_sceneHierarchyTree(new QTreeView(m_dockScene))
-,   m_coordinateProvider(new CoordinateProvider())
+,   m_coordinateProvider(nullptr)
 ,   m_loader(new AssimpLoader( registry ))
 {
 
@@ -513,6 +513,21 @@ void Viewer::setCamera(Camera * camera )
 Camera * Viewer::camera()
 {
     return m_camera;
+}
+
+void Viewer::setCoordinateProvider(CoordinateProvider * coordinateProvider )
+{
+    if (coordinateProvider)
+    {
+        delete m_coordinateProvider;
+        m_coordinateProvider = coordinateProvider;
+        m_qtCanvas->setCoordinateProvider(coordinateProvider);
+    }
+}
+
+CoordinateProvider * Viewer::coordinateProvider()
+{
+    return m_coordinateProvider;
 }
 
 void Viewer::keyPressEvent(QKeyEvent * event)

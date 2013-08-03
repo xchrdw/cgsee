@@ -14,6 +14,7 @@
 #include <core/abstractscenepainter.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
+#include <core/coordinateprovider.h>
 #include "core/timer.h"
 
 
@@ -24,6 +25,7 @@ Canvas::Canvas(
 :   QGLWidget(format.asQGLFormat(), parent)
 ,   m_painter(nullptr)
 ,   m_navigation(nullptr)
+,   m_coordinateProvider(nullptr)
 ,   m_timer(nullptr)
 ,   m_format(format)
 {
@@ -165,6 +167,20 @@ const QImage Canvas::capture(
     return capture(size(), false, alpha);
 }
 
+void Canvas::setCoordinateProvider(CoordinateProvider * coordinateProvider)
+{
+    if(m_coordinateProvider == coordinateProvider)
+        return;
+
+    m_coordinateProvider = coordinateProvider;
+    update();
+}
+
+CoordinateProvider * Canvas::coordinateProvider()
+{
+    return m_coordinateProvider;
+}
+
 #include <QSize>
 
 const QImage Canvas::capture(
@@ -206,9 +222,21 @@ void Canvas::mousePressEvent( QMouseEvent * event )
     m_navigation->mousePressEvent(event);
 }
 
+#include <iostream>
 void Canvas::mouseReleaseEvent( QMouseEvent * event )
 {
     m_navigation->mouseReleaseEvent(event);
+
+    if (m_coordinateProvider)
+    {
+        if (event->button() == Qt::LeftButton)
+        {
+            int x = event->x();
+            int y = event->y();
+
+            std::cout << m_coordinateProvider->objID(x,y) << std::endl;
+        }
+    }
 }
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )

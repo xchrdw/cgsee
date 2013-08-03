@@ -9,7 +9,7 @@
 
 
 
-class AbstractScenePainter;
+class RenderingPass;
 class Camera;
 class Node;
 class Group;
@@ -30,7 +30,7 @@ public:
 protected:
     void initialize();
 
-    AbstractScenePainter * m_painter;
+    RenderingPass * m_pass;
     Group * m_rootNode;
 
     QVector<Node *> m_nodes;

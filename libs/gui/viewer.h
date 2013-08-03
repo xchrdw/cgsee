@@ -66,6 +66,9 @@ public:
 
     void setCamera(Camera * camera);
     Camera * camera();
+
+    void setCoordinateProvider(CoordinateProvider * coordinateProvider);
+    CoordinateProvider * coordinateProvider();
     
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent (QKeyEvent *event);

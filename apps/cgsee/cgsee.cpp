@@ -7,6 +7,7 @@
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/navigation/arcballnavigation.h>
+#include <core/coordinateprovider.h>
 
 
 CGSee::CGSee(int & argc, char ** argv)
@@ -33,6 +34,10 @@ CGSee::CGSee(int & argc, char ** argv)
 
     AbstractNavigation * navigation = new ArcballNavigation(camera);
     m_viewer->setNavigation(navigation);
+
+    CoordinateProvider * coordinateProvider = new CoordinateProvider();
+    // coordinateProvider->assignCamera(camera);
+    m_viewer->setCoordinateProvider(coordinateProvider);
 
     m_viewer->show();
 
