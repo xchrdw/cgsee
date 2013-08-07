@@ -94,6 +94,8 @@ void Canvas::resizeGL(
         m_painter->resize(width, height);
     if(m_navigation)
         m_navigation->setViewPort(width, height);
+    // if(m_coordinateProvider)
+    //     m_coordinateProvider->resize(width, height);
 
 }
 

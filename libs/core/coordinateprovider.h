@@ -26,6 +26,9 @@ public:
 
     void assignCamera(Camera * camera);
     void assignScene(Group * rootNode);
+    void assignPass(RenderingPass * pass);
+
+    void resize(const int width, const int height);
 
 protected:
     void initialize();

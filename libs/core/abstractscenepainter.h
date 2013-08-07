@@ -3,6 +3,7 @@
 #include <core/abstractpainter.h>
 
 class Group;
+class RenderingPass;
 
 class CGSEE_API AbstractScenePainter : public AbstractPainter
 {
@@ -15,6 +16,7 @@ public:
     virtual void setEffect(int effect, bool active) = 0;
     
     virtual void postShaderRelinked() = 0;
+    virtual RenderingPass *  getSharedPass() = 0;
 
     void assignScene(Group * scene);
     Group * retainScene();

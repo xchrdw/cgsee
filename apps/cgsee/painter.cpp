@@ -390,3 +390,8 @@ void Painter::sceneChanged(Group * scene)
         pass->sceneChanged(scene);
     }
 }
+
+RenderingPass * Painter::getSharedPass()
+{
+    return m_colorId;
+}

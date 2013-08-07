@@ -32,6 +32,8 @@ public:
 
     virtual void resize(const int width, const int height);
     virtual void postShaderRelinked() override;
+
+    virtual RenderingPass * getSharedPass();
     
 protected:
     virtual const bool initialize() override;

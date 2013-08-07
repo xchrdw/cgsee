@@ -24,25 +24,29 @@ CoordinateProvider::~CoordinateProvider()
 
 unsigned int CoordinateProvider::objID(int x, int y)
 {
-    if (!m_pass)
-    {
-        return 0;
-    }
-    int i = 0;
+    if (!m_pass) return 0;
+
+    bool status = m_pass->isActive();
+
     m_pass->setActive(true);
     m_pass->applyIfActive();
 
     FrameBufferObject * fbo = m_pass->output();
 
+    if (x >= fbo->width() || y >= fbo->height())
+        return 0;
+
     fbo->bind();
+    glFlush();
+    glFinish();
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     float data[4];
-    glReadPixels(x, y, 1, 1, GL_RGBA, GL_FLOAT, data);
+    glReadPixels(x, fbo->height()-y, 1, 1, GL_RGBA, GL_FLOAT, data);
     fbo->release();
 
-    m_pass->setActive(false);
+    m_pass->setActive(status);
 
     return 255*data[0] + 255*data[1]*255 + 255*data[2]*255*255 + 255*data[3]*255*255*255;
 }
@@ -59,7 +63,17 @@ void CoordinateProvider::assignScene(Group * rootNode)
     initialize();
 }
 
-// #include <iostream>
+void CoordinateProvider::assignPass(RenderingPass * pass)
+{
+    m_pass = pass;
+}
+
+void CoordinateProvider::resize(const int width, const int height)
+{
+    if (m_pass)
+        m_pass->resize(width, height);
+}
+
 void CoordinateProvider::initialize()
 {
     m_nodes.clear();
@@ -71,8 +85,6 @@ void CoordinateProvider::initialize()
             {
                 node.setId(this->m_nodes.size());
                 this->m_nodes.push_back(&node);
-                // std::cout << m_nodes.size() << std::endl;
-                // std::cout << node.id() << std::endl;
             }
             return true;
         });

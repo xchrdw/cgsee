@@ -36,7 +36,6 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setNavigation(navigation);
 
     CoordinateProvider * coordinateProvider = new CoordinateProvider();
-    // coordinateProvider->assignCamera(camera);
     m_viewer->setCoordinateProvider(coordinateProvider);
 
     m_viewer->show();
