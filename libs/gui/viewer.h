@@ -135,6 +135,8 @@ protected slots:
     
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
+
+    void on_mouseReleaseEventSignal(QMouseEvent * event);
 protected:
 
     void initializeExplorer();

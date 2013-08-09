@@ -13,9 +13,10 @@ class Timer;
 
 class AbstractScenePainter;
 class AbstractNavigation;
-class CoordinateProvider;
 class CGSEE_API Canvas : public QGLWidget, public AbstractGLParent
 {
+    Q_OBJECT
+
 public:
     Canvas(
         const GLFormat & format,
@@ -26,8 +27,6 @@ public:
     AbstractScenePainter * painter();
     void setNavigation( AbstractNavigation * navigation );
     AbstractNavigation * navigation();
-    void setCoordinateProvider(CoordinateProvider * coordinateProvider);
-    CoordinateProvider * coordinateProvider();
 
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
@@ -43,6 +42,9 @@ public:
     ,   const bool alpha = false);
 
     virtual void resize(int width, int height);
+
+signals:
+    void mouseReleaseEventSignal ( QMouseEvent * event );
 
 protected:
 
@@ -69,7 +71,6 @@ protected:
 protected:
     AbstractScenePainter * m_painter;
     AbstractNavigation * m_navigation;
-    CoordinateProvider * m_coordinateProvider;
 
     QBasicTimer * m_timer;
     float m_lastEvent;

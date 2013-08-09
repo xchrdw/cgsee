@@ -258,6 +258,10 @@ void Viewer::initialize(const GLFormat & format)
         qFatal("OpenGL not supported.");
 
     createQtContext(format);
+
+    QObject::connect(
+        m_qtCanvas, SIGNAL(mouseReleaseEventSignal(QMouseEvent *)),
+        this, SLOT(on_mouseReleaseEventSignal(QMouseEvent *)));
 }
 
 Viewer::~Viewer()
@@ -522,7 +526,6 @@ void Viewer::setCoordinateProvider(CoordinateProvider * coordinateProvider )
     {
         delete m_coordinateProvider;
         m_coordinateProvider = coordinateProvider;
-        m_qtCanvas->setCoordinateProvider(coordinateProvider);
     }
 }
 
@@ -663,3 +666,17 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
+#include <iostream>
+void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
+{
+    if (m_coordinateProvider)
+    {
+        if (event->button() == Qt::LeftButton)
+        {
+            int x = event->x();
+            int y = event->y();
+
+            std::cout << m_coordinateProvider->objID(x,y) << std::endl;
+        }
+    }
+}
