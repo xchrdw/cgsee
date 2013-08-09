@@ -677,6 +677,10 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
             int y = event->y();
 
             std::cout << m_coordinateProvider->objID(x,y) << std::endl;
+
+            glm::dvec3 coordinates = m_coordinateProvider->pointAt(x,y);
+
+            std::cout << "x: " << coordinates.x << " y: " << coordinates.y << " z: " << coordinates.z << std::endl;
         }
     }
 }

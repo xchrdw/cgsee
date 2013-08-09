@@ -22,7 +22,7 @@ public:
     virtual ~CoordinateProvider();
 
     unsigned int objID(int x, int y);
-    glm::vec3 pointAt(int x, int y);
+    glm::dvec3 pointAt(int x, int y);
 
     void assignCamera(Camera * camera);
     void assignScene(Group * rootNode);
@@ -32,6 +32,7 @@ public:
 
 protected:
     void initialize();
+    glm::dvec3 unproject(float x, float y, float z);
 
     RenderingPass * m_pass;
     Group * m_rootNode;
