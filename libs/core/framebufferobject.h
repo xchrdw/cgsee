@@ -44,8 +44,9 @@ protected:
     inline const bool isRenderBuffer() const;
     inline const bool isTexture() const;
 
-protected:
+public:
     mutable GLuint m_fbo;
+protected:
     mutable GLuint m_render;
     mutable GLuint m_texture;
 

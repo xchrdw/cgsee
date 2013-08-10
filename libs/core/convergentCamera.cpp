@@ -57,7 +57,7 @@ void ConvergentCamera::initialize(const Program & program)
 
         glGenFramebuffers(1, &m_aFramebuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_aFramebuffer);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_aTexture[0], 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_aTexture[0], 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_aTexture[1], 0);
 
         glError();
@@ -172,23 +172,31 @@ void ConvergentCamera::draw(
 ,   FrameBufferObject * target)
 {
     initialize(program);
-
-    if(m_invalidated)
+     if(m_invalidated)
         update();
-
-    glActiveTexture(GL_TEXTURE0 + 0);
+    FrameBufferObject *left = new FrameBufferObject(
+        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+    FrameBufferObject *right = new FrameBufferObject(
+        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT1, true);
+    if(left){
+        left->bind();
+    }
+    left->bindTexture2D(program, "left",0);
+  // if(target)
+   //    glBindFramebuffer(GL_FRAMEBUFFER, target->m_fbo);
+       //target->bind();
+  /*   glActiveTexture(GL_TEXTURE0 + 0);
 
     glBindTexture(GL_TEXTURE_2D, m_aTexture[0]);
     glError();
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_aFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//m_aFramebuffer);
     glError();
 
-    GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + 0};
+   GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + 0,0};
 
-    glDrawBuffers(1, writebuffers);
-    glError();
-
+    glDrawBuffers(2, writebuffers);
+    glError();*/
 
     setFromMatrix();
     m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
@@ -197,41 +205,24 @@ void ConvergentCamera::draw(
     
     glViewport(0, 0, m_viewport.x , m_viewport.y);
     glError();
-       
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    
     activateLeftCamera(program,nullptr);
     
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
     setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
-   
 
-
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
+ /*   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    //if(target)
+    //    target->bind();
     // copy written buffer to screen/output framebuffer
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_aFramebuffer);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + 0);
     glError();
 
-    //if(target)
-    // target->bind();
-
     glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
- 
-
-    //if(target)
-    // target->release();
-
- 
-
-    //program.release();
-
-
-
-
-
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);*/
 
 
 
@@ -282,7 +273,9 @@ void ConvergentCamera::draw(
 
     setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
    */
-
+    if(left){
+        left->release();
+    }
    // if(target)
-   //     target->release();
+    //  target->release();
 }
