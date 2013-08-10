@@ -30,6 +30,49 @@ ConvergentCamera::~ConvergentCamera(void)
 {
 }
 
+void ConvergentCamera::initialize(const Program & program)
+
+{
+    if (m_aFramebuffer == -1) {
+
+        glGenTextures(2, m_aTexture);
+
+        glBindTexture(GL_TEXTURE_2D, m_aTexture[0]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, m_aTexture[1]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glError();
+
+        glGenFramebuffers(1, &m_aFramebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_aFramebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_aTexture[0], 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_aTexture[1], 0);
+
+        glError();
+
+        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        glError();
+
+        if(GL_FRAMEBUFFER_COMPLETE != status)
+            qDebug("Stereo Rendering Frame Buffer Object incomplete.");
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glError();
+
+    }
+
+}
+
 void ConvergentCamera::activateRightCamera(const Program & program 
 ,   FrameBufferObject * target)
 {
@@ -87,8 +130,8 @@ void ConvergentCamera::draw(
 {
     return draw(program);
 }
-
-/*void ConvergentCamera::draw(
+/*
+void ConvergentCamera::draw(
     const Program & program
 ,   FrameBufferObject * target)
 {
@@ -125,9 +168,76 @@ void ConvergentCamera::draw(
     const Program & program
 ,   FrameBufferObject * target)
 {
+    initialize(program);
+
     if(m_invalidated)
         update();
+
+    glActiveTexture(GL_TEXTURE0 + 0);
+
+    glBindTexture(GL_TEXTURE_2D, m_aTexture[0]);
+    glError();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_aFramebuffer);
+    glError();
+
+    GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + 0};
+
+    glDrawBuffers(1, writebuffers);
+    glError();
+
+
+    setFromMatrix();
+    m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
     
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glViewport(0, 0, m_viewport.x , m_viewport.y);
+    glError();
+       
+    activateLeftCamera(program,nullptr);
+    
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+    setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
+   
+
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+    // copy written buffer to screen/output framebuffer
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_aFramebuffer);
+    glReadBuffer(GL_COLOR_ATTACHMENT0 + 0);
+    glError();
+
+    //if(target)
+    // target->bind();
+
+    glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+ 
+
+    //if(target)
+    // target->release();
+
+ 
+
+    program.release();
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+
     setFromMatrix();
     m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
     
@@ -135,10 +245,10 @@ void ConvergentCamera::draw(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     FrameBufferObject *fboRightCamera = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+   
     //leftCamera
-
-   t_samplerByName samplerLeft;
-   samplerLeft["leftTexture"] = fboLeftCamera;
+    t_samplerByName samplerLeft;
+    samplerLeft["leftTexture"] = fboLeftCamera;
     
 
     GLenum info = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -168,7 +278,7 @@ void ConvergentCamera::draw(
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
     setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
-   
+   */
 
     if(target)
         target->release();
