@@ -5,7 +5,7 @@
 #include "abstractstereocamera.h"
 #include "declspec.h"
 
-#include <GL/glew.h>
+//#include <GL/glew.h>
 
 class QString;
 
@@ -28,9 +28,9 @@ public:
 protected:
     float m_focusDistance;
     void initialize(const Program &program);
-    GLuint m_aFramebuffer;
-    GLuint m_bFramebuffer;
-    GLuint m_aTexture[2];
-    GLuint m_bTexture;
+    unsigned int m_aFramebuffer;
+  //  unsigned int m_bFramebuffer;
+    unsigned int m_aTexture[2];
+  //  unsigned int m_bTexture;
 };
 

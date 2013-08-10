@@ -22,8 +22,11 @@ static const QString ZFAR_UNIFORM       ("zfar");
 
 ConvergentCamera::ConvergentCamera(const QString & name)
     : AbstractStereoCamera(name),
-    m_focusDistance(5.0f)
+    m_focusDistance(5.0f),
+    m_aFramebuffer(-1)
 {
+    m_aTexture[0]=-1;
+    m_aTexture[1]=-1;
 }
 
 ConvergentCamera::~ConvergentCamera(void)
@@ -223,7 +226,7 @@ void ConvergentCamera::draw(
 
  
 
-    program.release();
+    //program.release();
 
 
 
@@ -280,6 +283,6 @@ void ConvergentCamera::draw(
     setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
    */
 
-    if(target)
-        target->release();
+   // if(target)
+   //     target->release();
 }
