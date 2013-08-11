@@ -36,8 +36,8 @@ public:
     virtual const void remove(Node * node, const bool deleteIfParentsEmpty = true);
 
     virtual const AxisAlignedBoundingBox boundingBox() const;
+    virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const;
 
-protected:
     virtual void prepend(Node * node);
     virtual void append(Node * node);
 

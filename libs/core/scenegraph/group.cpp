@@ -3,6 +3,7 @@
 
 #include "polygonaldrawable.h"
 #include "group.h"
+#include "core/aabb.h"
 
 Group::Group(const QString & name)
 :   Node(name)
@@ -142,6 +143,26 @@ const AxisAlignedBoundingBox Group::boundingBox() const
             m_aabb.extend((*i)->boundingBox());
 
     return m_aabb;
+}
+
+const AxisAlignedBoundingBox Group::boundingBox(glm::mat4 transform) const
+{
+    AxisAlignedBoundingBox aabb = AxisAlignedBoundingBox();
+    t_children::const_iterator i(m_children.begin());
+    const t_children::const_iterator iEnd(m_children.end());
+    glm::mat4 newTransform;
+
+    if (RF_Relative == m_rf) {
+        newTransform = this->transform() * transform;
+    } else {
+        newTransform = transform;
+    }
+
+    for(; i != iEnd; ++i) {
+        aabb.extend((*i)->boundingBox(newTransform));
+    }
+
+    return aabb;
 }
 
 Group * Group::asGroup()

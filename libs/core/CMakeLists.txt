@@ -1,4 +1,5 @@
 
+
 set(target core)
 message(STATUS "lib ${target}")
 
@@ -51,7 +52,9 @@ set(SOURCES
 
     scenegraph/cullingvisitor.h
     scenegraph/cullingvisitor.cpp
-    
+    scenegraph/absolutetransformator.h
+    scenegraph/absolutetransformator.cpp
+
     scenegraph/pathtracingvisitor.h
     scenegraph/pathtracingvisitor.cpp
     scenegraph/pathtracingbvh.h

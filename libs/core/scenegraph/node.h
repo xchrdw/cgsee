@@ -28,6 +28,7 @@ public:
 
     virtual void draw(const Program & program, const glm::mat4 & transform) = 0;
     virtual const AxisAlignedBoundingBox boundingBox() const = 0;
+    virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const = 0;
 
     const QString name() const;
     void setName(const QString & name);

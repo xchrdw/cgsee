@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 
+#include <memory>
 #include <hash_map>
 
 #include <QMap>
@@ -14,13 +15,14 @@ class BufferObject;
 class Program;
 class FrameBufferObject;
 class PathTracingBVH;
+class DataBlockRegistry;
 
 class CGSEE_API PathTracer : public Camera
 {
 public:
     const static QMap<QString, GLuint> textureSlots;
 
-    PathTracer(const QString & name = "unnamed");
+    PathTracer(std::shared_ptr<DataBlockRegistry> registry, const QString & name = "unnamed");
     virtual ~PathTracer();
 
     virtual void draw(
@@ -74,4 +76,5 @@ protected:
     virtual void prepend(Node * node) override;
     virtual void append(Node * node) override;
     virtual void insert(const t_children::iterator & before, Node * node);
+    std::shared_ptr<DataBlockRegistry> m_registry;
 };

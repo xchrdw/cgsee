@@ -6,6 +6,7 @@
 #include "program.h"
 #include "bufferobject.h"
 #include "scenegraph/pathtracingbvh.h"
+#include "core/datacore/datablock.h"
 
 static const QString TRANSFORM_UNIFORM ("transform");
 static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
@@ -33,7 +34,7 @@ namespace {
 const QMap<QString, GLuint> PathTracer::textureSlots(initTextureSlots());
 
 
-PathTracer::PathTracer(const QString & name)
+PathTracer::PathTracer(std::shared_ptr<DataBlockRegistry> registry, const QString & name)
 :   Camera(name)
 ,   m_invalidatedGeometry(true)
 ,   m_invalidatedAccu(true)
@@ -44,6 +45,7 @@ PathTracer::PathTracer(const QString & name)
 ,   m_randomVectors(nullptr)
 ,   m_frameCounter(-1)
 ,   m_accuFramebuffer(-1)
+,   m_registry(registry)
 {
     m_accuTexture[0] = m_accuTexture[1] = -1;
     this->setZFar(300.0);
@@ -59,7 +61,7 @@ PathTracer::~PathTracer()
 void PathTracer::initialize(const Program & program)
 {
     if (m_bvh == nullptr) {
-        m_bvh = new PathTracingBVH();
+        m_bvh = new PathTracingBVH(m_registry);
     }
     if(-1 == m_vao)
         initVertexBuffer(program);
@@ -258,6 +260,7 @@ void PathTracer::buildBoundingVolumeHierarchy()
 {
     //works:
     //m_bvh->buildFlatBVH(this);
+    //doesn't work:
     m_bvh->buildBVHFromObjectsHierarchy(this);
     m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
     m_invalidatedGeometry = false;
