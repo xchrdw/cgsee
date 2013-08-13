@@ -29,19 +29,20 @@ CGSee::CGSee(int & argc, char ** argv)
     PathTracer * camera = new PathTracer();
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
-    camera->setZFar (300.0f);
+    camera->setZFar (20.0f);
     m_viewer->setCamera(camera);
 
     m_painter = new Painter(camera);
     m_viewer->setPainter(m_painter);
 
     AbstractNavigation * navigation = new ArcballNavigation(camera);
-    navigation->reset(); // initialize view matrix 
     m_viewer->setNavigation(navigation);
 
     m_viewer->show();
 
-    // m_painter->assignScene(loader.importFromFile("data/mario.dae"));
+    AssimpLoader loader;
+    m_painter->assignScene(loader.importFromFile("data/shadow_test.obj"));
+    navigation->sceneChanged(&m_painter->getScene());
 
 }
 
