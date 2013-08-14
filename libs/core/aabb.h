@@ -4,8 +4,10 @@
 #include <array>
 #include <glm/glm.hpp>
 
+#include "declspec.h"
 
-class AxisAlignedBoundingBox
+
+class CGSEE_API AxisAlignedBoundingBox
 {
 public:
     AxisAlignedBoundingBox();
