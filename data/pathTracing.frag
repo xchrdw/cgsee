@@ -22,7 +22,6 @@ uniform samplerBuffer normalBuffer;
 uniform samplerBuffer geometryBuffer;
 uniform samplerBuffer randomVectors;
 uniform sampler2D accumulation;
-// uniform sampler2D testTex;
 
 uniform int randomInt0;
 uniform int randomInt1;
@@ -33,7 +32,7 @@ vec3 arealight[4] = vec3[]( vec3(343.0, 547.8, 227.0),
         vec3(343.0, 547.8, 282.0),
         vec3(213.0, 547.8, 332.0),
         vec3(213.0, 547.8, 227.0));
-//vec3 cameraposition = vec3(1.0, 0.0, 3.0);
+
 float EPSILON = 0.000001;
 float INFINITY = 1000000000000.0;
 int INT_MAX = 2147483647;
@@ -76,7 +75,6 @@ vec4 skybox(vec3 direction);
 
 
 float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt0%1111)) * 43758.5453);
-
 float rand2 =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt1%1111)) * 43758.5453); // :)
 
 //TODO: artifacts at the outside of the cornell box even for first order rays (maybe something like aabb-room-flickering))
@@ -84,6 +82,7 @@ float rand2 =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (
 
 void main()
 {
+
     vec4 oldFragColor = texture(accumulation, v_uv);
     vec4 addedColor = vec4(0.0);
     
@@ -101,7 +100,7 @@ void main()
 
     
     for (int i = 0; i < 3; ++i) {
-
+		rndVec = texelFetch(randomVectors, int(rand*numRnd)+i+1).xyz;
         //TODO: problems in both implementations: some strange rendering artifacts, 
         //different colors for the same object from different angles
         //works for 1 x aabb + triangles
@@ -118,11 +117,13 @@ void main()
         vec3 primaryNormalAvg = getNormalAndTangentSpaceForTriangle(primaryTriangle, primaryTangentspace);
 
         //check the light
-        float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
+       // float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
 
-        addedColor += primaryLight / (i + 1);
+       // addedColor += primaryLight / (i + 1);
 
         //TODO: check if the ray can go through walls
+		//addedColor = vec4(normalize(primaryTangentspace * rndVec), 1.0);
+		//break;
         currentRay = makeRay(primaryIntersectionPoint, normalize(primaryTangentspace * rndVec));
     }
 
@@ -302,7 +303,7 @@ void rayBVHIntersection(
 
 
 float getLight(vec3 pos, vec3 normal) {
-    vec3 randomLightPos = (mix(arealight[2], arealight[3], rand2) + mix(arealight[0], arealight[1], rand)) / 2;
+    vec3 randomLightPos = arealight[0] + ((arealight[1] - arealight[0]) * rand) + ((arealight[3] - arealight[0]) * rand2);
 
     bool lightShines = rayTriangleIntersectionBool(pos, randomLightPos);
 
@@ -391,20 +392,22 @@ void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, 
 }
 
 vec4 skybox(vec3 direction) {
-    return vec4(0.09, 0.6, 0.9, 1.0);
+    // return vec4(0.09, 0.6, 0.9, 1.0);
+	return vec4(1.0, 1.0, 1.0, 1.0);
 }
 
 vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace) {
     vec3 e0 = triangle[1] - triangle[0];
     vec3 e1 = triangle[2] - triangle[0];
 
-    vec3 normal = normalize(cross(e0, e1));
+    vec3 norm_normal = normalize(cross(e0, e1));
     vec3 anotherone = normalize(vec3(rand+0.5, rand, rand));
 
 
-    tangentspace[0] = cross(normal, anotherone);
-    tangentspace[1] = normal;
-    tangentspace[2] = (cross(tangentspace[0], tangentspace[1]));
-
-    return tangentspace[1];
+    tangentspace[0] = normalize(cross(norm_normal, anotherone)); 		// t
+    tangentspace[1] = norm_normal;			// n
+    tangentspace[2] = cross(tangentspace[1], tangentspace[0]);	// n X t
+    
+    //return vec3(0.0, 1.0, 0.0);
+    return norm_normal;
 }
