@@ -67,7 +67,7 @@ float rayTriangleIntersectionDistance(
     in Ray ray, 
     in vec3 v0, in vec3 v1, in vec3 v2);
 
-void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint);
+void rayTriangleIntersection(Ray ray, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint);
 bool rayTriangleIntersectionBool(vec3 origin, vec3 target);
 vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace);
 float getLight(vec3 pos, vec3 normal);
@@ -100,13 +100,13 @@ void main()
 
     
     for (int i = 0; i < 3; ++i) {
-		rndVec = texelFetch(randomVectors, int(rand*numRnd)+i+1).xyz;
+        rndVec = texelFetch(randomVectors, int(rand*numRnd)+i+1).xyz;
         //TODO: problems in both implementations: some strange rendering artifacts, 
         //different colors for the same object from different angles
         //works for 1 x aabb + triangles
         rayBVHIntersection(currentRay, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
         //works:
-        //rayTriangleIntersection(currentRay.origin, currentRay.direction, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
+        //rayTriangleIntersection(currentRay, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
 
         if (primaryNearestIndex == -1) {
             addedColor += skybox(currentRay.direction) / (i + 1);
@@ -122,9 +122,9 @@ void main()
        // addedColor += primaryLight / (i + 1);
 
         //TODO: check if the ray can go through walls
-		//addedColor = vec4(normalize(primaryTangentspace * rndVec), 1.0);
-		//break;
-        currentRay = makeRay(primaryIntersectionPoint, normalize(primaryTangentspace * rndVec));
+        //addedColor = vec4(normalize(primaryTangentspace * rndVec), 1.0);
+        //break;
+        currentRay = makeRay(primaryIntersectionPoint, primaryTangentspace * rndVec);
     }
 
     fragColor = mix(oldFragColor, addedColor, 1.0/frameCounter);
@@ -204,19 +204,17 @@ float rayTriangleIntersectionDistance(
     float det = dot(edge0, pvec);
 
     //check parallel
-    if (det > -EPSILON && det < EPSILON) return INFINITY;
+    if (det > -EPSILON && det < EPSILON)
+        return INFINITY;
 
     float inv_det = 1.0 / det;
 
     vec3 tvec = ray.origin - v0;
 
     float u = dot(tvec, pvec) * inv_det;
-    if (u < 0.0 || u > 1.0)
-        return INFINITY;
-
     vec3 qvec = cross(tvec, edge0);
     float v = dot(ray.direction, qvec) * inv_det;
-    if (v < 0.0 || (u + v > 1.0))
+    if (v < 0.0 || u < 0.0 || (u + v > 1.0))
         return INFINITY;
 
     return dot (edge1, qvec) * inv_det;
@@ -294,7 +292,7 @@ void rayBVHIntersection(
         texelFetch(geometryBuffer, nearestIndex+1).xyz, 
         texelFetch(geometryBuffer, nearestIndex+2).xyz);
     //intersectionPoint = ray.origin + (distanceOfNearest - 0.001) * ray.direction;
-    intersectionPoint = ray.origin -(ray.direction*0.001) + distanceOfNearest * ray.direction;
+    intersectionPoint = ray.origin + distanceOfNearest * ray.direction * 0.999;
 }
 
     // }}} ray bvh intersection
@@ -317,7 +315,7 @@ float getLight(vec3 pos, vec3 normal) {
 
 //TODO: use as replacement for rayt...bool
 //TODO: optimize (only test as far as needed)
-/*bool canSee(vec3 eye, vec3 target) {
+bool canSee(vec3 eye, vec3 target) {
     vec3 direction = normalize(target - eye);
 
     int nearestIndex;
@@ -327,22 +325,22 @@ float getLight(vec3 pos, vec3 normal) {
     rayBVHIntersection(makeRay(eye, direction), nearestIndex, triangle, intersectionPoint);
 
     return length(target-eye) < length(intersectionPoint-eye);
-}*/
+}
 
 bool rayTriangleIntersectionBool(vec3 origin, vec3 target) {
-    vec3 direction = target - origin;
+    vec3 originToTarget = target - origin;
 
     int nearestIndex;
     vec3 triangle[3];
     vec3 intersectionPoint;
 
-    rayTriangleIntersection(origin, direction, nearestIndex, triangle, intersectionPoint);
+    rayTriangleIntersection(makeRay(origin, originToTarget), nearestIndex, triangle, intersectionPoint);
 
-    return length(target-origin) < length(intersectionPoint-origin);
+    return length(originToTarget) < length(intersectionPoint-origin);
 }
 
 
-void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint) {
+void rayTriangleIntersection(Ray ray, out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint) {
     int numIndices = textureSize(indexBuffer);
     nearestIndex = -1;
     float distanceOfNearest = 100000.0;
@@ -352,32 +350,7 @@ void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, 
         vec3 v1 = texelFetch(vertexBuffer, int(texelFetch(indexBuffer, i + 1).x)).xyz;
         vec3 v2 = texelFetch(vertexBuffer, int(texelFetch(indexBuffer, i + 2).x)).xyz;
 
-        vec3 edge0 = v1 - v0;
-        vec3 edge1 = v2 - v0;
-
-        vec3 pvec = cross(direction, edge1);
-
-        float det = dot(edge0, pvec);
-
-        //check parallel
-        if (det > -EPSILON && det < EPSILON)
-           continue;
-
-        float inv_det = 1.0 / det;
-
-        vec3 tvec = origin - v0;
-
-        float u = dot(tvec, pvec) * inv_det;
-        if (u < 0.0 || u > 1.0)
-            continue;
-
-        vec3 qvec = cross(tvec, edge0);
-        float v  = dot(direction, qvec) * inv_det;
-        if (v < 0.0 || (u + v > 1.0))
-            continue;
-
-        // found it
-        float t = dot (edge1, qvec) * inv_det;
+        float t = rayTriangleIntersectionDistance(ray,  v0, v1, v2);
 
         if (t < distanceOfNearest && t > EPSILON) {
             distanceOfNearest = t;
@@ -388,12 +361,12 @@ void rayTriangleIntersection(vec3 origin, vec3 direction, out int nearestIndex, 
         }
     }
 
-    intersectionPoint = origin -(direction*0.001) + distanceOfNearest * direction;
+    intersectionPoint = ray.origin + distanceOfNearest * ray.direction * 0.999;
 }
 
 vec4 skybox(vec3 direction) {
     // return vec4(0.09, 0.6, 0.9, 1.0);
-	return vec4(1.0, 1.0, 1.0, 1.0);
+    return vec4(1.0, 1.0, 1.0, 1.0);
 }
 
 vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace) {
@@ -404,9 +377,9 @@ vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace
     vec3 anotherone = normalize(vec3(rand+0.5, rand, rand));
 
 
-    tangentspace[0] = normalize(cross(norm_normal, anotherone)); 		// t
-    tangentspace[1] = norm_normal;			// n
-    tangentspace[2] = cross(tangentspace[1], tangentspace[0]);	// n X t
+    tangentspace[0] = normalize(cross(norm_normal, anotherone));        // t
+    tangentspace[1] = norm_normal;          // n
+    tangentspace[2] = cross(tangentspace[1], tangentspace[0]);  // n X t
     
     //return vec3(0.0, 1.0, 0.0);
     return norm_normal;
