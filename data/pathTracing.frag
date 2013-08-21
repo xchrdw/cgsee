@@ -38,7 +38,6 @@ float INFINITY = 1000000000000.0;
 int INT_MAX = 2147483647;
 
 
-// ray datastructure {{{
 struct Ray {
     vec3 origin;
     vec3 direction;
@@ -55,7 +54,7 @@ Ray makeRay(in vec3 origin, in vec3 direction) { //TODO: normalize direction?
         int[3] ( int(inv_direction.x < 0.0), int(inv_direction.y < 0.0), int(inv_direction.z < 0.0) )
     );
 }
-// }}} ray datastructure
+
 
 void rayBVHIntersection(
     in Ray ray, 
@@ -92,7 +91,6 @@ void main()
 
     Ray currentRay = makeRay(cameraposition, direction);
 
-    //TODO: test {{{
     
     int primaryNearestIndex; //TODO: primaryNearestIndex is not needed if we test e.g. primaryIntersectionPoint.x == INFINITY (has to be set in rayBVHIntersection)
     vec3 primaryTriangle[3];
@@ -117,21 +115,15 @@ void main()
         vec3 primaryNormalAvg = getNormalAndTangentSpaceForTriangle(primaryTriangle, primaryTangentspace);
 
         //check the light
-       // float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
-
-       // addedColor += primaryLight / (i + 1);
+        //float primaryLight = getLight(primaryIntersectionPoint, primaryNormalAvg);
+        //addedColor += primaryLight / (i + 1);
 
         //TODO: check if the ray can go through walls
-        //addedColor = vec4(normalize(primaryTangentspace * rndVec), 1.0);
-        //break;
+
         currentRay = makeRay(primaryIntersectionPoint, primaryTangentspace * rndVec);
     }
 
     fragColor = mix(oldFragColor, addedColor, 1.0/frameCounter);
-    
-    //fragColor = vec4(vec3(float(primaryNearestIndex) * 0.01 + 0.01), 0.0);
-    
-    // }}}
     
     /*
     // test rayTriangleIntersectionDistance {{{
@@ -170,10 +162,7 @@ void main()
 }
 
 
-// {{{ intersection tests
 
-//compiles, tested
-    // {{{ ray box intersection
 void rayBoxIntersectionDistances(
     in Ray ray, in vec3 aabb[2],
     out float tmin, out float tmax)
@@ -188,10 +177,8 @@ void rayBoxIntersectionDistances(
     tmin = max(max(tmin, tymin), tzmin);
     tmax = min(min(tmax, tymax), tzmax);
 }
-    // }}} ray box intersection
 
-//compiles, tested
-    // {{{ ray triangle intersection
+
 float rayTriangleIntersectionDistance(
     in Ray ray,
     in vec3 v0, in vec3 v1, in vec3 v2)
@@ -219,11 +206,8 @@ float rayTriangleIntersectionDistance(
 
     return dot (edge1, qvec) * inv_det;
 }
-    // }}} ray triangle intersection 
 
-    // {{{ ray bvh intersection
-//compiles
-//TODO: test
+//TODO test
 void rayBVHIntersection(
     in Ray ray,
     out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint)
@@ -291,13 +275,9 @@ void rayBVHIntersection(
         texelFetch(geometryBuffer, nearestIndex).xyz, 
         texelFetch(geometryBuffer, nearestIndex+1).xyz, 
         texelFetch(geometryBuffer, nearestIndex+2).xyz);
-    //intersectionPoint = ray.origin + (distanceOfNearest - 0.001) * ray.direction;
     intersectionPoint = ray.origin + distanceOfNearest * ray.direction * 0.999;
 }
 
-    // }}} ray bvh intersection
-
-// }}} intersection tests
 
 
 float getLight(vec3 pos, vec3 normal) {
@@ -326,6 +306,7 @@ bool canSee(vec3 eye, vec3 target) {
 
     return length(target-eye) < length(intersectionPoint-eye);
 }
+
 
 bool rayTriangleIntersectionBool(vec3 origin, vec3 target) {
     vec3 originToTarget = target - origin;
@@ -364,10 +345,11 @@ void rayTriangleIntersection(Ray ray, out int nearestIndex, out vec3 triangle[3]
     intersectionPoint = ray.origin + distanceOfNearest * ray.direction * 0.999;
 }
 
+
 vec4 skybox(vec3 direction) {
-    // return vec4(0.09, 0.6, 0.9, 1.0);
     return vec4(1.0, 1.0, 1.0, 1.0);
 }
+
 
 vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace) {
     vec3 e0 = triangle[1] - triangle[0];
@@ -376,11 +358,9 @@ vec3 getNormalAndTangentSpaceForTriangle(vec3 triangle[3], out mat3 tangentspace
     vec3 norm_normal = normalize(cross(e0, e1));
     vec3 anotherone = normalize(vec3(rand+0.5, rand, rand));
 
-
-    tangentspace[0] = normalize(cross(norm_normal, anotherone));        // t
-    tangentspace[1] = norm_normal;          // n
-    tangentspace[2] = cross(tangentspace[1], tangentspace[0]);  // n X t
+    tangentspace[0] = normalize(cross(norm_normal, anotherone));
+    tangentspace[1] = norm_normal;
+    tangentspace[2] = cross(tangentspace[1], tangentspace[0]);
     
-    //return vec3(0.0, 1.0, 0.0);
     return norm_normal;
 }
