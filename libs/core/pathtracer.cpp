@@ -27,6 +27,7 @@ namespace {
         textureSlots["geometryBuffer"] = 3;
         textureSlots["randomVectors"] = 4;
         textureSlots["accumulation"] = 5;
+        textureSlots["skyboxTexture"] = 6;
         return textureSlots;
     }
 }
@@ -45,6 +46,7 @@ PathTracer::PathTracer(std::shared_ptr<DataBlockRegistry> registry, const QStrin
 ,   m_randomVectors(nullptr)
 ,   m_frameCounter(-1)
 ,   m_accuFramebuffer(-1)
+,   m_staticCubeMap(-1)
 ,   m_registry(registry)
 {
     m_accuTexture[0] = m_accuTexture[1] = -1;
@@ -101,6 +103,9 @@ void PathTracer::initialize(const Program & program)
         glBindTexture(GL_TEXTURE_2D, 0);
         glError();
     }
+    if (m_staticCubeMap == -1) {
+        initSkybox();
+    }
 }
 
 void PathTracer::initVertexBuffer(const Program & program)
@@ -151,6 +156,65 @@ void PathTracer::initRandomVectorBuffer(const Program & program)
     glBindTexture(GL_TEXTURE_BUFFER, m_randomVectorTexture);
     glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB32F, m_randomVectors->buffer());
     glError();
+}
+
+char * loadTextureRAW(const char * filename, unsigned int width, unsigned int height, unsigned int depth)
+{
+    char * data;
+    FILE * file;
+
+    file = fopen( filename, "rb" );
+    if ( file == NULL ) return 0;
+
+    data = (char *)malloc( width * height * depth );
+
+    fread( data, width * height * depth, 1, file );
+    fclose( file );
+
+    return data;
+}
+
+void PathTracer::initSkybox()
+{
+    GLubyte *faces[6];
+    
+    glGenTextures( 1, &m_staticCubeMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_staticCubeMap);
+    faces[0] = (GLubyte*) loadTextureRAW("./data/skybox/skybox_left.raw", 512, 512, 3);
+    faces[1] = (GLubyte*) loadTextureRAW("./data/skybox/skybox_right.raw", 512, 512, 3);
+    faces[2] = (GLubyte*) loadTextureRAW("./data/skybox/skybox_top.raw", 512, 512, 3);
+    faces[3] = (GLubyte*) loadTextureRAW("./data/skybox/skybox_bottom.raw", 512, 512, 3);
+    faces[4] = (GLubyte*) loadTextureRAW("./data/skybox/skybox_back.raw", 512, 512, 3);
+    faces[5] = (GLubyte*) loadTextureRAW("./data/skybox/skybox_front.raw", 512, 512, 3);
+    for (int i = 0; i < 6; ++i) {
+        if (faces[i] == 0) {
+            qDebug("error while loading skybox textures.");
+            return;
+        }
+    }
+    qDebug("passing skybox to shader");
+    for (int i = 0; i < 6; i++) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                0,
+                GL_RGB8,
+                512,
+                512,
+                0,
+                GL_RGB,
+                GL_UNSIGNED_BYTE,
+                faces[i]);
+    }
+    glError();
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glError();
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glActiveTexture(GL_TEXTURE0 + textureSlots["skyboxTexture"]);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_staticCubeMap);
+    return;
 }
 
 void PathTracer::setUniforms(const Program & program)

@@ -22,6 +22,7 @@ uniform samplerBuffer normalBuffer;
 uniform samplerBuffer geometryBuffer;
 uniform samplerBuffer randomVectors;
 uniform sampler2D accumulation;
+uniform samplerCube skyboxTexture;
 
 uniform int randomInt0;
 uniform int randomInt1;
@@ -347,7 +348,8 @@ void rayTriangleIntersection(Ray ray, out int nearestIndex, out vec3 triangle[3]
 
 
 vec4 skybox(vec3 direction) {
-    return vec4(1.0, 1.0, 1.0, 1.0);
+    // return vec4(1.0, 1.0, 1.0, 1.0);
+    return texture(skyboxTexture, direction);
 }
 
 

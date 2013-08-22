@@ -35,6 +35,8 @@ protected:
     void initRandomVectorBuffer(const Program & program);
     void buildBoundingVolumeHierarchy();
 
+    void initSkybox();
+
     void setUniforms(const Program & program);
 
     virtual void setViewport(
@@ -66,6 +68,8 @@ protected:
     unsigned int m_frameCounter;
     GLuint m_accuTexture[2];
     GLuint m_accuFramebuffer;
+    
+    GLuint m_staticCubeMap;
 
 // override Group children changes, to notice when geometry changes
 public:
