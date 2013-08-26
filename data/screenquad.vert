@@ -2,8 +2,6 @@
 
 in vec3 a_vertex;
 
-uniform mat4 projectionInverse;
-
 out vec2 v_uv;
 
 void main(void)

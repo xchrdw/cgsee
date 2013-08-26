@@ -4,7 +4,8 @@
 #include "program.h"
 #include "gpuquery.h"
 #include "framebufferobject.h"
-
+#include <core/screenquad.h>
+#include <core/fileassociatedshader.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/random.hpp>
@@ -22,11 +23,8 @@ static const QString ZFAR_UNIFORM       ("zfar");
 
 ConvergentCamera::ConvergentCamera(const QString & name)
     : AbstractStereoCamera(name),
-    m_focusDistance(5.0f),
-    m_aFramebuffer(-1)
+    m_focusDistance(5.0f)
 {
-    m_aTexture[0]=-1;
-    m_aTexture[1]=-1;
 }
 
 ConvergentCamera::~ConvergentCamera(void)
@@ -36,50 +34,19 @@ ConvergentCamera::~ConvergentCamera(void)
 void ConvergentCamera::initialize(const Program & program)
 
 {
-    if (m_aFramebuffer == -1) {
+    right = new FrameBufferObject(
+    GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT1, true);
+    left = new FrameBufferObject(
+    GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
-        glGenTextures(2, m_aTexture);
-
-        glBindTexture(GL_TEXTURE_2D, m_aTexture[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, m_aTexture[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glError();
-
-        glGenFramebuffers(1, &m_aFramebuffer);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_aFramebuffer);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_aTexture[0], 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_aTexture[1], 0);
-
-        glError();
-
-        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        glError();
-
-        if(GL_FRAMEBUFFER_COMPLETE != status)
-            qDebug("Stereo Rendering Frame Buffer Object incomplete.");
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glError();
-
-    }
+    
 
 }
 
 void ConvergentCamera::activateRightCamera(const Program & program 
 ,   FrameBufferObject * target)
 {
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear( GL_DEPTH_BUFFER_BIT);
 
     glm::vec3 cameraPosition = m_virtualCameraPosition+( m_cameraSeparationVector * m_cameraSeparation);
     glm::vec3 viewDirection = m_center - m_virtualCameraPosition;
@@ -91,7 +58,7 @@ void ConvergentCamera::activateRightCamera(const Program & program
     setTransform(m_projection * m_view);
     glm::mat4 transform = m_projection * m_view;
 
-    update();
+    //update();
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
         
@@ -116,7 +83,7 @@ void ConvergentCamera::activateLeftCamera(const Program & program
     setTransform(m_projection * m_view);
     glm::mat4 transform = m_projection * m_view;
 
-    update();
+   // update();
 
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
@@ -174,61 +141,68 @@ void ConvergentCamera::draw(
     initialize(program);
      if(m_invalidated)
         update();
-    FrameBufferObject *left = new FrameBufferObject(
-        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    FrameBufferObject *right = new FrameBufferObject(
-        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT1, true);
+    
+    setFromMatrix();
+    m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
+
+  //  glClear(GL_COLOR_BUFFER_BIT);
+
+    left->resize(m_viewport.x, m_viewport.y);
+    right->resize(m_viewport.x, m_viewport.y);
+
+
     if(left){
         left->bind();
     }
-    left->bindTexture2D(program, "left",0);
-  // if(target)
-   //    glBindFramebuffer(GL_FRAMEBUFFER, target->m_fbo);
-       //target->bind();
-  /*   glActiveTexture(GL_TEXTURE0 + 0);
 
-    glBindTexture(GL_TEXTURE_2D, m_aTexture[0]);
-    glError();
-
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//m_aFramebuffer);
-    glError();
-
-   GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + 0,0};
-
-    glDrawBuffers(2, writebuffers);
-    glError();*/
-
-    setFromMatrix();
-    m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
-    
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
     glViewport(0, 0, m_viewport.x , m_viewport.y);
     glError();
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     
     activateLeftCamera(program,nullptr);
+    left->release();
+
+
+    if(right){
+        right->bind();
+    }
+
+    glViewport(0, 0, m_viewport.x , m_viewport.y);
+    glError();
+    
+    activateRightCamera(program,nullptr);
+    right->release();
+
+
+
+
+
+    
     
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+
+    t_samplerByName sampler;
+    sampler["leftCam"]=left;
+    sampler["rightCam"]=right;
+
+    ScreenQuad *quad = new ScreenQuad();
+    Program *sideBySide = new Program();
+
+    sideBySide->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
+    sideBySide->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/oculusRift.frag"));
+    sideBySide->setUniform("viewport", glm::vec2(m_viewport.x, m_viewport.y));
+   
+    target->bind();
+    bindSampler(sampler,*sideBySide);
+    quad->draw(*sideBySide, nullptr);
+    releaseSampler(sampler);
+    target->release();
+   
+
     setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
 
- /*   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    //if(target)
-    //    target->bind();
-    // copy written buffer to screen/output framebuffer
-
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_aFramebuffer);
-    glReadBuffer(GL_COLOR_ATTACHMENT0 + 0);
-    glError();
-
-    glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);*/
-
-
-
-
-
-
+ 
 
     /*
 
@@ -273,9 +247,30 @@ void ConvergentCamera::draw(
 
     setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
    */
-    if(left){
-        left->release();
-    }
+
    // if(target)
     //  target->release();
+}
+
+void ConvergentCamera::bindSampler(
+
+    const t_samplerByName & sampler
+,   const Program & program)
+{
+    t_samplerByName::const_iterator i(sampler.cbegin());
+    const t_samplerByName::const_iterator iEnd(sampler.cend());
+
+    for(glm::uint slot(0); i != iEnd; ++i, ++slot)
+        i.value()->bindTexture2D(program, i.key(), slot);
+}
+
+void ConvergentCamera::releaseSampler(
+    const t_samplerByName & sampler)
+{
+    t_samplerByName::const_iterator i(sampler.begin());
+    const t_samplerByName::const_iterator iEnd(sampler.cend());
+
+    for(; i != iEnd; ++i)
+        i.value()->releaseTexture2D();
+
 }
