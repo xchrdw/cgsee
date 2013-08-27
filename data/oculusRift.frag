@@ -4,7 +4,7 @@ in vec4 gl_FragCoord;
 in vec2 v_uv;
 out vec4 fragColor;
 
-uniform vec2 viewport;
+uniform ivec2 viewport;
 uniform sampler2D leftCam;
 uniform sampler2D rightCam;
 
@@ -15,7 +15,7 @@ void main()
     
     vec2 uvLeft = vec2(2*v_uv.x,v_uv.y);
     vec2 uvRight = vec2(2*(v_uv.x-0.5),v_uv.y);
-    if(v_uv.x < 0.5/*viewport.x/2*/){
+    if(v_uv.x < 0.5){
         fragColor = texture(leftCam, uvLeft);
     }
     else{

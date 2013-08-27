@@ -23,7 +23,9 @@ static const QString ZFAR_UNIFORM       ("zfar");
 
 ConvergentCamera::ConvergentCamera(const QString & name)
     : AbstractStereoCamera(name),
-    m_focusDistance(5.0f)
+    m_focusDistance(5.0f),
+    left(nullptr),
+    right(nullptr)
 {
 }
 
@@ -32,21 +34,23 @@ ConvergentCamera::~ConvergentCamera(void)
 }
 
 void ConvergentCamera::initialize(const Program & program)
-
 {
-    right = new FrameBufferObject(
-    GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT1, true);
-    left = new FrameBufferObject(
-    GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-
-    
-
+    if(left == nullptr)
+    {
+        left = new FrameBufferObject(
+            GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+    }
+    if( right == nullptr)
+    {
+        right = new FrameBufferObject(
+            GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+    }
 }
 
 void ConvergentCamera::activateRightCamera(const Program & program 
 ,   FrameBufferObject * target)
 {
-    glClear( GL_DEPTH_BUFFER_BIT);
+    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     glm::vec3 cameraPosition = m_virtualCameraPosition+( m_cameraSeparationVector * m_cameraSeparation);
     glm::vec3 viewDirection = m_center - m_virtualCameraPosition;
@@ -64,8 +68,9 @@ void ConvergentCamera::activateRightCamera(const Program & program
         
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
-    glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
+  //  glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
     Group::draw(program, transform);
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 }
 
 void ConvergentCamera::activateLeftCamera(const Program & program
@@ -83,15 +88,16 @@ void ConvergentCamera::activateLeftCamera(const Program & program
     setTransform(m_projection * m_view);
     glm::mat4 transform = m_projection * m_view;
 
-   // update();
+    //update();
 
     program.setUniform(VIEW_UNIFORM, m_view);
     program.setUniform(PROJECTION_UNIFORM, m_projection);
         
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);
-    glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
+    //glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
     Group::draw(program, transform);    
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 }
 
 void ConvergentCamera::draw(
@@ -150,6 +156,9 @@ void ConvergentCamera::draw(
     left->resize(m_viewport.x, m_viewport.y);
     right->resize(m_viewport.x, m_viewport.y);
 
+    ///
+    //render left camera
+    ///
 
     if(left){
         left->bind();
@@ -162,6 +171,10 @@ void ConvergentCamera::draw(
     left->release();
 
 
+    ///
+    //render right camera
+    ///
+
     if(right){
         right->bind();
     }
@@ -173,11 +186,10 @@ void ConvergentCamera::draw(
     right->release();
 
 
+    ///
+    //combine both cameras – side-by-side-rendering / oculus rift
+    ///
 
-
-
-    
-    
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
     t_samplerByName sampler;
@@ -191,15 +203,15 @@ void ConvergentCamera::draw(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
     sideBySide->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/oculusRift.frag"));
-    sideBySide->setUniform("viewport", glm::vec2(m_viewport.x, m_viewport.y));
+    sideBySide->setUniform("viewport", m_viewport);
    
     target->bind();
     bindSampler(sampler,*sideBySide);
     quad->draw(*sideBySide, nullptr);
     releaseSampler(sampler);
     target->release();
-   
 
+    //set camera position, center, up (view matrix) to original position
     setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
 
  
