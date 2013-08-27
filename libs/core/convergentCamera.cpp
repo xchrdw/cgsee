@@ -12,8 +12,6 @@
 #include <QDebug>
 
 
-//#include <core/fileassociatedshader.h>
-
 static const QString VIEWPORT_UNIFORM   ("viewport");
 static const QString VIEW_UNIFORM       ("view");
 static const QString PROJECTION_UNIFORM ("projection");
@@ -24,25 +22,27 @@ static const QString ZFAR_UNIFORM       ("zfar");
 ConvergentCamera::ConvergentCamera(const QString & name)
     : AbstractStereoCamera(name),
     m_focusDistance(5.0f),
-    left(nullptr),
-    right(nullptr)
+    m_left(nullptr),
+    m_right(nullptr)
 {
 }
 
 ConvergentCamera::~ConvergentCamera(void)
 {
+    delete m_left;
+    delete m_right;
 }
 
 void ConvergentCamera::initialize(const Program & program)
 {
-    if(left == nullptr)
+    if(m_left == nullptr)
     {
-        left = new FrameBufferObject(
+        m_left = new FrameBufferObject(
             GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     }
-    if( right == nullptr)
+    if( m_right == nullptr)
     {
-        right = new FrameBufferObject(
+        m_right = new FrameBufferObject(
             GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     }
 }
@@ -106,7 +106,8 @@ void ConvergentCamera::draw(
 {
     return draw(program);
 }
-/*
+
+/* red cyan
 void ConvergentCamera::draw(
     const Program & program
 ,   FrameBufferObject * target)
@@ -151,39 +152,37 @@ void ConvergentCamera::draw(
     setFromMatrix();
     m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
 
-  //  glClear(GL_COLOR_BUFFER_BIT);
-
-    left->resize(m_viewport.x, m_viewport.y);
-    right->resize(m_viewport.x, m_viewport.y);
+    m_left->resize(m_viewport.x, m_viewport.y);
+    m_right->resize(m_viewport.x, m_viewport.y);
 
     ///
     //render left camera
     ///
 
-    if(left){
-        left->bind();
+    if(m_left){
+        m_left->bind();
     }
 
     glViewport(0, 0, m_viewport.x , m_viewport.y);
     glError();
     
     activateLeftCamera(program,nullptr);
-    left->release();
+    m_left->release();
 
 
     ///
     //render right camera
     ///
 
-    if(right){
-        right->bind();
+    if(m_right){
+        m_right->bind();
     }
 
     glViewport(0, 0, m_viewport.x , m_viewport.y);
     glError();
     
     activateRightCamera(program,nullptr);
-    right->release();
+    m_right->release();
 
 
     ///
@@ -193,8 +192,8 @@ void ConvergentCamera::draw(
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
     t_samplerByName sampler;
-    sampler["leftCam"]=left;
-    sampler["rightCam"]=right;
+    sampler["leftCam"]=m_left;
+    sampler["rightCam"]=m_right;
 
     ScreenQuad *quad = new ScreenQuad();
     Program *sideBySide = new Program();
@@ -213,55 +212,6 @@ void ConvergentCamera::draw(
 
     //set camera position, center, up (view matrix) to original position
     setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
-
- 
-
-    /*
-
-    setFromMatrix();
-    m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
-    
-    FrameBufferObject *fboLeftCamera = new FrameBufferObject(
-        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    FrameBufferObject *fboRightCamera = new FrameBufferObject(
-        GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-   
-    //leftCamera
-    t_samplerByName samplerLeft;
-    samplerLeft["leftTexture"] = fboLeftCamera;
-    
-
-    GLenum info = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    glError();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    glViewport(0, 0, m_viewport.x , m_viewport.y);
-    glError();
-    bindSampler(samplerLeft, program);
-    if(fboLeftCamera)
-    {    fboLeftCamera->bind();}
-       
-    activateLeftCamera(program,fboLeftCamera);
-    releaseSampler(samplerLeft);
-
-    //rightCamera
-     if(fboRightCamera)
-        fboRightCamera->bind();
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glViewport(0, 0, m_viewport.x , m_viewport.y);
-    glError();
-
-    activateRightCamera(program,fboRightCamera);
-    
-    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
-
-    setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
-   */
-
-   // if(target)
-    //  target->release();
 }
 
 void ConvergentCamera::bindSampler(
