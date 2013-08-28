@@ -9,6 +9,7 @@
 
 class QFileSystemModel;
 class QMenu;
+class QPoint;
 
 
 class CGSEE_API FileExplorer : public QListView
@@ -38,8 +39,12 @@ public slots:
 	void setRoot(QString rootPath);
 
 protected:
+	void mousePressEvent(QMouseEvent * event);
+	void mouseMoveEvent(QMouseEvent * event);
+	
 	QFileSystemModel * m_model;
 	QMenu * m_menu;
 
 	QModelIndex m_clickedFile;
+	QPoint m_dragStartPosition;
 };
