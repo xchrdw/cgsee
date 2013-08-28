@@ -104,6 +104,11 @@ protected slots:
     void on_primitiveWireframeShadingAction_triggered();
     void on_normalsAction_triggered();
 
+    void on_standardCameraAction_triggered();
+    void on_parallelRedCyanStereoCameraAction_triggered();
+    void on_convergentRedCyanStereoCameraAction_triggered();
+    void on_oculusRiftStereoCameraAction_triggered();
+
     void on_openFileDialogAction_triggered();
     void on_quitAction_triggered();
 

@@ -43,6 +43,7 @@ public:
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
     void sceneChanged(Group * scene);
+    void setCamera(Camera * camera);
 
     glm::mat4 defaultView();
     glm::mat4 frontview();

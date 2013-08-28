@@ -20,6 +20,7 @@ public:
     virtual void paint();
 
     virtual void setShading(char shader) = 0;
+    virtual void setCamera(Camera * camera) = 0;
 
     const QImage capture(
         AbstractGLParent & parent

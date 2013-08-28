@@ -25,6 +25,7 @@ public:
     virtual void paint();
 
     virtual void setShading(char shader);
+    virtual void setCamera(Camera * camera);
 
     virtual void resize(
         const int width

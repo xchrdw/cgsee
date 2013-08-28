@@ -273,6 +273,11 @@ void Painter::setShading(char shader)
 
 }
 
+void Painter::setCamera(Camera * camera)
+{
+    m_camera = camera;
+}
+
 void Painter::postShaderRelinked()
 {
 }

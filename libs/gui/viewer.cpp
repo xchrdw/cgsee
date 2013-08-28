@@ -32,6 +32,10 @@
 #include <core/glformat.h>
 #include <core/assimploader.h>
 
+#include <core/camera.h>
+#include <core/convergentCamera.h>
+#include <core/parallelCamera.h>
+
 
 namespace
 {
@@ -315,6 +319,35 @@ void Viewer::on_normalsAction_triggered()
     m_qtCanvas->painter()->setShading('n');
     m_qtCanvas->repaint();
 }
+
+void Viewer::on_standardCameraAction_triggered()
+{
+    m_camera = new Camera();
+    printf("%s\n", "Std Cam");
+    m_qtCanvas->navigation()->setCamera(m_camera);
+    m_qtCanvas->painter()->setCamera(m_camera);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
+{
+   // glm::ivec2 viewport= m_camera->viewport();
+    float zNear=m_camera->zNear();
+    float zFar=m_camera->zFar();
+    m_camera = new ParallelCamera();
+    m_camera->setZFar(zFar);
+    m_camera->setZNear(zNear);
+    //m_camera->setViewport(viewport);
+    m_qtCanvas->navigation()->setCamera(m_camera);
+    m_qtCanvas->painter()->setCamera(m_camera);
+    m_qtCanvas->repaint();
+}  
+
+void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
+{}
+
+void Viewer::on_oculusRiftStereoCameraAction_triggered()
+{}
 
 
 void Viewer::setNavigation(AbstractNavigation * navigation)

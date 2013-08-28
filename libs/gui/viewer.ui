@@ -142,6 +142,22 @@
     <addaction name="separator"/>
     <addaction name="normalsAction"/>
    </widget>
+   <widget class="QMenu" name="cameraMenu">
+    <property name="title">
+     <string>&amp;Camera</string>
+    </property>
+    <widget class="QMenu" name="selectRedCyanStereoCameraTypeMenu">
+     <property name="title">
+      <string>Red Cyan Stereo Camera</string>
+     </property>
+     <addaction name="parallelRedCyanStereoCameraAction"/>
+     <addaction name="convergentRedCyanStereoCameraAction"/>
+    </widget> 
+    <addaction name="standardCameraAction"/>
+    <addaction name="separator"/>
+    <addaction name="selectRedCyanStereoCameraTypeMenu"/>
+    <addaction name="oculusRiftStereoCameraAction"/>
+   </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>View</string>
@@ -155,6 +171,7 @@
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
    <addaction name="shadingMenu"/>
+   <addaction name="cameraMenu"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -667,7 +684,42 @@
     <string>Normals</string>
    </property>
   </action>
+  <action name="standardCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Standard Camera</string>
+   </property>
+  </action>
+  <action name="parallelRedCyanStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>parallel Cameras</string>
+   </property>
+  </action>
+  <action name="convergentRedCyanStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>convergent Cameras</string>
+   </property>
+  </action>
+  <action name="oculusRiftStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Oculus Rift Stereo-Camera</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
 </ui>
+
+
+ 

@@ -88,6 +88,12 @@ void AbstractNavigation::setCanvas(QWidget * canvas)
     m_canvas = canvas;
 }
 
+void AbstractNavigation::setCamera(Camera * camera)
+{
+    m_camera = camera;
+    updateCamera();
+}
+
 
 /**
 * starts the timer. if it's called multiple times, you need 

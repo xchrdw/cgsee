@@ -26,7 +26,7 @@ ConvergentCamera::ConvergentCamera(const QString & name)
     m_right(nullptr)
 {
 }
-
+ 
 ConvergentCamera::~ConvergentCamera(void)
 {
     delete m_left;
