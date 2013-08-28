@@ -1,8 +1,10 @@
 #pragma once
 
+#include <list>
+
 #include <QString>
-#include <QSet>
-#include <QList>
+//#include <QSet>
+//#include <QList>
 
 #include <core/declspec.h>
 #include <core/aabb.h>
@@ -13,8 +15,8 @@ class Program;
 class CGSEE_API Node
 {
 public:
-    typedef QList<Node *> t_children;
-    typedef QSet<Node *> t_parents;
+    typedef std::list<Node *> t_children;
+    typedef std::list<Node *> t_parents;
 
     enum e_ReferenceFrame
     {
@@ -39,6 +41,7 @@ public:
     const t_children & children() const;
     
     const glm::mat4 & transform() const;
+    const glm::mat4 & transformInverse() const;
     void setTransform(const glm::mat4 & transform);
 
     const e_ReferenceFrame referenceFrame() const;

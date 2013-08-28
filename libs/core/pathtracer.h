@@ -15,14 +15,13 @@ class BufferObject;
 class Program;
 class FrameBufferObject;
 class PathTracingBVH;
-class DataBlockRegistry;
 
 class CGSEE_API PathTracer : public Camera
 {
 public:
     const static QMap<QString, GLuint> textureSlots;
 
-    PathTracer(std::shared_ptr<DataBlockRegistry> registry, const QString & name = "unnamed");
+    PathTracer(const QString & name = "unnamed");
     virtual ~PathTracer();
 
     virtual void draw(
@@ -33,7 +32,6 @@ protected:
     void initialize(const Program & program);
     void initVertexBuffer(const Program & program);
     void initRandomVectorBuffer(const Program & program);
-    void buildBoundingVolumeHierarchy();
 
     void setUniforms(const Program & program);
 
@@ -76,5 +74,4 @@ protected:
     virtual void prepend(Node * node) override;
     virtual void append(Node * node) override;
     virtual void insert(const t_children::iterator & before, Node * node);
-    std::shared_ptr<DataBlockRegistry> m_registry;
 };

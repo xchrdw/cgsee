@@ -54,6 +54,8 @@ set(SOURCES
     scenegraph/cullingvisitor.cpp
     scenegraph/absolutetransformator.h
     scenegraph/absolutetransformator.cpp
+    scenegraph/triangleobject.h
+    scenegraph/triangleobject.cpp
 
     scenegraph/pathtracingvisitor.h
     scenegraph/pathtracingvisitor.cpp

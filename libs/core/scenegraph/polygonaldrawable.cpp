@@ -40,7 +40,7 @@ const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
 //     for( const auto & pos : m_geometry->vertices() ){
 //         m_aabb.extend( pos );
 //     }
-   
+    
     t_VertexListP myVList = m_geometry->vertices();
     AxisAlignedBoundingBox & aabb = m_aabb;
     myVList->foreachVertexAttribute<glm::vec3>(0, myVList->size(), "position", nullptr,
@@ -55,12 +55,10 @@ const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
 
 const AxisAlignedBoundingBox PolygonalDrawable::boundingBox(glm::mat4 transform) const
 {
-    AxisAlignedBoundingBox aabb;
+    AxisAlignedBoundingBox aabb = AxisAlignedBoundingBox();
     glm::mat4 newTransform;
     
     if( m_geometry == nullptr ) {
-        glm::vec3 point = glm::vec3(newTransform * glm::vec4(0.0f));
-        aabb = AxisAlignedBoundingBox(point, point);
         return aabb;
     }
 

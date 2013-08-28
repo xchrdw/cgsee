@@ -1,26 +1,21 @@
 #pragma once
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
 
-#include <vector>
-#include <memory>
-#include <functional>
+#include "core/declspec.h"
 
-#include <core/declspec.h>
-
+class Node;
 
 class CGSEE_API AbsoluteTransformator
 {
 public:
-    AbsoluteTransformator(std::shared_ptr<DataBlockRegistry> registry);
+    AbsoluteTransformator();
     ~AbsoluteTransformator();
 
-    Node *toAbsolute(Node *root);
+    Node *toAbsoluteIgnoreRootTransform(Node *root);
 
 protected:
     Node *toAbsolute(Node *relativeRoot, glm::mat4 transform);
-
-private:
-    std::shared_ptr<DataBlockRegistry> m_registry;
-
+    
+    glm::mat4 m_transform;
 };

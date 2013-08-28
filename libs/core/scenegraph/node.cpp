@@ -56,6 +56,11 @@ const glm::mat4 & Node::transform() const
     return m_transform;
 }
 
+const glm::mat4 & Node::transformInverse() const
+{
+    return m_transformInverse;
+}
+
 void Node::setTransform(const glm::mat4 & transform)
 {
     if(transform == m_transform)

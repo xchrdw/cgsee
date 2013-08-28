@@ -258,9 +258,9 @@ void Painter::paint()
     PathTracer * pathTracer = dynamic_cast<PathTracer*>(m_camera);
 
     if (pathTracer != nullptr){ // pathtracing
-        SceneTraverser traverser;
-        PathTracingVisitor pathTracingVisitor(*m_useProgram, *pathTracer);
-        traverser.traverse(*pathTracer, pathTracingVisitor);
+        //SceneTraverser traverser;
+        //PathTracingVisitor pathTracingVisitor(*m_useProgram, *pathTracer);
+        //traverser.traverse(*pathTracer, pathTracingVisitor);
         pathTracer->draw(*m_useProgram, glm::mat4());
         return;
     }

@@ -26,7 +26,7 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->initialize(format());
 
     //Camera * camera = new Camera();
-    PathTracer * camera = new PathTracer(this->m_registry);
+    PathTracer * camera = new PathTracer();
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
     camera->setZFar (20.0f);

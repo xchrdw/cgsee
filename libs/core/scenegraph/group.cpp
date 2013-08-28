@@ -22,7 +22,7 @@ void Group::draw(const Program & program, const glm::mat4 & transform)
 
 const bool Group::contains(Node * node) const
 {
-    return m_children.contains(node);
+    return std::find(m_children.begin(), m_children.end(), node) != m_children.end();
 }
 
 void Group::insert(const Group::t_children::iterator & before, Group * group)
@@ -41,7 +41,7 @@ void Group::insert(const Group::t_children::iterator & before, Node * node)
         return;
 
     if(!contains(node))
-        node->parents().insert(this);
+        node->parents().push_back(this);
 
     m_children.insert(before, node);
 }
@@ -62,7 +62,7 @@ void Group::prepend(Node * node)
         return;
 
     if(!contains(node))
-        node->parents().insert(this);
+        node->parents().push_back(node);
 
     m_children.push_front(node);
 }
@@ -83,7 +83,7 @@ void Group::append(Node * node)
         return;
 
     if(!contains(node))
-        node->parents().insert(this);
+        node->parents().push_back(this);
 
     m_children.push_back(node);
 }
@@ -121,7 +121,7 @@ const void Group::remove(Node * node, const bool deleteIfParentsEmpty)
     if(!contains(node))
         node->parents().remove(this);
 
-    m_children.removeAll(node);
+    m_children.remove(node);
 
     if(deleteIfParentsEmpty && node->parents().empty())
         delete node;

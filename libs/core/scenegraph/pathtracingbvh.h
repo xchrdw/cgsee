@@ -6,12 +6,11 @@
 #include <core/declspec.h>
 
 class Group;
-class DataBlockRegistry;
 
 class CGSEE_API PathTracingBVH
 {
 public:
-    PathTracingBVH(std::shared_ptr<DataBlockRegistry> registry);
+    PathTracingBVH();
     ~PathTracingBVH();
 
     void buildFlatBVH(Node *node);
@@ -26,12 +25,4 @@ public:
 
 protected:
     std::vector<glm::vec4> *m_geometry;
-    std::shared_ptr<DataBlockRegistry> m_registry;
 };
-
-/*
-TODOs / ideas:
-==============
-- make changing geometry possible (add / remove)
-- handling of vertex normals, attributes, ...
-*/
