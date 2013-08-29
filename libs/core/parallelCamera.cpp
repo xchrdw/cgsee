@@ -17,7 +17,8 @@ static const QString ZFAR_UNIFORM       ("zfar");
 ParallelCamera::ParallelCamera(const QString & name)
     : AbstractStereoCamera(name),
     m_left(nullptr),
-    m_right(nullptr)
+    m_right(nullptr),
+    m_oculus(true)
 {
 }
 
@@ -40,6 +41,16 @@ void ParallelCamera::initialize(const Program & program)
         m_right = new FrameBufferObject(
             GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     }
+}
+
+void ParallelCamera::activateOculusRift()
+{
+    m_oculus=true;
+}
+
+void ParallelCamera::deactivateOculusRift()
+{
+    m_oculus=false;
 }
 
 void ParallelCamera::activateRedCyanRightCamera(const Program & program 
@@ -160,8 +171,14 @@ void ParallelCamera::draw(
     const Program & program
 ,   FrameBufferObject * target)
 {
-    drawRedCyan(program, target);
-    //drawOculusRift(program, target);
+    if(m_oculus)
+    {
+        drawOculusRift(program, target);
+    }
+    else
+    {
+        drawRedCyan(program, target);
+    }
 }
 
 void ParallelCamera::drawRedCyan(

@@ -2,6 +2,7 @@
 <ui version="4.0">
  <class>Viewer</class>
  <widget class="QMainWindow" name="Viewer">
+  <addaction name="toggleFullscreen"/>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -164,6 +165,7 @@
     </property>
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
+    <addaction name="toggleFullscreen"/>   
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
@@ -487,6 +489,14 @@
   <action name="toggleExplorer">
    <property name="text">
     <string>Show/Hide Explorer</string>
+   </property>
+  </action>
+  <action name="toggleFullscreen">
+   <property name="text">
+    <string>Fullscreen</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
    </property>
   </action>
   <action name="actionFrontView">

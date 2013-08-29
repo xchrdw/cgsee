@@ -116,6 +116,7 @@ protected slots:
     
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
+    void on_toggleFullscreen_triggered();
 protected:
 
     void initializeExplorer();
@@ -139,6 +140,9 @@ protected:
 
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
+    bool m_visibleDockNavigator;
+    bool m_visibleDockExplorer;
+    bool m_isFullscreen;
 
     Canvas * m_qtCanvas;
     Camera * m_camera;

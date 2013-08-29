@@ -19,9 +19,12 @@ public:
     virtual void drawRedCyan(const Program & program, FrameBufferObject * target = nullptr);
     virtual void drawOculusRift(const Program & program, FrameBufferObject * target = nullptr);
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
+    void activateOculusRift();
+    void deactivateOculusRift();
 
 protected:
     FrameBufferObject *m_left, *m_right;
+    bool m_oculus;
 
     void initialize(const Program &program);
     static void bindSampler(const t_samplerByName & sampler, const Program & program);

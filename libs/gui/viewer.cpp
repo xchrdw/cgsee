@@ -53,6 +53,7 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
 ,   m_saved_views(4)
+,   m_isFullscreen(false)
 
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
@@ -322,33 +323,107 @@ void Viewer::on_normalsAction_triggered()
 
 void Viewer::on_standardCameraAction_triggered()
 {
+    float zNear=m_camera->zNear();
+    float zFar=m_camera->zFar();
+    glm::ivec2 tempViewport = m_camera->viewport();
     m_camera = new Camera();
-    printf("%s\n", "Std Cam");
-    m_qtCanvas->navigation()->setCamera(m_camera);
+    m_camera->setZFar(zFar);
+    m_camera->setZNear(zNear);
+    
     m_qtCanvas->painter()->setCamera(m_camera);
-    m_qtCanvas->repaint();
+    m_qtCanvas->navigation()->setCamera(m_camera);
+    
+    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+
+    printf("%s\n", "Standard Mono Camera");
 }
 
 void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
 {
-   // glm::ivec2 viewport= m_camera->viewport();
     float zNear=m_camera->zNear();
     float zFar=m_camera->zFar();
+    glm::ivec2 tempViewport = m_camera->viewport();
     m_camera = new ParallelCamera();
     m_camera->setZFar(zFar);
     m_camera->setZNear(zNear);
-    //m_camera->setViewport(viewport);
-    m_qtCanvas->navigation()->setCamera(m_camera);
+    ((ParallelCamera*)m_camera)->deactivateOculusRift();
+    
     m_qtCanvas->painter()->setCamera(m_camera);
-    m_qtCanvas->repaint();
+    m_qtCanvas->navigation()->setCamera(m_camera);
+    
+    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+
+    printf("%s\n", "(Parallel) Red Cyan Stereo Camera");
 }  
 
 void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
-{}
+{
+    float zNear=m_camera->zNear();
+    float zFar=m_camera->zFar();
+    glm::ivec2 tempViewport = m_camera->viewport();
+    m_camera = new ConvergentCamera();
+    m_camera->setZFar(zFar);
+    m_camera->setZNear(zNear);
+    
+    m_qtCanvas->painter()->setCamera(m_camera);
+    m_qtCanvas->navigation()->setCamera(m_camera);
+    
+    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+
+    printf("%s\n", "(Convergent) Red Cyan Stereo Camera");
+}
 
 void Viewer::on_oculusRiftStereoCameraAction_triggered()
-{}
+{
+    float zNear=m_camera->zNear();
+    float zFar=m_camera->zFar();
+    glm::ivec2 tempViewport = m_camera->viewport();
+    m_camera = new ParallelCamera();
+    m_camera->setZFar(zFar);
+    m_camera->setZNear(zNear);
+    ((ParallelCamera*)m_camera)->activateOculusRift();
+    
+    m_qtCanvas->painter()->setCamera(m_camera);
+    m_qtCanvas->navigation()->setCamera(m_camera);
+    
+    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
+    printf("%s\n", "Stereo Camera for Oculus Rift");
+
+    ((QWidget*)m_qtCanvas->parent())->showFullScreen();
+    m_visibleDockNavigator = m_dockNavigator->isVisible();
+    m_dockNavigator->setVisible(false);
+    m_visibleDockExplorer = m_dockExplorer->isVisible();
+    m_dockExplorer->setVisible(false);
+    menuBar()->setVisible(false);
+    statusBar()->setVisible(false);
+    m_isFullscreen=true;
+}
+
+void Viewer::on_toggleFullscreen_triggered()
+{
+    if(!m_isFullscreen)
+    {
+        ((QWidget*)m_qtCanvas->parent())->showFullScreen();
+        m_visibleDockNavigator = m_dockNavigator->isVisible();
+        m_dockNavigator->setVisible(false);
+        m_visibleDockExplorer = m_dockExplorer->isVisible();
+        m_dockExplorer->setVisible(false);
+        menuBar()->setVisible(false);
+        menuBar()->setShortcutEnabled(Qt::Key_Escape,true);
+        statusBar()->setVisible(false);
+        m_isFullscreen=true;
+    }
+    else
+    {
+        ((QWidget*)m_qtCanvas->parent())->showNormal();
+        m_dockExplorer->setVisible(m_visibleDockExplorer);
+        m_dockNavigator->setVisible(m_visibleDockNavigator);
+        menuBar()->setVisible(true);
+        statusBar()->setVisible(true);
+        m_isFullscreen=false;
+    }
+}
 
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
