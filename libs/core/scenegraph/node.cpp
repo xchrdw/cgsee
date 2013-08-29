@@ -8,7 +8,7 @@ Node::Node(const QString & name)
 ,   m_children()
 ,   m_rf(RF_Relative)
 ,   m_transform(glm::mat4(1))
-,   b_selected(false)
+,   m_selected(false)
 {
 }
 
@@ -92,10 +92,10 @@ void Node::setId(const unsigned int id)
 
 const bool Node::selected() const
 {
-    return b_selected;
+    return m_selected;
 }
 
 void Node::setSelected(const bool selected)
 {
-    b_selected = selected;
+    m_selected = selected;
 }

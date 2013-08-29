@@ -63,6 +63,6 @@ protected:
     mutable AxisAlignedBoundingBox m_aabb;
 
     unsigned int m_id;
-    bool b_selected;
+    bool m_selected;
 };
 
