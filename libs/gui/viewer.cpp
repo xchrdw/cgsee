@@ -40,7 +40,11 @@
 
 #include <core/scenegraph/node.h>
 #include <core/scenegraph/group.h>
+#include <core/scenegraph/polygonaldrawable.h>
+#include <core/scenegraph/scenetraverser.h>
 
+
+static const unsigned int BACKGROUND_ID = 4244897280;
 
 namespace
 {
@@ -195,6 +199,22 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
 //     model->appendRow(visitor.m_item);
 // }
 
+void Viewer::assignScene(Group * rootNode)
+{
+    m_nodes.clear();
+
+    SceneTraverser traverser;
+    traverser.traverse(*rootNode, [&] (Node & node) 
+        {
+            if (PolygonalDrawable * drawable = dynamic_cast <PolygonalDrawable *> (& node))
+            {
+                node.setId(this->m_nodes.size());
+                this->m_nodes.push_back(&node);
+            }
+            return true;
+        });
+}
+
 #ifdef WIN32
 const HGLRC Viewer::currentContextHandle()
 {
@@ -339,10 +359,10 @@ void Viewer::on_loadFile(const QString & path)
     if (!scene)
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     else {
+        this->assignScene(scene);
         this->m_qtCanvas->navigation()->rescaleScene(scene);
         // this->m_coordinateProvider->assignCamera(m_camera);
         this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
-        this->m_coordinateProvider->assignScene(scene);
         this->painter()->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
@@ -666,21 +686,22 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
+
 #include <iostream>
 void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
-    if (m_coordinateProvider)
+    if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
-        if (event->button() == Qt::LeftButton)
+        unsigned int id = m_coordinateProvider->objID(event->x(),event->y());
+
+        if (id < BACKGROUND_ID)
         {
-            int x = event->x();
-            int y = event->y();
+            for (auto node : m_nodes)
+                node->setSelected(false);
 
-            std::cout << m_coordinateProvider->objID(x,y) << std::endl;
+            m_nodes.at(id)->setSelected(true);
 
-            glm::dvec3 coordinates = m_coordinateProvider->pointAt(x,y);
-
-            std::cout << "x: " << coordinates.x << " y: " << coordinates.y << " z: " << coordinates.z << std::endl;
+            this->m_qtCanvas->update();
         }
     }
 }

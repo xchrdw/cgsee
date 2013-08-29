@@ -45,6 +45,9 @@ public:
 
     const unsigned int id() const;
     void setId(const unsigned int id);
+
+    const bool selected() const;
+    void setSelected(const bool selected);
     
 //     bool isCircularDependentTo( const Node & other ) const;
 
@@ -60,5 +63,6 @@ protected:
     mutable AxisAlignedBoundingBox m_aabb;
 
     unsigned int m_id;
+    bool b_selected;
 };
 

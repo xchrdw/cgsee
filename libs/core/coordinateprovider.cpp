@@ -14,7 +14,7 @@
 
 CoordinateProvider::CoordinateProvider()
 :   m_pass(nullptr)
-,   m_rootNode(nullptr)
+// ,   m_rootNode(nullptr)
 {
 
 }
@@ -117,12 +117,6 @@ void CoordinateProvider::assignCamera(Camera * camera)
     m_pass = new ColorIdPass(camera);
 }
 
-void CoordinateProvider::assignScene(Group * rootNode)
-{
-    m_rootNode = rootNode;
-    initialize();
-}
-
 void CoordinateProvider::assignPass(RenderingPass * pass)
 {
     m_pass = pass;
@@ -132,20 +126,4 @@ void CoordinateProvider::resize(const int width, const int height)
 {
     if (m_pass)
         m_pass->resize(width, height);
-}
-
-void CoordinateProvider::initialize()
-{
-    m_nodes.clear();
-
-    SceneTraverser traverser;
-    traverser.traverse(*m_rootNode, [&] (Node & node) 
-        {
-            if (PolygonalDrawable * drawable = dynamic_cast <PolygonalDrawable *> (& node))
-            {
-                node.setId(this->m_nodes.size());
-                this->m_nodes.push_back(&node);
-            }
-            return true;
-        });
 }

@@ -144,6 +144,7 @@ protected:
         QWidget * widget, Qt::DockWidgetArea area);
     void createSceneHierarchy(QStandardItemModel * model, Node * parentNode);
     void fillSceneHierarchy(Node * node, QStandardItem * parent);
+    void assignScene(Group * rootNode);
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -177,4 +178,5 @@ protected:
     AbstractModelLoader * m_loader;
 
     CoordinateProvider * m_coordinateProvider;
+    QVector<Node *> m_nodes;
 };
