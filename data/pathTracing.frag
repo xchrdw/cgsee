@@ -102,11 +102,8 @@ void main()
         rndVec = texelFetch(randomVectors, int(rand*numRnd)+i+1).xyz;
         //TODO: problems in both implementations: some strange rendering artifacts, 
         //different colors for the same object from different angles
-        //works for 1 x aabb + triangles
         rayBVHIntersection(currentRay, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
-        //works:
-        //rayTriangleIntersection(currentRay, primaryNearestIndex, primaryTriangle, primaryIntersectionPoint);
-
+        
         if (primaryNearestIndex == -1) {
             addedColor += skybox(currentRay.direction) / (i + 1);
             break;
@@ -208,7 +205,6 @@ float rayTriangleIntersectionDistance(
     return dot (edge1, qvec) * inv_det;
 }
 
-//TODO test
 void rayBVHIntersection(
     in Ray ray,
     out int nearestIndex, out vec3 triangle[3], out vec3 intersectionPoint)
@@ -227,8 +223,6 @@ void rayBVHIntersection(
     //distanceOfCurrent = INFINITY;
     datapos = 0;
     
-    //TODO
-    
     while (datapos < numIndices)
     {
         
@@ -239,8 +233,8 @@ void rayBVHIntersection(
         //algorithm only works for non-intersection bounding boxes!
         if (data_a.w == 0.0) // current node is an aabb
         {
-            //TODO: overlapping boxes: we need a list of tmin variables
-            //TODO!!!!!!!!!!: if ray is inside box?!?
+            //TODO: overlapping boxes are not handled explicitely. Is that a problem? How can we deal with it if it is a problem? 
+            //TODO: handle the case that the ray is inside the aabb
             rayBoxIntersectionDistances(ray, vec3[2] (data_a.xyz, data_b.xyz), tmin, tmax );
             //TODO: replace if with mix()
             if (!(      tmin < tmax //ray intersects bounding box
