@@ -15,7 +15,6 @@
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
-#include <core/scenegraph/pathtracingvisitor.h>
 #include <core/objloader.h>
 #include <core/assimploader.h>
 #include <core/program.h>

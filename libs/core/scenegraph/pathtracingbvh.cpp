@@ -64,10 +64,16 @@ void PathTracingBVH::addToGeometry(Node *node) {
             addToGeometry(child);
         }
     }
-    m_geometry->at(aabbIndex) = glm::vec4(aabb.llf(), 0.0f); //data1
+    glm::vec3 aabbEnlargement = aabb.radius() * glm::vec3(0.000001f, 0.000001f, 0.000001f);
+    m_geometry->at(aabbIndex) = glm::vec4(
+        aabb.llf() - aabbEnlargement, //llf
+        0.0f //we are a bounding box
+    ); //data1
     m_geometry->at(aabbIndex + 1) = glm::vec4(
-        aabb.urb(), 
-        float(m_geometry->size()) // points to one behind the last entry in geometry list
+        aabb.urb() + aabbEnlargement, //urb 
+        float(m_geometry->size()) // points to one behind the last entry in geometry list, 
+        // that is the next object on the same hierarchy level (or a higher hierarchy level 
+        // if there is none on the same)
     ); //data2
 
 }
