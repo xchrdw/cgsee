@@ -225,6 +225,10 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
     CanvasExporter::save(*m_qtCanvas, this, true);
 }
 
+void Viewer::on_enableCullingAction_triggered() {
+    m_qtCanvas->painter()->setViewFrustumCulling(m_ui->enableCullingAction->isChecked());
+}
+
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();

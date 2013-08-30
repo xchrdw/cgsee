@@ -29,20 +29,22 @@ CullingVisitor::~CullingVisitor()
 }
 
 bool CullingVisitor::operator() (Node &node) {
-    bool returnValue;
-    node.draw(*m_program, m_transform);
+    bool returnValue, drawNode;
     if (m_cull) {
         switch (m_viewFrustum->contains(node.boundingBox(), m_transform)) {
         case ViewFrustum::e_insideFrustum::INSIDE_FRUSTUM:
             m_cull = false;
-            returnValue = true;
+            returnValue = drawNode = true;
         case ViewFrustum::e_insideFrustum::OUTSIDE_FRUSTUM:
             //YAY - culled!
-            returnValue = false;
+            returnValue = drawNode = false;
         default: //ViewFrustum::e_insideFrustum::INTERSECTS_FRUSTUM:
             m_cull = true;
-            returnValue = true;
+            returnValue = drawNode = true;
         }
+    }
+    if (drawNode) {
+        node.draw(*m_program, m_transform);
     }
 
     if( Node::RF_Relative == node.referenceFrame() )

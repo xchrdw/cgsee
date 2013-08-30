@@ -33,6 +33,9 @@ public:
     virtual void resize(const int width, const int height);
     virtual void postShaderRelinked() override;
     
+    virtual void setViewFrustumCulling(bool viewFrustumCullingEnabled) override;
+    virtual bool isViewFrustumCullingEnabled() override;
+
 protected:
     virtual const bool initialize() override;
     virtual Camera * camera() override;

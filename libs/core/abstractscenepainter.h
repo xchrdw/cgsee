@@ -13,7 +13,9 @@ public:
     virtual void setShading(char shader) = 0;
     virtual void setFrameBuffer(int frameBuffer) = 0;
     virtual void setEffect(int effect, bool active) = 0;
-    
+    virtual void setViewFrustumCulling(bool viewFrustumCullingEnabled) = 0;
+    virtual bool isViewFrustumCullingEnabled() = 0;
+
     virtual void postShaderRelinked() = 0;
 
     void assignScene(Group * scene);
@@ -22,4 +24,6 @@ public:
 protected:
     virtual void sceneChanged(Group * scene);
     Group * m_scene;
+    bool m_viewFrustumCulling;
+
 };

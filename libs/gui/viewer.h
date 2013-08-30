@@ -96,6 +96,7 @@ public slots:
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
+    void on_enableCullingAction_triggered();
 
     void on_reloadAllShadersAction_triggered();
     void on_phongShadingAction_triggered();
