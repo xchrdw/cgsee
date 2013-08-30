@@ -20,48 +20,6 @@ set(SOURCES
     abstractpainter.cpp
     abstractscenepainter.h
     abstractscenepainter.cpp
-
-    datacore/datablock.h
-    datacore/datablock.cpp
-    datacore/attributeiterator.h
-    datacore/attributeiterator_impl.inl
-    datacore/vertexlist.h
-    datacore/vertexlist.cpp
-    datacore/vertexindexlist.h
-    datacore/vertexindexlist.cpp
-    datacore/vertexindexlist_impl.inl
-    datacore/typefunctions.h
-    datacore/typefunctions.cpp
-    datacore/registertypeshere.h
-    datacore/vertexlist_impl.inl
-    datacore/datablock_impl.inl
-    
-    scenegraph/node.h
-    scenegraph/node.cpp
-    scenegraph/group.h
-    scenegraph/group.cpp
-    scenegraph/polygonaldrawable.h
-    scenegraph/polygonaldrawable.cpp
-    scenegraph/polygonalgeometry.h
-    scenegraph/polygonalgeometry.cpp
-    scenegraph/scenetraverser.h
-    scenegraph/scenetraverser.cpp
-    scenegraph/SceneVisitorInterface.h
-    scenegraph/drawvisitor.h
-    scenegraph/drawvisitor.cpp
-
-    scenegraph/cullingvisitor.h
-    scenegraph/cullingvisitor.cpp
-    scenegraph/absolutetransformator.h
-    scenegraph/absolutetransformator.cpp
-    scenegraph/triangleobject.h
-    scenegraph/triangleobject.cpp
-
-    scenegraph/pathtracingvisitor.h
-    scenegraph/pathtracingvisitor.cpp
-    scenegraph/pathtracingbvh.h
-    scenegraph/pathtracingbvh.cpp
-    
     abstracttimer.h
     assimploader.h
     assimploader.cpp
@@ -74,6 +32,22 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+
+    datacore/attributeiterator.h
+    datacore/attributeiterator_impl.inl
+    datacore/datablock.h
+    datacore/datablock.cpp
+    datacore/datablock_impl.inl
+    datacore/registertypeshere.h
+    datacore/typefunctions.h
+    datacore/typefunctions.cpp
+    datacore/vertexindexlist.h
+    datacore/vertexindexlist.cpp
+    datacore/vertexindexlist_impl.inl
+    datacore/vertexlist.h
+    datacore/vertexlist.cpp
+    datacore/vertexlist_impl.inl
+    
     fileassociatedshader.h
     fileassociatedshader.cpp
     framebufferobject.h
@@ -102,6 +76,29 @@ set(SOURCES
     pathtracer.cpp
     program.h
     program.cpp
+
+    scenegraph/absolutetransformator.h
+    scenegraph/absolutetransformator.cpp
+    scenegraph/cullingvisitor.h
+    scenegraph/cullingvisitor.cpp
+    scenegraph/drawvisitor.h
+    scenegraph/drawvisitor.cpp
+    scenegraph/group.h
+    scenegraph/group.cpp
+    scenegraph/node.h
+    scenegraph/node.cpp
+    scenegraph/pathtracingbvh.cpp
+    scenegraph/pathtracingbvh.h    
+    scenegraph/polygonaldrawable.h
+    scenegraph/polygonaldrawable.cpp
+    scenegraph/polygonalgeometry.h
+    scenegraph/polygonalgeometry.cpp
+    scenegraph/scenetraverser.h
+    scenegraph/scenetraverser.cpp
+    scenegraph/SceneVisitorInterface.h
+    scenegraph/triangleobject.h
+    scenegraph/triangleobject.cpp
+
     screenquad.h
     screenquad.cpp
     shader.h

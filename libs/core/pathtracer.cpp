@@ -260,8 +260,7 @@ void PathTracer::draw(
     //     -> requieres new SceneGraph + Iterators
     if (m_invalidatedGeometry) {
         // rebuild bounding volume hierarchy :
-        m_bvh->buildFlatBVH(this);
-        //m_bvh->buildBVHFromObjectsHierarchy(this);
+        m_bvh->buildBVHFromObjectsHierarchy(this);
         m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
         m_invalidatedGeometry = false;
     }
