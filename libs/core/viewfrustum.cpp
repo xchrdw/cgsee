@@ -16,7 +16,6 @@ ViewFrustum::ViewFrustum(Camera *camera) :
 }
 
 ViewFrustum::e_insideFrustum ViewFrustum::contains(const AxisAlignedBoundingBox &aabb, glm::mat4 transform) const {
-    //TODO: what happens if the bounding sphere completely contains the view frustum?
 
     bool sphereCompletelyInsideFrustum = true;
 
