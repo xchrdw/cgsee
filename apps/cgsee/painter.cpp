@@ -1,6 +1,5 @@
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/random.hpp>
 #include <QDebug>
 
 #include "painter.h"
@@ -22,6 +21,11 @@
 #include <core/screenquad.h>
 #include "core/navigation/arcballnavigation.h"
 #include "core/navigation/flightnavigation.h"
+#include "core/rendering/ssaoeffect.h"
+#include "core/rendering/blureffect.h"
+#include "core/rendering/shadowmapping.h"
+#include "core/rendering/normalzpass.h"
+#include "core/rendering/lightsource.h"
 
 
 //for phong, flat and gouraud
@@ -35,24 +39,12 @@ static const QString LIGHTPOSITION_UNIFORM ("lightposition");
 //gooch
 static const QString WARMCOLDCOLOR_UNIFORM ("warmcoldcolor");
 
-const glm::mat4 Painter::biasMatrix (
-    0.5, 0.0, 0.0, 0.0,
-    0.0, 0.5, 0.0, 0.0,
-    0.0, 0.0, 0.5, 0.0,
-    0.5, 0.5, 0.5, 1.0
-);
-
 
 Painter::Painter(Camera * camera)
 :   AbstractScenePainter()
 ,   m_quad(nullptr)
 ,   m_normals(nullptr)
 ,   m_normalz(nullptr)
-,   m_lightsource(nullptr)
-,   m_shadowMapping(nullptr)
-,   m_SSAO(nullptr)
-,   m_blurv(nullptr)
-,   m_blurh(nullptr)
 ,   m_wireframe(nullptr)
 ,   m_primitiveWireframe(nullptr)
 ,   m_solidWireframe(nullptr)
@@ -61,53 +53,16 @@ Painter::Painter(Camera * camera)
 ,   m_phong(nullptr)
 ,   m_gooch(nullptr)
 ,   m_useProgram(nullptr)
-,   m_fboNormalz(nullptr)
 ,   m_fboColor(nullptr)
 ,   m_fboTemp(nullptr)
-,   m_fboShadows(nullptr)
-,   m_fboSSAO(nullptr)
-,   m_fboShadowMap(nullptr)
 ,   m_fboActiveBuffer(nullptr)
 ,   m_flush(nullptr)
+,   m_shadows(nullptr)
 ,   m_camera(camera)
 ,   m_useColor(true)
-,   m_useShadows(true)
-,   m_blurShadows(true)
-,   m_useSSAO(true)
-,   m_blurSSAO(true)
-,   m_kernel(128)
-,   m_noise(16)
-,   m_shadow_samples(128)
+,   m_passes()
 {
-    m_lightcam = new Camera();
-    m_lightcam->setViewport(camera->viewport());
-    m_lightcam->setFovy(camera->fovy());
-    m_lightcam->setZFar(camera->zFar());
-    m_lightcam->setZNear(camera->zNear());
 
-    for (int i = 0; i < m_kernel.size(); ++i) {
-        m_kernel[i] = glm::normalize(glm::vec3(
-            glm::linearRand(-1.0f, 1.0f),
-            glm::linearRand(-1.0f, 1.0f),
-            glm::linearRand(0.0f, 1.0f)));
-            
-            float scale = glm::linearRand(0.0f, 1.0f);
-            scale = glm::mix(0.1f, 1.0f, scale * scale);
-            m_kernel[i] *= scale;
-    }
-
-    for (int i = 0; i < m_noise.size(); ++i) {
-        m_noise[i] = glm::normalize(glm::vec3(
-            glm::linearRand(-1.0f, 1.0f),
-            glm::linearRand(-1.0f, 1.0f),
-            0.0f));
-    }
-
-    for (int i = 0; i < m_shadow_samples.size(); ++i) {
-        m_shadow_samples[i] = glm::vec2(
-            glm::linearRand(-1.0f, 1.0f),
-            glm::linearRand(-1.0f, 1.0f));
-    }
 }
 
 Painter::~Painter()
@@ -115,11 +70,10 @@ Painter::~Painter()
     delete m_quad;
     delete m_normals;
     delete m_normalz;
-    delete m_lightsource;
-    delete m_shadowMapping;
-    delete m_SSAO;
-    delete m_blurv;
-    delete m_blurh;
+    delete m_shadows;
+    delete m_shadowBlur;
+    delete m_ssao;
+    delete m_ssaoBlur;
     delete m_flat;
     delete m_gouraud;
     delete m_phong;
@@ -128,10 +82,7 @@ Painter::~Painter()
     delete m_primitiveWireframe;
     delete m_solidWireframe;
     delete m_fboColor;
-    delete m_fboNormalz;
-    delete m_fboShadows;
-    delete m_fboShadowMap;
-    delete m_fboSSAO;
+
     delete m_flush;
 }
 
@@ -153,38 +104,8 @@ const bool Painter::initialize()
     m_normals->attach(new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/normals.geo"));
     m_normals->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/normals.vert"));
 
-    // NORMALZ
-    m_normalz = new Program();
-    m_normalz->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
-    m_normalz->attach(depth_util);
-    m_normalz->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
-    
-    // SHADOWS
-    m_lightsource = new Program();
-    m_lightsource->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/lightsource.frag"));
-    m_lightsource->attach(depth_util);
-    m_lightsource->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/lightsource.vert"));
-
-    m_shadowMapping = new Program();
-    m_shadowMapping->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/shadowmapping.frag"));
-    m_shadowMapping->attach(depth_util);
-    m_shadowMapping->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/shadowmapping.vert"));
 
     FileAssociatedShader * screenQuadShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert");
-
-    // SSAO
-    m_SSAO = new Program();
-    m_SSAO->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/ssao.frag"));
-    m_SSAO->attach(screenQuadShader);
-
-    // Blur
-    m_blurv = new Program();
-    m_blurv->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/gauss_blur_5_v.frag"));
-    m_blurv->attach(screenQuadShader);
-
-    m_blurh = new Program();
-    m_blurh->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/gauss_blur_5_h.frag"));
-    m_blurh->attach(screenQuadShader);
 
     FileAssociatedShader *wireframeShader = new FileAssociatedShader(GL_VERTEX_SHADER, "data/wireframe/wireframe.vert");
     FileAssociatedShader *wireframeShaderGEO = new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/wireframe/wireframe.geo");
@@ -239,21 +160,31 @@ const bool Painter::initialize()
     //set UNIFORMS for selected shader
     m_useProgram = m_flat;
     setUniforms();
-    setShaderProperties();
 
     // Post Processing Shader
     m_flush = new Program();
     m_flush->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/flush.frag"));
     m_flush->attach(screenQuadShader);
-    
-    m_fboNormalz = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+
     m_fboColor = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_fboTemp = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    m_fboShadows = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    m_fboShadowMap = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-    m_fboSSAO = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+
+    m_normalz = new NormalzPass(m_camera, depth_util);
+    m_lightsource = new LightSourcePass(m_camera, depth_util);
+    m_shadows = new ShadowMappingPass(m_camera, depth_util, m_lightsource);
+    m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows, m_fboTemp);
+    m_ssao = new SSAOEffect(m_camera, m_quad, screenQuadShader, m_normalz->output());
+    m_ssaoBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_ssao, m_fboTemp);
     
-    m_fboActiveBuffer = &m_fboColor;
+    m_passes.append(m_normalz);
+    m_passes.append(m_lightsource);
+    m_passes.append(m_shadows);
+    m_passes.append(m_shadowBlur);
+    m_passes.append(m_ssao);
+    m_passes.append(m_ssaoBlur);
+
+
+    m_fboActiveBuffer = m_fboColor;
 
     return true;
 }
@@ -304,24 +235,9 @@ void Painter::setUniforms()
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
 
-    m_shadowMapping->setUniform("samples", &m_shadow_samples[0], m_shadow_samples.size());
-    m_SSAO->setUniform("kernel", &m_kernel[0], m_kernel.size());
-    m_SSAO->setUniform("noise", &m_noise[0], m_noise.size());
-    
-}
 
-// some time in the future this may be variable properties 
-void Painter::setShaderProperties() {
-    m_shadowMapping->setUniform("lightSize", 0.03f); 
-    m_shadowMapping->setUniform("searchWidth", 0.02f); 
-    m_shadowMapping->setUniform("zOffset",  0.0015f); 
-    m_shadowMapping->setUniform("sample_count", 24); // usefull range: 0-128
-    
-    m_SSAO->setUniform("sample_count", 32); // usefull range: 0-128
-    m_SSAO->setUniform("zOffset", 0.005f); 
-    m_SSAO->setUniform("filterRadius", 0.05f);
-}
 
+}
 
 void Painter::paint()
 {
@@ -333,31 +249,20 @@ void Painter::paint()
     // update() is called for each paint as a hot fix.
     m_camera->update();
 
-    drawScene(m_camera, m_normalz, m_fboNormalz);
-
     if(m_useColor)
         drawScene(m_camera, m_useProgram, m_fboColor);
     else
         m_fboColor->clear();
 
-    if(m_useShadows)
-        createShadows();
-    
-    if(m_useShadows && m_blurShadows)
-        addBlur(m_fboShadows);
-
-    if(m_useSSAO)
-        createSSAO();
-
-    if(m_useSSAO && m_blurSSAO) 
-        addBlur(m_fboSSAO);
-    
+    for (RenderingPass * pass : m_passes) {
+        pass->applyIfActive();
+    }
 
     sampler.clear();
-    sampler["source"] = *m_fboActiveBuffer;
-    if(*m_fboActiveBuffer == m_fboColor) {
-        sampler["shadows"] = m_fboShadows;
-        sampler["ssao"] = m_fboSSAO;
+    sampler["source"] = m_fboActiveBuffer;
+    if(m_fboActiveBuffer == m_fboColor) {
+        sampler["shadows"] = m_shadows->output();
+        sampler["ssao"] = m_ssao->output();
     } else { // dont render effects
         m_fboTemp->clear();
         sampler["shadows"] = m_fboTemp;
@@ -379,72 +284,19 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
     fbo->release();
 }
 
-void Painter::createShadows()
-{
-    t_samplerByName sampler;
 
-    drawScene(m_lightcam, m_lightsource, m_fboShadowMap);
-
-    sampler["shadowMap"] = m_fboShadowMap;
-
-    bindSampler(sampler, *m_shadowMapping);
-    m_shadowMapping->setUniform("invCameraTransform", glm::inverse(m_camera->transform()), false);
-    m_shadowMapping->setUniform("LightSourceTransform", biasMatrix * m_lightcam->transform(), false);
-    drawScene(m_camera, m_shadowMapping, m_fboShadows);
-    releaseSampler(sampler);
-}
-
-void Painter::createSSAO()
-{
-    t_samplerByName sampler;
-
-    sampler["normalz"] = m_fboNormalz;
-
-    bindSampler(sampler, *m_SSAO);
-    m_SSAO->setUniform("viewport", m_camera->viewport());
-    m_quad->draw(*m_SSAO, m_fboSSAO);
-    releaseSampler(sampler);
-    
-}
-
-void Painter::addBlur(FrameBufferObject * fbo)
-{
-    t_samplerByName sampler;
-
-    sampler["source"] = fbo;
-    bindSampler(sampler, *m_blurv);
-    m_blurv->setUniform("viewport", m_camera->viewport());
-    m_quad->draw(*m_blurv, m_fboTemp);
-    releaseSampler(sampler);    
-    sampler.clear();
-
-    sampler["source"] = m_fboTemp;
-    bindSampler(sampler, *m_blurh);
-    m_blurh->setUniform("viewport", m_camera->viewport());
-    m_quad->draw(*m_blurh, fbo);
-    releaseSampler(sampler);
-}
-
-
-void Painter::resize(  //probably never called anywhere?
-    const int width
-,   const int height)
+void Painter::resize(const int width, const int height)
 {
     AbstractPainter::resize(width, height);
-
+    for (RenderingPass * pass : m_passes) {
+        pass->resize(width, height);
+    }
     m_camera->setViewport(width, height);
-    m_lightcam->setViewport(width, height);
-    m_lightcam->update();
 
-    m_fboNormalz->resize(width, height);
     m_fboColor->resize(width, height);
     m_fboTemp->resize(width, height);
-    m_fboShadows->resize(width, height);
-    m_fboShadowMap->resize(width, height);
-    m_fboSSAO->resize(width, height);
 
     postShaderRelinked();
-
 }
 
 void Painter::setShading(char shader)
@@ -467,37 +319,38 @@ void Painter::setShading(char shader)
 
 void Painter::setFrameBuffer(int frameBuffer)
 {
-    switch(frameBuffer) 
+    switch(frameBuffer)
     {
-        case 1: m_fboActiveBuffer = &m_fboColor; std::printf("\nColor Buffer\n"); break;
-        case 2: m_fboActiveBuffer = &m_fboNormalz; std::printf("\nNormal Buffer\n"); break;
-        case 3: m_fboActiveBuffer = &m_fboShadows; std::printf("\nShadows Buffer\n"); break;
-        case 4: m_fboActiveBuffer = &m_fboShadowMap; std::printf("\nShadowMap Buffer\n"); break;
-        case 5: m_fboActiveBuffer = &m_fboSSAO; std::printf("\nSSAO Buffer\n"); break;
+        case 1: m_fboActiveBuffer = m_fboColor; std::printf("\nColor Buffer\n"); break;
+        case 2: m_fboActiveBuffer = m_normalz->output(); std::printf("\nNormal Buffer\n"); break;
+        case 3: m_fboActiveBuffer = m_shadows->output(); std::printf("\nShadows Buffer\n"); break;
+        case 4: m_fboActiveBuffer = m_lightsource->output(); std::printf("\nShadowMap Buffer\n"); break;
+        case 5: m_fboActiveBuffer = m_ssao->output(); std::printf("\nSSAO Buffer\n"); break;
     }
 }
 
-void Painter::setEffect( int effect, bool active )
+void Painter::setEffect(int effect, bool value)
 {
-    switch(effect) 
+    switch(effect)
     {
-        case 1: m_useColor = active; std::printf("\nColor toggled\n"); break;
-        case 2: m_useShadows = active; std::printf("\nShadow toggled\n"); break;
-        case 3: m_blurShadows = active; std::printf("\nShadow blur toggled\n"); break;
-        case 4: m_useSSAO = active; std::printf("\nSSAO toggled\n"); break;
-        case 5: m_blurSSAO = active; std::printf("\nSSAO blur toggled\n"); break;
+        case 1: m_useColor = value; std::printf("\nColor toggled\n"); break;
+        case 2: m_shadows->setActive(value); std::printf("\nShadow toggled\n"); break;
+        case 3: m_shadowBlur->setActive(value); std::printf("\nShadow blur toggled\n"); break;
+        case 4: m_ssao->setActive(value); std::printf("\nSSAO toggled\n"); break;
+        case 5: m_ssaoBlur->setActive(value); std::printf("\nSSAO blur toggled\n"); break;
     }
-
-    m_fboShadows->clear();
-    m_fboSSAO->clear();
 }
 
 void Painter::postShaderRelinked()
 {
+    setUniforms();
+    m_shadows->setUniforms();
+    m_shadowBlur->setUniforms();
+    m_ssao->setUniforms();
+    m_ssaoBlur->setUniforms();
 }
 
 void Painter::bindSampler(
-
     const t_samplerByName & sampler
 ,   const Program & program)
 {
@@ -526,11 +379,8 @@ Camera * Painter::camera()
 
 void Painter::sceneChanged(Group * scene)
 {
-    if(m_scene)
-        m_lightcam->remove(m_scene);
-    m_lightcam->append(scene);
-
-    AxisAlignedBoundingBox bb = scene->boundingBox();
-    m_lightcam->setView(glm::lookAt(glm::vec3(3.5, 5.0, 5.5)+bb.center(), bb.center(), glm::vec3(0.0,1.0,0.0)));
-
+    for (RenderingPass * pass : m_passes) 
+    {
+        pass->sceneChanged(scene);
+    }
 }
