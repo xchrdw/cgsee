@@ -15,6 +15,8 @@ public:
     virtual void activateLeftCamera(const Program & program,   FrameBufferObject * target);
     virtual void draw(const Program & program, FrameBufferObject * target = nullptr);
     virtual void draw(const Program & program, const glm::mat4 & transform);
+    virtual void setCameraSeparation(float cameraSeparation);
+    void setFocusDistance(float focusDistance);
 
 protected:
     float m_focusDistance;

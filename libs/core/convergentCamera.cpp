@@ -33,6 +33,16 @@ void ConvergentCamera::initialize(const Program & program)
 {
 }
 
+void ConvergentCamera::setCameraSeparation(float cameraSeparation)
+{
+    m_cameraSeparation = cameraSeparation;
+}
+
+void ConvergentCamera::setFocusDistance(float focusDistance)
+{
+    m_focusDistance = focusDistance;
+}
+
 void ConvergentCamera::activateRightCamera(const Program & program 
 ,   FrameBufferObject * target)
 {

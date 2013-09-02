@@ -43,6 +43,11 @@ void ParallelCamera::initialize(const Program & program)
     }
 }
 
+void ParallelCamera::setCameraSeparation(float cameraSeparation)
+{
+    m_cameraSeparation = cameraSeparation;
+}
+
 void ParallelCamera::activateOculusRift()
 {
     m_oculus=true;

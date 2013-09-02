@@ -10,6 +10,7 @@ class CGSEE_API ParallelCamera :
 public:
 	ParallelCamera(const QString & name = "unnamed"); 
 	~ParallelCamera(void);
+    virtual void setCameraSeparation(float cameraSeparation);
     virtual void activateOculusRiftRightCamera(const Program & program, FrameBufferObject * target);
     virtual void activateOculusRiftLeftCamera(const Program & program, FrameBufferObject * target);
     virtual void activateRedCyanRightCamera(const Program & program, FrameBufferObject * target);

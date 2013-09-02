@@ -87,7 +87,8 @@ void Painter::setConvergentCameraFocus(AbstractProperty & p)
     if(dynamic_cast<ConvergentCamera*>(m_camera))
     {
         qDebug("set ConvergentCameraFocus");
-        //  ((ConvergentCamera*)m_camera)->setFocusDistance(p.);
+        ((ConvergentCamera*)m_camera)->setFocusDistance(p.to<LimitedProperty<float>>()->value());
+        //resize(m_camera->viewport().x,m_camera->viewport().y);
     }
     
 }
@@ -98,7 +99,8 @@ void Painter::setStereoCameraSeparation(AbstractProperty & p)
     if(dynamic_cast<AbstractStereoCamera*>(m_camera))
     {
         qDebug("set StereoCameraSeparation");
-        //  ((ParallelCamera*)m_camera)->setCameraSeparation(p.);
+       ((AbstractStereoCamera*)m_camera)->setCameraSeparation(p.to<LimitedProperty<float>>()->value());
+       //resize(m_camera->viewport().x,m_camera->viewport().y);
     }
   
 }
@@ -111,22 +113,11 @@ const bool Painter::initialize()
         m_camera->append(m_scene);
     }
 
-
-
-
-
-    LimitedProperty<float> * cameraSeparationLevel = new LimitedProperty<float>("cameraSeparation", "Camera-Separation:", 10.3f, 4.111f, 12.3f);
-    LimitedProperty<float> * focusdistanceLevel = new LimitedProperty<float>("focusdistance", "Focus-Distance:", 10.3f, 4.111f, 12.3f);
+    LimitedProperty<float> * cameraSeparationLevel = new LimitedProperty<float>("cameraSeparation", "Camera-Separation:", 0.5f, 0.0f, 12.3f);
+    LimitedProperty<float> * focusdistanceLevel = new LimitedProperty<float>("focusdistance", "Focus-Distance:", 0.5f, 0.0f, 12.3f);
     
     m_propertylist->add(cameraSeparationLevel);
     cameraSeparationLevel->subscribe(LimitedProperty<float>::kValueChanged, this, &Painter::setStereoCameraSeparation);
- 
-
-    //mit_maden->subscribe(ValueProperty<bool>::kValueChanged, this, &Painter::helloWord);
-    //mit_maden->subscribe(ValueProperty<bool>::kValueChanged, [] (AbstractProperty & property) {
-    //    qDebug("hello Lambda!");
-    //});
-
 
     m_quad = new ScreenQuad();
 
@@ -238,7 +229,7 @@ const bool Painter::initialize()
     PropertyWidgetBuilder builder2;
     builder2.buildWidget(m_propertylist->list());
     builder2.retainWidget()->hide();
-
+    builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
 
 
     return true;
