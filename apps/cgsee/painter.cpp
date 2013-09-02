@@ -1,6 +1,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <QDebug>
+#include <QWidget>
 
 #include "painter.h"
 
@@ -8,6 +9,8 @@
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
+#include <core/parallelCamera.h>
+#include <core/convergentCamera.h>
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
@@ -18,6 +21,13 @@
 #include <core/screenquad.h>
 #include "core/navigation/arcballnavigation.h"
 #include "core/navigation/flightnavigation.h"
+
+#include <core/property/advancedlistproperty.h>
+#include <core/property/valueproperty.h>
+#include <core/property/limitedproperty.h>
+#include <core/property/propertylist.h>
+#include <core/property/announcer.h>
+#include <gui/propertywidgetbuilder.h>
 
 
 
@@ -67,6 +77,32 @@ Painter::~Painter()
     delete m_flush;
 }
 
+void Painter::helloWord(AbstractProperty & property)
+{
+    qDebug("hello world!");
+}
+
+void Painter::setConvergentCameraFocus(AbstractProperty & p)
+{
+    if(dynamic_cast<ConvergentCamera*>(m_camera))
+    {
+        qDebug("set ConvergentCameraFocus");
+        //  ((ConvergentCamera*)m_camera)->setFocusDistance(p.);
+    }
+    
+}
+
+void Painter::setStereoCameraSeparation(AbstractProperty & p)
+{
+    
+    if(dynamic_cast<AbstractStereoCamera*>(m_camera))
+    {
+        qDebug("set StereoCameraSeparation");
+        //  ((ParallelCamera*)m_camera)->setCameraSeparation(p.);
+    }
+  
+}
+
 const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
@@ -74,6 +110,23 @@ const bool Painter::initialize()
     if(m_scene) {
         m_camera->append(m_scene);
     }
+
+
+
+
+
+    LimitedProperty<float> * cameraSeparationLevel = new LimitedProperty<float>("cameraSeparation", "Camera-Separation:", 10.3f, 4.111f, 12.3f);
+    LimitedProperty<float> * focusdistanceLevel = new LimitedProperty<float>("focusdistance", "Focus-Distance:", 10.3f, 4.111f, 12.3f);
+    
+    m_propertylist->add(cameraSeparationLevel);
+    cameraSeparationLevel->subscribe(LimitedProperty<float>::kValueChanged, this, &Painter::setStereoCameraSeparation);
+ 
+
+    //mit_maden->subscribe(ValueProperty<bool>::kValueChanged, this, &Painter::helloWord);
+    //mit_maden->subscribe(ValueProperty<bool>::kValueChanged, [] (AbstractProperty & property) {
+    //    qDebug("hello Lambda!");
+    //});
+
 
     m_quad = new ScreenQuad();
 
@@ -173,6 +226,20 @@ const bool Painter::initialize()
 
     m_fboNormalz = new FrameBufferObject(
         GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+
+    PropertyWidgetBuilder builder;
+    builder.buildWidget(m_propertylist->list());
+
+    builder.retainWidget()->hide();
+
+    m_propertylist->add(focusdistanceLevel);
+    focusdistanceLevel->subscribe(LimitedProperty<float>::kValueChanged, this, &Painter::setConvergentCameraFocus);
+
+    PropertyWidgetBuilder builder2;
+    builder2.buildWidget(m_propertylist->list());
+    builder2.retainWidget()->hide();
+
+
 
     return true;
 }

@@ -1,6 +1,6 @@
 
 #include <core/declspec.h>
-#include <core/abstractpainter.h>
+#include <core/painter/abstractpainter.h>
 
 class Group;
 

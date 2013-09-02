@@ -12,13 +12,13 @@ set(SOURCES
     aabb.cpp
     abstractapplication.h
     abstractapplication.cpp
-    abstractglparent.h
+    painter/abstractglparent.h
     abstractmodelloader.cpp
     abstractmodelloader.h
-    abstractpainter.h
-    abstractpainter.cpp
-    abstractscenepainter.h
-    abstractscenepainter.cpp
+    painter/abstractpainter.h
+    painter/abstractpainter.cpp
+    painter/abstractscenepainter.h
+    painter/abstractscenepainter.cpp
     abstractStereoCamera.h
     abstractStereoCamera.cpp
 
@@ -76,6 +76,22 @@ set(SOURCES
     navigation/fpsnavigation.cpp
     node.h
     node.cpp
+
+    property/abstractproperty.h
+    property/abstractproperty.cpp
+    property/valueproperty.h
+    property/limitedproperty.h
+    property/propertylist.h
+    property/propertylist.cpp
+    property/listproperty.h
+    property/listproperty.cpp
+    property/advancedlistproperty.h
+    property/advancedlistproperty.cpp
+    property/abstractpropertyvisitor.h
+    property/abstractpropertyvisitor.cpp
+    property/announcer.h
+    property/announcer.cpp
+
     objloader.h
     objloader.cpp
     offAxisCamera.h

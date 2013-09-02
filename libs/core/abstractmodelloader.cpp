@@ -1,5 +1,5 @@
 
-#include "abstractpainter.h"
+#include "painter/abstractpainter.h"
 #include "group.h"
 #include "abstractmodelloader.h"
 

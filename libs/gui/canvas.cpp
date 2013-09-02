@@ -11,7 +11,7 @@
 #include "core/navigation/flightnavigation.h"
 #include "core/navigation/arcballnavigation.h"
 
-#include <core/abstractscenepainter.h>
+#include <core/painter/abstractscenepainter.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
 #include "core/timer.h"

@@ -5,7 +5,7 @@
 #include <QString>
 #include <QMap>
 
-#include <core/abstractscenepainter.h>
+#include <core/painter/abstractscenepainter.h>
 
 
 
@@ -15,6 +15,7 @@ class Group;
 class ScreenQuad;
 class Program;
 class FrameBufferObject;
+class AbstractProperty;
 
 class Painter : public AbstractScenePainter
 {
@@ -26,6 +27,10 @@ public:
 
     virtual void setShading(char shader);
     virtual void setCamera(Camera * camera);
+
+    void helloWord(AbstractProperty & property);
+    void setStereoCameraSeparation(AbstractProperty & property);
+    void setConvergentCameraFocus(AbstractProperty & property);
 
     virtual void resize(
         const int width

@@ -16,7 +16,7 @@
 
 #include "canvas.h"
 
-#include <core/abstractpainter.h>
+#include <core/painter/abstractpainter.h>
 
 namespace 
 {
