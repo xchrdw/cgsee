@@ -27,7 +27,8 @@ public:
 
     virtual void paint();
 
-    virtual void setShading(char shader);
+    virtual void selectCamera(QString cameraName) override;
+    virtual void setShading(char shader) override;
     virtual void setFrameBuffer(int frameBuffer);
     virtual void setEffect( int effect, bool active );
 

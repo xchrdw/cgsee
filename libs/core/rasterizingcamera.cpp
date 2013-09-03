@@ -6,7 +6,7 @@
 #include "gpuquery.h"
 
 // define the virtual and the static member in each camera implementation to simulate "virtual static"
-const QString RasterizingCamera::m_implementationName("rasterizationCamera");
+const QString RasterizingCamera::m_implementationName("RasterizationCamera");
 
 const QString RasterizingCamera::implementationName() const
 {

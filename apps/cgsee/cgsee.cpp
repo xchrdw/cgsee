@@ -26,7 +26,7 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->initialize(format());
 
     Camera * camera = new Camera("main");
-    camera->selectImplementation("PathTracer");
+    camera->selectImplementation("RasterizationCamera");
     
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);

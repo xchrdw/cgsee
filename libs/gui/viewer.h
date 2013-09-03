@@ -97,6 +97,9 @@ protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
 
+    void on_rasterizingCameraAction_triggered();
+    void on_pathtracerAction_triggered();
+
     void on_reloadAllShadersAction_triggered();
     void on_phongShadingAction_triggered();
     void on_gouraudShadingAction_triggered();
@@ -106,7 +109,6 @@ protected slots:
     void on_solidWireframeShadingAction_triggered();
     void on_primitiveWireframeShadingAction_triggered();
     void on_normalsAction_triggered();
-    void on_pathTracingAction_triggered();
     void on_colorRenderingAction_triggered();
     void on_shadowMappingAction_triggered();
     void on_shadowBlurAction_triggered();

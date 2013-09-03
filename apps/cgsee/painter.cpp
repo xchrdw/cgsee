@@ -192,9 +192,6 @@ const bool Painter::initialize()
     m_pathTracing->attach(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/pathTracing.vert"));
 
-    // TODO allow switching between rasterization/pathTracing to allow using other shaders
-    m_useProgram = m_pathTracing;
-
     return true;
 }
 
@@ -243,9 +240,6 @@ void Painter::setUniforms()
         warmColdColor[3] = glm::vec4(0.45,0.45,0,0);         //Diffuse Warm, DiffuseCool
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
-
-
-
 }
 
 void Painter::paint()
@@ -320,6 +314,17 @@ void Painter::resize(const int width, const int height)
     postShaderRelinked();
 }
 
+void Painter::selectCamera(QString cameraName)
+{
+    m_camera->selectImplementation(cameraName);
+    if (cameraName == "PathTracer") {
+        m_useProgram = m_pathTracing;
+    }
+    else {
+        m_useProgram = m_flat;
+    }
+}
+
 void Painter::setShading(char shader)
 {
     switch(shader)
@@ -332,7 +337,6 @@ void Painter::setShading(char shader)
         case 's': m_useProgram = m_solidWireframe; std::printf("\nWireframeSolid Shading\n\n"); break;
         case 'r': m_useProgram = m_primitiveWireframe; std::printf("\nprimitive Wireframe Shading\n\n"); break;
         case 'n': m_useProgram = m_normals; std::printf("\nNormals\n\n"); break;
-        case 't': m_useProgram = m_pathTracing; std::printf("\nPathTracing\n\n"); break;
     }
 
     setUniforms();

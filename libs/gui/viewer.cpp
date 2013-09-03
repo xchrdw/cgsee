@@ -273,6 +273,16 @@ void Viewer::on_toggleExplorer_triggered()
     m_dockExplorer->setVisible(!visible);
 }
 
+void Viewer::on_rasterizingCameraAction_triggered()
+{
+    m_qtCanvas->painter()->selectCamera("RasterizationCamera");
+}
+
+void Viewer::on_pathtracerAction_triggered()
+{
+    m_qtCanvas->painter()->selectCamera("PathTracer");
+}
+
 void Viewer::on_phongShadingAction_triggered()
 {
     m_qtCanvas->painter()->setShading('p');
@@ -318,12 +328,6 @@ void Viewer::on_primitiveWireframeShadingAction_triggered()
 void Viewer::on_normalsAction_triggered()
 {
     m_qtCanvas->painter()->setShading('n');
-    m_qtCanvas->repaint();
-}
-
-void Viewer::on_pathTracingAction_triggered()
-{
-    m_qtCanvas->painter()->setShading('t');
     m_qtCanvas->repaint();
 }
 

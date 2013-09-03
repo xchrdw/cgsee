@@ -37,7 +37,7 @@ Camera::Camera(const QString & name)
     for (CameraImplementation* impl: m_implementations)
         qDebug() << "\t" << impl->implementationName();
 
-    selectImplementation("rasterizationCamera");
+    // selectImplementation("rasterizationCamera");
 }
 
 Camera::~Camera()
@@ -50,6 +50,11 @@ void Camera::selectImplementation(QString name)
     for (CameraImplementation* impl: m_implementations) {
         if (impl->implementationName() == name) {
             m_activeCamera = impl;
+            qDebug() << "Camera > selected Implementation: " << m_activeCamera->implementationName();
+            // update selected camera
+            m_activeCamera->onInvalidatedView();
+            m_activeCamera->onInvalidatedViewport(m_viewport.x, m_viewport.y);
+            m_activeCamera->onInvalidatedChildren();
             return;
         }
     }
@@ -90,6 +95,9 @@ void Camera::invalidate()
         return;
 
     m_invalidated = true;
+
+    if (m_activeCamera)
+        m_activeCamera->onInvalidatedView();
 }
 
 void Camera::invalidateChildren()
@@ -153,8 +161,6 @@ void Camera::setView(const glm::mat4 & view)
 {
     m_view = view;
     invalidate();
-    if (m_activeCamera)
-        m_activeCamera->onInvalidatedView();
 }
 
 const float Camera::fovy() const
