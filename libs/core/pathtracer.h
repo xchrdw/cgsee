@@ -8,7 +8,7 @@
 #include <QMap>
 
 #include "declspec.h"
-#include "camera.h"
+#include "cameraimplementation.h"
 
 
 class BufferObject;
@@ -16,17 +16,19 @@ class Program;
 class FrameBufferObject;
 class PathTracingBVH;
 
-class CGSEE_API PathTracer : public Camera
+class CGSEE_API PathTracer : public CameraImplementation
 {
 public:
     const static QMap<QString, GLuint> textureSlots;
 
-    PathTracer(const QString & name = "unnamed");
+    PathTracer(Camera & abstraction);
     virtual ~PathTracer();
 
     virtual void draw(
         const Program & program,
         const glm::mat4 & transform) override;
+
+    virtual const QString implementationName() const override;
 
 protected:
     void initialize(const Program & program);
@@ -36,10 +38,12 @@ protected:
     void initSkybox();
 
     void setUniforms(const Program & program);
-
-    virtual void setViewport(
+    
+    virtual void onInvalidatedView() override;
+    virtual void onInvalidatedViewport(
         const int width
     ,   const int height) override;
+    virtual void onInvalidatedChildren() override;
 
     static void pointsOnSphere(std::vector<glm::vec3> & points, const unsigned int minN);
     static const glm::uint splitEdge(
@@ -50,7 +54,6 @@ protected:
 
     PathTracingBVH *m_bvh;
 
-    virtual void invalidate() override;
     void invalidateGeometry();
     void invalidateAccumulator();
     bool m_invalidatedGeometry;
@@ -69,13 +72,7 @@ protected:
     
     GLuint m_staticCubeMap;
 
-// override Group children changes, to notice when geometry changes
-public:
-    virtual void removeFirst() override;
-    virtual void removeLast () override;
-protected:
-    virtual const void remove(Node * node, const bool deleteIfParentsEmpty = true) override;
-    virtual void prepend(Node * node) override;
-    virtual void append(Node * node) override;
-    virtual void insert(const t_children::iterator & before, Node * node);
+private:
+    static const QString m_implementationName;
+    static bool isRegistered;
 };

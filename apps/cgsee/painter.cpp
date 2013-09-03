@@ -254,16 +254,6 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    PathTracer * pathTracer = dynamic_cast<PathTracer*>(m_camera);
-
-    if (pathTracer != nullptr){ // pathtracing
-        //SceneTraverser traverser;
-        //PathTracingVisitor pathTracingVisitor(*m_useProgram, *pathTracer);
-        //traverser.traverse(*pathTracer, pathTracingVisitor);
-        pathTracer->draw(*m_useProgram, glm::mat4());
-        return;
-    }
-
     // camera.m_invalidated is evaluated after the call to transform(), this should be fixed!
     // update() is called for each paint as a hot fix.
     m_camera->update();
@@ -273,6 +263,8 @@ void Painter::paint()
     else
         m_fboColor->clear();
 
+    if (m_camera->selectedImplementation() == "PathTracer")
+        return;
     for (RenderingPass * pass : m_passes) {
         pass->applyIfActive();
     }
@@ -296,6 +288,16 @@ void Painter::paint()
 
 void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject * fbo)
 {
+    // TODO this better :-D
+
+    if (m_camera->selectedImplementation() == "PathTracer"){ // pathtracing
+        //SceneTraverser traverser;
+        //PathTracingVisitor pathTracingVisitor(*m_useProgram, *pathTracer);
+        //traverser.traverse(*pathTracer, pathTracingVisitor);
+        m_camera->draw(*m_useProgram, glm::mat4());
+        return;
+    }
+
     fbo->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, camera->transform());

@@ -29,6 +29,10 @@ set(SOURCES
     bufferobject.cpp
     camera.h
     camera.cpp
+    cameraimplementation.h
+    cameraimplementation.cpp
+    rasterizingcamera.h
+    rasterizingcamera.cpp
     chronotimer.h
     chronotimer.cpp
     common.h

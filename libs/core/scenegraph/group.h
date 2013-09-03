@@ -42,4 +42,8 @@ public:
     virtual void append(Node * node);
 
     virtual void insert(const t_children::iterator & before, Node * node);
+
+protected:
+    virtual void invalidateChildren();
+    bool m_invalidatedChildren;
 };

@@ -6,7 +6,8 @@
 #include "core/aabb.h"
 
 Group::Group(const QString & name)
-:   Node(name)
+:   Node(name),
+    m_invalidatedChildren(true)
 {
 }
 
@@ -40,6 +41,8 @@ void Group::insert(const Group::t_children::iterator & before, Node * node)
     if(!node)
         return;
 
+    invalidateChildren();
+
     if(!contains(node))
         node->parents().push_back(this);
 
@@ -60,6 +63,8 @@ void Group::prepend(Node * node)
 {
     if(!node)
         return;
+    
+    invalidateChildren();
 
     if(!contains(node))
         node->parents().push_back(node);
@@ -82,6 +87,8 @@ void Group::append(Node * node)
     if(!node)
         return;
 
+    invalidateChildren();
+
     if(!contains(node))
         node->parents().push_back(this);
 
@@ -92,6 +99,8 @@ void Group::removeFirst()
 {
     if(m_children.empty())
         return;
+
+    invalidateChildren();
 
     Node * node(m_children.front());
 
@@ -106,6 +115,8 @@ void Group::removeLast()
 {
     if(m_children.empty())
         return;
+    
+    invalidateChildren();
 
     Node * node(m_children.back());
 
@@ -118,6 +129,8 @@ void Group::removeLast()
 
 const void Group::remove(Node * node, const bool deleteIfParentsEmpty)
 {
+    invalidateChildren();
+
     if(!contains(node))
         node->parents().remove(this);
 
@@ -168,4 +181,12 @@ const AxisAlignedBoundingBox Group::boundingBox(glm::mat4 transform) const
 Group * Group::asGroup()
 {
     return this;
+}
+
+void Group::invalidateChildren()
+{
+    if (m_invalidatedChildren)
+        return;
+
+    m_invalidatedChildren = true;
 }

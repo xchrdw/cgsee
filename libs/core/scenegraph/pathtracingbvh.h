@@ -6,6 +6,7 @@
 #include <core/declspec.h>
 
 class Group;
+class Node;
 
 class CGSEE_API PathTracingBVH
 {

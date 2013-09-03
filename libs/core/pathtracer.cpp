@@ -3,10 +3,25 @@
 
 #include "pathtracer.h"
 
+#include "camera.h"
+
 #include "program.h"
 #include "bufferobject.h"
 #include "scenegraph/pathtracingbvh.h"
 #include "core/datacore/datablock.h"
+
+
+const QString PathTracer::m_implementationName("PathTracer");
+
+const QString PathTracer::implementationName() const
+{
+    return m_implementationName;
+}
+
+bool PathTracer::isRegistered = CameraImplementation::registerImplementation(
+    m_implementationName,
+    createInstace<PathTracer>);
+
 
 static const QString TRANSFORM_UNIFORM ("transform");
 static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
@@ -35,8 +50,8 @@ namespace {
 const QMap<QString, GLuint> PathTracer::textureSlots(initTextureSlots());
 
 
-PathTracer::PathTracer(const QString & name)
-:   Camera(name)
+PathTracer::PathTracer(Camera & abstraction)
+:   CameraImplementation(abstraction)
 ,   m_invalidatedGeometry(true)
 ,   m_invalidatedAccu(true)
 ,   m_bvh(nullptr)
@@ -49,9 +64,9 @@ PathTracer::PathTracer(const QString & name)
 ,   m_staticCubeMap(-1)
 {
     m_accuTexture[0] = m_accuTexture[1] = -1;
-    this->setZFar(300.0);
+    /*this->setZFar(300.0);
     this->setZNear(1.0);
-    this->setFovy(45.0f);
+    this->setFovy(45.0f);*/
 }
 
 PathTracer::~PathTracer()
@@ -73,13 +88,13 @@ void PathTracer::initialize(const Program & program)
         glGenTextures(2, m_accuTexture);
 
         glBindTexture(GL_TEXTURE_2D, m_accuTexture[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_abstraction.viewport().x, m_abstraction.viewport().y, 0, GL_RGBA, GL_FLOAT, 0);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
         glBindTexture(GL_TEXTURE_2D, m_accuTexture[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_abstraction.viewport().x, m_abstraction.viewport().y, 0, GL_RGBA, GL_FLOAT, 0);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
@@ -218,19 +233,22 @@ void PathTracer::initSkybox()
 
 void PathTracer::setUniforms(const Program & program)
 {
-    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    program.setUniform(VIEW_UNIFORM, m_view);
-    program.setUniform(PROJECTION_UNIFORM, m_projection);
-    program.setUniform(TRANSFORM_UNIFORM, m_transform);
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+
+    // TODO move this to camera.cpp
+    // in CameraImplementation: call m_abstraction.setUniforms(); or so
+    program.setUniform(CAMERAPOSITION_UNIFORM, m_abstraction.getEye());
+    program.setUniform(VIEWPORT_UNIFORM, m_abstraction.viewport());
+    program.setUniform(VIEW_UNIFORM, m_abstraction.view());
+    program.setUniform(PROJECTION_UNIFORM, m_abstraction.projection());
+    program.setUniform(TRANSFORM_UNIFORM, m_abstraction.transform());
+    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_abstraction.transformInverse());
 
     program.setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
     program.setUniform(RANDOM_INT_UNIFORM0, rng());
     program.setUniform(RANDOM_INT_UNIFORM1, rng());
 
     glm::vec2 offset(aaOffsetDistribution(rng), aaOffsetDistribution(rng));
-    offset /= viewport();
+    offset /= m_abstraction.viewport();
     program.setUniform(ANTIALIASING_OFFSET_UNIFORM, offset);
 
     for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
@@ -260,13 +278,13 @@ void PathTracer::draw(
     //     -> requieres new SceneGraph + Iterators
     if (m_invalidatedGeometry) {
         // rebuild bounding volume hierarchy :
-        m_bvh->buildBVHFromObjectsHierarchy(this);
+        m_bvh->buildBVHFromObjectsHierarchy(&this->m_abstraction);
         m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
         m_invalidatedGeometry = false;
     }
     // update m_transform, reset m_invalidated
-    if (m_invalidated)
-        update();
+    /*if (m_invalidated)  // this is now done in camera.draw() (i hope)
+        update();*/
 
 
     setUniforms(program);
@@ -292,7 +310,7 @@ void PathTracer::draw(
     glEnable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
 
-    glViewport(0, 0, m_viewport.x, m_viewport.y);
+    glViewport(0, 0, m_abstraction.viewport().x, m_abstraction.viewport().y);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glError();
@@ -313,7 +331,7 @@ void PathTracer::draw(
 
     //if(target)
     //    target->bind();
-    glBlitFramebuffer(0, 0, m_viewport.x, m_viewport.y, 0, 0, m_viewport.x, m_viewport.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, m_abstraction.viewport().x, m_abstraction.viewport().y, 0, 0, m_abstraction.viewport().x, m_abstraction.viewport().y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
     //if(target)
@@ -322,19 +340,22 @@ void PathTracer::draw(
     program.release();
 }
 
-void PathTracer::setViewport(
+void PathTracer::onInvalidatedView()
+{
+    invalidateAccumulator();
+}
+
+void PathTracer::onInvalidatedViewport(
         const int width
     ,   const int height)
 {
-    Camera::setViewport(width, height);
-
     if (m_accuFramebuffer == -1)
         return;
     for (int i=0; i<2; ++i) {
         glBindTexture(GL_TEXTURE_2D, m_accuTexture[i]);
         glError();
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_viewport.x, m_viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
         glError();
 
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
@@ -345,12 +366,12 @@ void PathTracer::setViewport(
         glBindTexture(GL_TEXTURE_2D, 0);
         glError();
     }
+    invalidateAccumulator();
 }
 
-void PathTracer::invalidate()
+void PathTracer::onInvalidatedChildren()
 {
-    Camera::invalidate();
-    invalidateAccumulator();
+    invalidateGeometry();
 }
 
 void PathTracer::invalidateGeometry()
@@ -364,41 +385,7 @@ void PathTracer::invalidateAccumulator()
     m_invalidatedAccu = true;
 }
 
-void PathTracer::removeFirst()
-{
-    Group::removeFirst();
-    invalidateGeometry();
-}
 
-void PathTracer::removeLast()
-{
-    Group::removeLast();
-    invalidateGeometry();
-}
-
-const void PathTracer::remove(Node * node, const bool deleteIfParentsEmpty)
-{
-    Group::remove(node, deleteIfParentsEmpty);
-    invalidateGeometry();
-}
-
-void PathTracer::prepend(Node * node)
-{
-    Group::prepend(node);
-    invalidateGeometry();
-}
-
-void PathTracer::append(Node * node)
-{
-    Group::append(node);
-    invalidateGeometry();
-}
-
-void PathTracer::insert(const t_children::iterator & before, Node * node)
-{
-    Group::insert(before, node);
-    invalidateGeometry();
-}
 
 
 // https://code.google.com/p/pathgl/source/browse/pathgl.cpp thanks Daniel :-D
