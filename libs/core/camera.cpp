@@ -12,12 +12,14 @@
 #include "framebufferobject.h"
 #include "core/viewfrustum.h"
 
-const QString Camera::VIEWPORT_UNIFORM   ("viewport");
-const QString Camera::VIEW_UNIFORM       ("view");
-const QString Camera::PROJECTION_UNIFORM ("projection");
-const QString Camera::ZNEAR_UNIFORM      ("znear");
-const QString Camera::ZFAR_UNIFORM       ("zfar");
-const QString Camera::CAMERAPOSITION_UNIFORM ("cameraposition");
+static const QString VIEWPORT_UNIFORM   ("viewport");
+static const QString VIEW_UNIFORM       ("view");
+static const QString PROJECTION_UNIFORM ("projection");
+static const QString TRANSFORM_UNIFORM("transform");
+static const QString TRANSFORMINVERSE_UNIFORM("transformInverse");
+static const QString ZNEAR_UNIFORM      ("znear");
+static const QString ZFAR_UNIFORM       ("zfar");
+static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
 
 Camera::Camera(const QString & name)
     :   Group(name)
@@ -80,7 +82,9 @@ void Camera::draw( const Program & program, const glm::mat4 & transform )
 
     program.setUniform(VIEWPORT_UNIFORM, m_viewport);
     program.setUniform(VIEW_UNIFORM, m_view);
-    program.setUniform(PROJECTION_UNIFORM, m_projection);
+	program.setUniform(PROJECTION_UNIFORM, m_projection);
+	program.setUniform(TRANSFORM_UNIFORM, m_transform);
+	program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
 
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);

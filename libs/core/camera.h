@@ -80,13 +80,5 @@ protected:
 
     bool m_invalidated;
 
-    static const QString CAMERAPOSITION_UNIFORM;
-    static const QString VIEWPORT_UNIFORM;
-    static const QString VIEW_UNIFORM;
-    static const QString PROJECTION_UNIFORM;
-
-    static const QString ZNEAR_UNIFORM;
-    static const QString ZFAR_UNIFORM;
-
 // friend CameraImplementation;
 };

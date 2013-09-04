@@ -49,10 +49,5 @@ protected:
     virtual void onInvalidatedViewport(const int width, const int height);
     virtual void onInvalidatedChildren();
 
-    static const QString CAMERAPOSITION_UNIFORM;
-    static const QString VIEWPORT_UNIFORM;
-    static const QString VIEW_UNIFORM;
-    static const QString PROJECTION_UNIFORM;
-
 friend class Camera;
 };

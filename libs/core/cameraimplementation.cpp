@@ -5,11 +5,6 @@
 
 QMap<QString, CameraImplementation::CamConstructor> CameraImplementation::implementations;
 
-const QString CameraImplementation::VIEWPORT_UNIFORM   ("viewport");
-const QString CameraImplementation::VIEW_UNIFORM       ("view");
-const QString CameraImplementation::PROJECTION_UNIFORM ("projection");
-const QString CameraImplementation::CAMERAPOSITION_UNIFORM ("cameraposition");
-
 bool CameraImplementation::registerImplementation(QString name, CamConstructor conststructor)
 {
     if (implementations.contains(name))

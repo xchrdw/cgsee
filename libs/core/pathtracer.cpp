@@ -23,8 +23,6 @@ bool PathTracer::isRegistered = CameraImplementation::registerImplementation(
     createInstace<PathTracer>);
 
 
-static const QString TRANSFORM_UNIFORM ("transform");
-static const QString TRANSFORMINVERSE_UNIFORM ("transformInverse");
 static const QString RANDOM_INT_UNIFORM0("randomInt0");
 static const QString RANDOM_INT_UNIFORM1("randomInt1");
 static const QString FRAMECOUNTER_UNIFORM("frameCounter");
@@ -233,16 +231,6 @@ void PathTracer::initSkybox()
 
 void PathTracer::setUniforms(const Program & program)
 {
-
-    // TODO move this to camera.cpp
-    // in CameraImplementation: call m_abstraction.setUniforms(); or so
-    program.setUniform(CAMERAPOSITION_UNIFORM, m_abstraction.getEye());
-    program.setUniform(VIEWPORT_UNIFORM, m_abstraction.viewport());
-    program.setUniform(VIEW_UNIFORM, m_abstraction.view());
-    program.setUniform(PROJECTION_UNIFORM, m_abstraction.projection());
-    program.setUniform(TRANSFORM_UNIFORM, m_abstraction.transform());
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_abstraction.transformInverse());
-
     program.setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
     program.setUniform(RANDOM_INT_UNIFORM0, rng());
     program.setUniform(RANDOM_INT_UNIFORM1, rng());
@@ -253,7 +241,6 @@ void PathTracer::setUniforms(const Program & program)
 
     for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
     {
-        //qDebug() << "setting uniform: " << it.key();
         program.setUniform(it.key(), it.value());
     }
 }
@@ -262,9 +249,6 @@ void PathTracer::draw(
     const Program & program
     ,   const glm::mat4 & transform)
 {
-    // call group draw with initOnly, to initialize all needed buffer objects
-    //Group::draw(program, glm::mat4(), true); // includes call "program.use()"
-
     initialize(program);
 
     ++m_frameCounter;
@@ -273,19 +257,13 @@ void PathTracer::draw(
         m_frameCounter = 1;
         m_invalidatedAccu = false;
     }
-    // TODO: fetch geometry data from m_children
-    //       atm geometry data is attached to the shader by PolygonalDrawable
-    //     -> requieres new SceneGraph + Iterators
+
     if (m_invalidatedGeometry) {
         // rebuild bounding volume hierarchy :
         m_bvh->buildBVHFromObjectsHierarchy(&this->m_abstraction);
         m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
         m_invalidatedGeometry = false;
     }
-    // update m_transform, reset m_invalidated
-    /*if (m_invalidated)  // this is now done in camera.draw() (i hope)
-        update();*/
-
 
     setUniforms(program);
 
@@ -295,7 +273,7 @@ void PathTracer::draw(
     unsigned short writeIndex = m_whichBuffer ? 1 : 0;
 
     glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
-    glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]); //GL_ERROR!!!
+    glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
     glError();
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_accuFramebuffer);
     GLenum writebuffers[] = { GL_COLOR_ATTACHMENT0 + writeIndex };
