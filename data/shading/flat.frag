@@ -23,8 +23,6 @@ vec4 phongLighting(vec3 n, vec3 v_pos, vec3 cameraposition, vec3 lightdir, vec3 
 
 void main()
 {
-    fragColor = vec4(cameraposition, 1.0);
-    return;
     vec3 n = normal;
     fragColor = phongLighting(n, position, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);
 }
