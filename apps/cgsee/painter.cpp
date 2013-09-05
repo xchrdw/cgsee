@@ -53,6 +53,7 @@ Painter::Painter(Camera * camera)
 ,   m_phong(nullptr)
 ,   m_gooch(nullptr)
 ,   m_useProgram(nullptr)
+,   m_lastUsedProgram(nullptr)
 ,   m_fboColor(nullptr)
 ,   m_fboTemp(nullptr)
 ,   m_fboActiveBuffer(nullptr)
@@ -309,13 +310,19 @@ void Painter::resize(const int width, const int height)
 
 void Painter::selectCamera(QString cameraName)
 {
-    m_camera->selectImplementation(cameraName);
+    if (m_camera->selectedImplementation() == cameraName)
+        return;
+
     if (cameraName == "PathTracer") {
+        assert(m_useProgram != m_pathTracing);
+        m_lastUsedProgram = m_useProgram;
         m_useProgram = m_pathTracing;
     }
     else {
-        m_useProgram = m_flat;
+        m_useProgram = m_lastUsedProgram;
     }
+
+    m_camera->selectImplementation(cameraName);
 }
 
 void Painter::setShading(char shader)

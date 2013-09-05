@@ -63,6 +63,7 @@ protected:
     Program * m_gooch;
     Program * m_pathTracing;
     Program * m_useProgram;
+    Program * m_lastUsedProgram;
     Program * m_flush;
     FrameBufferObject * m_fboColor;
     FrameBufferObject * m_fboTemp;
