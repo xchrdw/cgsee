@@ -252,13 +252,17 @@ void Painter::paint()
     // update() is called for each paint as a hot fix.
     m_camera->update();
 
+    // TODO this better :-D
+    if (m_camera->selectedImplementation() == "PathTracer"){
+        m_camera->draw(*m_useProgram, glm::mat4());
+        return;
+    }
+
     if(m_useColor)
         drawScene(m_camera, m_useProgram, m_fboColor);
     else
         m_fboColor->clear();
 
-    if (m_camera->selectedImplementation() == "PathTracer")
-        return;
     for (RenderingPass * pass : m_passes) {
         pass->applyIfActive();
     }
@@ -277,21 +281,10 @@ void Painter::paint()
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
-
 }
 
 void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject * fbo)
 {
-    // TODO this better :-D
-
-    if (m_camera->selectedImplementation() == "PathTracer"){ // pathtracing
-        //SceneTraverser traverser;
-        //PathTracingVisitor pathTracingVisitor(*m_useProgram, *pathTracer);
-        //traverser.traverse(*pathTracer, pathTracingVisitor);
-        m_camera->draw(*m_useProgram, glm::mat4());
-        return;
-    }
-
     fbo->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, camera->transform());
