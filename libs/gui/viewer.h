@@ -141,7 +141,7 @@ protected:
 
     void initializeExplorer();
     void initializeDockWidgets(QDockWidget * dockWidget,
-        QWidget * widget, Qt::DockWidgetArea area);
+    QWidget * widget, Qt::DockWidgetArea area);
     void createSceneHierarchy(QStandardItemModel * model, Node * parentNode);
     void fillSceneHierarchy(Node * node, QStandardItem * parent);
     void assignScene(Group * rootNode);

@@ -138,67 +138,29 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
 #endif
 }
 
-void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * parentNode)
+void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * rootNode)
 {
-    QStandardItem * item = new QStandardItem(parentNode->name());
-    item->setData(QVariant(parentNode->name()), Qt::UserRole + 1);
+    QStandardItem * item = new QStandardItem(rootNode->name());
+    item->setData(QVariant(rootNode->name()), Qt::UserRole + 1);
 
     model->clear();
     model->appendRow(item);
 
-    fillSceneHierarchy(parentNode, item);
-
-    // size_t counter = 0;
-    // SceneTraverser traverser;
-    // traverser.traverse(*parentNode, [] (Node & node) 
-    //     {
-    //         node.setId(counter);
-    //         ++counter;
-    //         return true;
-    //     });
+    fillSceneHierarchy(rootNode, item);
 }
 
 void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
 {
-    for (auto child : node->children())
+    for (const auto & child : node->children())
     {
         QStandardItem * item = new QStandardItem(child->name());
         item->setData(QVariant(child->name()), Qt::UserRole + 1);
+        item->setEditable(false);
+        
         parent->appendRow(item);
         fillSceneHierarchy(child, item);
     }
 }
-
-// void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * parentNode)
-// {
-//     struct SceneHierarchyFiller
-//     {
-//         SceneHierarchyFiller()
-//         :   m_item(nullptr)
-//         {
-//         }
-
-//         bool operator() (Node & node){
-//             QStandardItem * parent = m_item;
-//             m_item = new QStandardItem(node.name());
-//             m_item->setData(QVariant(node.name()), Qt::UserRole + 1);
-//             if (parent)
-//                 parent->appendRow(m_item);
-
-//             return true;
-//         }
-
-//     public:
-//         QStandardItem * m_item;
-//     };
-
-//     SceneTraverser traverser;
-//     SceneHierarchyFiller visitor;
-//     traverser.traverse(*parentNode, visitor);
-
-//     model->clear();
-//     model->appendRow(visitor.m_item);
-// }
 
 void Viewer::assignScene(Group * rootNode)
 {
@@ -355,17 +317,19 @@ void Viewer::on_loadFile(const QString & path)
 {
     Group * scene = m_loader->importFromFile(path);
     if (!scene)
+    {
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
-    else {
+    }
+    else 
+    {
         this->assignScene(scene);
         this->m_qtCanvas->navigation()->rescaleScene(scene);
-        // this->m_coordinateProvider->assignCamera(m_camera);
         if (m_coordinateProvider)
             this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
         this->painter()->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
-        this->createSceneHierarchy(m_sceneHierarchy, m_camera);
+        this->createSceneHierarchy(m_sceneHierarchy, scene);
     }
 }
 
