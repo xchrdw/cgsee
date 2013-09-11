@@ -48,6 +48,11 @@ set(SOURCES
     scenegraph/SceneVisitorInterface.h
     scenegraph/drawvisitor.h
     scenegraph/drawvisitor.cpp
+    scenegraph/drawmethod.h
+    scenegraph/defaultdrawmethod.h
+    scenegraph/defaultdrawmethod.cpp
+    scenegraph/highlightingdrawmethod.h
+    scenegraph/highlightingdrawmethod.cpp
 
     scenegraph/cullingvisitor.h
     scenegraph/cullingvisitor.cpp

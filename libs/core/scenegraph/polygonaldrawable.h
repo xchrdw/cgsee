@@ -14,6 +14,7 @@
 class PolygonalGeometry;
 class DataBlockRegistry;
 class Program;
+class DrawMethod;
 
 
 class CGSEE_API PolygonalDrawable : public Node
@@ -31,17 +32,19 @@ public:
     virtual const AxisAlignedBoundingBox boundingBox() const override;
     
     void setGeometry(t_geometryP geometry);
-    t_geometryP geometry() { return m_geometry; }
+    t_geometryP geometry(void) { return m_geometry; }
 
     void setMode(const GLenum mode) { m_mode = mode; }
-    inline const GLenum mode() const { return m_mode; }
+    inline const GLenum mode(void) const { return m_mode; }
+    
+    void setDrawMethod( DrawMethod * drawmethod );
+    DrawMethod * drawmethod(void);
     
 protected:
     virtual void invalidateBoundingBox() override;
 
-    glm::vec4 colorVectorFromId(const unsigned int & id);
-
 protected:
     t_geometryP m_geometry;
     GLenum  m_mode;
+    DrawMethod * m_drawMehtod;
 };

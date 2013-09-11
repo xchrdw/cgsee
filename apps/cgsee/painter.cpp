@@ -218,13 +218,13 @@ void Painter::setUniforms()
 
         m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, false);
 
-        glm::mat4 materialCoeff;
-        materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);    //ambient
-        materialCoeff[1] = glm::vec4(1.0,1.0,1.0,1.0);    //diffuse
-        materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);    //specular
-        materialCoeff[3] = glm::vec4(0,0,0,0);            //emission
-
-        m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
+//         glm::mat4 materialCoeff;
+//         materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);    //ambient
+//         materialCoeff[1] = glm::vec4(1.0,1.0,1.0,1.0);    //diffuse
+//         materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);    //specular
+//         materialCoeff[3] = glm::vec4(0,0,0,0);            //emission
+// 
+//         m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
     }
 
     else if(m_useProgram == m_gooch)

@@ -42,9 +42,9 @@
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/polygonaldrawable.h>
 #include <core/scenegraph/scenetraverser.h>
+#include <core/scenegraph/defaultdrawmethod.h>
+#include <core/scenegraph/highlightingdrawmethod.h>
 
-
-static const unsigned int BACKGROUND_ID = 4244897280;
 
 namespace
 {
@@ -690,6 +690,8 @@ void Viewer::on_actionSave_4_triggered() { saveView(3); }
 #include <iostream>
 void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
+    static const unsigned int BACKGROUND_ID = 4244897280;
+    
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
@@ -697,13 +699,19 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
         if (id < BACKGROUND_ID)
         {
             for (auto node : m_nodes)
+            {
                 node->setSelected(false);
+                if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+                    drawable->setDrawMethod(new DefaultDrawMethod());
+            }
 
-                if (id < m_nodes.size())
-                    m_nodes.at(id)->setSelected(true);
+            if (id < m_nodes.size())
+            {
+                m_nodes.at(id)->setSelected(true);
+                if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(m_nodes.at(id)))
+                    drawable->setDrawMethod(new HighlightingDrawMethod());
+            }
 
-            std::cerr << "ID : " << id << "\n"; // TODO (jg) : Can be deleted.
-            
             this->m_qtCanvas->update();
         }
     }
