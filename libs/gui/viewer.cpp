@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 
 #include <cassert>
+#include <iostream>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -201,18 +202,15 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
 
 void Viewer::assignScene(Group * rootNode)
 {
-    m_nodes.clear();
+    m_selectedNodes.clear();
 
     SceneTraverser traverser;
-    traverser.traverse(*rootNode, [&] (Node & node) 
-        {
-            if (PolygonalDrawable * drawable = dynamic_cast <PolygonalDrawable *> (& node))
-            {
-                node.setId(this->m_nodes.size());
-                this->m_nodes.push_back(&node);
-            }
-            return true;
-        });
+    unsigned int count = 0;
+    traverser.traverse(*rootNode, [&count] (Node & node) 
+    {
+        node.setId(count++);
+        return true;
+    });
 }
 
 #ifdef WIN32
@@ -687,32 +685,53 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
-#include <iostream>
 void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
     static const unsigned int BACKGROUND_ID = 4244897280;
+    static std::shared_ptr<DrawMethod> defaultDrawmethod = std::make_shared<DefaultDrawMethod>();
+    static std::shared_ptr<DrawMethod> highlightingDrawmethod = std::make_shared<HighlightingDrawMethod>();
     
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
-
         if (id < BACKGROUND_ID)
         {
-            for (auto node : m_nodes)
+            if (m_selectedNodes.contains(id))
+                return;
+            
+            SceneTraverser traverser;
+            Node * result = nullptr;
+            traverser.traverse(*m_camera, [&result, &id](Node & node)
             {
-                node->setSelected(false);
-                if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
-                    drawable->setDrawMethod(new DefaultDrawMethod());
-            }
+                if( node.id() == id){
+                    result = &node;
+                    return false;
+                }
+                return true;
+            });
 
-            if (id < m_nodes.size())
+            if (result)
             {
-                m_nodes.at(id)->setSelected(true);
-                if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(m_nodes.at(id)))
-                    drawable->setDrawMethod(new HighlightingDrawMethod());
-            }
+                m_selectedNodes.insert(id, result);
+                result->setSelected(true);
+                if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(result))
+                    drawable->setDrawMethod(highlightingDrawmethod);
 
-            this->m_qtCanvas->update();
+                std::cerr << "ID : " << id << "\n"; // TODO (jg) : Can be removed.
+                this->m_qtCanvas->update();
+            }
         }
+    }
+    
+    if (event->button() == Qt::RightButton)
+    {
+        for( auto node : m_selectedNodes )
+        {
+            node->setSelected(false);
+            if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+                drawable->setDrawMethod(defaultDrawmethod);
+        }
+        m_selectedNodes.clear();
+        this->m_qtCanvas->update();
     }
 }

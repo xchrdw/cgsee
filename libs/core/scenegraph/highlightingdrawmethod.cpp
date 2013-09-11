@@ -11,11 +11,6 @@
 #include "highlightingdrawmethod.h"
 
 
-static const QString TRANSFORM_UNIFORM( "transform" );
-static const QString ID_UNIFORM( "u_id" );
-static const QString MATERIAL_UNIFORM ("material");
-
-
 HighlightingDrawMethod::HighlightingDrawMethod()
 {
 }
@@ -62,6 +57,4 @@ void HighlightingDrawMethod::draw(const Program & program, const glm::mat4 & tra
     glError();
     
     program.release();
-    
-    std::cerr << "ID : " << drawable.id() << "\n"; // TODO (jg) : Can be deleted.
 }

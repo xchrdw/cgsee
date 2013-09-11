@@ -178,5 +178,5 @@ protected:
     AbstractModelLoader * m_loader;
 
     CoordinateProvider * m_coordinateProvider;
-    QVector<Node *> m_nodes;
+    QMap<unsigned int, Node *> m_selectedNodes;
 };

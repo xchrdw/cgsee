@@ -21,7 +21,6 @@ PolygonalDrawable::PolygonalDrawable(const QString & name)
 
 PolygonalDrawable::~PolygonalDrawable()
 {
-    delete m_drawMehtod;
 }
 
 void PolygonalDrawable::setGeometry(t_geometryP geometry)
@@ -62,13 +61,12 @@ void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transfor
     }
 }
 
-void PolygonalDrawable::setDrawMethod( DrawMethod * drawMethod )
+void PolygonalDrawable::setDrawMethod( t_drawMethodP drawMethod )
 {
-    delete m_drawMehtod;
     m_drawMehtod = drawMethod;
 }
 
-DrawMethod * PolygonalDrawable::drawmethod(void)
+PolygonalDrawable::t_drawMethodP PolygonalDrawable::drawmethod(void)
 {
     return m_drawMehtod;
 }

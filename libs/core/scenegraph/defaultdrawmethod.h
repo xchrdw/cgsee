@@ -20,5 +20,8 @@ public:
     
 protected:
     glm::vec4 colorVectorFromId(const unsigned int id) const;
-    
+
+    const QString TRANSFORM_UNIFORM = "transform";
+    const QString ID_UNIFORM = "u_id";
+    const QString MATERIAL_UNIFORM = "material";    
 };
