@@ -362,7 +362,8 @@ void Viewer::on_loadFile(const QString & path)
         this->assignScene(scene);
         this->m_qtCanvas->navigation()->rescaleScene(scene);
         // this->m_coordinateProvider->assignCamera(m_camera);
-        this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
+        if (m_coordinateProvider)
+            this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
         this->painter()->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
@@ -686,20 +687,23 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
-
+#include <iostream>
 void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
-        unsigned int id = m_coordinateProvider->objID(event->x(),event->y());
+        unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
 
         if (id < BACKGROUND_ID)
         {
             for (auto node : m_nodes)
                 node->setSelected(false);
 
-            m_nodes.at(id)->setSelected(true);
+                if (id < m_nodes.size())
+                    m_nodes.at(id)->setSelected(true);
 
+            std::cerr << "ID : " << id << "\n"; // TODO (jg) : Can be deleted.
+            
             this->m_qtCanvas->update();
         }
     }

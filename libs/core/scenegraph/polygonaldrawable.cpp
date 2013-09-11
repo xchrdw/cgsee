@@ -10,6 +10,7 @@
 
 static const QString TRANSFORM_UNIFORM( "transform" );
 static const QString ID_UNIFORM( "u_id" );
+static const QString MATERIAL_UNIFORM ("material");
 
 // TODO: wieder rueckgaengig machen...
 // PolygonalDrawable::PolygonalDrawable( DataBlockRegistry & registry, const QString & name )
@@ -37,11 +38,6 @@ const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
     if( m_geometry == nullptr )
         return AxisAlignedBoundingBox();
 
-    // TODO: Hier muss was effizienteres her! vertices() legt jedes mal eine Kopie an.
-//     for( const auto & pos : m_geometry->vertices() ){
-//         m_aabb.extend( pos );
-//     }
-   
     t_VertexListP myVList = m_geometry->vertices();
     AxisAlignedBoundingBox & aabb = m_aabb;
     myVList->foreachVertexAttribute<glm::vec3>(0, myVList->size(), "position", nullptr,
@@ -69,8 +65,7 @@ void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transfor
     program.use();
     program.setUniform(TRANSFORM_UNIFORM, transform);
 
-    glm::vec4 id_vec = colorVectorFromId(m_id);
-    program.setUniform(ID_UNIFORM, id_vec);
+    program.setUniform(ID_UNIFORM, colorVectorFromId(m_id));
 
     glBindVertexArray(m_geometry->vao());
     glError();

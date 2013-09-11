@@ -8,6 +8,7 @@
 ColorIdPass::ColorIdPass(Camera * camera)
 :   RenderingPass(camera)
 {
+    // TODO (jg) : If the type of frame buffer object does not change ColorIdPass can inherit from DefaultPass (which would be cleaner).
     m_fbo = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
     m_program = new Program();
     m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/colorId.frag"));

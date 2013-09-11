@@ -171,9 +171,9 @@ void PolygonalGeometry::initialize(const Program & program)
     
     // Apply vertex deduplication
 
-    applyOptimizer(new VertexReuse()); // TODO: That's just bad!
+    applyOptimizer(new VertexReuse()); // TODO: That's just bad! At least use a smart ptr...
     // Apply Vertex Cache Optimization
-    applyOptimizer(new VertexCacheOptimizer()); // TODO: That's just bad!
+    applyOptimizer(new VertexCacheOptimizer()); // TODO: That's just bad! At least use a smart ptr...
 
     // setup element array buffers
 
