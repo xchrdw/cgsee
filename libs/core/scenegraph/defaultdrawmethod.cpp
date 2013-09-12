@@ -9,9 +9,9 @@
 #include "defaultdrawmethod.h"
 
 
-static const QString TRANSFORM_UNIFORM( "transform" );
-static const QString ID_UNIFORM( "u_id" );
-static const QString MATERIAL_UNIFORM ("material");
+const QString DefaultDrawMethod::TRANSFORM_UNIFORM("transform");
+const QString DefaultDrawMethod::ID_UNIFORM("u_id");
+const QString DefaultDrawMethod::MATERIAL_UNIFORM("material");
 
 DefaultDrawMethod::DefaultDrawMethod()
 {
