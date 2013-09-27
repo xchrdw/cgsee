@@ -79,6 +79,8 @@ public:
     void uncheckManipulatorActions();
     void uncheckFboActions();
 
+    void selectNode(Node * node);
+
 
 public slots:
     void on_flightManipulatorAction_triggered();
