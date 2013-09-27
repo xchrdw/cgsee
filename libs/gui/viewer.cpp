@@ -141,7 +141,8 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
 void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * rootNode)
 {
     QStandardItem * item = new QStandardItem(rootNode->name());
-    item->setData(QVariant(rootNode->name()), Qt::UserRole + 1);
+    item->setData(QVariant(rootNode->name()), Qt::DisplayRole);
+    item->setData(QVariant(rootNode->id()), Qt::UserRole + 1);
 
     model->clear();
     model->appendRow(item);
@@ -154,7 +155,8 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
     for (const auto & child : node->children())
     {
         QStandardItem * item = new QStandardItem(child->name());
-        item->setData(QVariant(child->name()), Qt::UserRole + 1);
+        item->setData(QVariant(child->name()), Qt::DisplayRole);
+        item->setData(QVariant(child->id()), Qt::UserRole + 1);
         item->setEditable(false);
         
         parent->appendRow(item);
@@ -173,6 +175,8 @@ void Viewer::assignScene(Group * rootNode)
         node.setId(count++);
         return true;
     });
+
+    createSceneHierarchy(m_sceneHierarchy, rootNode);
 }
 
 #ifdef WIN32
@@ -329,7 +333,6 @@ void Viewer::on_loadFile(const QString & path)
         this->painter()->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
-        this->createSceneHierarchy(m_sceneHierarchy, scene);
     }
 }
 
@@ -653,7 +656,6 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
     static const unsigned int BACKGROUND_ID = 4244897280;
     static std::shared_ptr<DrawMethod> defaultDrawmethod = std::make_shared<DefaultDrawMethod>();
-    static std::shared_ptr<DrawMethod> highlightingDrawmethod = std::make_shared<HighlightingDrawMethod>();
     
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
@@ -675,15 +677,7 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
             });
 
             if (result)
-            {
-                m_selectedNodes.insert(id, result);
-                result->setSelected(true);
-                if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(result))
-                    drawable->setDrawMethod(highlightingDrawmethod);
-
-                std::cerr << "ID : " << id << "\n"; // TODO (jg) : Can be removed.
-                this->m_qtCanvas->update();
-            }
+                this->selectNode(result);
         }
     }
     
@@ -698,4 +692,17 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
         m_selectedNodes.clear();
         this->m_qtCanvas->update();
     }
+}
+
+void Viewer::selectNode(Node * node)
+{
+    static std::shared_ptr<DrawMethod> highlightingDrawmethod = std::make_shared<HighlightingDrawMethod>();
+
+    m_selectedNodes.insert(node->id(), node);
+    node->setSelected(true);
+    if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+        drawable->setDrawMethod(highlightingDrawmethod);
+
+    std::cerr << "ID : " << node->id() << "\n"; // TODO (jg) : Can be removed.
+    this->m_qtCanvas->update();
 }
