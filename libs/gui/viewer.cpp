@@ -89,11 +89,11 @@ Viewer::Viewer(
     m_sceneHierarchyTree->setModel(m_sceneHierarchy);
     m_sceneHierarchyTree->setSelectionMode(QAbstractItemView::MultiSelection);
     m_dockScene->setObjectName("scenehierarchy");
-    this->initializeDockWidgets(m_dockScene, m_sceneHierarchyTree, Qt::RightDockWidgetArea);
-
     QObject::connect(
         m_sceneHierarchyTree, SIGNAL(clicked(const QModelIndex &)),
         this, SLOT(on_m_sceneHierarchyTree_clicked(const QModelIndex &)));
+
+    this->initializeDockWidgets(m_dockScene, m_sceneHierarchyTree, Qt::RightDockWidgetArea);
 };
 
 void Viewer::initializeExplorer()
@@ -182,6 +182,7 @@ void Viewer::assignScene(Group * rootNode)
     });
 
     createSceneHierarchy(m_sceneHierarchy, rootNode);
+    m_sceneHierarchyTree->expandAll();
 }
 
 #ifdef WIN32
