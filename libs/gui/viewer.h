@@ -24,6 +24,7 @@ class QSettings;
 class QStandardItemModel;
 class QStandardItem;
 class QTreeView;
+class QModelIndex;
 
 class Ui_Viewer;
 class Canvas;
@@ -79,6 +80,7 @@ public:
     void uncheckManipulatorActions();
     void uncheckFboActions();
 
+    void selectById(const unsigned int & id);
     void selectNode(Node * node);
 
 
@@ -139,6 +141,8 @@ protected slots:
     void on_toggleExplorer_triggered();
 
     void on_mouseReleaseEventSignal(QMouseEvent * event);
+
+    void on_m_sceneHierarchyTree_clicked(const QModelIndex & index);
 protected:
 
     void initializeExplorer();

@@ -89,6 +89,10 @@ Viewer::Viewer(
     m_sceneHierarchyTree->setModel(m_sceneHierarchy);
     m_dockScene->setObjectName("scenehierarchy");
     this->initializeDockWidgets(m_dockScene, m_sceneHierarchyTree, Qt::RightDockWidgetArea);
+
+    QObject::connect(
+        m_sceneHierarchyTree, SIGNAL(clicked(const QModelIndex &)),
+        this, SLOT(on_m_sceneHierarchyTree_clicked(const QModelIndex &)));
 };
 
 void Viewer::initializeExplorer()
@@ -662,22 +666,7 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
         if (id < BACKGROUND_ID)
         {
-            if (m_selectedNodes.contains(id))
-                return;
-            
-            SceneTraverser traverser;
-            Node * result = nullptr;
-            traverser.traverse(*m_camera, [&result, &id](Node & node)
-            {
-                if( node.id() == id){
-                    result = &node;
-                    return false;
-                }
-                return true;
-            });
-
-            if (result)
-                this->selectNode(result);
+            this->selectById(id);
         }
     }
     
@@ -694,6 +683,26 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
     }
 }
 
+void Viewer::selectById(const unsigned int & id)
+{
+    if (m_selectedNodes.contains(id))
+        return;
+
+    SceneTraverser traverser;
+    Node * result = nullptr;
+    traverser.traverse(*m_camera, [&result, &id](Node & node)
+    {
+        if( node.id() == id){
+            result = &node;
+            return false;
+        }
+        return true;
+    });
+
+    if (result)
+        this->selectNode(result);
+}
+
 void Viewer::selectNode(Node * node)
 {
     static std::shared_ptr<DrawMethod> highlightingDrawmethod = std::make_shared<HighlightingDrawMethod>();
@@ -705,4 +714,10 @@ void Viewer::selectNode(Node * node)
 
     std::cerr << "ID : " << node->id() << "\n"; // TODO (jg) : Can be removed.
     this->m_qtCanvas->update();
+}
+
+void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
+{
+    this->selectById(index.data(Qt::UserRole + 1).toUInt());
+    this->selectById(index.data(Qt::UserRole + 1).toUInt());
 }
