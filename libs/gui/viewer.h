@@ -80,9 +80,10 @@ public:
     void uncheckManipulatorActions();
     void uncheckFboActions();
 
-    void selectById(const unsigned int & id, const bool & select);
+    void selectById(const unsigned int & id);
     void selectNode(Node * node);
     void deselectNode(Node * node);
+    void nodeChangeSelection(const unsigned int & id);
 
 
 public slots:
