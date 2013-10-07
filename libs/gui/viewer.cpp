@@ -87,6 +87,7 @@ Viewer::Viewer(
     restoreViews(s);
     initializeExplorer();
     m_sceneHierarchyTree->setModel(m_sceneHierarchy);
+    // m_sceneHierarchyTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
     m_dockScene->setObjectName("scenehierarchy");
     this->initializeDockWidgets(m_dockScene, m_sceneHierarchyTree, Qt::RightDockWidgetArea);
 
@@ -659,35 +660,17 @@ void Viewer::on_actionSave_4_triggered() { saveView(3); }
 void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
     static const unsigned int BACKGROUND_ID = 4244897280;
-    static std::shared_ptr<DrawMethod> defaultDrawmethod = std::make_shared<DefaultDrawMethod>();
     
-    if (m_coordinateProvider && event->button() == Qt::LeftButton)
+    if (m_coordinateProvider)
     {
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
         if (id < BACKGROUND_ID)
-        {
-            this->selectById(id);
-        }
-    }
-    
-    if (event->button() == Qt::RightButton)
-    {
-        for( auto node : m_selectedNodes )
-        {
-            node->setSelected(false);
-            if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
-                drawable->setDrawMethod(defaultDrawmethod);
-        }
-        m_selectedNodes.clear();
-        this->m_qtCanvas->update();
+            this->selectById(id, event->button() == Qt::LeftButton);
     }
 }
 
-void Viewer::selectById(const unsigned int & id)
+void Viewer::selectById(const unsigned int & id, const bool & select)
 {
-    if (m_selectedNodes.contains(id))
-        return;
-
     SceneTraverser traverser;
     Node * result = nullptr;
     traverser.traverse(*m_camera, [&result, &id](Node & node)
@@ -700,7 +683,18 @@ void Viewer::selectById(const unsigned int & id)
     });
 
     if (result)
-        this->selectNode(result);
+    {
+        if (select)
+        {
+            if (m_selectedNodes.contains(id))
+                return;
+            this->selectNode(result);
+        } else {
+            if (!m_selectedNodes.contains(id))
+                return;
+            this->deselectNode(result);
+        }
+    }
 }
 
 void Viewer::selectNode(Node * node)
@@ -716,8 +710,21 @@ void Viewer::selectNode(Node * node)
     this->m_qtCanvas->update();
 }
 
+void Viewer::deselectNode(Node * node)
+{
+    static std::shared_ptr<DrawMethod> defaultDrawmethod = std::make_shared<DefaultDrawMethod>();
+
+    m_selectedNodes.erase(m_selectedNodes.find(node->id()));
+    node->setSelected(false);
+    if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+        drawable->setDrawMethod(defaultDrawmethod);
+
+    std::cerr << "ID deselect : " << node->id() << "\n";
+    this->m_qtCanvas->update();
+}
+
 void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
 {
-    this->selectById(index.data(Qt::UserRole + 1).toUInt());
-    this->selectById(index.data(Qt::UserRole + 1).toUInt());
+    this->selectById(index.data(Qt::UserRole + 1).toUInt(), true);
+    // this->selectById(index.data(Qt::UserRole + 1).toUInt(), true);
 }
