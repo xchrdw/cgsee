@@ -746,7 +746,6 @@ void Viewer::selectNode(Node * node)
     if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
         drawable->setDrawMethod(highlightingDrawmethod);
 
-    std::cerr << "ID select : " << node->id() << "\n"; // TODO (jg) : Can be removed.
     this->m_qtCanvas->update();
 
     for ( auto child : node->children() )
@@ -768,7 +767,6 @@ void Viewer::deselectNode(Node * node)
     if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
         drawable->setDrawMethod(defaultDrawmethod);
 
-    std::cerr << "ID deselect : " << node->id() << "\n";
     this->m_qtCanvas->update();
 
     for ( auto child : node->children() )
