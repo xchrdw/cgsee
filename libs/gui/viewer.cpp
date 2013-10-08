@@ -95,6 +95,10 @@ Viewer::Viewer(
         m_sceneHierarchyTree, SIGNAL(clicked(const QModelIndex &)),
         this, SLOT(on_m_sceneHierarchyTree_clicked(const QModelIndex &)));
 
+    QObject::connect(
+        m_sceneHierarchy, SIGNAL(itemChanged(QStandardItem *)),
+        this, SLOT(on_m_sceneHierarchy_itemChanged(QStandardItem *)));
+
     this->initializeDockWidgets(m_dockScene, m_sceneHierarchyTree, Qt::RightDockWidgetArea);
 };
 
@@ -150,6 +154,8 @@ void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * rootNode)
     QStandardItem * item = new QStandardItem(rootNode->name());
     item->setData(QVariant(rootNode->name()), Qt::DisplayRole);
     item->setData(QVariant(rootNode->id()), Qt::UserRole + 1);
+    item->setCheckable(true);
+    item->setCheckState(Qt::Checked);
 
     model->clear();
     model->appendRow(item);
@@ -169,9 +175,14 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
 
         item->setData(QVariant(child->id()), Qt::UserRole + 1);
         item->setEditable(false);
+        item->setCheckable(true);
+        item->setCheckState(Qt::Checked);
         
         parent->appendRow(item);
         fillSceneHierarchy(child, item);
+
+        if (childCount == 1 && child->children().count() == 0)
+            m_sceneHierarchyTree->setRowHidden(0, parent->index(), true);
 
         ++count;
     }
@@ -802,6 +813,25 @@ void Viewer::clearSelection()
         m_sceneHierarchyTree->clearSelection();
 }
 
+void Viewer::hideById(const unsigned int & id, const bool & hideStatus)
+{
+    SceneTraverser traverser;
+    Node * result = nullptr;
+    traverser.traverse(*m_camera, [&result, &id](Node & node)
+    {
+        if( node.id() == id){
+            result = &node;
+            return false;
+        }
+        return true;
+    });
+
+    if (result)
+    {
+        result->setHidden(hideStatus);
+    }
+}
+
 void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
 {
     if (QApplication::keyboardModifiers() != Qt::CTRL)
@@ -810,4 +840,9 @@ void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
         this->treeToggleSelection(index.data(Qt::UserRole + 1).toUInt());
     }
     this->selectById(index.data(Qt::UserRole + 1).toUInt());
+}
+
+void Viewer::on_m_sceneHierarchy_itemChanged(QStandardItem * item)
+{
+    this->hideById(item->data(Qt::UserRole + 1).toUInt(), item->checkState() == Qt::Unchecked);
 }

@@ -48,6 +48,9 @@ public:
 
     const bool selected() const;
     void setSelected(const bool selected);
+
+    const bool hidden() const;
+    void setHidden(const bool hidden);
     
 //     bool isCircularDependentTo( const Node & other ) const;
 
@@ -64,5 +67,6 @@ protected:
 
     unsigned int m_id;
     bool m_selected;
+    bool m_hidden;
 };
 

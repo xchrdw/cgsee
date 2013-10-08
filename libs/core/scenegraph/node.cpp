@@ -9,6 +9,7 @@ Node::Node(const QString & name)
 ,   m_rf(RF_Relative)
 ,   m_transform(glm::mat4(1))
 ,   m_selected(false)
+,   m_hidden(false)
 {
 }
 
@@ -98,4 +99,14 @@ const bool Node::selected() const
 void Node::setSelected(const bool selected)
 {
     m_selected = selected;
+}
+
+const bool Node::hidden() const
+{
+    return m_hidden;
+}
+
+void Node::setHidden(const bool hidden)
+{
+    m_hidden = hidden;
 }

@@ -85,6 +85,7 @@ public:
     void deselectNode(Node * node);
     void treeToggleSelection(const unsigned int & id);
     void clearSelection();
+    void hideById(const unsigned int & id, const bool & hideStatus);
 
 
 public slots:
@@ -146,6 +147,7 @@ protected slots:
     void on_mouseReleaseEventSignal(QMouseEvent * event);
 
     void on_m_sceneHierarchyTree_clicked(const QModelIndex & index);
+    void on_m_sceneHierarchy_itemChanged(QStandardItem * item);
 protected:
 
     void initializeExplorer();
