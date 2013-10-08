@@ -88,6 +88,8 @@ Viewer::Viewer(
     initializeExplorer();
     m_sceneHierarchyTree->setModel(m_sceneHierarchy);
     m_sceneHierarchyTree->setSelectionMode(QAbstractItemView::MultiSelection);
+    m_sceneHierarchyTree->setItemsExpandable(false);
+    m_sceneHierarchyTree->setRootIsDecorated(false);
     m_dockScene->setObjectName("scenehierarchy");
     QObject::connect(
         m_sceneHierarchyTree, SIGNAL(clicked(const QModelIndex &)),
@@ -157,15 +159,21 @@ void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * rootNode)
 
 void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
 {
+    int childCount = node->children().count();
+    int count = 0;
     for (const auto & child : node->children())
     {
         QStandardItem * item = new QStandardItem(child->name());
-        item->setData(QVariant(child->name()), Qt::DisplayRole);
+        if (child->name() == "") { item->setData(QVariant(node->name() + QString("_") + QString::number(count)), Qt::DisplayRole); }
+        else { item->setData(QVariant(child->name()), Qt::DisplayRole); }
+
         item->setData(QVariant(child->id()), Qt::UserRole + 1);
         item->setEditable(false);
         
         parent->appendRow(item);
         fillSceneHierarchy(child, item);
+
+        ++count;
     }
 }
 
@@ -695,10 +703,26 @@ void Viewer::selectById(const unsigned int & id)
 
     if (result)
     {
+        Node * parent = *result->parents().begin();
+        int siblings = parent->children().count() - 1;
         if (m_selectedNodes.contains(id))
+        {
             this->deselectNode(result);
+            if (!siblings)
+            {
+                this->deselectNode(parent);
+                this->treeToggleSelection(parent->id());
+            }
+        }
         else
+        {
             this->selectNode(result);
+            if (!siblings)
+            {
+                this->selectNode(parent);
+                this->treeToggleSelection(parent->id());
+            }
+        }
     }
 }
 
@@ -713,6 +737,15 @@ void Viewer::selectNode(Node * node)
 
     std::cerr << "ID select : " << node->id() << "\n"; // TODO (jg) : Can be removed.
     this->m_qtCanvas->update();
+
+    for ( auto child : node->children() )
+    {
+        if (!m_selectedNodes.contains(child->id()))
+        {
+            this->selectNode(child);
+            this->treeToggleSelection(child->id());
+        }
+    }
 }
 
 void Viewer::deselectNode(Node * node)
@@ -726,16 +759,15 @@ void Viewer::deselectNode(Node * node)
 
     std::cerr << "ID deselect : " << node->id() << "\n";
     this->m_qtCanvas->update();
-}
 
-void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
-{
-    if (QApplication::keyboardModifiers() != Qt::CTRL)
+    for ( auto child : node->children() )
     {
-        this->clearSelection();
-        this->treeToggleSelection(index.data(Qt::UserRole + 1).toUInt());
+        if (m_selectedNodes.contains(child->id()))
+        {
+            this->deselectNode(child);
+            this->treeToggleSelection(child->id());
+        }
     }
-    this->selectById(index.data(Qt::UserRole + 1).toUInt());
 }
 
 void Viewer::treeToggleSelection(const unsigned int & id)
@@ -768,4 +800,14 @@ void Viewer::clearSelection()
         this->m_qtCanvas->update();
 
         m_sceneHierarchyTree->clearSelection();
+}
+
+void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
+{
+    if (QApplication::keyboardModifiers() != Qt::CTRL)
+    {
+        this->clearSelection();
+        this->treeToggleSelection(index.data(Qt::UserRole + 1).toUInt());
+    }
+    this->selectById(index.data(Qt::UserRole + 1).toUInt());
 }
