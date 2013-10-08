@@ -83,7 +83,8 @@ public:
     void selectById(const unsigned int & id);
     void selectNode(Node * node);
     void deselectNode(Node * node);
-    void nodeChangeSelection(const unsigned int & id);
+    void treeToggleSelection(const unsigned int & id);
+    void clearSelection();
 
 
 public slots:

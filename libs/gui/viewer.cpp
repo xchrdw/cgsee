@@ -661,32 +661,23 @@ void Viewer::on_actionSave_4_triggered() { saveView(3); }
 void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
     static const unsigned int BACKGROUND_ID = 4244897280;
-    static std::shared_ptr<DrawMethod> defaultDrawmethod = std::make_shared<DefaultDrawMethod>();
     
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
+
+        if (event->modifiers() != Qt::CTRL)
+            this->clearSelection();
+
         if (id < BACKGROUND_ID)
         {
             this->selectById(id);
-            this->nodeChangeSelection(id);
+            this->treeToggleSelection(id);
         }
     }
 
     if (event->button() == Qt::RightButton)
-    {
-        for( auto node : m_selectedNodes )
-        {
-            node->setSelected(false);
-            if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
-                drawable->setDrawMethod(defaultDrawmethod);
-        }
-
-        m_selectedNodes.clear();
-        this->m_qtCanvas->update();
-
-        m_sceneHierarchyTree->clearSelection();
-    }
+        this->clearSelection();
 }
 
 void Viewer::selectById(const unsigned int & id)
@@ -739,10 +730,15 @@ void Viewer::deselectNode(Node * node)
 
 void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
 {
+    if (QApplication::keyboardModifiers() != Qt::CTRL)
+    {
+        this->clearSelection();
+        this->treeToggleSelection(index.data(Qt::UserRole + 1).toUInt());
+    }
     this->selectById(index.data(Qt::UserRole + 1).toUInt());
 }
 
-void Viewer::nodeChangeSelection(const unsigned int & id)
+void Viewer::treeToggleSelection(const unsigned int & id)
 {
     QModelIndexList list = m_sceneHierarchy->match(
         m_sceneHierarchy->indexFromItem((m_sceneHierarchy->item(0,0))),
@@ -755,4 +751,21 @@ void Viewer::nodeChangeSelection(const unsigned int & id)
         return;
 
     m_sceneHierarchyTree->selectionModel()->select(list.first(), QItemSelectionModel::Toggle);
+}
+
+void Viewer::clearSelection()
+{
+    static std::shared_ptr<DrawMethod> defaultDrawmethod = std::make_shared<DefaultDrawMethod>();
+
+    for( auto node : m_selectedNodes )
+        {
+            node->setSelected(false);
+            if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+                drawable->setDrawMethod(defaultDrawmethod);
+        }
+
+        m_selectedNodes.clear();
+        this->m_qtCanvas->update();
+
+        m_sceneHierarchyTree->clearSelection();
 }
