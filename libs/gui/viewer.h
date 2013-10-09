@@ -25,6 +25,7 @@ class QStandardItemModel;
 class QStandardItem;
 class QTreeView;
 class QModelIndex;
+class QTextEdit;
 
 class Ui_Viewer;
 class Canvas;
@@ -187,6 +188,7 @@ protected:
     FileExplorer * m_explorer;
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
+    QTextEdit * m_sceneInfoBox;
     AbstractModelLoader * m_loader;
 
     CoordinateProvider * m_coordinateProvider;

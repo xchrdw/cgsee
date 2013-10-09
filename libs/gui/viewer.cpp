@@ -18,6 +18,8 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QTreeView>
+#include <QTextEdit>
+#include <QVBoxLayout>
 
 #include "ui_viewer.h"
 #include "viewer.h"
@@ -71,7 +73,8 @@ Viewer::Viewer(
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
-,   m_sceneHierarchyTree(new QTreeView(m_dockScene))
+,   m_sceneHierarchyTree(new QTreeView())
+,   m_sceneInfoBox(new QTextEdit())
 ,   m_coordinateProvider(nullptr)
 ,   m_loader(new AssimpLoader( registry ))
 {
@@ -87,7 +90,7 @@ Viewer::Viewer(
     restoreViews(s);
     initializeExplorer();
     initializeSceneTree();
-    
+
 };
 
 void Viewer::initializeExplorer()
@@ -124,7 +127,7 @@ void Viewer::initializeSceneTree()
     m_sceneHierarchyTree->setSelectionMode(QAbstractItemView::MultiSelection);
     m_sceneHierarchyTree->setItemsExpandable(false);
     m_sceneHierarchyTree->setRootIsDecorated(false);
-    m_dockScene->setObjectName("scenehierarchy");
+    m_dockScene->setObjectName("sceneHierarchy");
 
     QObject::connect(
         m_sceneHierarchyTree, SIGNAL(clicked(const QModelIndex &)),
@@ -134,7 +137,19 @@ void Viewer::initializeSceneTree()
         m_sceneHierarchy, SIGNAL(itemChanged(QStandardItem *)),
         this, SLOT(on_m_sceneHierarchy_itemChanged(QStandardItem *)));
 
-    this->initializeDockWidgets(m_dockScene, m_sceneHierarchyTree, Qt::RightDockWidgetArea);
+
+    QVBoxLayout * layout = new QVBoxLayout(m_dockScene);
+    layout->addWidget(m_sceneHierarchyTree);
+    layout->addWidget(m_sceneInfoBox);
+    layout->setStretch(0,10);
+    layout->setStretch(1,1);
+
+    QWidget * sceneWidget = new QWidget(this);
+    sceneWidget->setLayout(layout);
+
+    this->initializeDockWidgets(m_dockScene, sceneWidget, Qt::RightDockWidgetArea);
+
+    m_sceneInfoBox->setReadOnly(true);
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
