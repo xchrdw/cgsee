@@ -151,6 +151,7 @@ protected slots:
 protected:
 
     void initializeExplorer();
+    void initializeSceneTree();
     void initializeDockWidgets(QDockWidget * dockWidget,
     QWidget * widget, Qt::DockWidgetArea area);
     void createSceneHierarchy(QStandardItemModel * model, Node * parentNode);
