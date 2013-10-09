@@ -119,6 +119,8 @@ void Viewer::initializeExplorer()
         this, SLOT(on_openFileDialogAction_triggered()));
 
     m_explorer->emitActivatedItem(m_explorer->model()->index(QDir::currentPath()));
+
+    m_dockExplorer->setMinimumHeight(200);
 }
 
 void Viewer::initializeSceneTree()
