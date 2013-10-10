@@ -87,7 +87,11 @@ public:
     void treeToggleSelection(const unsigned int & id);
     void clearSelection();
     void hideById(const unsigned int & id, const bool & hideStatus);
+    void updateInfoBox();
 
+
+signals:
+    void infoBoxChanged(const QString & info);
 
 public slots:
     void on_flightManipulatorAction_triggered();
@@ -188,7 +192,6 @@ protected:
     FileExplorer * m_explorer;
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
-    QTextEdit * m_sceneInfoBox;
     AbstractModelLoader * m_loader;
 
     CoordinateProvider * m_coordinateProvider;

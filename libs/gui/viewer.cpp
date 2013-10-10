@@ -21,6 +21,8 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
+#include <core/scenegraph/polygonalgeometry.h>
+
 #include "ui_viewer.h"
 #include "viewer.h"
 #include "canvas.h"
@@ -74,7 +76,6 @@ Viewer::Viewer(
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
 ,   m_sceneHierarchyTree(new QTreeView())
-,   m_sceneInfoBox(new QTextEdit())
 ,   m_coordinateProvider(nullptr)
 ,   m_loader(new AssimpLoader( registry ))
 {
@@ -131,18 +132,12 @@ void Viewer::initializeSceneTree()
     m_sceneHierarchyTree->setRootIsDecorated(false);
     m_dockScene->setObjectName("sceneHierarchy");
 
-    QObject::connect(
-        m_sceneHierarchyTree, SIGNAL(clicked(const QModelIndex &)),
-        this, SLOT(on_m_sceneHierarchyTree_clicked(const QModelIndex &)));
 
-    QObject::connect(
-        m_sceneHierarchy, SIGNAL(itemChanged(QStandardItem *)),
-        this, SLOT(on_m_sceneHierarchy_itemChanged(QStandardItem *)));
-
+    QTextEdit * sceneInfoText = new QTextEdit();
 
     QVBoxLayout * layout = new QVBoxLayout(m_dockScene);
     layout->addWidget(m_sceneHierarchyTree);
-    layout->addWidget(m_sceneInfoBox);
+    layout->addWidget(sceneInfoText);
     layout->setStretch(0,10);
     layout->setStretch(1,1);
 
@@ -151,7 +146,19 @@ void Viewer::initializeSceneTree()
 
     this->initializeDockWidgets(m_dockScene, sceneWidget, Qt::RightDockWidgetArea);
 
-    m_sceneInfoBox->setReadOnly(true);
+    sceneInfoText->setReadOnly(true);
+
+    QObject::connect(
+        m_sceneHierarchyTree, SIGNAL(clicked(const QModelIndex &)),
+        this, SLOT(on_m_sceneHierarchyTree_clicked(const QModelIndex &)));
+
+    QObject::connect(
+        m_sceneHierarchy, SIGNAL(itemChanged(QStandardItem *)),
+        this, SLOT(on_m_sceneHierarchy_itemChanged(QStandardItem *)));
+
+    QObject::connect(
+        this, SIGNAL(infoBoxChanged(const QString &)),
+        sceneInfoText, SLOT(setPlainText(const QString &)));
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
@@ -226,6 +233,7 @@ void Viewer::assignScene(Group * rootNode)
 
     createSceneHierarchy(m_sceneHierarchy, rootNode);
     m_sceneHierarchyTree->expandAll();
+    this->updateInfoBox();
 }
 
 #ifdef WIN32
@@ -759,6 +767,7 @@ void Viewer::selectById(const unsigned int & id)
             }
         }
     }
+    this->updateInfoBox();
 }
 
 void Viewer::selectNode(Node * node)
@@ -867,4 +876,19 @@ void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
 void Viewer::on_m_sceneHierarchy_itemChanged(QStandardItem * item)
 {
     this->hideById(item->data(Qt::UserRole + 1).toUInt(), item->checkState() == Qt::Unchecked);
+}
+
+void Viewer::updateInfoBox()
+{
+    int vertices = 0;
+    
+    for ( auto node : m_selectedNodes )
+    {
+        if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+            vertices += drawable->geometry()->vertices()->size();
+    }
+
+    QString info = "(Selected objects)\n\nVertices: " + QString::number(vertices);
+
+    emit infoBoxChanged(info);
 }
