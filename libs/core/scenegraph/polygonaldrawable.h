@@ -47,5 +47,5 @@ protected:
 protected:
     t_geometryP m_geometry;
     GLenum  m_mode;
-    t_drawMethodP m_drawMehtod;
+    t_drawMethodP m_drawMethod;
 };

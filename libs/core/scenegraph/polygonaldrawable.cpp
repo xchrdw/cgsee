@@ -15,7 +15,7 @@ PolygonalDrawable::PolygonalDrawable(const QString & name)
 :   Node( name )
 ,   m_geometry( nullptr )
 ,   m_mode( GL_TRIANGLES )
-,   m_drawMehtod( new DefaultDrawMethod )
+,   m_drawMethod( new DefaultDrawMethod )
 {
 }
 
@@ -57,16 +57,16 @@ void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transfor
 {
     if (m_geometry)
     {
-        m_drawMehtod->draw(program, transform, *this);
+        m_drawMethod->draw(program, transform, *this);
     }
 }
 
 void PolygonalDrawable::setDrawMethod( t_drawMethodP drawMethod )
 {
-    m_drawMehtod = drawMethod;
+    m_drawMethod = drawMethod;
 }
 
 PolygonalDrawable::t_drawMethodP PolygonalDrawable::drawmethod(void)
 {
-    return m_drawMehtod;
+    return m_drawMethod;
 }
