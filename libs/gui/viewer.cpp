@@ -30,6 +30,8 @@
 #include "fileNavigator.h"
 #include "fileExplorer.h"
 
+#include "../../apps/cgsee/painter.h"
+
 #include <core/navigation/abstractnavigation.h>
 #include <core/navigation/flightnavigation.h>
 #include <core/navigation/fpsnavigation.h>
@@ -42,6 +44,7 @@
 
 #include <core/coordinateprovider.h>
 #include <core/camera.h>
+#include <core/aabb.h>
 
 #include <core/scenegraph/node.h>
 #include <core/scenegraph/group.h>
@@ -77,6 +80,7 @@ Viewer::Viewer(
 ,   m_sceneHierarchy(new QStandardItemModel())
 ,   m_sceneHierarchyTree(new QTreeView())
 ,   m_coordinateProvider(nullptr)
+,   m_selectionBBox(new AxisAlignedBoundingBox)
 ,   m_loader(new AssimpLoader( registry ))
 {
 
@@ -135,7 +139,7 @@ void Viewer::initializeSceneTree()
 
     QTextEdit * sceneInfoText = new QTextEdit();
 
-    QVBoxLayout * layout = new QVBoxLayout(m_dockScene);
+    QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget(m_sceneHierarchyTree);
     layout->addWidget(sceneInfoText);
     layout->setStretch(0,10);
@@ -319,6 +323,7 @@ Viewer::~Viewer()
     delete m_sceneHierarchy;
     delete m_loader;
     delete m_coordinateProvider;
+    delete m_selectionBBox;
 }
 
 void Viewer::setPainter(AbstractScenePainter * painter)
@@ -390,6 +395,7 @@ void Viewer::on_loadFile(const QString & path)
         this->painter()->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
+        this->selectionBBoxChanged();
     }
 }
 
@@ -709,6 +715,7 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
+
 void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
     static const unsigned int BACKGROUND_ID = 4244897280;
@@ -779,6 +786,7 @@ void Viewer::selectNode(Node * node)
     if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
         drawable->setDrawMethod(highlightingDrawmethod);
 
+    this->selectionBBoxChanged();
     this->m_qtCanvas->update();
 
     for ( auto child : node->children() )
@@ -799,7 +807,8 @@ void Viewer::deselectNode(Node * node)
     node->setSelected(false);
     if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
         drawable->setDrawMethod(defaultDrawmethod);
-
+    
+    this->selectionBBoxChanged();
     this->m_qtCanvas->update();
 
     for ( auto child : node->children() )
@@ -839,6 +848,7 @@ void Viewer::clearSelection()
         }
 
         m_selectedNodes.clear();
+        this->selectionBBoxChanged();
         this->m_qtCanvas->update();
 
         m_sceneHierarchyTree->clearSelection();
@@ -891,4 +901,16 @@ void Viewer::updateInfoBox()
     QString info = "(Selected objects)\n\nVertices: " + QString::number(vertices);
 
     emit infoBoxChanged(info);
+}
+
+void Viewer::selectionBBoxChanged()
+{
+    m_selectionBBox->invalidate();
+    for ( auto node : m_selectedNodes )
+    {
+        m_selectionBBox->extend(node->boundingBox());
+    }
+
+    if (Painter * painter = dynamic_cast<Painter*>(this->painter()))
+        painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
 }

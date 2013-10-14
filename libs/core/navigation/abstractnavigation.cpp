@@ -217,6 +217,11 @@ glm::mat4 AbstractNavigation::topRightView()
     return frontview() * glm::rotate(30.f, glm::vec3(1,0,0)) *  glm::rotate(45.f, glm::vec3(0,1,0)); 
 }
 
+glm::mat4 AbstractNavigation::sceneTransform()
+{
+    return m_sceneTransform;
+}
+
 void AbstractNavigation::sceneChanged(Group * scene)
 {
     AxisAlignedBoundingBox bb = scene->boundingBox();
@@ -243,5 +248,6 @@ void AbstractNavigation::rescaleScene( Group * scene )
     AxisAlignedBoundingBox bb = scene->boundingBox();
 
     glm::mat4 scale_matrix = glm::scale(glm::vec3(5.0f / bb.radius()));
-    scene->setTransform(scale_matrix * scene->transform());
+    m_sceneTransform = scale_matrix * scene->transform();
+    scene->setTransform(m_sceneTransform);
 }

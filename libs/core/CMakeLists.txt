@@ -113,6 +113,8 @@ set(SOURCES
     
     rendering/blureffect.h
     rendering/blureffect.cpp
+    rendering/boundingboxpass.h
+    rendering/boundingboxpass.cpp
     rendering/defaultpass.h   
     rendering/defaultpass.cpp
     rendering/coloridpass.h   
