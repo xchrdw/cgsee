@@ -42,6 +42,7 @@ class Node;
 class DataBlockRegistry;
 
 class CoordinateProvider;
+class AxisAlignedBoundingBox;
 
 
 class CGSEE_API Viewer : public QMainWindow
@@ -88,6 +89,7 @@ public:
     void clearSelection();
     void hideById(const unsigned int & id, const bool & hideStatus);
     void updateInfoBox();
+    void selectionBBoxChanged();
 
 
 signals:
@@ -196,4 +198,6 @@ protected:
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;
+
+    AxisAlignedBoundingBox * m_selectionBBox;
 };

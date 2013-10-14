@@ -33,6 +33,8 @@ public:
     virtual void resize(const int width, const int height);
     virtual void postShaderRelinked() override;
 
+    virtual void setBoundingBox(const glm::vec3 & llf, const glm::vec3 & urb, const glm::mat4 & transform);
+
     virtual RenderingPass * getSharedPass();
     
 protected:
@@ -74,6 +76,7 @@ protected:
     RenderingPass * m_ssao;
     RenderingPass * m_ssaoBlur;
     RenderingPass * m_colorId;
+    RenderingPass * m_boundingBox;
     QList<RenderingPass*> m_passes;
 
     Camera * m_camera;
