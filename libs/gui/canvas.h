@@ -45,6 +45,7 @@ public:
 
 signals:
     void mouseReleaseEventSignal ( QMouseEvent * event );
+    void mouseMoveEventTriggered ( int triggered );
 
 protected:
 

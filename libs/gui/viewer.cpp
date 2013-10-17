@@ -82,6 +82,7 @@ Viewer::Viewer(
 ,   m_coordinateProvider(nullptr)
 ,   m_selectionBBox(new AxisAlignedBoundingBox)
 ,   m_loader(new AssimpLoader( registry ))
+,   m_mouseMoving(false)
 {
 
     m_ui->setupUi(this);
@@ -307,6 +308,10 @@ void Viewer::initialize(const GLFormat & format)
     QObject::connect(
         m_qtCanvas, SIGNAL(mouseReleaseEventSignal(QMouseEvent *)),
         this, SLOT(on_mouseReleaseEventSignal(QMouseEvent *)));
+
+    QObject::connect(
+        m_qtCanvas, SIGNAL(mouseMoveEventTriggered(int)),
+        this, SLOT(on_mouseMoveEventTriggered(int)));
 }
 
 Viewer::~Viewer()
@@ -716,9 +721,20 @@ void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
 
+void Viewer::on_mouseMoveEventTriggered(int triggered)
+{
+    m_mouseMoving = triggered;
+}
+
 void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 {
     static const unsigned int BACKGROUND_ID = 4244897280;
+
+    if (m_mouseMoving)
+    {
+        m_mouseMoving = false;
+        return;
+    }
     
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {

@@ -218,6 +218,8 @@ void Canvas::mouseReleaseEvent( QMouseEvent * event )
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
     m_navigation->mouseMoveEvent(event);
+
+    emit mouseMoveEventTriggered(1);
 }
 
 void Canvas::wheelEvent(QWheelEvent * event)

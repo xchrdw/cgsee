@@ -151,6 +151,7 @@ protected slots:
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
 
+    void on_mouseMoveEventTriggered(int triggered);
     void on_mouseReleaseEventSignal(QMouseEvent * event);
 
     void on_m_sceneHierarchyTree_clicked(const QModelIndex & index);
@@ -200,4 +201,6 @@ protected:
     QMap<unsigned int, Node *> m_selectedNodes;
 
     AxisAlignedBoundingBox * m_selectionBBox;
+
+    bool m_mouseMoving;
 };
