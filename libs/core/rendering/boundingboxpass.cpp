@@ -164,6 +164,7 @@ void BoundingBoxPass::render()
 
     glEnable(GL_DEPTH_TEST);
 
+    glLineWidth(2.0);
     glDrawArrays(GL_LINES, 0, m_vertices->size());
     glError();
 
