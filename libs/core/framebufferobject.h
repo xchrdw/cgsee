@@ -41,6 +41,8 @@ public:
     unsigned int width();
     unsigned int height();
 
+    GLuint depthTexture() const;
+
 protected:
     void initialize() const;
     void resize() const;

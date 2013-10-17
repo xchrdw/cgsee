@@ -851,6 +851,7 @@ void Viewer::clearSelection()
         this->selectionBBoxChanged();
         this->m_qtCanvas->update();
 
+        this->updateInfoBox();
         m_sceneHierarchyTree->clearSelection();
 }
 

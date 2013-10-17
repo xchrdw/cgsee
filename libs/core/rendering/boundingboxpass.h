@@ -33,5 +33,6 @@ protected:
     Program * m_program;
 
     glm::mat4 m_transform;
+    GLuint m_depthTexture;
 };
 

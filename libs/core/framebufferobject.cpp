@@ -39,7 +39,7 @@ FrameBufferObject::~FrameBufferObject()
     }
     if(isRenderBuffer())
     {
-        glDeleteRenderbuffers(1, &m_render);
+        glDeleteTextures(1, &m_render);
         glError();
     }
     if(isFrameBuffer())
@@ -115,7 +115,7 @@ void FrameBufferObject::initialize() const
 {
     if(m_depth) // Initialize Render Buffer for Depth
     {
-        glGenRenderbuffers(1, &m_render);
+        glGenTextures(1, &m_render);
         glError();
     }
 
@@ -132,7 +132,7 @@ void FrameBufferObject::initialize() const
 
     if(m_depth)
     {
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_render, 0);
         glError();
     }
 
@@ -172,15 +172,26 @@ unsigned int FrameBufferObject::height()
     return m_height;
 }
 
+GLuint FrameBufferObject::depthTexture() const
+{
+    return m_render;
+}
+
+
 void FrameBufferObject::resize() const
 {
     if(m_depth && m_render != -1)
     {
-        glBindRenderbuffer(GL_RENDERBUFFER, m_render);
+        glBindTexture(GL_TEXTURE_2D, m_render);
         glError();
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_size.x, m_size.y);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, m_size.x, m_size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
         glError();
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+        glBindTexture(GL_TEXTURE_2D, 0);
         glError();
     }
 

@@ -9,6 +9,8 @@
 
 
 const QString TRANSFORM_UNIFORM("transform");
+const QString DEPTH_TEXTURE_UNIFORM("depthTexture");
+const QString VIEWPORT_UNIFORM("viewport");
 
 
 BoundingBoxPass::BoundingBoxPass(Camera * camera, FrameBufferObject * target)
@@ -19,8 +21,10 @@ BoundingBoxPass::BoundingBoxPass(Camera * camera, FrameBufferObject * target)
 ,   m_vertices(new QVector<glm::vec3>)
 ,   m_validVertices(false)
 ,   m_program(new Program())
+,   m_depthTexture(-1)
 {
     m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/bbox.frag"));
+    m_program->attach(new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/shading/bbox.geo"));
     m_program->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/bbox.vert"));
     setActive(true);
 }
@@ -71,6 +75,7 @@ void BoundingBoxPass::updateVertices(const glm::vec3 & llf, const glm::vec3 & ur
 {
     m_vertices->clear();
 
+
     m_vertices->append(llf);
     m_vertices->append(glm::vec3(urb.x, llf.y, llf.z));
 
@@ -106,38 +111,6 @@ void BoundingBoxPass::updateVertices(const glm::vec3 & llf, const glm::vec3 & ur
 
     m_vertices->append(glm::vec3(urb.x, llf.y, urb.z));
     m_vertices->append(urb);
-
-
-    // m_vertices->append(-1.f);
-    // m_vertices->append(-1.f);
-    // m_vertices->append(-1.f);
-    // m_vertices->append(-1.f);
-    // m_vertices->append(-1.f);
-    // m_vertices->append(1.f);
-    // m_vertices->append(-1.f);
-    // m_vertices->append(1.f);
-    // m_vertices->append(1.f);
-
-    // m_vertices->append(-1.f);
-    // m_vertices->append(-1.f);
-    // m_vertices->append(1.0f);
-
-    // m_vertices->append(1.f);
-    // m_vertices->append(1.f);
-    // m_vertices->append(0);
-    // m_vertices->append(-1.f);
-    // m_vertices->append(1.f);
-    // m_vertices->append(0);
-
-    // m_vertices->append(-1.0f);
-    // m_vertices->append(-1.0f);
-    // m_vertices->append(0.0f);
-    // m_vertices->append(1.0f);
-    // m_vertices->append(-1.0f);
-    // m_vertices->append(0.0f);
-    // m_vertices->append(0.0f);
-    // m_vertices->append(1.0f);
-    // m_vertices->append(0.0f);
 
     m_validVertices = false;
 }
@@ -158,16 +131,25 @@ void BoundingBoxPass::render()
 
     m_program->use();
     m_program->setUniform(TRANSFORM_UNIFORM, m_camera->transform() * m_transform);
+    m_program->setUniform(DEPTH_TEXTURE_UNIFORM, 0);
+    m_program->setUniform(VIEWPORT_UNIFORM, m_camera->viewport());
+
+    glActiveTexture(GL_TEXTURE0);
+    glError();
+
+    glBindTexture(GL_TEXTURE_2D, m_fbo->depthTexture());
+    glError();
 
     glBindVertexArray(m_vao);                                                                  
     glError();
 
-    glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_DEPTH_TEST);
 
+    glLineWidth(2.0f);
     glDrawArrays(GL_LINES, 0, m_vertices->size());
     glError();
 
-    glDisable(GL_DEPTH_TEST);
+    // glDisable(GL_DEPTH_TEST);
 
     glBindVertexArray(0);
     glError();
@@ -178,7 +160,7 @@ void BoundingBoxPass::render()
 
 void BoundingBoxPass::clearFbos()
 {
-    // m_fbo->clear();
+
 }
 
 FrameBufferObject * BoundingBoxPass::output()
