@@ -97,7 +97,7 @@ void FrameBufferObject::bindTexture2D(
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glError();
 
-    program.setUniform(uniform, slot);  
+    program.setUniform(uniform, GLint(slot));
 }
 
 void FrameBufferObject::releaseTexture2D() const
