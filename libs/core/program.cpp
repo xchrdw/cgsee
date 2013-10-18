@@ -234,7 +234,7 @@ void Program::setUniform(
 {
     const GLint location(uniformLocation(name));
 
-    glUniform1i(location, value);
+    glUniform1ui(location, value);
     glError();
 }
 
