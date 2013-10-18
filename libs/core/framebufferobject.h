@@ -38,6 +38,9 @@ public:
         const unsigned int width
     ,   const unsigned int height);
 
+    unsigned int width();
+    unsigned int height();
+
 protected:
     void initialize() const;
     void resize() const;
@@ -57,4 +60,7 @@ protected:
     const GLenum m_type;
     const GLenum m_attachment;
     const bool   m_depth;
+
+    unsigned int m_width;
+    unsigned int m_height;
 };

@@ -97,6 +97,10 @@ public:
 
     void setUniform(
         const QString & name
+    ,   const glm::uvec4 & vec) const;
+
+    void setUniform(
+        const QString & name
     ,   const glm::mat3 & mat
     ,   const bool transpose = false) const;
 

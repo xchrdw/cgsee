@@ -19,6 +19,8 @@ public:
 
     void applyIfActive();
 
+    Camera * camera();
+
     virtual void setUniforms() = 0;
     virtual void resize(const int width, const int height) = 0;
 

@@ -28,6 +28,11 @@ void RenderingPass::setActive(bool value)
         clearFbos();
 }
 
+Camera * RenderingPass::camera()
+{
+    return m_camera;
+}
+
 void RenderingPass::applyIfActive()
 {
     if (m_active)

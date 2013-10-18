@@ -48,6 +48,11 @@ set(SOURCES
     scenegraph/SceneVisitorInterface.h
     scenegraph/drawvisitor.h
     scenegraph/drawvisitor.cpp
+    scenegraph/drawmethod.h
+    scenegraph/defaultdrawmethod.h
+    scenegraph/defaultdrawmethod.cpp
+    scenegraph/highlightingdrawmethod.h
+    scenegraph/highlightingdrawmethod.cpp
 
     scenegraph/cullingvisitor.h
     scenegraph/cullingvisitor.cpp
@@ -64,6 +69,8 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
+    coordinateprovider.h
+    coordinateprovider.cpp
     fileassociatedshader.h
     fileassociatedshader.cpp
     framebufferobject.h
@@ -76,6 +83,10 @@ set(SOURCES
     messagehandler.h
     messagehandler.cpp
     mathmacros.h
+
+    idpainter.h
+    idpainter.cpp
+
     
     navigation/abstractnavigation.h
     navigation/abstractnavigation.cpp
@@ -102,8 +113,12 @@ set(SOURCES
     
     rendering/blureffect.h
     rendering/blureffect.cpp
+    rendering/boundingboxpass.h
+    rendering/boundingboxpass.cpp
     rendering/defaultpass.h   
     rendering/defaultpass.cpp
+    rendering/coloridpass.h   
+    rendering/coloridpass.cpp
     rendering/lightsource.h
     rendering/lightsource.cpp
     rendering/normalzpass.h   

@@ -55,6 +55,8 @@ public:
     glm::mat4 bottomview();
     glm::mat4 topRightView();
     
+    glm::mat4 sceneTransform();
+
     float getBBRadius();
     void setBBRadius(float radius);
 
@@ -98,4 +100,5 @@ private:
     glm::quat m_old_rotation;
     glm::quat m_new_rotation;
     glm::mat4 m_frontView;
+    glm::mat4 m_sceneTransform;
 };
