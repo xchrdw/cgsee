@@ -24,7 +24,7 @@ CoordinateProvider::~CoordinateProvider()
 
 }
 
-unsigned int CoordinateProvider::objID(int x, int y)
+unsigned int CoordinateProvider::objID(unsigned int x, unsigned int y)
 {
     if (!m_pass) return 0;
 
@@ -53,7 +53,7 @@ unsigned int CoordinateProvider::objID(int x, int y)
     return 255*data[0] + 255*data[1]*255 + 255*data[2]*255*255 + 255*data[3]*255*255*255;
 }
 
-glm::dvec3 CoordinateProvider::pointAt(int x, int y)
+glm::dvec3 CoordinateProvider::pointAt(unsigned int x, unsigned int y)
 {
     if (!m_pass) return glm::dvec3(0.0f,0.0f,0.0f);
 

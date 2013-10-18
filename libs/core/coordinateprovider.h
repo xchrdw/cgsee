@@ -21,8 +21,8 @@ public:
     CoordinateProvider();
     virtual ~CoordinateProvider();
 
-    unsigned int objID(int x, int y);
-    glm::dvec3 pointAt(int x, int y);
+    unsigned int objID(unsigned int x, unsigned int y);
+    glm::dvec3 pointAt(unsigned int x, unsigned int y);
 
     void assignCamera(Camera * camera);
     void assignPass(RenderingPass * pass);
