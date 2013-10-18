@@ -40,6 +40,8 @@ public:
     
     void setDrawMethod( t_drawMethodP drawmethod );
     t_drawMethodP drawmethod(void);
+
+    unsigned int numVertices() const;
     
 protected:
     virtual void invalidateBoundingBox() override;

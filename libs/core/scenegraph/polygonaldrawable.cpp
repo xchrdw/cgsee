@@ -70,3 +70,13 @@ PolygonalDrawable::t_drawMethodP PolygonalDrawable::drawmethod(void)
 {
     return m_drawMethod;
 }
+
+unsigned int PolygonalDrawable::numVertices() const
+{
+    if (m_geometry)
+    {
+        return m_geometry->vertices()->size();
+    } else {
+        return 0;
+    }
+}

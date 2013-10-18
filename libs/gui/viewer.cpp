@@ -21,8 +21,6 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
-#include <core/scenegraph/polygonalgeometry.h>
-
 #include "ui_viewer.h"
 #include "viewer.h"
 #include "canvas.h"
@@ -911,7 +909,7 @@ void Viewer::updateInfoBox()
     for ( auto node : m_selectedNodes )
     {
         if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
-            vertices += drawable->geometry()->vertices()->size();
+            vertices += drawable->numVertices();
     }
 
     QString info = "(Selected objects)\n\nVertices: " + QString::number(vertices);
