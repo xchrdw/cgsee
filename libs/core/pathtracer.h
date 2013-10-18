@@ -20,7 +20,7 @@ class PathTracingBVH;
 class CGSEE_API PathTracer : public CameraImplementation
 {
 public:
-    const static QMap<QString, GLuint> textureSlots;
+    const static QMap<QString, GLint> textureSlots;
 
     PathTracer(Camera & abstraction);
     virtual ~PathTracer();

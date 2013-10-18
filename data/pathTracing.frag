@@ -24,9 +24,9 @@ uniform samplerBuffer randomVectors;
 uniform sampler2D accumulation;
 uniform samplerCube skyboxTexture;
 
-uniform int randomInt0;
-uniform int randomInt1;
-uniform int frameCounter;
+uniform uint randomInt0;
+uniform uint randomInt1;
+uniform uint frameCounter;
 
 vec3 light = vec3(0.0, 0.0, .0);
 vec3 arealight[4] = vec3[]( vec3(343.0, 547.8, 227.0),
@@ -74,8 +74,8 @@ float getLight(vec3 pos, vec3 normal);
 vec4 skybox(vec3 direction);
 
 
-float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt0%1111)) * 43758.5453);
-float rand2 =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt1%1111)) * 43758.5453); // :)
+float rand =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt0%1111u)) * 43758.5453);
+float rand2 =  fract(sin(dot(normalize(direction.xy) ,vec2(12.9898, 78.233)) * (randomInt1%1111u)) * 43758.5453); // :)
 
 //TODO: artifacts at the outside of the cornell box even for first order rays (maybe something like aabb-room-flickering))
 //TODO: more artifacts for higher order rays

@@ -32,8 +32,8 @@ std::mt19937 rng;
 std::uniform_real_distribution<float> aaOffsetDistribution(-1.0f, 1.0f);
 
 namespace {
-    QMap<QString, GLuint> initTextureSlots() {
-        QMap<QString, GLuint> textureSlots;
+    QMap<QString, GLint> initTextureSlots() {
+        QMap<QString, GLint> textureSlots;
         textureSlots["indexBuffer"] = 0;
         textureSlots["vertexBuffer"] = 1;
         textureSlots["normalBuffer"] = 2;
@@ -45,7 +45,7 @@ namespace {
     }
 }
 
-const QMap<QString, GLuint> PathTracer::textureSlots(initTextureSlots());
+const QMap<QString, GLint> PathTracer::textureSlots(initTextureSlots());
 
 
 PathTracer::PathTracer(Camera & abstraction)
