@@ -59,6 +59,8 @@ public:
     void selectImplementation(QString name);
     QString selectedImplementation();
 
+    int preferredRefreshTimeMSec() const;
+
 protected:
     QVector<CameraImplementation*> m_implementations;
     CameraImplementation * m_activeCamera;

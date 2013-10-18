@@ -67,6 +67,13 @@ QString Camera::selectedImplementation()
     return m_activeCamera->implementationName();
 }
 
+int Camera::preferredRefreshTimeMSec() const
+{
+    if (m_activeCamera == nullptr)
+        return 0;
+    return m_activeCamera->preferredRefreshTimeMSec();
+}
+
 void Camera::draw( const Program & program, const glm::mat4 & transform )
 {
     if (m_activeCamera == nullptr)

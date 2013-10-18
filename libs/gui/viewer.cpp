@@ -27,6 +27,7 @@
 #include <core/navigation/fpsnavigation.h>
 #include <core/navigation/arcballnavigation.h>
 
+#include <core/camera.h>
 #include <core/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
@@ -49,6 +50,7 @@ Viewer::Viewer(
 :   QMainWindow(parent, flags)
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
+,   m_camera(nullptr)
 ,   m_saved_views(4)
 
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
@@ -142,6 +144,8 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 {
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
+    if (m_camera != nullptr)
+        m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 
     QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
 
@@ -273,14 +277,20 @@ void Viewer::on_toggleExplorer_triggered()
     m_dockExplorer->setVisible(!visible);
 }
 
+void Viewer::updateCameraSelection(QString cameraName) const
+{
+    m_qtCanvas->painter()->selectCamera(cameraName);
+    m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
+}
+
 void Viewer::on_rasterizingCameraAction_triggered()
 {
-    m_qtCanvas->painter()->selectCamera("RasterizationCamera");
+    updateCameraSelection("RasterizationCamera");
 }
 
 void Viewer::on_pathtracerAction_triggered()
 {
-    m_qtCanvas->painter()->selectCamera("PathTracer");
+    updateCameraSelection("PathTracer");
 }
 
 void Viewer::on_phongShadingAction_triggered()
@@ -423,6 +433,8 @@ AbstractNavigation * Viewer::navigation() {
 void Viewer::setCamera(Camera * camera )
 {
     m_camera = camera;
+    if ((m_camera != nullptr) && (m_qtCanvas != nullptr))
+        m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 }
 
 Camera * Viewer::camera()

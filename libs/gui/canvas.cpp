@@ -22,13 +22,14 @@ Canvas::Canvas(
     QWidget * parent)
 
 :   QGLWidget(format.asQGLFormat(), parent)
+,   m_refreshTimeMSec(0)
 ,   m_painter(nullptr)
 ,   m_navigation(nullptr)
 ,   m_timer(nullptr)
 ,   m_format(format)
 {
     m_timer = new QBasicTimer();
-    m_timer->start( 1, this);
+    //m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
 
@@ -142,6 +143,21 @@ void Canvas::timerEvent(QTimerEvent *event)
         return;
 
     update();
+}
+
+void Canvas::setRefreshTimeMSec(int msec)
+{
+    m_refreshTimeMSec = msec;
+    if (msec < 0) {
+        m_timer->stop();
+    } else {
+        m_timer->start(m_refreshTimeMSec, this);
+    }
+}
+
+int Canvas::refreshTimeMSec() const
+{
+    return m_refreshTimeMSec;
 }
 
 void Canvas::setPainter(AbstractScenePainter * painter)

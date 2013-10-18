@@ -5,10 +5,8 @@
 
 #include <core/datacore/datablock.h>
 #include <core/assimploader.h>
-#include <gui/canvas.h>
 #include <gui/viewer.h>
 #include <core/camera.h>
-#include <core/pathtracer.h>
 #include <core/navigation/arcballnavigation.h>
 
 

@@ -61,6 +61,7 @@ PathTracer::PathTracer(Camera & abstraction)
 ,   m_accuFramebuffer(-1)
 ,   m_staticCubeMap(-1)
 {
+    m_preferredRefreshTimeMSec = 0;
     m_accuTexture[0] = m_accuTexture[1] = -1;
     /*this->setZFar(300.0);
     this->setZNear(1.0);

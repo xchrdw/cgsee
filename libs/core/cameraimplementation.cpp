@@ -32,6 +32,7 @@ QVector<CameraImplementation*> CameraImplementation::newImplementations(Camera &
 
 CameraImplementation::CameraImplementation(Camera & abstraction)
     : m_abstraction(abstraction)
+,   m_preferredRefreshTimeMSec(-1)
 {
 }
 
@@ -53,4 +54,14 @@ void CameraImplementation::onInvalidatedViewport(const int height, const int wid
 
 void CameraImplementation::onInvalidatedChildren()
 {
+}
+
+int CameraImplementation::preferredRefreshTimeMSec() const
+{
+    return m_preferredRefreshTimeMSec;
+}
+
+void CameraImplementation::setPreferredRefreshTimeMSec(int msec)
+{
+    m_preferredRefreshTimeMSec = msec;
 }

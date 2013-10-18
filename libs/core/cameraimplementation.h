@@ -28,6 +28,9 @@ public:
 
     virtual const QString implementationName() const = 0;
 
+    int preferredRefreshTimeMSec() const;
+    void setPreferredRefreshTimeMSec(int msec);
+
 protected:
     typedef std::function<CameraImplementation*(Camera * abstraction)> CamConstructor;
 
@@ -44,6 +47,8 @@ protected:
 
 protected:
     Camera & m_abstraction;
+
+    int m_preferredRefreshTimeMSec;
 
     virtual void onInvalidatedView();
     virtual void onInvalidatedViewport(const int width, const int height);

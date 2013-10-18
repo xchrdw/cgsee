@@ -41,6 +41,9 @@ public:
 
     virtual void resize(int width, int height);
 
+    virtual void setRefreshTimeMSec(int msec);
+    int refreshTimeMSec() const;
+
 protected:
 
     // QGLWidget Interface
@@ -62,6 +65,8 @@ protected:
 
     // For Rendering Loop
     void timerEvent(QTimerEvent *event);
+
+    int m_refreshTimeMSec;
 
 protected:
     AbstractScenePainter * m_painter;
