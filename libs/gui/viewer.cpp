@@ -20,6 +20,7 @@
 #include <QTreeView>
 #include <QTextEdit>
 #include <QVBoxLayout>
+#include <QMimeData>
 
 #include "ui_viewer.h"
 #include "viewer.h"
@@ -95,6 +96,7 @@ Viewer::Viewer(
     initializeExplorer();
     initializeSceneTree();
 
+    setAcceptDrops(true);
 };
 
 void Viewer::initializeExplorer()
@@ -929,4 +931,28 @@ void Viewer::selectionBBoxChanged()
 
     if (Painter * painter = dynamic_cast<Painter*>(this->painter()))
         painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
+}
+
+void Viewer::dragEnterEvent(QDragEnterEvent * event)
+{
+    event->acceptProposedAction();
+
+    // for ( auto url : event->mimeData()->urls() )
+    // {
+    //     if ( url.toLocalFile() )
+    // }
+}
+
+void Viewer::dragMoveEvent(QDragMoveEvent * event)
+{
+    event->acceptProposedAction();
+}
+
+void Viewer::dropEvent(QDropEvent * event)
+{
+    event->acceptProposedAction();
+
+    QString path = (event->mimeData()->urls().first().toLocalFile());
+
+    on_loadFile(path);
 }

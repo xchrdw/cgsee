@@ -166,6 +166,10 @@ protected:
     void fillSceneHierarchy(Node * node, QStandardItem * parent);
     void assignScene(Group * rootNode);
 
+    void dragEnterEvent(QDragEnterEvent * event) override;
+    void dragMoveEvent(QDragMoveEvent * event) override;
+    void dropEvent(QDropEvent * event) override;
+
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
     static const HGLRC currentContextHandle();
