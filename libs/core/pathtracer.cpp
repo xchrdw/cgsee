@@ -232,8 +232,8 @@ void PathTracer::initSkybox()
 void PathTracer::setUniforms(const Program & program)
 {
     program.setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
-    program.setUniform(RANDOM_INT_UNIFORM0, rng());
-    program.setUniform(RANDOM_INT_UNIFORM1, rng());
+    program.setUniform(RANDOM_INT_UNIFORM0, (unsigned int)(rng()));
+    program.setUniform(RANDOM_INT_UNIFORM1, (unsigned int)(rng()));
 
     glm::vec2 offset(aaOffsetDistribution(rng), aaOffsetDistribution(rng));
     offset /= m_abstraction.viewport();
@@ -269,8 +269,8 @@ void PathTracer::draw(
 
     // switch the rendering buffers for each pass
     m_whichBuffer = !m_whichBuffer;
-    unsigned short readIndex = m_whichBuffer ? 0 : 1;
-    unsigned short writeIndex = m_whichBuffer ? 1 : 0;
+    GLenum readIndex = m_whichBuffer ? 0 : 1;
+    GLenum writeIndex = m_whichBuffer ? 1 : 0;
 
     glActiveTexture(GL_TEXTURE0 + textureSlots["accumulation"]);
     glBindTexture(GL_TEXTURE_2D, m_accuTexture[readIndex]);
@@ -434,7 +434,7 @@ void PathTracer::pointsOnSphere(
 
     const int r = static_cast<int>(ceil(log(static_cast<float>(minN * 2 / 12.f)) / log(4.f))); // N = 12 * 4 ^ r
 
-    std::hash_map<glm::highp_uint, glm::uint> cache;
+    std::unordered_map<glm::highp_uint, glm::uint> cache;
 
     for(int i = 0; i < r; ++i)
     {
@@ -479,14 +479,14 @@ const glm::uint PathTracer::splitEdge(
     const glm::uint a
 ,   const glm::uint b
 ,   std::vector<glm::vec3> & points
-,   std::hash_map<glm::highp_uint, glm::uint> & cache)
+,   std::unordered_map<glm::highp_uint, glm::uint> & cache)
 {
     const bool aSmaller(a < b);
     const glm::highp_uint smaller(aSmaller ? a : b);
     const glm::highp_uint greater(aSmaller ? b : a);
     const glm::highp_uint hash((smaller << 32) + greater);
 
-    std::hash_map<glm::highp_uint, glm::uint>::const_iterator h(cache.find(hash));
+    std::unordered_map<glm::highp_uint, glm::uint>::const_iterator h(cache.find(hash));
     if(cache.end() != h)
         return h->second;
 

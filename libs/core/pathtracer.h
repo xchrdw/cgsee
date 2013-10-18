@@ -3,7 +3,8 @@
 #include <GL/glew.h>
 
 #include <memory>
-#include <hash_map>
+
+#include <unordered_map>
 
 #include <QMap>
 
@@ -50,7 +51,7 @@ protected:
         const glm::uint a
     ,   const glm::uint b
     ,   std::vector<glm::vec3> & points
-    ,   std::hash_map<glm::highp_uint, glm::uint> & cache);
+    ,   std::unordered_map<glm::highp_uint, glm::uint> & cache);
 
     PathTracingBVH *m_bvh;
 
