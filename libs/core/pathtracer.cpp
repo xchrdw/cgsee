@@ -86,20 +86,7 @@ void PathTracer::initialize(const Program & program)
 
         glGenTextures(2, m_accuTexture);
 
-        glBindTexture(GL_TEXTURE_2D, m_accuTexture[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_abstraction.viewport().x, m_abstraction.viewport().y, 0, GL_RGBA, GL_FLOAT, 0);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-        glBindTexture(GL_TEXTURE_2D, m_accuTexture[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_abstraction.viewport().x, m_abstraction.viewport().y, 0, GL_RGBA, GL_FLOAT, 0);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glError();
+        resizeTextures(m_abstraction.viewport());
    
         glGenFramebuffers(1, &m_accuFramebuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_accuFramebuffer);
@@ -177,7 +164,7 @@ char * loadTextureRAW(const char * filename, unsigned int width, unsigned int he
     FILE * file;
 
     file = fopen( filename, "rb" );
-    if ( file == NULL ) return 0;
+    if ( file == NULL ) return nullptr;
 
     data = (char *)malloc( width * height * depth );
 
@@ -200,12 +187,12 @@ void PathTracer::initSkybox()
     faces[4] = (GLubyte*) loadTextureRAW("./data/skybox/skybox_back.raw", 512, 512, 3);
     faces[5] = (GLubyte*) loadTextureRAW("./data/skybox/skybox_front.raw", 512, 512, 3);
     for (int i = 0; i < 6; ++i) {
-        if (faces[i] == 0) {
+        if (faces[i] == nullptr) {
             qDebug("error while loading skybox textures.");
             return;
         }
     }
-    qDebug("passing skybox to shader");
+    
     for (int i = 0; i < 6; i++) {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                 0,
@@ -243,6 +230,28 @@ void PathTracer::setUniforms(const Program & program)
     for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
     {
         program.setUniform(it.key(), it.value());
+    }
+}
+
+void PathTracer::resizeTextures(const glm::ivec2 & viewport) const
+{
+    if (m_accuTexture[0] == -1)
+        return;
+
+    for (int i=0; i<2; ++i) {
+        glBindTexture(GL_TEXTURE_2D, m_accuTexture[i]);
+        glError();
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, viewport.x, viewport.y, 0, GL_RGBA, GL_FLOAT, 0);
+        glError();
+
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glError();
     }
 }
 
@@ -308,14 +317,9 @@ void PathTracer::draw(
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + writeIndex );
 
-    //if(target)
-    //    target->bind();
     glBlitFramebuffer(0, 0, m_abstraction.viewport().x, m_abstraction.viewport().y, 0, 0, m_abstraction.viewport().x, m_abstraction.viewport().y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
-    //if(target)
-    //    target->release();
-
+    
     program.release();
 }
 
@@ -330,21 +334,7 @@ void PathTracer::onInvalidatedViewport(
 {
     if (m_accuFramebuffer == -1)
         return;
-    for (int i=0; i<2; ++i) {
-        glBindTexture(GL_TEXTURE_2D, m_accuTexture[i]);
-        glError();
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
-        glError();
-
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glError();
-    }
+    resizeTextures(glm::ivec2(width, height));
     invalidateAccumulator();
 }
 

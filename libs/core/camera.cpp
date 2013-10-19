@@ -1,8 +1,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
-#include <QDebug>
-
 #include "camera.h"
 
 #include "cameraimplementation.h"
@@ -22,24 +20,18 @@ static const QString ZFAR_UNIFORM       ("zfar");
 static const QString CAMERAPOSITION_UNIFORM ("cameraposition");
 
 Camera::Camera(const QString & name)
-    :   Group(name)
-    ,   m_viewFrustum(new ViewFrustum(this))
-    ,   m_fovy(0.f)
-    ,   m_zNear(0.f)
-    ,   m_zFar (0.f)
-    ,   m_invalidated(true)
-    // add a new camera of each implemented type to our list
-    ,   m_implementations(CameraImplementation::newImplementations(*this))
-    ,   m_activeCamera(nullptr)
+:   Group(name)
+,   m_viewFrustum(new ViewFrustum(this))
+,   m_fovy(0.f)
+,   m_zNear(0.f)
+,   m_zFar (0.f)
+,   m_invalidated(true)
+// add a new camera of each implemented type to our list
+,   m_implementations(CameraImplementation::newImplementations(*this))
+,   m_activeCamera(nullptr)
 {
     m_rf = RF_Absolute;
-    //     m_rf = RF_Relative;
-
-    qDebug() << "Camera """<< name << """: registered implementation types:";
-    for (CameraImplementation* impl: m_implementations)
-        qDebug() << "\t" << impl->implementationName();
-
-    // selectImplementation("rasterizationCamera");
+//     m_rf = RF_Relative;
 }
 
 Camera::~Camera()
@@ -52,7 +44,6 @@ void Camera::selectImplementation(QString name)
     for (CameraImplementation* impl: m_implementations) {
         if (impl->implementationName() == name) {
             m_activeCamera = impl;
-            qDebug() << "Camera > selected Implementation: " << m_activeCamera->implementationName();
             // update selected camera
             m_activeCamera->onInvalidatedView();
             m_activeCamera->onInvalidatedViewport(m_viewport.x, m_viewport.y);
@@ -89,9 +80,9 @@ void Camera::draw( const Program & program, const glm::mat4 & transform )
 
     program.setUniform(VIEWPORT_UNIFORM, m_viewport);
     program.setUniform(VIEW_UNIFORM, m_view);
-	program.setUniform(PROJECTION_UNIFORM, m_projection);
-	program.setUniform(TRANSFORM_UNIFORM, m_transform);
-	program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+    program.setUniform(PROJECTION_UNIFORM, m_projection);
+    program.setUniform(TRANSFORM_UNIFORM, m_transform);
+    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
 
     program.setUniform(ZNEAR_UNIFORM, m_zNear);
     program.setUniform(ZFAR_UNIFORM, m_zFar);

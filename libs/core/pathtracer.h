@@ -39,6 +39,8 @@ protected:
     void initSkybox();
 
     void setUniforms(const Program & program);
+
+    void resizeTextures(const glm::ivec2 & viewport) const;
     
     virtual void onInvalidatedView() override;
     virtual void onInvalidatedViewport(

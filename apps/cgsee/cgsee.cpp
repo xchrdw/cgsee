@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-
 #include "cgsee.h"
 #include "painter.h"
 

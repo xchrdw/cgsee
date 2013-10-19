@@ -1,11 +1,13 @@
 ﻿
 #include "aabb.h"
 
+
 AxisAlignedBoundingBox::AxisAlignedBoundingBox()
 :   m_invalidated(true)
 {
     invalidate();
 }
+
 AxisAlignedBoundingBox::AxisAlignedBoundingBox(glm::vec3 llf, glm::vec3 urb)
 :   m_invalidated(false)
 ,   m_llf(llf)
@@ -14,7 +16,6 @@ AxisAlignedBoundingBox::AxisAlignedBoundingBox(glm::vec3 llf, glm::vec3 urb)
 ,   m_radius(glm::distance(llf, urb) * 0.5f)
 {
 }
-
 
 AxisAlignedBoundingBox::~AxisAlignedBoundingBox()
 {

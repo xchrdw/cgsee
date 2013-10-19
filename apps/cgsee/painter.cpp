@@ -253,7 +253,6 @@ void Painter::paint()
     // update() is called for each paint as a hot fix.
     m_camera->update();
 
-    // TODO this better :-D
     if (m_camera->selectedImplementation() == "PathTracer"){
         m_camera->draw(*m_useProgram, glm::mat4());
         return;

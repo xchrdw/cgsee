@@ -3,8 +3,6 @@
 #include <list>
 
 #include <QString>
-//#include <QSet>
-//#include <QList>
 
 #include <core/declspec.h>
 #include <core/aabb.h>
