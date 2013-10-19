@@ -935,12 +935,8 @@ void Viewer::selectionBBoxChanged()
 
 void Viewer::dragEnterEvent(QDragEnterEvent * event)
 {
-    event->acceptProposedAction();
-
-    // for ( auto url : event->mimeData()->urls() )
-    // {
-    //     if ( url.toLocalFile() )
-    // }
+    if ( event->mimeData()->hasFormat("text/plain") && event->mimeData()->urls().size() == 1 )
+        event->acceptProposedAction();
 }
 
 void Viewer::dragMoveEvent(QDragMoveEvent * event)
@@ -954,5 +950,10 @@ void Viewer::dropEvent(QDropEvent * event)
 
     QString path = (event->mimeData()->urls().first().toLocalFile());
 
-    on_loadFile(path);
+    if ( int pos = path.indexOf(".") )
+    {
+        QString ext = path.right(path.size() - (pos+1));
+        if( m_loader->canLoad(ext) )
+            on_loadFile(path);
+    }
 }

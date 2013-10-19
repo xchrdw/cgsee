@@ -17,12 +17,12 @@ AbstractModelLoader::~AbstractModelLoader()
 
 bool AbstractModelLoader::canLoad(const QString & extension) const
 {
-    return loadableExtensions().contains(extension);
+    return loadableExtensions().contains(extension.toLower());
 }
 
 bool AbstractModelLoader::canSave(const QString & extension) const
 {
-    return saveableExtensions().contains(extension);
+    return saveableExtensions().contains(extension.toLower());
 }
 
 QStringList AbstractModelLoader::namedLoadableTypes() const
