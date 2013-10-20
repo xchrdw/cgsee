@@ -12,7 +12,7 @@
 
 FileExplorer::FileExplorer(
 	QWidget * parent)
-:	QListView(parent)
+:	QTreeView(parent)
 ,	m_model(new QFileSystemModel)
 ,	m_menu(new QMenu)
 ,	m_clickedFile()
@@ -22,6 +22,9 @@ FileExplorer::FileExplorer(
 
 	this->setFilter(QDir::NoDot | QDir::Files | QDir::AllDirs);
 	this->setRoot("");
+
+	this->setItemsExpandable(false);
+	this->setRootIsDecorated(false);
 
 	m_model->setNameFilterDisables(false);
 

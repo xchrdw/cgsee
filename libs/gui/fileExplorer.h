@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <QListView>
+#include <QTreeView>
 #include <QDir>
 
 #include <core/declspec.h>
@@ -12,7 +12,7 @@ class QMenu;
 class QPoint;
 
 
-class CGSEE_API FileExplorer : public QListView
+class CGSEE_API FileExplorer : public QTreeView
 {
 	Q_OBJECT
 	
