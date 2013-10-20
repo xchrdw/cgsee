@@ -34,8 +34,6 @@ FileExplorer::FileExplorer(
 	QObject::connect(
         this, SIGNAL(activated(const QModelIndex &)),
         this, SLOT(emitActivatedItem(const QModelIndex &)));
-
-	setAcceptDrops(true);
 };
 
 FileExplorer::~FileExplorer()
@@ -103,29 +101,4 @@ void FileExplorer::emitActivatedItem(const QModelIndex & index)
 void FileExplorer::setRoot(QString rootPath)
 {
 	this->setRootIndex(m_model->setRootPath(rootPath));
-}
-
-void FileExplorer::mousePressEvent(QMouseEvent * event)
-{
-    if (event->button() == Qt::LeftButton)
-        m_dragStartPosition = event->pos();
-
-    QListView::mousePressEvent(event);
-}
-
-void FileExplorer::mouseMoveEvent(QMouseEvent * event)
-{
-    if (!(event->buttons() & Qt::LeftButton))
-        return;
-    if ((event->pos() - m_dragStartPosition).manhattanLength()
-         < QApplication::startDragDistance())
-        return;
-
-    QDrag *drag = new QDrag(this);
-    QMimeData *mimeData = new QMimeData;
-
-    mimeData->setText("..");
-    drag->setMimeData(mimeData);
-
-    Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
 }
