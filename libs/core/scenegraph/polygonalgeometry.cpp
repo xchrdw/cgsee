@@ -169,8 +169,12 @@ void PolygonalGeometry::initialize(const Program & program)
     glBindVertexArray(m_vao);                                                                  
     glError();
 
-    applyOptimizer(new VertexReuse());
-    applyOptimizer(new VertexCacheOptimizer());
+    {
+        VertexReuse vertexReuse;
+        VertexCacheOptimizer vertexCacheOptimizer;
+        applyOptimizer(&vertexReuse);
+        applyOptimizer(&vertexCacheOptimizer);
+    }
 
     // setup element array buffers
 

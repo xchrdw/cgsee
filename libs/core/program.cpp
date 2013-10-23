@@ -322,6 +322,16 @@ void Program::setUniform(
 
 void Program::setUniform(
     const QString & name
+,   const glm::uvec4 & vec) const
+{
+    const GLint location(uniformLocation(name));
+
+    glUniform4uiv(location, 1, glm::value_ptr(vec));
+    glError();
+}
+
+void Program::setUniform(
+    const QString & name
 ,   const glm::mat3 & mat
 ,   const bool transpose) const
 {

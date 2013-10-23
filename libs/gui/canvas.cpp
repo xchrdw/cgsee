@@ -93,6 +93,8 @@ void Canvas::resizeGL(
         m_painter->resize(width, height);
     if(m_navigation)
         m_navigation->setViewPort(width, height);
+    // if(m_coordinateProvider)
+    //     m_coordinateProvider->resize(width, height);
 
 }
 
@@ -225,11 +227,15 @@ void Canvas::mousePressEvent( QMouseEvent * event )
 void Canvas::mouseReleaseEvent( QMouseEvent * event )
 {
     m_navigation->mouseReleaseEvent(event);
+
+    emit mouseReleaseEventSignal(event);
 }
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
     m_navigation->mouseMoveEvent(event);
+
+    emit mouseMoveEventTriggered(1);
 }
 
 void Canvas::wheelEvent(QWheelEvent * event)

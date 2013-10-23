@@ -1,5 +1,4 @@
 
-
 set(target core)
 message(STATUS "lib ${target}")
 
@@ -20,6 +19,11 @@ set(SOURCES
     abstractpainter.cpp
     abstractscenepainter.h
     abstractscenepainter.cpp
+    scenegraph/drawmethod.h
+    scenegraph/defaultdrawmethod.h
+    scenegraph/defaultdrawmethod.cpp
+    scenegraph/highlightingdrawmethod.h
+    scenegraph/highlightingdrawmethod.cpp
     abstracttimer.h
     assimploader.h
     assimploader.cpp
@@ -36,8 +40,8 @@ set(SOURCES
     chronotimer.h
     chronotimer.cpp
     common.h
-
-    datacore/attributeiterator.h
+    coordinateprovider.h
+    coordinateprovider.cpp
     datacore/attributeiterator_impl.inl
     datacore/datablock.h
     datacore/datablock.cpp
@@ -64,6 +68,10 @@ set(SOURCES
     messagehandler.h
     messagehandler.cpp
     mathmacros.h
+
+    idpainter.h
+    idpainter.cpp
+
     
     navigation/abstractnavigation.h
     navigation/abstractnavigation.cpp
@@ -114,8 +122,12 @@ set(SOURCES
     
     rendering/blureffect.h
     rendering/blureffect.cpp
+    rendering/boundingboxpass.h
+    rendering/boundingboxpass.cpp
     rendering/defaultpass.h   
     rendering/defaultpass.cpp
+    rendering/coloridpass.h   
+    rendering/coloridpass.cpp
     rendering/lightsource.h
     rendering/lightsource.cpp
     rendering/normalzpass.h   
