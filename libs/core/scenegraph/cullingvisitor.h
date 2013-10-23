@@ -13,7 +13,7 @@
 #include "node.h"
 #include "core/viewfrustum.h"
 
-#include "SceneVisitorInterface.h"
+#include "scenevisitorinterface.h"
 
 
 class CGSEE_API CullingVisitor final : public SceneVisitorInterface
