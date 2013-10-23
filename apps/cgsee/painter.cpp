@@ -1,4 +1,3 @@
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <QDebug>
 
@@ -8,6 +7,7 @@
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
+#include <core/pathtracer.h>
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
@@ -57,6 +57,7 @@ Painter::Painter(Camera * camera)
 ,   m_colorId(nullptr)
 ,   m_boundingBox(nullptr)
 ,   m_useProgram(nullptr)
+,   m_lastUsedProgram(nullptr)
 ,   m_fboColor(nullptr)
 ,   m_fboTemp(nullptr)
 ,   m_fboActiveBuffer(nullptr)
@@ -196,6 +197,12 @@ const bool Painter::initialize()
 
     m_fboActiveBuffer = m_fboColor;
 
+    m_pathTracing = new Program();
+    m_pathTracing->attach(
+        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/pathTracing.frag"));
+    m_pathTracing->attach(
+        new FileAssociatedShader(GL_VERTEX_SHADER, "data/pathTracing.vert"));
+
     return true;
 }
 
@@ -244,9 +251,6 @@ void Painter::setUniforms()
         warmColdColor[3] = glm::vec4(0.45,0.45,0,0);         //Diffuse Warm, DiffuseCool
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
-
-
-
 }
 
 void Painter::paint()
@@ -258,6 +262,11 @@ void Painter::paint()
     // camera.m_invalidated is evaluated after the call to transform(), this should be fixed!
     // update() is called for each paint as a hot fix.
     m_camera->update();
+
+    if (m_camera->selectedImplementation() == "PathTracer"){
+        m_camera->draw(*m_useProgram, glm::mat4());
+        return;
+    }
 
     if(m_useColor)
         drawScene(m_camera, m_useProgram, m_fboColor);
@@ -279,11 +288,9 @@ void Painter::paint()
         sampler["ssao"] = m_fboTemp;
     }
 
-
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
     releaseSampler(sampler);
-
 }
 
 void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject * fbo)
@@ -308,6 +315,23 @@ void Painter::resize(const int width, const int height)
     m_fboTemp->resize(width, height);
 
     postShaderRelinked();
+}
+
+void Painter::selectCamera(QString cameraName)
+{
+    if (m_camera->selectedImplementation() == cameraName)
+        return;
+
+    if (cameraName == "PathTracer") {
+        assert(m_useProgram != m_pathTracing);
+        m_lastUsedProgram = m_useProgram;
+        m_useProgram = m_pathTracing;
+    }
+    else {
+        m_useProgram = m_lastUsedProgram;
+    }
+
+    m_camera->selectImplementation(cameraName);
 }
 
 void Painter::setShading(char shader)

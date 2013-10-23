@@ -68,6 +68,7 @@ Viewer::Viewer(
 :   QMainWindow(parent, flags)
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
+,   m_camera(nullptr)
 ,   m_saved_views(4)
 
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
@@ -199,7 +200,7 @@ void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * rootNode)
 
 void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
 {
-    int childCount = node->children().count();
+    int childCount = node->children().size();
     int count = 0;
     for (const auto & child : node->children())
     {
@@ -215,7 +216,7 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
         parent->appendRow(item);
         fillSceneHierarchy(child, item);
 
-        if (childCount == 1 && child->children().count() == 0)
+        if (childCount == 1 && child->children().size() == 0)
             m_sceneHierarchyTree->setRowHidden(0, parent->index(), true);
 
         ++count;
@@ -264,6 +265,8 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 {
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
+    if (m_camera != nullptr)
+        m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 
     QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
 
@@ -414,6 +417,22 @@ void Viewer::on_toggleExplorer_triggered()
     m_dockExplorer->setVisible(!visible);
 }
 
+void Viewer::updateCameraSelection(QString cameraName) const
+{
+    m_qtCanvas->painter()->selectCamera(cameraName);
+    m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
+}
+
+void Viewer::on_rasterizingCameraAction_triggered()
+{
+    updateCameraSelection("RasterizationCamera");
+}
+
+void Viewer::on_pathtracerAction_triggered()
+{
+    updateCameraSelection("PathTracer");
+}
+
 void Viewer::on_phongShadingAction_triggered()
 {
     m_qtCanvas->painter()->setShading('p');
@@ -461,7 +480,6 @@ void Viewer::on_normalsAction_triggered()
     m_qtCanvas->painter()->setShading('n');
     m_qtCanvas->repaint();
 }
-
 
 void Viewer::on_colorRenderingAction_triggered()
 {
@@ -565,6 +583,8 @@ AbstractNavigation * Viewer::navigation() {
 void Viewer::setCamera(Camera * camera )
 {
     m_camera = camera;
+    if ((m_camera != nullptr) && (m_qtCanvas != nullptr))
+        m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 }
 
 Camera * Viewer::camera()
@@ -768,7 +788,7 @@ void Viewer::selectById(const unsigned int & id)
     if (result)
     {
         Node * parent = *result->parents().begin();
-        int siblings = parent->children().count() - 1;
+        int siblings = parent->children().size() - 1;
         if (m_selectedNodes.contains(id))
         {
             this->deselectNode(result);

@@ -3,7 +3,6 @@
 
 #include <core/datacore/datablock.h>
 #include <core/assimploader.h>
-#include <gui/canvas.h>
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/navigation/arcballnavigation.h>
@@ -23,7 +22,9 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setWindowTitle(title());
     m_viewer->initialize(format());
 
-    Camera * camera = new Camera();
+    Camera * camera = new Camera("main");
+    camera->selectImplementation("RasterizationCamera");
+    
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
     camera->setZFar (20.0f);

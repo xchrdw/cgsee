@@ -1,8 +1,8 @@
 #pragma once
 
+#include <list>
+
 #include <QString>
-#include <QSet>
-#include <QList>
 
 #include <core/declspec.h>
 #include <core/aabb.h>
@@ -13,8 +13,8 @@ class Program;
 class CGSEE_API Node
 {
 public:
-    typedef QList<Node *> t_children;
-    typedef QSet<Node *> t_parents;
+    typedef std::list<Node *> t_children;
+    typedef std::list<Node *> t_parents;
 
     enum e_ReferenceFrame
     {
@@ -28,6 +28,7 @@ public:
 
     virtual void draw(const Program & program, const glm::mat4 & transform) = 0;
     virtual const AxisAlignedBoundingBox boundingBox() const = 0;
+    virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const = 0;
 
     const QString name() const;
     void setName(const QString & name);
@@ -38,6 +39,7 @@ public:
     const t_children & children() const;
     
     const glm::mat4 & transform() const;
+    const glm::mat4 & transformInverse() const;
     void setTransform(const glm::mat4 & transform);
 
     const e_ReferenceFrame referenceFrame() const;
@@ -63,6 +65,7 @@ protected:
     t_children m_children;
     e_ReferenceFrame m_rf;
     glm::mat4 m_transform;
+    glm::mat4 m_transformInverse;
     mutable AxisAlignedBoundingBox m_aabb;
 
     unsigned int m_id;

@@ -45,6 +45,7 @@ public:
     
     inline GLuint vao() { return m_vao; }
     t_bufferObjects & elementArrayBOs() { return m_elementArrayBOs; } // TODO: perhaps as const.
+    t_bufferObjectsByAttribute & arrayBOsByAttribute() { return m_arrayBOsByAttribute; }
     
     // Geometry Computation
 

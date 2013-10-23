@@ -13,6 +13,7 @@ class DataBlockRegistry;
 class Camera;
 class Group;
 class ScreenQuad;
+class PathTracer;
 class Program;
 class FrameBufferObject;
 class RenderingPass;
@@ -26,7 +27,8 @@ public:
 
     virtual void paint();
 
-    virtual void setShading(char shader);
+    virtual void selectCamera(QString cameraName) override;
+    virtual void setShading(char shader) override;
     virtual void setFrameBuffer(int frameBuffer);
     virtual void setEffect( int effect, bool active );
 
@@ -63,7 +65,9 @@ protected:
     Program * m_gouraud;
     Program * m_phong;
     Program * m_gooch;
+    Program * m_pathTracing;
     Program * m_useProgram;
+    Program * m_lastUsedProgram;
     Program * m_flush;
     FrameBufferObject * m_fboColor;
     FrameBufferObject * m_fboTemp;

@@ -121,6 +121,9 @@ protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
 
+    void on_rasterizingCameraAction_triggered();
+    void on_pathtracerAction_triggered();
+
     void on_reloadAllShadersAction_triggered();
     void on_phongShadingAction_triggered();
     void on_gouraudShadingAction_triggered();
@@ -182,6 +185,8 @@ protected:
 
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
+
+    void updateCameraSelection(QString cameraName) const;
 
     Canvas * m_qtCanvas;
     Camera * m_camera;

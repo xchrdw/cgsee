@@ -30,16 +30,20 @@ public:
 
 
     // both removals delete the node if parents are empty
-    void removeFirst();
-    void removeLast ();
+    virtual void removeFirst();
+    virtual void removeLast ();
 
-    const void remove(Node * node, const bool deleteIfParentsEmpty = true);
+    virtual const void remove(Node * node, const bool deleteIfParentsEmpty = true);
 
     virtual const AxisAlignedBoundingBox boundingBox() const;
+    virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const;
+
+    virtual void prepend(Node * node);
+    virtual void append(Node * node);
+
+    virtual void insert(const t_children::iterator & before, Node * node);
 
 protected:
-    void prepend(Node * node);
-    void append(Node * node);
-
-    void insert(const t_children::iterator & before, Node * node);
+    virtual void invalidateChildren();
+    bool m_invalidatedChildren;
 };

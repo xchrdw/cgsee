@@ -25,15 +25,16 @@ public:
     
     // TODO: wieder rueckgaengig machen...
 //     PolygonalDrawable( DataBlockRegistry & registry, const QString & name );
-    PolygonalDrawable(const QString & name);
+    PolygonalDrawable(const QString & name = "unnamed");
     virtual ~PolygonalDrawable();
 
     virtual void draw(const Program & program, const glm::mat4 & transform) override;
 
     virtual const AxisAlignedBoundingBox boundingBox() const override;
-    
+    virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;
+
     void setGeometry(t_geometryP geometry);
-    t_geometryP geometry(void) { return m_geometry; }
+    t_geometryP geometry() { return m_geometry; }
 
     void setMode(const GLenum mode) { m_mode = mode; }
     inline const GLenum mode(void) const { return m_mode; }

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset><contributor><author></author><authoring_tool>FBX COLLADA exporter</authoring_tool><comments></comments></contributor><created>2013-08-15T10:52:46Z</created><keywords></keywords><modified>2013-08-15T10:52:46Z</modified><revision></revision><subject></subject><title></title><unit meter="0.025400" name="centimeter"></unit><up_axis>Y_UP</up_axis></asset>
+  <library_geometries>
+    <geometry id="Pyramide006-lib" name="Pyramide006Mesh">
+      <mesh>
+        <source id="Pyramide006-POSITION">
+          <float_array id="Pyramide006-POSITION-array" count="72">
+0.000000 0.000000 29.026546
+-21.946903 -23.008850 0.000000
+21.946903 -23.008850 0.000000
+21.946903 23.008850 0.000000
+-21.946903 23.008850 0.000000
+0.000000 0.000000 0.000000
+0.000000 0.000000 29.026546
+21.946903 -23.008850 0.000000
+0.000000 0.000000 29.026546
+21.946903 23.008850 0.000000
+0.000000 0.000000 29.026546
+-21.946903 23.008850 0.000000
+-21.946903 -23.008850 0.000000
+-21.946903 -23.008850 0.000000
+21.946903 -23.008850 0.000000
+21.946903 -23.008850 0.000000
+0.000000 0.000000 0.000000
+21.946903 23.008850 0.000000
+21.946903 23.008850 0.000000
+0.000000 0.000000 0.000000
+-21.946903 23.008850 0.000000
+-21.946903 23.008850 0.000000
+0.000000 0.000000 0.000000
+-21.946903 -23.008850 0.000000
+</float_array>
+          <technique_common>
+            <accessor source="#Pyramide006-POSITION-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Pyramide006-Normal0">
+          <float_array id="Pyramide006-Normal0-array" count="72">
+0.000000 -0.783658 0.621193
+0.000000 -0.783658 0.621192
+0.000000 -0.783658 0.621192
+0.797659 0.000000 0.603108
+0.000000 0.783658 0.621192
+0.000000 0.000000 -1.000000
+0.797659 0.000000 0.603108
+0.797659 0.000000 0.603108
+0.000000 0.783658 0.621193
+0.000000 0.783658 0.621192
+-0.797659 0.000000 0.603108
+-0.797659 0.000000 0.603108
+-0.797659 0.000000 0.603108
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+</float_array>
+          <technique_common>
+            <accessor source="#Pyramide006-Normal0-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Pyramide006-UV0">
+          <float_array id="Pyramide006-UV0-array" count="48">
+0.500000 1.000000
+0.000000 0.000000
+1.000000 0.000000
+1.023077 0.000000
+1.000000 0.000000
+0.500000 0.500000
+0.500000 1.000000
+0.023077 0.000000
+0.500000 1.000000
+0.000000 0.000000
+0.500000 1.000000
+0.023077 0.000000
+1.023077 0.000000
+0.000000 1.000000
+1.000000 1.000000
+1.000000 1.000000
+0.500000 0.500000
+1.000000 0.000000
+1.000000 0.000000
+0.500000 0.500000
+0.000000 0.000000
+0.000000 0.000000
+0.500000 0.500000
+0.000000 1.000000
+</float_array>
+          <technique_common>
+            <accessor source="#Pyramide006-UV0-array" count="24" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Pyramide006-VERTEX">
+          <input semantic="POSITION" source="#Pyramide006-POSITION"/>
+          <input semantic="NORMAL" source="#Pyramide006-Normal0"/>
+          <input semantic="TEXCOORD" source="#Pyramide006-UV0"/>
+        </vertices>
+        <triangles count="8"><input semantic="VERTEX" offset="0" source="#Pyramide006-VERTEX"/><p> 0 1 2 6 7 3 8 9 4 10 11 12 13 5 14 15 16 17 18 19 20 21 22 23</p></triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Quader004-lib" name="Quader004Mesh">
+      <mesh>
+        <source id="Quader004-POSITION">
+          <float_array id="Quader004-POSITION-array" count="72">
+-26.548672 -22.300884 0.000000
+26.548672 -22.300884 0.000000
+-26.548672 22.300884 0.000000
+26.548672 22.300884 0.000000
+-26.548672 -22.300884 35.398232
+26.548672 -22.300884 35.398232
+-26.548672 22.300884 35.398232
+26.548672 22.300884 35.398232
+-26.548672 -22.300884 0.000000
+26.548672 -22.300884 0.000000
+26.548672 -22.300884 35.398232
+-26.548672 -22.300884 35.398232
+26.548672 -22.300884 0.000000
+26.548672 22.300884 0.000000
+26.548672 22.300884 35.398232
+26.548672 -22.300884 35.398232
+26.548672 22.300884 0.000000
+-26.548672 22.300884 0.000000
+-26.548672 22.300884 35.398232
+26.548672 22.300884 35.398232
+-26.548672 22.300884 0.000000
+-26.548672 -22.300884 0.000000
+-26.548672 -22.300884 35.398232
+-26.548672 22.300884 35.398232
+</float_array>
+          <technique_common>
+            <accessor source="#Quader004-POSITION-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Quader004-Normal0">
+          <float_array id="Quader004-Normal0-array" count="72">
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 -1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 -1.000000 0.000000
+0.000000 -1.000000 0.000000
+0.000000 -1.000000 0.000000
+0.000000 -1.000000 0.000000
+1.000000 0.000000 0.000000
+1.000000 0.000000 0.000000
+1.000000 0.000000 0.000000
+1.000000 0.000000 0.000000
+0.000000 1.000000 0.000000
+0.000000 1.000000 0.000000
+0.000000 1.000000 0.000000
+0.000000 1.000000 0.000000
+-1.000000 0.000000 0.000000
+-1.000000 0.000000 0.000000
+-1.000000 0.000000 0.000000
+-1.000000 0.000000 0.000000
+</float_array>
+          <technique_common>
+            <accessor source="#Quader004-Normal0-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Quader004-UV0">
+          <float_array id="Quader004-UV0-array" count="48">
+1.000000 0.000000
+0.000000 0.000000
+1.000000 1.000000
+0.000000 1.000000
+0.000000 0.000000
+1.000000 0.000000
+0.000000 1.000000
+1.000000 1.000000
+0.000000 0.000000
+1.000000 0.000000
+1.000000 1.000000
+0.000000 1.000000
+0.000000 0.000000
+1.000000 0.000000
+1.000000 1.000000
+0.000000 1.000000
+0.000000 0.000000
+1.000000 0.000000
+1.000000 1.000000
+0.000000 1.000000
+0.000000 0.000000
+1.000000 0.000000
+1.000000 1.000000
+0.000000 1.000000
+</float_array>
+          <technique_common>
+            <accessor source="#Quader004-UV0-array" count="24" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Quader004-VERTEX">
+          <input semantic="POSITION" source="#Quader004-POSITION"/>
+          <input semantic="NORMAL" source="#Quader004-Normal0"/>
+          <input semantic="TEXCOORD" source="#Quader004-UV0"/>
+        </vertices>
+        <triangles count="12"><input semantic="VERTEX" offset="0" source="#Quader004-VERTEX"/><p> 1 0 3 0 2 3 7 6 4 7 4 5 10 11 8 10 8 9 14 15 12 14 12 13 18 19 16 18 16 17 22 23 20 22 20 21</p></triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Pyramide007-lib" name="Pyramide007Mesh">
+      <mesh>
+        <source id="Pyramide007-POSITION">
+          <float_array id="Pyramide007-POSITION-array" count="72">
+0.000000 0.000000 -7.079645
+-6.194689 -6.902653 0.000000
+6.194689 -6.902653 0.000000
+6.194689 6.902653 0.000000
+-6.194689 6.902653 0.000000
+0.000000 0.000000 0.000000
+6.194689 -6.902653 0.000000
+0.000000 0.000000 -7.079645
+6.194689 6.902653 0.000000
+0.000000 0.000000 -7.079645
+-6.194689 -6.902653 0.000000
+-6.194689 6.902653 0.000000
+0.000000 0.000000 -7.079645
+6.194689 -6.902653 0.000000
+-6.194689 -6.902653 0.000000
+6.194689 6.902653 0.000000
+0.000000 0.000000 0.000000
+6.194689 -6.902653 0.000000
+-6.194689 6.902653 0.000000
+0.000000 0.000000 0.000000
+6.194689 6.902653 0.000000
+-6.194689 -6.902653 0.000000
+0.000000 0.000000 0.000000
+-6.194689 6.902653 0.000000
+</float_array>
+          <technique_common>
+            <accessor source="#Pyramide007-POSITION-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Pyramide007-Normal0">
+          <float_array id="Pyramide007-Normal0-array" count="72">
+0.000000 -0.716000 -0.698100
+0.000000 -0.716000 -0.698100
+0.000000 -0.716000 -0.698100
+0.752577 0.000000 -0.658505
+0.000000 0.716000 -0.698100
+0.000000 0.000000 1.000000
+0.752577 0.000000 -0.658505
+0.752577 0.000000 -0.658505
+0.000000 0.716000 -0.698100
+0.000000 0.716000 -0.698100
+-0.752577 0.000000 -0.658505
+-0.752577 0.000000 -0.658505
+-0.752577 0.000000 -0.658505
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+</float_array>
+          <technique_common>
+            <accessor source="#Pyramide007-Normal0-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Pyramide007-UV0">
+          <float_array id="Pyramide007-UV0-array" count="48">
+0.500000 1.000000
+0.000000 -0.000000
+1.000000 -0.000000
+1.051282 -0.000000
+1.000000 -0.000000
+0.500000 0.500000
+0.051282 -0.000000
+0.500000 1.000000
+0.000000 -0.000000
+0.500000 1.000000
+1.051282 -0.000000
+0.051282 -0.000000
+0.500000 1.000000
+1.000000 1.000000
+0.000000 1.000000
+1.000000 0.000000
+0.500000 0.500000
+1.000000 1.000000
+0.000000 0.000000
+0.500000 0.500000
+1.000000 0.000000
+0.000000 1.000000
+0.500000 0.500000
+0.000000 0.000000
+</float_array>
+          <technique_common>
+            <accessor source="#Pyramide007-UV0-array" count="24" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Pyramide007-VERTEX">
+          <input semantic="POSITION" source="#Pyramide007-POSITION"/>
+          <input semantic="NORMAL" source="#Pyramide007-Normal0"/>
+          <input semantic="TEXCOORD" source="#Pyramide007-UV0"/>
+        </vertices>
+        <triangles count="8"><input semantic="VERTEX" offset="0" source="#Pyramide007-VERTEX"/><p> 2 1 0 3 6 7 4 8 9 10 11 12 13 5 14 15 16 17 18 19 20 21 22 23</p></triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="" name="">
+      <node name="group1" id="group1" sid="group1"><matrix sid="matrix">0.784850 -0.619686 -0.000000 -1.398119 0.000000 0.000000 1.000000 3.204667 -0.619686 -0.784850 0.000000 1.241822 0.000000 0.000000 0.000000 1.000000</matrix><extra><technique profile="FCOLLADA"><visibility>1.000000</visibility></technique></extra><node name="Pyramide006" id="Pyramide006" sid="Pyramide006"><matrix sid="matrix">0.070606 -0.211726 -0.176356 19.258127 0.111363 -0.144598 0.218184 -4.008158 -0.252047 -0.123199 0.046999 -8.901860 0.000000 0.000000 0.000000 1.000000</matrix><instance_geometry url="#Pyramide006-lib"/><extra><technique profile="FCOLLADA"><visibility>1.000000</visibility></technique></extra></node><node name="Quader004" id="Quader004" sid="Quader004"><matrix sid="matrix">0.174215 -0.220987 -0.041572 -14.654314 0.091472 0.021606 0.268478 -2.634687 -0.205418 -0.177798 0.084295 4.865636 0.000000 0.000000 0.000000 1.000000</matrix><instance_geometry url="#Quader004-lib"/><extra><technique profile="FCOLLADA"><visibility>1.000000</visibility></technique></extra></node></node>
+      <node name="Pyramide007" id="Pyramide007" sid="Pyramide007"><matrix sid="matrix">0.866025 -0.000000 -0.500000 -17.176327 0.493845 0.156430 0.855364 -37.154305 0.078215 -0.987689 0.135472 -24.002785 0.000000 0.000000 0.000000 1.000000</matrix><instance_geometry url="#Pyramide007-lib"/><extra><technique profile="FCOLLADA"><visibility>1.000000</visibility></technique></extra></node>
+      <extra><technique profile="MAX3D"><frame_rate>30.000000</frame_rate></technique><technique profile="FCOLLADA"><start_time>0.000000</start_time><end_time>3.333333</end_time></technique></extra>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#"></instance_visual_scene>
+  </scene>
+</COLLADA>

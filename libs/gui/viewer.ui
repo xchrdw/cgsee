@@ -160,11 +160,19 @@
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
    </widget>
+   <widget class="QMenu" name="menuCamera">
+    <property name="title">
+     <string>Camera</string>
+    </property>
+    <addaction name="rasterizingCameraAction"/>
+    <addaction name="pathtracerAction"/>
+   </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
    <addaction name="menuView"/>
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
+   <addaction name="menuCamera"/>
    <addaction name="shadingMenu"/>
    <addaction name="helpMenu"/>
   </widget>
@@ -678,6 +686,14 @@
     <string>Normals</string>
    </property>
   </action>
+  <action name="pathTracingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Path&amp;Tracing</string>
+   </property>
+  </action>
   <action name="fboColorAction">
    <property name="checkable">
     <bool>true</bool>
@@ -790,6 +806,16 @@
    </property>
    <property name="text">
     <string>Shadow blur</string>
+   </property>
+  </action>
+  <action name="rasterizingCameraAction">
+   <property name="text">
+    <string>Rasterizing Camera</string>
+   </property>
+  </action>
+  <action name="pathtracerAction">
+   <property name="text">
+    <string>Pathtracer</string>
    </property>
   </action>
  </widget>

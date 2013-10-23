@@ -9,11 +9,13 @@
 #include "polygonalgeometry.h"
 #include "defaultdrawmethod.h"
 
+static const QString TRANSFORM_UNIFORM( "transform" );
+
 // TODO: wieder rueckgaengig machen...
 // PolygonalDrawable::PolygonalDrawable( DataBlockRegistry & registry, const QString & name )
 PolygonalDrawable::PolygonalDrawable(const QString & name)
 :   Node( name )
-,   m_geometry( nullptr )
+,   m_geometry( std::shared_ptr<PolygonalGeometry>())
 ,   m_mode( GL_TRIANGLES )
 ,   m_drawMethod( new DefaultDrawMethod )
 {
@@ -46,6 +48,33 @@ const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
     );
 
     return m_aabb;
+}
+
+const AxisAlignedBoundingBox PolygonalDrawable::boundingBox(glm::mat4 transform) const
+{
+    AxisAlignedBoundingBox aabb = AxisAlignedBoundingBox();
+    glm::mat4 newTransform;
+    
+    if( m_geometry == nullptr ) {
+        return aabb;
+    }
+
+    if (m_rf == RF_Absolute) {
+        newTransform = transform;
+    } else {
+        newTransform = this->transform() * transform;
+    }
+
+
+    t_VertexListP myVList = m_geometry->vertices();
+    myVList->foreachVertexAttribute<glm::vec3>(0, myVList->size(), "position", nullptr,
+        [&aabb, &newTransform](int i, const glm::vec3 & pos)
+        {
+            aabb.extend( glm::vec3(newTransform * glm::vec4(pos, 1.0f)) );
+        }
+    );
+
+    return aabb;
 }
 
 void PolygonalDrawable::invalidateBoundingBox()

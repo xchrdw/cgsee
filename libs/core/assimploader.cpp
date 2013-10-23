@@ -105,11 +105,24 @@ Group * AssimpLoader::parseNode(const aiScene & scene,
 
     const aiMatrix4x4 & mat = node.mTransformation;
     glm::mat4 transform(
-        mat.a1, mat.a2, mat.a3, mat.a4,
-        mat.b1, mat.b2, mat.b3, mat.b4,
-        mat.c1, mat.c2, mat.c3, mat.c4,
-        mat.d1, mat.d2, mat.d3, mat.d4
+        mat.a1, mat.b1, mat.c1, mat.d1,
+        mat.a2, mat.b2, mat.c2, mat.d2,
+        mat.a3, mat.b3, mat.c3, mat.d3,
+        mat.a4, mat.b4, mat.c4, mat.d4
     );
+    /*
+    translation vector is marked with []
+    assimp's aiMatrix4x4 : row major (as usually written down in maths)
+     a1  a2  a3 [a4]  <1. row>
+     b1  b2  b3 [b4]  <2. row>
+     c1  c2  c3 [c4]  <3. row>
+     d1  d2  d3  d4   <4. row>
+    glm/openGL mat4 : column major (not as stated in http://assimp.sourceforge.net/lib_html/data.html , search for "All matrices")
+     a1  b1  c1  d1   <1. column>
+     a2  b2  c2  d2   <2. column>
+     a3  b3  c3  d3   <3. column>
+    [a4][b4][c4] d4   <4. column>
+    */
     group->setTransform(transform);
 
     for (unsigned int i = 0; i < node.mNumChildren; i++)

@@ -168,12 +168,13 @@ void PolygonalGeometry::initialize(const Program & program)
     glError();
     glBindVertexArray(m_vao);                                                                  
     glError();
-    
-    // Apply vertex deduplication
 
-    applyOptimizer(new VertexReuse()); // TODO: That's just bad! At least use a smart ptr...
-    // Apply Vertex Cache Optimization
-    applyOptimizer(new VertexCacheOptimizer()); // TODO: That's just bad! At least use a smart ptr...
+    {
+        VertexReuse vertexReuse;
+        VertexCacheOptimizer vertexCacheOptimizer;
+        applyOptimizer(&vertexReuse);
+        applyOptimizer(&vertexCacheOptimizer);
+    }
 
     // setup element array buffers
 

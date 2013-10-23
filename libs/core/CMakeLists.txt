@@ -8,134 +8,140 @@ set(SOURCES
 
     declspec.h
 
-    aabb.h
     aabb.cpp
-    abstractapplication.h
+    aabb.h
     abstractapplication.cpp
+    abstractapplication.h
     abstractglparent.h
     abstractmodelloader.cpp
     abstractmodelloader.h
-    abstractpainter.h
     abstractpainter.cpp
-    abstractscenepainter.h
+    abstractpainter.h
     abstractscenepainter.cpp
+    abstractscenepainter.h
+    abstracttimer.h
+    assimploader.cpp
+    assimploader.h
+    autotimer.cpp
+    autotimer.h
+    bufferobject.cpp
+    bufferobject.h
+    camera.cpp
+    camera.h
+    cameraimplementation.cpp
+    cameraimplementation.h
+    chronotimer.cpp
+    chronotimer.h
+    common.h
+    coordinateprovider.cpp
+    coordinateprovider.h
+	
+    fileassociatedshader.cpp
+    fileassociatedshader.h
+    framebufferobject.cpp
+    framebufferobject.h
+    geometryoptimizer.h
+    glformat.cpp
+    glformat.h
+    gpuquery.cpp
+    gpuquery.h
+    idpainter.cpp
+    idpainter.h
+    mathmacros.h
+    messagehandler.cpp
+    messagehandler.h
+    objloader.cpp
+    objloader.h
+    pathtracer.cpp
+    pathtracer.h
+    plane.cpp
+    plane.h
+    program.cpp
+    program.h
+    rasterizingcamera.cpp
+    rasterizingcamera.h
+    screenquad.cpp
+    screenquad.h
+    shader.cpp
+    shader.h
+    timer.cpp
+    timer.h
+    vertexcacheoptimizer.cpp
+    vertexcacheoptimizer.h
+    vertexreuse.cpp
+    vertexreuse.h
+    viewfrustum.cpp
+    viewfrustum.h
 
-    datacore/datablock.h
-    datacore/datablock.cpp
     datacore/attributeiterator.h
     datacore/attributeiterator_impl.inl
-    datacore/vertexlist.h
-    datacore/vertexlist.cpp
-    datacore/vertexindexlist.h
-    datacore/vertexindexlist.cpp
-    datacore/vertexindexlist_impl.inl
-    datacore/typefunctions.h
-    datacore/typefunctions.cpp
-    datacore/registertypeshere.h
-    datacore/vertexlist_impl.inl
+    datacore/datablock.cpp
+    datacore/datablock.h
     datacore/datablock_impl.inl
-    
-    scenegraph/node.h
-    scenegraph/node.cpp
-    scenegraph/group.h
-    scenegraph/group.cpp
-    scenegraph/polygonaldrawable.h
-    scenegraph/polygonaldrawable.cpp
-    scenegraph/polygonalgeometry.h
-    scenegraph/polygonalgeometry.cpp
-    scenegraph/scenetraverser.h
-    scenegraph/scenetraverser.cpp
-    scenegraph/scenevisitorinterface.h
-    scenegraph/drawvisitor.h
-    scenegraph/drawvisitor.cpp
-    scenegraph/drawmethod.h
-    scenegraph/defaultdrawmethod.h
-    scenegraph/defaultdrawmethod.cpp
-    scenegraph/highlightingdrawmethod.h
-    scenegraph/highlightingdrawmethod.cpp
-
-    scenegraph/cullingvisitor.h
-    scenegraph/cullingvisitor.cpp
-    
-    abstracttimer.h
-    assimploader.h
-    assimploader.cpp
-    autotimer.h
-    autotimer.cpp
-    bufferobject.h
-    bufferobject.cpp
-    camera.h
-    camera.cpp
-    chronotimer.h
-    chronotimer.cpp
-    common.h
-    coordinateprovider.h
-    coordinateprovider.cpp
-    fileassociatedshader.h
-    fileassociatedshader.cpp
-    framebufferobject.h
-    framebufferobject.cpp
-    geometryoptimizer.h
-    glformat.h
-    glformat.cpp
-    gpuquery.h
-    gpuquery.cpp
-    messagehandler.h
-    messagehandler.cpp
-    mathmacros.h
-
-    idpainter.h
-    idpainter.cpp
-
-    
-    navigation/abstractnavigation.h
+    datacore/registertypeshere.h
+    datacore/typefunctions.cpp
+    datacore/typefunctions.h
+    datacore/vertexindexlist.cpp
+    datacore/vertexindexlist.h
+    datacore/vertexindexlist_impl.inl
+    datacore/vertexlist.cpp
+    datacore/vertexlist.h
+    datacore/vertexlist_impl.inl
+	
     navigation/abstractnavigation.cpp
-    navigation/arcballnavigation.h
+    navigation/abstractnavigation.h
     navigation/arcballnavigation.cpp
-    navigation/flightnavigation.h
+    navigation/arcballnavigation.h
     navigation/flightnavigation.cpp
-    navigation/fpsnavigation.h
+    navigation/flightnavigation.h
     navigation/fpsnavigation.cpp
-    
-    objloader.h
-    objloader.cpp
-
-    program.h
-    program.cpp
-    screenquad.h
-    screenquad.cpp
-    shader.h
-    shader.cpp
-    timer.h
-    timer.cpp
-    plane.h
-    plane.cpp
-    
-    rendering/blureffect.h
+    navigation/fpsnavigation.h
+	
+    scenegraph/absolutetransformator.cpp
+    scenegraph/absolutetransformator.h
+    scenegraph/cullingvisitor.cpp
+    scenegraph/cullingvisitor.h
+    scenegraph/defaultdrawmethod.cpp
+    scenegraph/defaultdrawmethod.h
+    scenegraph/drawmethod.h
+    scenegraph/drawvisitor.cpp
+    scenegraph/drawvisitor.h
+    scenegraph/group.cpp
+    scenegraph/group.h
+    scenegraph/highlightingdrawmethod.cpp
+    scenegraph/highlightingdrawmethod.h
+    scenegraph/node.cpp
+    scenegraph/node.h
+    scenegraph/pathtracingbvh.cpp
+    scenegraph/pathtracingbvh.h    
+    scenegraph/polygonaldrawable.cpp
+    scenegraph/polygonaldrawable.h
+    scenegraph/polygonalgeometry.cpp
+    scenegraph/polygonalgeometry.h
+    scenegraph/scenetraverser.cpp
+    scenegraph/scenetraverser.h
+    scenegraph/scenevisitorinterface.h
+    scenegraph/triangleobject.cpp
+    scenegraph/triangleobject.h
+	
     rendering/blureffect.cpp
-    rendering/boundingboxpass.h
+    rendering/blureffect.h
     rendering/boundingboxpass.cpp
-    rendering/defaultpass.h   
-    rendering/defaultpass.cpp
-    rendering/coloridpass.h   
+    rendering/boundingboxpass.h
     rendering/coloridpass.cpp
-    rendering/lightsource.h
+    rendering/coloridpass.h   
+    rendering/defaultpass.cpp
+    rendering/defaultpass.h   
     rendering/lightsource.cpp
-    rendering/normalzpass.h   
+    rendering/lightsource.h
     rendering/normalzpass.cpp
-    rendering/renderingpass.h
+    rendering/normalzpass.h   
     rendering/renderingpass.cpp
-    rendering/shadowmapping.h
+    rendering/renderingpass.h
     rendering/shadowmapping.cpp
-    rendering/ssaoeffect.h   
+    rendering/shadowmapping.h
     rendering/ssaoeffect.cpp
-    
-    viewfrustum.h
-    viewfrustum.cpp
-    vertexcacheoptimizer.h
-    vertexcacheoptimizer.cpp
-    vertexreuse.h
-    vertexreuse.cpp
+    rendering/ssaoeffect.h
 )
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$|\\\\.inl$" 
