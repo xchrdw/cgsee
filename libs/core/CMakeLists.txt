@@ -45,7 +45,7 @@ set(SOURCES
     scenegraph/polygonalgeometry.cpp
     scenegraph/scenetraverser.h
     scenegraph/scenetraverser.cpp
-    scenegraph/SceneVisitorInterface.h
+    scenegraph/scenevisitorinterface.h
     scenegraph/drawvisitor.h
     scenegraph/drawvisitor.cpp
     scenegraph/drawmethod.h

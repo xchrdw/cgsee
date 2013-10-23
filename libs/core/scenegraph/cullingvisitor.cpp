@@ -13,8 +13,6 @@
 #include "node.h"
 #include "core/viewfrustum.h"
 
-#include "SceneVisitorInterface.h"
-
 CullingVisitor::CullingVisitor(Camera *camera, Program *program, glm::mat4 transform) :
     m_camera(camera),
     m_program(program),

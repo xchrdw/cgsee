@@ -4,7 +4,7 @@
 
 #include <core/declspec.h>
 
-#include "SceneVisitorInterface.h"
+#include "scenevisitorinterface.h"
 
 
 class Program;
