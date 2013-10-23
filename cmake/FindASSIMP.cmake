@@ -21,6 +21,7 @@ IF(X64 AND NOT APPLE)
         ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0-win64/lib
         $ENV{ASSIMP_DIR}/lib
         $ENV{ASSIMP_HOME}/lib
+        $ENV{ASSIMP_HOME}/lib/x64
         /usr/lib64
         /usr/local/lib64
         /sw/lib64

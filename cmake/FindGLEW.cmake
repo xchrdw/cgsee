@@ -24,6 +24,7 @@ IF(X64 AND NOT APPLE)
         $ENV{TMR_HOME}/../3rdparty/glew-1.9.0-win64/lib
         $ENV{GLEW_DIR}/lib
         $ENV{GLEW_HOME}/lib
+        $ENV{GLEW_HOME}/lib/Release/x64
         /usr/lib64
         /usr/local/lib64
         /sw/lib64

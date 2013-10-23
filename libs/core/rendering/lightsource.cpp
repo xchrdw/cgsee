@@ -12,7 +12,9 @@ LightSourcePass::LightSourcePass(Camera * camera, FileAssociatedShader * depth_u
 :   DefaultPass(camera)
 ,   m_scene(nullptr)
 {
-    m_lightcam = new Camera();
+    m_lightcam = new Camera("lightsource");
+    m_lightcam->selectImplementation("RasterizationCamera");
+
     m_lightcam->setViewport(camera->viewport());
     m_lightcam->setFovy(camera->fovy());
     m_lightcam->setZFar(camera->zFar());
