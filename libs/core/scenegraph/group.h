@@ -20,7 +20,7 @@ public:
     const bool contains(Node * node) const;
 
     void prepend(Group * group);
-    void prepend (PolygonalDrawable * drawable);
+    void prepend(PolygonalDrawable * drawable);
 
     void append(Group * group);
     void append(PolygonalDrawable * drawable);

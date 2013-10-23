@@ -15,6 +15,8 @@ class AbstractScenePainter;
 class AbstractNavigation;
 class CGSEE_API Canvas : public QGLWidget, public AbstractGLParent
 {
+    Q_OBJECT
+
 public:
     Canvas(
         const GLFormat & format,
@@ -40,6 +42,10 @@ public:
     ,   const bool alpha = false);
 
     virtual void resize(int width, int height);
+
+signals:
+    void mouseReleaseEventSignal ( QMouseEvent * event );
+    void mouseMoveEventTriggered ( int triggered );
 
 protected:
 

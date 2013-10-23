@@ -8,6 +8,8 @@ Node::Node(const QString & name)
 ,   m_children()
 ,   m_rf(RF_Relative)
 ,   m_transform(glm::mat4(1))
+,   m_selected(false)
+,   m_hidden(false)
 {
 }
 
@@ -77,4 +79,34 @@ void Node::setReferenceFrame(const e_ReferenceFrame referenceFrame)
 
     m_rf = referenceFrame;
     invalidateBoundingBox();
+}
+
+const unsigned int Node::id() const
+{
+    return m_id;
+}
+
+void Node::setId(const unsigned int id)
+{
+    m_id = id;
+}
+
+const bool Node::selected() const
+{
+    return m_selected;
+}
+
+void Node::setSelected(const bool selected)
+{
+    m_selected = selected;
+}
+
+const bool Node::hidden() const
+{
+    return m_hidden;
+}
+
+void Node::setHidden(const bool hidden)
+{
+    m_hidden = hidden;
 }

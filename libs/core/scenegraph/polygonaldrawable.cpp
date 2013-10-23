@@ -7,8 +7,7 @@
 #include <core/program.h>
 
 #include "polygonalgeometry.h"
-
-static const QString TRANSFORM_UNIFORM( "transform" );
+#include "defaultdrawmethod.h"
 
 // TODO: wieder rueckgaengig machen...
 // PolygonalDrawable::PolygonalDrawable( DataBlockRegistry & registry, const QString & name )
@@ -16,6 +15,7 @@ PolygonalDrawable::PolygonalDrawable(const QString & name)
 :   Node( name )
 ,   m_geometry( nullptr )
 ,   m_mode( GL_TRIANGLES )
+,   m_drawMethod( new DefaultDrawMethod )
 {
 }
 
@@ -36,11 +36,6 @@ const AxisAlignedBoundingBox PolygonalDrawable::boundingBox() const
     if( m_geometry == nullptr )
         return AxisAlignedBoundingBox();
 
-    // TODO: Hier muss was effizienteres her! vertices() legt jedes mal eine Kopie an.
-//     for( const auto & pos : m_geometry->vertices() ){
-//         m_aabb.extend( pos );
-//     }
-   
     t_VertexListP myVList = m_geometry->vertices();
     AxisAlignedBoundingBox & aabb = m_aabb;
     myVList->foreachVertexAttribute<glm::vec3>(0, myVList->size(), "position", nullptr,
@@ -60,29 +55,28 @@ void PolygonalDrawable::invalidateBoundingBox()
 
 void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transform)
 {
-    if( !m_geometry || m_geometry->indices().empty() )
-        return;
+    if (m_geometry)
+    {
+        m_drawMethod->draw(program, transform, *this);
+    }
+}
 
-    m_geometry->initialize(program);
+void PolygonalDrawable::setDrawMethod( t_drawMethodP drawMethod )
+{
+    m_drawMethod = drawMethod;
+}
 
-    program.use();
-    program.setUniform(TRANSFORM_UNIFORM, transform);
+PolygonalDrawable::t_drawMethodP PolygonalDrawable::drawmethod(void)
+{
+    return m_drawMethod;
+}
 
-    glBindVertexArray(m_geometry->vao());
-    glError();
-
-    glEnable(GL_DEPTH_TEST);
-//     glEnable(GL_CULL_FACE);
-//     glCullFace(GL_BACK);
- 
-    for( const auto & bo : m_geometry->elementArrayBOs() )
-        bo->draw( mode() );
-
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
-
-    glBindVertexArray(0);
-    glError();
-
-    program.release();
+unsigned int PolygonalDrawable::numVertices() const
+{
+    if (m_geometry)
+    {
+        return m_geometry->vertices()->size();
+    } else {
+        return 0;
+    }
 }

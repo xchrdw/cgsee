@@ -25,6 +25,8 @@
 #include "core/rendering/blureffect.h"
 #include "core/rendering/shadowmapping.h"
 #include "core/rendering/normalzpass.h"
+#include "core/rendering/coloridpass.h"
+#include "core/rendering/boundingboxpass.h"
 #include "core/rendering/lightsource.h"
 
 
@@ -52,6 +54,8 @@ Painter::Painter(Camera * camera)
 ,   m_gouraud(nullptr)
 ,   m_phong(nullptr)
 ,   m_gooch(nullptr)
+,   m_colorId(nullptr)
+,   m_boundingBox(nullptr)
 ,   m_useProgram(nullptr)
 ,   m_fboColor(nullptr)
 ,   m_fboTemp(nullptr)
@@ -74,6 +78,8 @@ Painter::~Painter()
     delete m_shadowBlur;
     delete m_ssao;
     delete m_ssaoBlur;
+    delete m_colorId;
+    delete m_boundingBox;
     delete m_flat;
     delete m_gouraud;
     delete m_phong;
@@ -175,6 +181,8 @@ const bool Painter::initialize()
     m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows, m_fboTemp);
     m_ssao = new SSAOEffect(m_camera, m_quad, screenQuadShader, m_normalz->output());
     m_ssaoBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_ssao, m_fboTemp);
+    m_colorId = new ColorIdPass(m_camera);
+    m_boundingBox = new BoundingBoxPass(m_camera, m_fboColor);
     
     m_passes.append(m_normalz);
     m_passes.append(m_lightsource);
@@ -182,6 +190,8 @@ const bool Painter::initialize()
     m_passes.append(m_shadowBlur);
     m_passes.append(m_ssao);
     m_passes.append(m_ssaoBlur);
+    m_passes.append(m_colorId);
+    m_passes.append(m_boundingBox);
 
 
     m_fboActiveBuffer = m_fboColor;
@@ -213,13 +223,13 @@ void Painter::setUniforms()
 
         m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, false);
 
-        glm::mat4 materialCoeff;
-        materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);    //ambient
-        materialCoeff[1] = glm::vec4(1.0,1.0,1.0,1.0);    //diffuse
-        materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);    //specular
-        materialCoeff[3] = glm::vec4(0,0,0,0);            //emission
-
-        m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
+//         glm::mat4 materialCoeff;
+//         materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);    //ambient
+//         materialCoeff[1] = glm::vec4(1.0,1.0,1.0,1.0);    //diffuse
+//         materialCoeff[2] = glm::vec4(1.0,1.0,1.0,1.0);    //specular
+//         materialCoeff[3] = glm::vec4(0,0,0,0);            //emission
+// 
+//         m_useProgram->setUniform(MATERIAL_UNIFORM, materialCoeff);
     }
 
     else if(m_useProgram == m_gooch)
@@ -268,6 +278,7 @@ void Painter::paint()
         sampler["shadows"] = m_fboTemp;
         sampler["ssao"] = m_fboTemp;
     }
+
 
     bindSampler(sampler, *m_flush);
     m_quad->draw(*m_flush, nullptr);
@@ -326,6 +337,7 @@ void Painter::setFrameBuffer(int frameBuffer)
         case 3: m_fboActiveBuffer = m_shadows->output(); std::printf("\nShadows Buffer\n"); break;
         case 4: m_fboActiveBuffer = m_lightsource->output(); std::printf("\nShadowMap Buffer\n"); break;
         case 5: m_fboActiveBuffer = m_ssao->output(); std::printf("\nSSAO Buffer\n"); break;
+        case 6: m_fboActiveBuffer = m_colorId->output(); std::printf("\nColorId Buffer\n"); break;
     }
 }
 
@@ -348,6 +360,15 @@ void Painter::postShaderRelinked()
     m_shadowBlur->setUniforms();
     m_ssao->setUniforms();
     m_ssaoBlur->setUniforms();
+}
+
+void Painter::setBoundingBox(const glm::vec3 & llf, const glm::vec3 & urb, const glm::mat4 & transform)
+{
+    if (BoundingBoxPass * bbox_pass = dynamic_cast<BoundingBoxPass *>(m_boundingBox))
+    {
+        bbox_pass->setTransform(transform);
+        bbox_pass->updateVertices(llf, urb);
+    }
 }
 
 void Painter::bindSampler(
@@ -383,4 +404,9 @@ void Painter::sceneChanged(Group * scene)
     {
         pass->sceneChanged(scene);
     }
+}
+
+RenderingPass * Painter::getSharedPass()
+{
+    return m_colorId;
 }

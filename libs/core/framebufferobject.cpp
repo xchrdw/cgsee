@@ -25,6 +25,8 @@ FrameBufferObject::FrameBufferObject(
 ,   m_type(type)
 ,   m_attachment(attachment)
 ,   m_depth(depth)
+,   m_width(0)
+,   m_height(0)
 {
 }
 
@@ -154,7 +156,20 @@ void FrameBufferObject::resize(
 {
     m_size = glm::ivec2(width, height);
 
+    m_width = width;
+    m_height = height;
+
     resize();
+}
+
+unsigned int FrameBufferObject::width()
+{
+    return m_width;
+}
+
+unsigned int FrameBufferObject::height()
+{
+    return m_height;
 }
 
 void FrameBufferObject::resize() const
