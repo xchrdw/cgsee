@@ -5,7 +5,7 @@
 #include <QVector>
 
 #include "declspec.h"
-#include "group.h"
+#include "scenegraph/group.h"
 
 
 class Program;

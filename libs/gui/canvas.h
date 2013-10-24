@@ -15,6 +15,8 @@ class AbstractScenePainter;
 class AbstractNavigation;
 class CGSEE_API Canvas : public QGLWidget, public AbstractGLParent
 {
+    Q_OBJECT
+
 public:
     Canvas(
         const GLFormat & format,
@@ -41,6 +43,13 @@ public:
 
     virtual void resize(int width, int height);
 
+    virtual void setRefreshTimeMSec(int msec);
+    int refreshTimeMSec() const;
+
+signals:
+    void mouseReleaseEventSignal ( QMouseEvent * event );
+    void mouseMoveEventTriggered ( int triggered );
+
 protected:
 
     // QGLWidget Interface
@@ -62,6 +71,8 @@ protected:
 
     // For Rendering Loop
     void timerEvent(QTimerEvent *event);
+
+    int m_refreshTimeMSec;
 
 protected:
     AbstractScenePainter * m_painter;

@@ -25,6 +25,8 @@ FrameBufferObject::FrameBufferObject(
 ,   m_type(type)
 ,   m_attachment(attachment)
 ,   m_depth(depth)
+,   m_width(0)
+,   m_height(0)
 {
 }
 
@@ -97,7 +99,7 @@ void FrameBufferObject::bindTexture2D(
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glError();
 
-    program.setUniform(uniform, slot);  
+    program.setUniform(uniform, GLint(slot));
 }
 
 void FrameBufferObject::releaseTexture2D() const
@@ -154,7 +156,20 @@ void FrameBufferObject::resize(
 {
     m_size = glm::ivec2(width, height);
 
+    m_width = width;
+    m_height = height;
+
     resize();
+}
+
+unsigned int FrameBufferObject::width()
+{
+    return m_width;
+}
+
+unsigned int FrameBufferObject::height()
+{
+    return m_height;
 }
 
 void FrameBufferObject::resize() const
@@ -185,4 +200,11 @@ void FrameBufferObject::resize() const
         glBindTexture(GL_TEXTURE_2D, 0);
         glError();
     }
+}
+
+void FrameBufferObject::clear()
+{
+    bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    release();
 }

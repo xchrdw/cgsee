@@ -22,6 +22,7 @@ Canvas::Canvas(
     QWidget * parent)
 
 :   QGLWidget(format.asQGLFormat(), parent)
+,   m_refreshTimeMSec(0)
 ,   m_painter(nullptr)
 ,   m_navigation(nullptr)
 ,   m_timer(nullptr)
@@ -92,6 +93,8 @@ void Canvas::resizeGL(
         m_painter->resize(width, height);
     if(m_navigation)
         m_navigation->setViewPort(width, height);
+    // if(m_coordinateProvider)
+    //     m_coordinateProvider->resize(width, height);
 
 }
 
@@ -142,6 +145,21 @@ void Canvas::timerEvent(QTimerEvent *event)
         return;
 
     update();
+}
+
+void Canvas::setRefreshTimeMSec(int msec)
+{
+    m_refreshTimeMSec = msec;
+    if (msec < 0) {
+        m_timer->stop();
+    } else {
+        m_timer->start(m_refreshTimeMSec, this);
+    }
+}
+
+int Canvas::refreshTimeMSec() const
+{
+    return m_refreshTimeMSec;
 }
 
 void Canvas::setPainter(AbstractScenePainter * painter)
@@ -209,11 +227,15 @@ void Canvas::mousePressEvent( QMouseEvent * event )
 void Canvas::mouseReleaseEvent( QMouseEvent * event )
 {
     m_navigation->mouseReleaseEvent(event);
+
+    emit mouseReleaseEventSignal(event);
 }
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
     m_navigation->mouseMoveEvent(event);
+
+    emit mouseMoveEventTriggered(1);
 }
 
 void Canvas::wheelEvent(QWheelEvent * event)

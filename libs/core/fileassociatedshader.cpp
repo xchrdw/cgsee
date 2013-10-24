@@ -81,7 +81,7 @@ void FileAssociatedShader::unregisterShader(
 {
     t_shadersByFilePath::iterator f(shadersByFilePath.find(filePath));
 
-    assert(shadersByFilePath.end() != f);
+    assert(shadersByFilePath.end() != f); // shader was loaded twice
 
     t_shaders * shaders(f.value());
 

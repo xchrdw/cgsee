@@ -1,6 +1,6 @@
 
 #include "abstractscenepainter.h"
-#include <core/group.h>
+#include <core/scenegraph/group.h>
 #include <core/camera.h>
 
 AbstractScenePainter::AbstractScenePainter()
@@ -16,6 +16,7 @@ AbstractScenePainter::~AbstractScenePainter()
 
 void AbstractScenePainter::assignScene(Group * scene)
 {
+    this->sceneChanged(scene);
     if (m_scene)
         delete retainScene();
 
@@ -36,3 +37,9 @@ Group & AbstractScenePainter::getScene() const
 {
     return *m_scene;
 }
+
+void AbstractScenePainter::sceneChanged(Group * scene)
+{
+}
+
+

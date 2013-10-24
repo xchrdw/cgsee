@@ -2,8 +2,8 @@
 
 #include "declspec.h"
 #include "aabb.h"
-#include "node.h"
-#include "group.h"
+#include "scenegraph/node.h"
+#include "scenegraph/group.h"
 #include "camera.h"
 #include "plane.h"
 

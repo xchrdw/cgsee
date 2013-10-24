@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 
 #include <cassert>
+#include <iostream>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -12,9 +13,14 @@
 #include <QMessageBox>
 #include <QDockWidget>
 #include <QMenu>
-#include <QFileSystemModel>
 #include <QDir>
 #include <QDebug>
+#include <QFileSystemModel>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QTreeView>
+#include <QTextEdit>
+#include <QVBoxLayout>
 
 #include "ui_viewer.h"
 #include "viewer.h"
@@ -22,6 +28,8 @@
 #include "canvasexporter.h"
 #include "fileNavigator.h"
 #include "fileExplorer.h"
+
+#include "../../apps/cgsee/painter.h"
 
 #include <core/navigation/abstractnavigation.h>
 #include <core/navigation/flightnavigation.h>
@@ -36,6 +44,16 @@
 #include <core/camera.h>
 #include <core/convergentCamera.h>
 #include <core/parallelCamera.h>
+#include <core/coordinateprovider.h>
+
+#include <core/aabb.h>
+
+#include <core/scenegraph/node.h>
+#include <core/scenegraph/group.h>
+#include <core/scenegraph/polygonaldrawable.h>
+#include <core/scenegraph/scenetraverser.h>
+#include <core/scenegraph/defaultdrawmethod.h>
+#include <core/scenegraph/highlightingdrawmethod.h>
 
 
 namespace
@@ -47,21 +65,30 @@ namespace
 
 
 Viewer::Viewer(
+    std::shared_ptr<DataBlockRegistry> registry,
     QWidget  * parent,
     Qt::WindowFlags flags)
 
 :   QMainWindow(parent, flags)
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
+,   m_camera(nullptr)
 ,   m_saved_views(4)
 ,   m_isFullscreen(false)
 
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
+,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
-,   m_loader(new AssimpLoader())
+,   m_sceneHierarchy(new QStandardItemModel())
+,   m_sceneHierarchyTree(new QTreeView())
+,   m_coordinateProvider(nullptr)
+,   m_selectionBBox(new AxisAlignedBoundingBox)
+,   m_loader(new AssimpLoader( registry ))
+,   m_mouseMoving(false)
 {
+
     m_ui->setupUi(this);
     
     QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -72,6 +99,8 @@ Viewer::Viewer(
     
     restoreViews(s);
     initializeExplorer();
+    initializeSceneTree();
+
 };
 
 void Viewer::initializeExplorer()
@@ -100,6 +129,45 @@ void Viewer::initializeExplorer()
         this, SLOT(on_openFileDialogAction_triggered()));
 
     m_explorer->emitActivatedItem(m_explorer->model()->index(QDir::currentPath()));
+
+    m_dockExplorer->setMinimumHeight(200);
+}
+
+void Viewer::initializeSceneTree()
+{
+    m_sceneHierarchyTree->setModel(m_sceneHierarchy);
+    m_sceneHierarchyTree->setSelectionMode(QAbstractItemView::MultiSelection);
+    m_sceneHierarchyTree->setItemsExpandable(false);
+    m_sceneHierarchyTree->setRootIsDecorated(false);
+    m_dockScene->setObjectName("sceneHierarchy");
+
+
+    QTextEdit * sceneInfoText = new QTextEdit();
+
+    QVBoxLayout * layout = new QVBoxLayout();
+    layout->addWidget(m_sceneHierarchyTree);
+    layout->addWidget(sceneInfoText);
+    layout->setStretch(0,10);
+    layout->setStretch(1,1);
+
+    QWidget * sceneWidget = new QWidget(this);
+    sceneWidget->setLayout(layout);
+
+    this->initializeDockWidgets(m_dockScene, sceneWidget, Qt::RightDockWidgetArea);
+
+    sceneInfoText->setReadOnly(true);
+
+    QObject::connect(
+        m_sceneHierarchyTree, SIGNAL(clicked(const QModelIndex &)),
+        this, SLOT(on_m_sceneHierarchyTree_clicked(const QModelIndex &)));
+
+    QObject::connect(
+        m_sceneHierarchy, SIGNAL(itemChanged(QStandardItem *)),
+        this, SLOT(on_m_sceneHierarchy_itemChanged(QStandardItem *)));
+
+    QObject::connect(
+        this, SIGNAL(infoBoxChanged(const QString &)),
+        sceneInfoText, SLOT(setPlainText(const QString &)));
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
@@ -119,6 +187,62 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
     
     dockWidget->move(QPoint(20, 40 + count++ * (dockWidget->height() + 35)));
 #endif
+}
+
+void Viewer::createSceneHierarchy(QStandardItemModel * model, Node * rootNode)
+{
+    QStandardItem * item = new QStandardItem(rootNode->name());
+    item->setData(QVariant(rootNode->name()), Qt::DisplayRole);
+    item->setData(QVariant(rootNode->id()), Qt::UserRole + 1);
+    item->setCheckable(true);
+    item->setCheckState(Qt::Checked);
+
+    model->clear();
+    model->appendRow(item);
+
+    fillSceneHierarchy(rootNode, item);
+}
+
+void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
+{
+    int childCount = node->children().size();
+    int count = 0;
+    for (const auto & child : node->children())
+    {
+        QStandardItem * item = new QStandardItem(child->name());
+        if (child->name() == "") { item->setData(QVariant(node->name() + QString("_") + QString::number(count)), Qt::DisplayRole); }
+        else { item->setData(QVariant(child->name()), Qt::DisplayRole); }
+
+        item->setData(QVariant(child->id()), Qt::UserRole + 1);
+        item->setEditable(false);
+        item->setCheckable(true);
+        item->setCheckState(Qt::Checked);
+        
+        parent->appendRow(item);
+        fillSceneHierarchy(child, item);
+
+        if (childCount == 1 && child->children().size() == 0)
+            m_sceneHierarchyTree->setRowHidden(0, parent->index(), true);
+
+        ++count;
+    }
+}
+
+void Viewer::assignScene(Group * rootNode)
+{
+    m_selectedNodes.clear();
+
+    SceneTraverser traverser;
+    unsigned int count = 0;
+    traverser.traverse(*rootNode, [&count] (Node & node) 
+    {
+        node.setId(count++);
+        return true;
+    });
+
+    createSceneHierarchy(m_sceneHierarchy, rootNode);
+    m_sceneHierarchyTree->expandAll();
+    this->updateInfoBox();
 }
 
 #ifdef WIN32
@@ -146,6 +270,8 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 {
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
+    if (m_camera != nullptr)
+        m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 
     QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
 
@@ -184,6 +310,14 @@ void Viewer::initialize(const GLFormat & format)
         qFatal("OpenGL not supported.");
 
     createQtContext(format);
+
+    QObject::connect(
+        m_qtCanvas, SIGNAL(mouseReleaseEventSignal(QMouseEvent *)),
+        this, SLOT(on_mouseReleaseEventSignal(QMouseEvent *)));
+
+    QObject::connect(
+        m_qtCanvas, SIGNAL(mouseMoveEventTriggered(int)),
+        this, SLOT(on_mouseMoveEventTriggered(int)));
 }
 
 Viewer::~Viewer()
@@ -196,7 +330,11 @@ Viewer::~Viewer()
 
     delete m_dockNavigator;
     delete m_dockExplorer;
+    delete m_dockScene;
+    delete m_sceneHierarchy;
     delete m_loader;
+    delete m_coordinateProvider;
+    delete m_selectionBBox;
 }
 
 void Viewer::setPainter(AbstractScenePainter * painter)
@@ -232,6 +370,8 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+    painter()->postShaderRelinked();
+    m_qtCanvas->repaint();
 }
 
 void Viewer::on_openFileDialogAction_triggered()
@@ -254,11 +394,19 @@ void Viewer::on_loadFile(const QString & path)
 {
     Group * scene = m_loader->importFromFile(path);
     if (!scene)
+    {
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
-    else {
+    }
+    else 
+    {
+        this->assignScene(scene);
+        this->m_qtCanvas->navigation()->rescaleScene(scene);
+        if (m_coordinateProvider)
+            this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
         this->painter()->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
+        this->selectionBBoxChanged();
     }
 }
 
@@ -272,6 +420,22 @@ void Viewer::on_toggleExplorer_triggered()
 {
     bool visible = m_dockExplorer->isVisible();
     m_dockExplorer->setVisible(!visible);
+}
+
+void Viewer::updateCameraSelection(QString cameraName) const
+{
+    m_qtCanvas->painter()->selectCamera(cameraName);
+    m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
+}
+
+void Viewer::on_rasterizingCameraAction_triggered()
+{
+    updateCameraSelection("RasterizationCamera");
+}
+
+void Viewer::on_pathtracerAction_triggered()
+{
+    updateCameraSelection("PathTracer");
 }
 
 void Viewer::on_phongShadingAction_triggered()
@@ -322,6 +486,94 @@ void Viewer::on_normalsAction_triggered()
     m_qtCanvas->repaint();
 }
 
+void Viewer::on_colorRenderingAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(1, m_ui->colorRenderingAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_shadowMappingAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(2, m_ui->shadowMappingAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_shadowBlurAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(3, m_ui->shadowBlurAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_ssaoAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(4, m_ui->ssaoAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_ssaoBlurAction_triggered()
+{
+    m_qtCanvas->painter()->setEffect(5, m_ui->ssaoBlurAction->isChecked());
+    m_qtCanvas->repaint();
+}
+
+void Viewer::uncheckFboActions() {
+    m_ui->fboColorAction->setChecked(false);
+    m_ui->fboNormalzAction->setChecked(false);
+    m_ui->fboShadowMapAction->setChecked(false);
+    m_ui->fboShadowsAction->setChecked(false);
+    m_ui->fboSSAOAction->setChecked(false);
+    m_ui->fboColorIdAction->setChecked(false);
+    m_ui->fboTempBufferAction->setChecked(false);
+}
+
+void Viewer::on_fboColorAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboColorAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(1);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboNormalzAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboNormalzAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(2);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboShadowsAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboShadowsAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(3);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboShadowMapAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboShadowMapAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(4);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboSSAOAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboSSAOAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(5);
+    m_qtCanvas->repaint();
+}
+
+void Viewer::on_fboColorIdAction_triggered()
+{
+    uncheckFboActions();
+    m_ui->fboColorIdAction->setChecked(true);
+    m_qtCanvas->painter()->setFrameBuffer(6);
+    m_qtCanvas->repaint();
+}
+
 void Viewer::on_standardCameraAction_triggered()
 {
     float zNear=m_camera->zNear();
@@ -331,8 +583,8 @@ void Viewer::on_standardCameraAction_triggered()
     m_camera->setZFar(zFar);
     m_camera->setZNear(zNear);
     
-    m_qtCanvas->painter()->setCamera(m_camera);
-    m_qtCanvas->navigation()->setCamera(m_camera);
+    //m_qtCanvas->painter()->setCamera(m_camera);
+    //m_qtCanvas->navigation()->setCamera(m_camera);
     
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
@@ -356,8 +608,8 @@ void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
         qDebug() << "Expected ParallelCamera as active implementation but was"
                 << m_camera->selectedImplementation();
     
-    m_qtCanvas->painter()->setCamera(m_camera);
-    m_qtCanvas->navigation()->setCamera(m_camera);
+    //m_qtCanvas->painter()->setCamera(m_camera);
+    //m_qtCanvas->navigation()->setCamera(m_camera);
     
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
@@ -374,8 +626,8 @@ void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
     m_camera->setZFar(zFar);
     m_camera->setZNear(zNear);
     
-    m_qtCanvas->painter()->setCamera(m_camera);
-    m_qtCanvas->navigation()->setCamera(m_camera);
+    //m_qtCanvas->painter()->setCamera(m_camera);
+    //m_qtCanvas->navigation()->setCamera(m_camera);
     
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
@@ -400,8 +652,8 @@ void Viewer::on_oculusRiftStereoCameraAction_triggered()
                 << m_camera->selectedImplementation();
 
     
-    m_qtCanvas->painter()->setCamera(m_camera);
-    m_qtCanvas->navigation()->setCamera(m_camera);
+    //m_qtCanvas->painter()->setCamera(m_camera);
+    //m_qtCanvas->navigation()->setCamera(m_camera);
     
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
@@ -456,11 +708,27 @@ AbstractNavigation * Viewer::navigation() {
 void Viewer::setCamera(Camera * camera )
 {
     m_camera = camera;
+    if ((m_camera != nullptr) && (m_qtCanvas != nullptr))
+        m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 }
 
 Camera * Viewer::camera()
 {
     return m_camera;
+}
+
+void Viewer::setCoordinateProvider(CoordinateProvider * coordinateProvider )
+{
+    if (coordinateProvider)
+    {
+        delete m_coordinateProvider;
+        m_coordinateProvider = coordinateProvider;
+    }
+}
+
+CoordinateProvider * Viewer::coordinateProvider()
+{
+    return m_coordinateProvider;
 }
 
 void Viewer::keyPressEvent(QKeyEvent * event)
@@ -595,3 +863,213 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
+
+void Viewer::on_mouseMoveEventTriggered(int triggered)
+{
+    m_mouseMoving = triggered;
+}
+
+void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
+{
+    static const unsigned int BACKGROUND_ID = 4244897280;
+
+    if (m_mouseMoving)
+    {
+        m_mouseMoving = false;
+        return;
+    }
+    
+    if (m_coordinateProvider && event->button() == Qt::LeftButton)
+    {
+        unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
+
+        if (event->modifiers() != Qt::CTRL)
+            this->clearSelection();
+
+        if (id < BACKGROUND_ID)
+        {
+            this->selectById(id);
+            this->treeToggleSelection(id);
+        }
+    }
+
+    if (event->button() == Qt::RightButton)
+        this->clearSelection();
+}
+
+void Viewer::selectById(const unsigned int & id)
+{
+    SceneTraverser traverser;
+    Node * result = nullptr;
+    traverser.traverse(*m_camera, [&result, &id](Node & node)
+    {
+        if( node.id() == id){
+            result = &node;
+            return false;
+        }
+        return true;
+    });
+
+    if (result)
+    {
+        Node * parent = *result->parents().begin();
+        int siblings = parent->children().size() - 1;
+        if (m_selectedNodes.contains(id))
+        {
+            this->deselectNode(result);
+            if (!siblings)
+            {
+                this->deselectNode(parent);
+                this->treeToggleSelection(parent->id());
+            }
+        }
+        else
+        {
+            this->selectNode(result);
+            if (!siblings)
+            {
+                this->selectNode(parent);
+                this->treeToggleSelection(parent->id());
+            }
+        }
+    }
+    this->updateInfoBox();
+}
+
+void Viewer::selectNode(Node * node)
+{
+    static std::shared_ptr<DrawMethod> highlightingDrawmethod = std::make_shared<HighlightingDrawMethod>();
+
+    m_selectedNodes.insert(node->id(), node);
+    node->setSelected(true);
+    if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+        drawable->setDrawMethod(highlightingDrawmethod);
+
+    this->selectionBBoxChanged();
+    this->m_qtCanvas->update();
+
+    for ( auto child : node->children() )
+    {
+        if (!m_selectedNodes.contains(child->id()))
+        {
+            this->selectNode(child);
+            this->treeToggleSelection(child->id());
+        }
+    }
+}
+
+void Viewer::deselectNode(Node * node)
+{
+    static std::shared_ptr<DrawMethod> defaultDrawmethod = std::make_shared<DefaultDrawMethod>();
+
+    m_selectedNodes.erase(m_selectedNodes.find(node->id()));
+    node->setSelected(false);
+    if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+        drawable->setDrawMethod(defaultDrawmethod);
+    
+    this->selectionBBoxChanged();
+    this->m_qtCanvas->update();
+
+    for ( auto child : node->children() )
+    {
+        if (m_selectedNodes.contains(child->id()))
+        {
+            this->deselectNode(child);
+            this->treeToggleSelection(child->id());
+        }
+    }
+}
+
+void Viewer::treeToggleSelection(const unsigned int & id)
+{
+    QModelIndexList list = m_sceneHierarchy->match(
+        m_sceneHierarchy->indexFromItem((m_sceneHierarchy->item(0,0))),
+        Qt::UserRole + 1,
+        QVariant(id),
+        2,
+        Qt::MatchRecursive);
+
+    if (list.isEmpty())
+        return;
+
+    m_sceneHierarchyTree->selectionModel()->select(list.first(), QItemSelectionModel::Toggle);
+}
+
+void Viewer::clearSelection()
+{
+    static std::shared_ptr<DrawMethod> defaultDrawmethod = std::make_shared<DefaultDrawMethod>();
+
+    for( auto node : m_selectedNodes )
+        {
+            node->setSelected(false);
+            if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+                drawable->setDrawMethod(defaultDrawmethod);
+        }
+
+        m_selectedNodes.clear();
+        this->selectionBBoxChanged();
+        this->m_qtCanvas->update();
+
+        m_sceneHierarchyTree->clearSelection();
+}
+
+void Viewer::hideById(const unsigned int & id, const bool & hideStatus)
+{
+    SceneTraverser traverser;
+    Node * result = nullptr;
+    traverser.traverse(*m_camera, [&result, &id](Node & node)
+    {
+        if( node.id() == id){
+            result = &node;
+            return false;
+        }
+        return true;
+    });
+
+    if (result)
+    {
+        result->setHidden(hideStatus);
+    }
+}
+
+void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
+{
+    if (QApplication::keyboardModifiers() != Qt::CTRL)
+    {
+        this->clearSelection();
+        this->treeToggleSelection(index.data(Qt::UserRole + 1).toUInt());
+    }
+    this->selectById(index.data(Qt::UserRole + 1).toUInt());
+}
+
+void Viewer::on_m_sceneHierarchy_itemChanged(QStandardItem * item)
+{
+    this->hideById(item->data(Qt::UserRole + 1).toUInt(), item->checkState() == Qt::Unchecked);
+}
+
+void Viewer::updateInfoBox()
+{
+    int vertices = 0;
+    
+    for ( auto node : m_selectedNodes )
+    {
+        if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+            vertices += drawable->numVertices();
+    }
+
+    QString info = "(Selected objects)\n\nVertices: " + QString::number(vertices);
+
+    emit infoBoxChanged(info);
+}
+
+void Viewer::selectionBBoxChanged()
+{
+    m_selectionBBox->invalidate();
+    for ( auto node : m_selectedNodes )
+    {
+        m_selectionBBox->extend(node->boundingBox());
+    }
+
+    if (Painter * painter = dynamic_cast<Painter*>(this->painter()))
+        painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
+}

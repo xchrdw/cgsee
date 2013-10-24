@@ -1,12 +1,13 @@
 
-#include "group.h"
+#include <core/program.h>
 
 #include "polygonaldrawable.h"
-#include "program.h"
-
+#include "group.h"
+#include "core/aabb.h"
 
 Group::Group(const QString & name)
-:   Node(name)
+:   Node(name),
+    m_invalidatedChildren(true)
 {
 }
 
@@ -16,46 +17,26 @@ Group::~Group()
         removeLast();
 }
 
-void Group::draw(
-    const Program & program
-,   const glm::mat4 & transform)
+void Group::draw(const Program & program, const glm::mat4 & transform)
 {
-    t_nodes::const_iterator i(m_children.begin());
-    const t_nodes::const_iterator iEnd(m_children.end());
-
-    for(; i != iEnd; ++i)
-    {
-        Node * node(*i);
-
-        if(RF_Absolute == m_rf)
-            node->draw(program, this->transform());
-        else
-            node->draw(program, transform * this->transform());
-    }
 }
 
 const bool Group::contains(Node * node) const
 {
-    return m_children.contains(node);
+    return std::find(m_children.begin(), m_children.end(), node) != m_children.end();
 }
 
-void Group::insert(
-    const Group::t_nodes::iterator & before
-,   Group * group)
+void Group::insert(const Group::t_children::iterator & before, Group * group)
 {
     return insert(before, dynamic_cast<Node *>(group));
 }
 
-void Group::insert(
-    const Group::t_nodes::iterator & before
-,   PolygonalDrawable * drawable)
+void Group::insert(const Group::t_children::iterator & before, PolygonalDrawable * drawable)
 {
     return insert(before, dynamic_cast<Node *>(drawable));
 }
 
-void Group::insert(
-    const Group::t_nodes::iterator & before
-,   Node * node)
+void Group::insert(const Group::t_children::iterator & before, Node * node)
 {
     if(!node)
         return;
@@ -63,7 +44,7 @@ void Group::insert(
     invalidateChildren();
 
     if(!contains(node))
-        node->parents().insert(this);
+        node->parents().push_back(this);
 
     m_children.insert(before, node);
 }
@@ -86,7 +67,7 @@ void Group::prepend(Node * node)
     invalidateChildren();
 
     if(!contains(node))
-        node->parents().insert(this);
+        node->parents().push_back(node);
 
     m_children.push_front(node);
 }
@@ -109,7 +90,7 @@ void Group::append(Node * node)
     invalidateChildren();
 
     if(!contains(node))
-        node->parents().insert(this);
+        node->parents().push_back(this);
 
     m_children.push_back(node);
 }
@@ -134,7 +115,7 @@ void Group::removeLast()
 {
     if(m_children.empty())
         return;
-
+    
     invalidateChildren();
 
     Node * node(m_children.back());
@@ -146,24 +127,17 @@ void Group::removeLast()
         delete node;
 }
 
-const void Group::remove(
-    Node * node
-,   const bool deleteIfParentsEmpty)
+const void Group::remove(Node * node, const bool deleteIfParentsEmpty)
 {
     invalidateChildren();
 
     if(!contains(node))
         node->parents().remove(this);
 
-    m_children.removeAll(node);
+    m_children.remove(node);
 
     if(deleteIfParentsEmpty && node->parents().empty())
         delete node;
-}
-
-const Group::t_nodes & Group::children() const
-{
-    return m_children;
 }
 
 const AxisAlignedBoundingBox Group::boundingBox() const
@@ -171,8 +145,8 @@ const AxisAlignedBoundingBox Group::boundingBox() const
     if(m_aabb.valid())
         return m_aabb;
 
-    t_nodes::const_iterator i(m_children.begin());
-    const t_nodes::const_iterator iEnd(m_children.end());
+    t_children::const_iterator i(m_children.begin());
+    const t_children::const_iterator iEnd(m_children.end());
 
     if(RF_Relative == m_rf)
         for(; i != iEnd; ++i)
@@ -182,6 +156,26 @@ const AxisAlignedBoundingBox Group::boundingBox() const
             m_aabb.extend((*i)->boundingBox());
 
     return m_aabb;
+}
+
+const AxisAlignedBoundingBox Group::boundingBox(glm::mat4 transform) const
+{
+    AxisAlignedBoundingBox aabb = AxisAlignedBoundingBox();
+    t_children::const_iterator i(m_children.begin());
+    const t_children::const_iterator iEnd(m_children.end());
+    glm::mat4 newTransform;
+
+    if (RF_Relative == m_rf) {
+        newTransform = this->transform() * transform;
+    } else {
+        newTransform = transform;
+    }
+
+    for(; i != iEnd; ++i) {
+        aabb.extend((*i)->boundingBox(newTransform));
+    }
+
+    return aabb;
 }
 
 Group * Group::asGroup()

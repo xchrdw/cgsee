@@ -67,11 +67,21 @@ public:
 
     void setUniform(
         const QString & name
+    ,   const glm::vec2 * vec_array
+    ,   const unsigned int & count) const;
+
+    void setUniform(
+        const QString & name
     ,   const glm::ivec2 & vec) const;
 
     void setUniform(
         const QString & name
     ,   const glm::vec3 & vec) const;
+    
+    void setUniform(
+        const QString & name
+    ,   const glm::vec3 * vec_array
+    ,   const unsigned int & count) const;
 
     void setUniform(
         const QString & name
@@ -84,6 +94,10 @@ public:
     void setUniform(
         const QString & name
     ,   const glm::ivec4 & vec) const;
+
+    void setUniform(
+        const QString & name
+    ,   const glm::uvec4 & vec) const;
 
     void setUniform(
         const QString & name

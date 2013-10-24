@@ -32,9 +32,14 @@ public:
 
     void releaseTexture2D() const;
 
+    void clear();
+
     void resize(
         const unsigned int width
     ,   const unsigned int height);
+
+    unsigned int width();
+    unsigned int height();
 
 protected:
     void initialize() const;
@@ -43,7 +48,6 @@ protected:
     inline const bool isFrameBuffer() const;
     inline const bool isRenderBuffer() const;
     inline const bool isTexture() const;
-
 public:
     mutable GLuint m_fbo;
 protected:
@@ -57,4 +61,7 @@ protected:
     const GLenum m_type;
     const GLenum m_attachment;
     const bool   m_depth;
+
+    unsigned int m_width;
+    unsigned int m_height;
 };

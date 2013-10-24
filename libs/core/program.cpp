@@ -234,7 +234,7 @@ void Program::setUniform(
 {
     const GLint location(uniformLocation(name));
 
-    glUniform1i(location, value);
+    glUniform1ui(location, value);
     glError();
 }
 
@@ -245,6 +245,17 @@ void Program::setUniform(
     const GLint location(uniformLocation(name));
 
     glUniform2fv(location, 1, glm::value_ptr(vec));
+    glError();
+}
+
+void Program::setUniform(
+    const QString & name
+    ,   const glm::vec2 * vec_array
+    ,   const unsigned int & count) const
+{
+    const GLint location(uniformLocation(name));
+
+    glUniform2fv(location, count, glm::value_ptr(*vec_array));
     glError();
 }
 
@@ -265,6 +276,17 @@ void Program::setUniform(
     const GLint location(uniformLocation(name));
 
     glUniform3fv(location, 1, glm::value_ptr(vec));
+    glError();
+}
+
+void Program::setUniform(
+    const QString & name
+,   const glm::vec3 * vec_array
+,   const unsigned int & count) const
+{
+    const GLint location(uniformLocation(name));
+
+    glUniform3fv(location, count, glm::value_ptr(*vec_array));
     glError();
 }
 
@@ -295,6 +317,16 @@ void Program::setUniform(
     const GLint location(uniformLocation(name));
 
     glUniform4iv(location, 1, glm::value_ptr(vec));
+    glError();
+}
+
+void Program::setUniform(
+    const QString & name
+,   const glm::uvec4 & vec) const
+{
+    const GLint location(uniformLocation(name));
+
+    glUniform4uiv(location, 1, glm::value_ptr(vec));
     glError();
 }
 
