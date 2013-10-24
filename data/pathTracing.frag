@@ -121,7 +121,7 @@ void main()
         currentRay = makeRay(primaryIntersectionPoint, primaryTangentspace * rndVec);
     }
 
-    fragColor = mix(oldFragColor, addedColor, 1.0/frameCounter);
+    fragColor = mix(oldFragColor, addedColor, 1.0/float(frameCounter));
     
     /*
     // test rayTriangleIntersectionDistance {{{
