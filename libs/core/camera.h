@@ -2,12 +2,16 @@
 
 #include <glm/glm.hpp>
 
+#include <QVector>
+
 #include "declspec.h"
 #include "group.h"
 
 
 class Program;
-class FrameBufferObject;
+class ViewFrustum;
+
+class CameraImplementation;
 
 class CGSEE_API Camera : public Group
 {
@@ -17,13 +21,7 @@ public:
 
     virtual Camera * asCamera();
 
-    virtual void draw(
-        const Program & program
-    ,   FrameBufferObject * target = nullptr);
-    virtual void draw(
-        const Program & program
-    ,   const glm::mat4 & transform);
-
+    virtual void draw( const Program & program, const glm::mat4 & transform) override;
 
     const glm::ivec2 & viewport() const;
     void setViewport(const glm::ivec2 & size);
@@ -47,26 +45,43 @@ public:
 
     const float aspect() const;
 
+    ViewFrustum *viewFrustum() const;
+
     // updates camera matrices
     void update();
-    
+
     //
     glm::vec3 getEye();
     glm::vec3 getUp();
     glm::vec3 getCenter();
 
-protected:
-    void invalidate();
+public:
+    void selectImplementation(QString name);
+    QString selectedImplementation();
+    CameraImplementation * activeImplementation() const;
+
+    int preferredRefreshTimeMSec() const;
 
 protected:
+    QVector<CameraImplementation*> m_implementations;
+    CameraImplementation * m_activeCamera;
+
+protected:
+    void invalidate();
+    virtual void invalidateChildren() override;
+
     glm::ivec2 m_viewport;
 
     glm::mat4 m_view;
     glm::mat4 m_projection;
+
+    ViewFrustum *m_viewFrustum;
 
     float m_fovy;
     float m_zNear;
     float m_zFar;
 
     bool m_invalidated;
+
+// friend CameraImplementation;
 };

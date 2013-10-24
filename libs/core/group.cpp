@@ -60,6 +60,8 @@ void Group::insert(
     if(!node)
         return;
 
+    invalidateChildren();
+
     if(!contains(node))
         node->parents().insert(this);
 
@@ -80,6 +82,8 @@ void Group::prepend(Node * node)
 {
     if(!node)
         return;
+    
+    invalidateChildren();
 
     if(!contains(node))
         node->parents().insert(this);
@@ -102,6 +106,8 @@ void Group::append(Node * node)
     if(!node)
         return;
 
+    invalidateChildren();
+
     if(!contains(node))
         node->parents().insert(this);
 
@@ -112,6 +118,8 @@ void Group::removeFirst()
 {
     if(m_children.empty())
         return;
+
+    invalidateChildren();
 
     Node * node(m_children.front());
 
@@ -127,6 +135,8 @@ void Group::removeLast()
     if(m_children.empty())
         return;
 
+    invalidateChildren();
+
     Node * node(m_children.back());
 
     node->parents().remove(this);
@@ -140,6 +150,8 @@ const void Group::remove(
     Node * node
 ,   const bool deleteIfParentsEmpty)
 {
+    invalidateChildren();
+
     if(!contains(node))
         node->parents().remove(this);
 
@@ -175,4 +187,12 @@ const AxisAlignedBoundingBox Group::boundingBox() const
 Group * Group::asGroup()
 {
     return this;
+}
+
+void Group::invalidateChildren()
+{
+    if (m_invalidatedChildren)
+        return;
+
+    m_invalidatedChildren = true;
 }

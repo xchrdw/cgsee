@@ -229,7 +229,7 @@ const bool Painter::initialize()
     PropertyWidgetBuilder builder2;
     builder2.buildWidget(m_propertylist->list());
     builder2.retainWidget()->hide();
-    builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
+    //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
 
 
     return true;
@@ -288,7 +288,8 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    m_camera->draw(*m_useProgram, m_fboNormalz);
+    //m_camera->draw(*m_useProgram, m_fboNormalz);
+    qDebug() << "Painter line 291 does not draw :(";
 
     sampler.clear();
     sampler["source"] = m_fboNormalz;

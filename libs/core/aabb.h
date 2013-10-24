@@ -1,15 +1,19 @@
 ﻿
 #pragma once
 
+#include <array>
 #include <glm/glm.hpp>
+
 #include "declspec.h"
+
 
 class CGSEE_API AxisAlignedBoundingBox
 {
 public:
     AxisAlignedBoundingBox();
+    AxisAlignedBoundingBox(glm::vec3 llf, glm::vec3 urb);
     virtual ~AxisAlignedBoundingBox();
-
+    
     const bool extend(const glm::vec3 & vertex);
     const bool extend(const AxisAlignedBoundingBox & aabb);
 
@@ -18,6 +22,7 @@ public:
 
     const glm::vec3 & llf() const;
     const glm::vec3 & urb() const;
+    const std::array<glm::vec3, 8> allVertices() const;
 
     const bool inside(const glm::vec3 & vertex) const;
     const bool outside(const glm::vec3 & vertex) const;

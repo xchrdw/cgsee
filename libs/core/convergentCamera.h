@@ -9,18 +9,23 @@ class CGSEE_API ConvergentCamera :
 	public AbstractStereoCamera
 {
 public:
-	ConvergentCamera(const QString & name = "unnamed"); 
+	ConvergentCamera(Camera & abstraction); 
 	~ConvergentCamera(void);
-    virtual void activateRightCamera(const Program & program,   FrameBufferObject * target);
-    virtual void activateLeftCamera(const Program & program,   FrameBufferObject * target);
-    virtual void draw(const Program & program, FrameBufferObject * target = nullptr);
-    virtual void draw(const Program & program, const glm::mat4 & transform);
+    virtual void activateRightCamera(const Program & program/*,   FrameBufferObject * target*/);
+    virtual void activateLeftCamera(const Program & program/*,   FrameBufferObject * target*/);
+    virtual void draw(const Program & program, const glm::mat4 & transform) override;
     virtual void setCameraSeparation(float cameraSeparation);
     void setFocusDistance(float focusDistance);
+
+    virtual const QString implementationName() const override;
 
 protected:
     float m_focusDistance;
 
     void initialize(const Program &program);
+
+private:
+    static const QString m_implementationName;
+    static bool isRegistered;
 };
 

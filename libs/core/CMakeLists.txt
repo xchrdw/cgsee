@@ -45,6 +45,10 @@ set(SOURCES
     bufferobject.cpp
     camera.h
     camera.cpp
+    cameraimplementation.h
+    cameraimplementation.cpp
+    rasterizingcamera.h
+    rasterizingcamera.cpp
     chronotimer.h
     chronotimer.cpp
     common.h
@@ -76,6 +80,10 @@ set(SOURCES
     navigation/fpsnavigation.cpp
     node.h
     node.cpp
+    viewfrustum.h
+    viewfrustum.cpp
+    plane.h
+    plane.cpp
 
     property/abstractproperty.h
     property/abstractproperty.cpp

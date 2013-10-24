@@ -8,6 +8,15 @@ AxisAlignedBoundingBox::AxisAlignedBoundingBox()
     invalidate();
 }
 
+AxisAlignedBoundingBox::AxisAlignedBoundingBox(glm::vec3 llf, glm::vec3 urb)
+:   m_invalidated(false)
+,   m_llf(llf)
+,   m_urb(urb)
+,   m_center((urb + llf) * 0.5f)
+,   m_radius(glm::distance(llf, urb) * 0.5f)
+{
+}
+
 AxisAlignedBoundingBox::~AxisAlignedBoundingBox()
 {
 }
@@ -58,6 +67,21 @@ const glm::vec3 & AxisAlignedBoundingBox::llf() const
 const glm::vec3 & AxisAlignedBoundingBox::urb() const
 {
     return m_urb;
+}
+
+const std::array<glm::vec3, 8> AxisAlignedBoundingBox::allVertices() const
+{
+    std::array<glm::vec3, 8> allVertices = {
+        glm::vec3(m_llf.x, m_llf.y, m_llf.z),
+        glm::vec3(m_llf.x, m_llf.y, m_urb.z),
+        glm::vec3(m_llf.x, m_urb.y, m_llf.z),
+        glm::vec3(m_llf.x, m_urb.y, m_urb.z),
+        glm::vec3(m_urb.x, m_llf.y, m_llf.z),
+        glm::vec3(m_urb.x, m_llf.y, m_urb.z),
+        glm::vec3(m_urb.x, m_urb.y, m_llf.z),
+        glm::vec3(m_urb.x, m_urb.y, m_urb.z)
+    };
+    return allVertices;
 }
 
 const bool AxisAlignedBoundingBox::inside(const glm::vec3 & vertex) const

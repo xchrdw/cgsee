@@ -1,13 +1,13 @@
 #pragma once
-#include "camera.h"
+#include "cameraimplementation.h"
 #include "declspec.h"
 #include <QMap>
 class QString;
 
-class CGSEE_API AbstractStereoCamera :public Camera
+class CGSEE_API AbstractStereoCamera :public CameraImplementation
 {
 public:
-	AbstractStereoCamera(const QString & name = "unnamed");  
+	AbstractStereoCamera(Camera & abstraction);  
 	virtual ~AbstractStereoCamera(void);
     virtual void setCameraSeparation(float cameraSeparation);
     virtual void setCenter(glm::vec3 center);
@@ -17,13 +17,13 @@ public:
     void setFromMatrix();
 protected:
     float m_cameraSeparation;
-    typedef QMap<QString, FrameBufferObject *> t_samplerByName;
+    //typedef QMap<QString, FrameBufferObject *> t_samplerByName;
     //for lookat calculation
     glm::vec3 m_cameraSeparationVector;
     glm::vec3 m_center;
     glm::vec3 m_virtualCameraPosition;
     glm::vec3 m_up;
-    void bindSampler(const t_samplerByName & sampler, const Program & program);
-    void releaseSampler(const t_samplerByName & sampler);
+    /*void bindSampler(const t_samplerByName & sampler, const Program & program);
+    void releaseSampler(const t_samplerByName & sampler);*/
 };
 

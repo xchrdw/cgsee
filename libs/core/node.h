@@ -61,6 +61,7 @@ protected:
 
     e_ReferenceFrame m_rf;
     glm::mat4 m_transform;
+    glm::mat4 m_transformInverse;
 
     mutable AxisAlignedBoundingBox m_aabb;
 };

@@ -59,5 +59,9 @@ protected:
     ,   Node * node);
 
 protected:
+    virtual void invalidateChildren();
+    bool m_invalidatedChildren;
+
+protected:
     t_nodes m_children;
 };

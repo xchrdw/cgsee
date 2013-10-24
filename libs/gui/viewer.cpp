@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QFileSystemModel>
 #include <QDir>
+#include <QDebug>
 
 #include "ui_viewer.h"
 #include "viewer.h"
@@ -343,17 +344,24 @@ void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
     float zNear=m_camera->zNear();
     float zFar=m_camera->zFar();
     glm::ivec2 tempViewport = m_camera->viewport();
-    m_camera = new ParallelCamera();
+    m_camera->selectImplementation("ParallelCamera");
+    //m_camera = new ParallelCamera();
     m_camera->setZFar(zFar);
     m_camera->setZNear(zNear);
-    ((ParallelCamera*)m_camera)->deactivateOculusRift();
+    //((ParallelCamera*)m_camera)->deactivateOculusRift();
+    ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
+    if (parallelCam != nullptr)
+        parallelCam->deactivateOculusRift();
+    else
+        qDebug() << "Expected ParallelCamera as active implementation but was"
+                << m_camera->selectedImplementation();
     
     m_qtCanvas->painter()->setCamera(m_camera);
     m_qtCanvas->navigation()->setCamera(m_camera);
     
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
-    printf("%s\n", "(Parallel) Red Cyan Stereo Camera");
+    qDebug("(Parallel) Red Cyan Stereo Camera");
 }  
 
 void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
@@ -361,7 +369,8 @@ void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
     float zNear=m_camera->zNear();
     float zFar=m_camera->zFar();
     glm::ivec2 tempViewport = m_camera->viewport();
-    m_camera = new ConvergentCamera();
+    //m_camera = new ConvergentCamera();
+    m_camera->selectImplementation("ConvergentCamera");
     m_camera->setZFar(zFar);
     m_camera->setZNear(zNear);
     
@@ -370,7 +379,7 @@ void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
     
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
-    printf("%s\n", "(Convergent) Red Cyan Stereo Camera");
+    qDebug("(Convergent) Red Cyan Stereo Camera");
 }
 
 void Viewer::on_oculusRiftStereoCameraAction_triggered()
@@ -378,17 +387,25 @@ void Viewer::on_oculusRiftStereoCameraAction_triggered()
     float zNear=m_camera->zNear();
     float zFar=m_camera->zFar();
     glm::ivec2 tempViewport = m_camera->viewport();
-    m_camera = new ParallelCamera();
+    //m_camera = new ParallelCamera();
+    m_camera->selectImplementation("ParallelCamera");
     m_camera->setZFar(zFar);
     m_camera->setZNear(zNear);
-    ((ParallelCamera*)m_camera)->activateOculusRift();
+    //((ParallelCamera*)m_camera)->activateOculusRift();
+    ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
+    if (parallelCam != nullptr)
+        parallelCam->deactivateOculusRift();
+    else
+        qDebug() << "Expected ParallelCamera as active implementation but was"
+                << m_camera->selectedImplementation();
+
     
     m_qtCanvas->painter()->setCamera(m_camera);
     m_qtCanvas->navigation()->setCamera(m_camera);
     
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
-    printf("%s\n", "Stereo Camera for Oculus Rift");
+    qDebug() << "Stereo Camera for Oculus Rift";
 
     ((QWidget*)m_qtCanvas->parent())->showFullScreen();
     m_visibleDockNavigator = m_dockNavigator->isVisible();
