@@ -32,6 +32,8 @@ public:
 
     virtual int preferredRefreshTimeMSec() const { return 1; };
 
+    const Program * program() const { return m_program; }
+
 protected:
     void initialize();
     void initVertexBuffer();

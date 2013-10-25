@@ -87,7 +87,7 @@ void ParallelCamera::activateRedCyanRightCamera(const Program & program)
 
 void ParallelCamera::activateRedCyanLeftCamera(const Program & program)
 {
-    glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT );
+    /*glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT );*/
 
     glm::vec3 cameraPosition = m_virtualCameraPosition+( m_cameraSeparationVector * m_cameraSeparation * (-1.f));
     glm::vec3 viewDirection = m_center - m_virtualCameraPosition;

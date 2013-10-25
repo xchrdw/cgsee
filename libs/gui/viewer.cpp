@@ -647,7 +647,7 @@ void Viewer::on_oculusRiftStereoCameraAction_triggered()
     //((ParallelCamera*)m_camera)->activateOculusRift();
     ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
     if (parallelCam != nullptr)
-        parallelCam->deactivateOculusRift();
+        parallelCam->activateOculusRift();
     else
         qDebug() << "Expected ParallelCamera as active implementation but was"
                 << m_camera->selectedImplementation();

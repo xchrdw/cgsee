@@ -69,6 +69,8 @@ public:
 
     int preferredRefreshTimeMSec() const;
 
+    bool rendererAllowsPostprocessing() const;
+
 protected:
     QVector<CameraImplementation*> m_implementations;
     CameraImplementation * m_activeCamera;

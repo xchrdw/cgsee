@@ -53,6 +53,7 @@ Camera::~Camera()
 
 void Camera::selectImplementation(QString name)
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_activeCamera = nullptr;
 
     for (CameraImplementation* impl: m_implementations) {
@@ -73,15 +74,28 @@ void Camera::selectImplementation(QString name)
 
 bool Camera::selectRenderingByName(QString name)
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (name == "Rasterization") {
         m_activeRenderTechnique = m_rasterizer;
+        m_activeRenderTechnique->onInvalidatedView();
+        m_activeRenderTechnique->onInvalidatedViewport(m_viewport.x, m_viewport.y);
+        m_activeRenderTechnique->onInvalidatedChildren();
         return true;
     }
     if (name == "PathTracing") {
         m_activeRenderTechnique = m_pathTracer;
+        m_activeRenderTechnique->onInvalidatedView();
+        m_activeRenderTechnique->onInvalidatedViewport(m_viewport.x, m_viewport.y);
+        m_activeRenderTechnique->onInvalidatedChildren();
         return true;
     }
     return false;
+}
+
+bool Camera::rendererAllowsPostprocessing() const
+{
+    // applying postprocessing on path tracer does not make sense in current implementation
+    return m_activeRenderTechnique != m_pathTracer;
 }
 
 QString Camera::selectedImplementation()
@@ -131,6 +145,8 @@ void Camera::invalidate()
 
     if (m_activeCamera)
         m_activeCamera->onInvalidatedView();
+
+    m_activeRenderTechnique->onInvalidatedView();
 }
 
 void Camera::invalidateChildren()
@@ -139,6 +155,8 @@ void Camera::invalidateChildren()
 
     if (m_activeCamera)
         m_activeCamera->onInvalidatedChildren();
+
+    m_activeRenderTechnique->onInvalidatedChildren();
 }
 
 const float Camera::aspect() const
@@ -159,14 +177,31 @@ void Camera::update()
 
 void Camera::setUniforms(const Program & program) const
 {
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    program.setUniform(VIEW_UNIFORM, m_view);
-    program.setUniform(PROJECTION_UNIFORM, m_projection);
-    program.setUniform(TRANSFORM_UNIFORM, m_transform);
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
-    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
-    program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    program.setUniform(ZFAR_UNIFORM, m_zFar);
+    if (m_activeRenderTechnique == m_pathTracer)
+    {
+        const Program * p(m_pathTracer->program());
+        if (p == nullptr)
+            return;
+        p->setUniform(VIEWPORT_UNIFORM, m_viewport);
+        p->setUniform(VIEW_UNIFORM, m_view);
+        p->setUniform(PROJECTION_UNIFORM, m_projection);
+        p->setUniform(TRANSFORM_UNIFORM, m_transform);
+        p->setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+        p->setUniform(CAMERAPOSITION_UNIFORM, getEye());
+        p->setUniform(ZNEAR_UNIFORM, m_zNear);
+        p->setUniform(ZFAR_UNIFORM, m_zFar);
+    }
+    else
+    {
+        program.setUniform(VIEWPORT_UNIFORM, m_viewport);
+        program.setUniform(VIEW_UNIFORM, m_view);
+        program.setUniform(PROJECTION_UNIFORM, m_projection);
+        program.setUniform(TRANSFORM_UNIFORM, m_transform);
+        program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+        program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
+        program.setUniform(ZNEAR_UNIFORM, m_zNear);
+        program.setUniform(ZFAR_UNIFORM, m_zFar);
+    }
 }
 
 const glm::ivec2 & Camera::viewport() const
@@ -187,6 +222,8 @@ void Camera::setViewport(
     invalidate();
     if (m_activeCamera)
         m_activeCamera->onInvalidatedViewport(width, height);
+
+    m_activeRenderTechnique->onInvalidatedViewport(width, height);
 }
 
 const glm::mat4 & Camera::projection()

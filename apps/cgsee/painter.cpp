@@ -314,6 +314,11 @@ void Painter::paint()
 {
     AbstractPainter::paint();
 
+    if (!m_camera->rendererAllowsPostprocessing()) {
+        m_camera->drawScene(*m_useProgram, glm::mat4());
+        return;
+    }
+
     t_samplerByName sampler;
 
     if(m_useColor) {
