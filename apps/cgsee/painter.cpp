@@ -8,7 +8,6 @@
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
-#include <core/pathtracer.h>
 #include <core/parallelCamera.h>
 #include <core/convergentCamera.h>
 #include <core/fileassociatedshader.h>
@@ -22,15 +21,15 @@
 #include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
-#include "core/navigation/arcballnavigation.h"
-#include "core/navigation/flightnavigation.h"
-#include "core/rendering/ssaoeffect.h"
-#include "core/rendering/blureffect.h"
-#include "core/rendering/shadowmapping.h"
-#include "core/rendering/normalzpass.h"
-#include "core/rendering/coloridpass.h"
-#include "core/rendering/boundingboxpass.h"
-#include "core/rendering/lightsource.h"
+#include <core/navigation/arcballnavigation.h>
+#include <core/navigation/flightnavigation.h>
+#include <core/rendering/ssaoeffect.h>
+#include <core/rendering/blureffect.h>
+#include <core/rendering/shadowmapping.h>
+#include <core/rendering/normalzpass.h>
+#include <core/rendering/coloridpass.h>
+#include <core/rendering/boundingboxpass.h>
+#include <core/rendering/lightsource.h>
 
 #include <core/property/advancedlistproperty.h>
 #include <core/property/valueproperty.h>
@@ -68,7 +67,6 @@ Painter::Painter(Camera * camera)
 ,   m_colorId(nullptr)
 ,   m_boundingBox(nullptr)
 ,   m_useProgram(nullptr)
-,   m_lastUsedProgram(nullptr)
 ,   m_fboColor(nullptr)
 ,   m_fboTemp(nullptr)
 ,   m_fboActiveBuffer(nullptr)
@@ -114,7 +112,13 @@ void Painter::setConvergentCameraFocus(AbstractProperty & p)
     if(dynamic_cast<ConvergentCamera*>(m_camera))
     {
         qDebug("set ConvergentCameraFocus");
-        ((ConvergentCamera*)m_camera)->setFocusDistance(p.to<LimitedProperty<float>>()->value());
+        //((ConvergentCamera*)m_camera)->setFocusDistance(p.to<LimitedProperty<float>>()->value());
+        ConvergentCamera * convergent = dynamic_cast<ConvergentCamera*>(m_camera->activeImplementation());
+        if (convergent == nullptr) {
+            qDebug() << "Trying to configure ConvergentCamera but " << m_camera->selectedImplementation() << " is active.";
+            exit(2);
+        }
+        convergent->setFocusDistance(p.to<LimitedProperty<float>>()->value());
         //resize(m_camera->viewport().x,m_camera->viewport().y);
     }
     
@@ -242,12 +246,6 @@ const bool Painter::initialize()
 
     m_fboActiveBuffer = m_fboColor;
 
-    m_pathTracing = new Program();
-    m_pathTracing->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/pathTracing.frag"));
-    m_pathTracing->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/pathTracing.vert"));
-
     PropertyWidgetBuilder builder;
     builder.buildWidget(m_propertylist->list());
 
@@ -318,17 +316,17 @@ void Painter::paint()
 
     t_samplerByName sampler;
 
-    // camera.m_invalidated is evaluated after the call to transform(), this should be fixed!
-    // update() is called for each paint as a hot fix.
-    m_camera->update();
-
-    if (m_camera->selectedImplementation() == "PathTracer"){
-        m_camera->draw(*m_useProgram, glm::mat4());
-        return;
+    if(m_useColor) {
+        //drawScene(m_camera, m_useProgram, m_fboColor);
+        /*
+        It depends on the current camera configuration how we need to draw the scene.
+        CameraImplementation: needs to configure the cam position and can start rendering multiple times.
+        RenderTechniques: decide how to render the objects
+        */
+        m_fboColor->bind();
+        m_camera->drawScene(*m_useProgram, glm::mat4());
+        m_fboColor->release();
     }
-
-    if(m_useColor)
-        drawScene(m_camera, m_useProgram, m_fboColor);
     else
         m_fboColor->clear();
 
@@ -352,16 +350,6 @@ void Painter::paint()
     releaseSampler(sampler);
 }
 
-void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject * fbo)
-{
-    fbo->bind();
-    SceneTraverser traverser;
-    DrawVisitor drawVisitor(program, camera->transform());
-    traverser.traverse(*camera, drawVisitor);
-    fbo->release();
-}
-
-
 void Painter::resize(const int width, const int height)
 {
     AbstractPainter::resize(width, height);
@@ -381,16 +369,12 @@ void Painter::selectCamera(QString cameraName)
     if (m_camera->selectedImplementation() == cameraName)
         return;
 
-    if (cameraName == "PathTracer") {
-        assert(m_useProgram != m_pathTracing);
-        m_lastUsedProgram = m_useProgram;
-        m_useProgram = m_pathTracing;
-    }
-    else {
-        m_useProgram = m_lastUsedProgram;
-    }
-
     m_camera->selectImplementation(cameraName);
+}
+
+void Painter::selectRendering(QString rendering)
+{
+    m_camera->selectRenderingByName(rendering);
 }
 
 void Painter::setShading(char shader)
@@ -408,7 +392,6 @@ void Painter::setShading(char shader)
     }
 
     setUniforms();
-    //repaint missing
 }
 
 void Painter::setFrameBuffer(int frameBuffer)

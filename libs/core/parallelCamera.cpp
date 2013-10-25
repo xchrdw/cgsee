@@ -1,19 +1,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
 #include "parallelCamera.h"
+#include "camera.h"
 #include "program.h"
 #include "gpuquery.h"
 #include "framebufferobject.h"
-#include "camera.h"
 #include <core/screenquad.h>
 #include <core/fileassociatedshader.h>
-
-static const QString VIEWPORT_UNIFORM   ("viewport");
-static const QString VIEW_UNIFORM       ("view");
-static const QString PROJECTION_UNIFORM ("projection");
-
-static const QString ZNEAR_UNIFORM      ("znear");
-static const QString ZFAR_UNIFORM       ("zfar");
 
 const QString ParallelCamera::m_implementationName("ParallelCamera");
 
@@ -33,7 +26,6 @@ ParallelCamera::ParallelCamera(Camera & abstraction)
     m_oculus(true)
 {
 }
-
 
 ParallelCamera::~ParallelCamera(void)
 {
@@ -82,17 +74,15 @@ void ParallelCamera::activateRedCyanRightCamera(const Program & program)
 
     m_abstraction.setView(glm::lookAt(
         cameraPosition, center, m_up));
-    /*m_abstraction.setTransform(m_projection * m_view);
-    glm::mat4 transform = m_projection * m_view;*/
+    //setTransform(m_projection * m_view); // done in update
+    //glm::mat4 transform = m_projection * m_view;
 
     m_abstraction.update();
-    program.setUniform(VIEW_UNIFORM, m_abstraction.view());
-    program.setUniform(PROJECTION_UNIFORM, m_abstraction.projection());
-        
-    //program.setUniform(ZNEAR_UNIFORM, m_abstraction.m_zNear);
-    //program.setUniform(ZFAR_UNIFORM, m_abstraction.m_zFar);
+    m_abstraction.setUniforms(program);
+
     glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
     //Group::draw(program, transform);
+    abstractionRenderScene(program);
 }
 
 void ParallelCamera::activateRedCyanLeftCamera(const Program & program)
@@ -107,22 +97,18 @@ void ParallelCamera::activateRedCyanLeftCamera(const Program & program)
 
     m_abstraction.setView(glm::lookAt(
         cameraPosition, center, m_up));
-    //setTransform(m_projection * m_view);
-    //glm::mat4 transform = m_projection * m_view;
+    /*setTransform(m_projection * m_view);
+    glm::mat4 transform = m_projection * m_view;*/
 
     m_abstraction.update();
+    m_abstraction.setUniforms(program);
 
-    program.setUniform(VIEW_UNIFORM, m_abstraction.view());
-    program.setUniform(PROJECTION_UNIFORM, m_abstraction.projection());
-        
-    /*program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    program.setUniform(ZFAR_UNIFORM, m_zFar);*/
     glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
     //Group::draw(program, transform);    
+    abstractionRenderScene(program);
 }
 
-void ParallelCamera::activateOculusRiftRightCamera(const Program & program 
-,   FrameBufferObject * target)
+void ParallelCamera::activateOculusRiftRightCamera(const Program & program)
 {
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -134,22 +120,17 @@ void ParallelCamera::activateOculusRiftRightCamera(const Program & program
 
     m_abstraction.setView(glm::lookAt(
         cameraPosition, center, m_up));
-    //setTransform(m_projection * m_view);
-    //glm::mat4 transform = m_projection * m_view;
+    /*setTransform(m_projection * m_view);
+    glm::mat4 transform = m_projection * m_view;*/
 
     m_abstraction.update();
-
-    program.setUniform(VIEW_UNIFORM, m_abstraction.view());
-    program.setUniform(PROJECTION_UNIFORM, m_abstraction.projection());
-        
-    /*program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    program.setUniform(ZFAR_UNIFORM, m_zFar);*/
+    m_abstraction.setUniforms(program);
 
     //Group::draw(program, transform);
+    abstractionRenderScene(program);
 }
 
-void ParallelCamera::activateOculusRiftLeftCamera(const Program & program
-,   FrameBufferObject * target)
+void ParallelCamera::activateOculusRiftLeftCamera(const Program & program)
 {
     glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT );
 
@@ -161,21 +142,17 @@ void ParallelCamera::activateOculusRiftLeftCamera(const Program & program
 
     m_abstraction.setView(glm::lookAt(
         cameraPosition, center, m_up));
-    //setTransform(m_projection * m_view);
-    //glm::mat4 transform = m_projection * m_view;
+    /*setTransform(m_projection * m_view);
+    glm::mat4 transform = m_projection * m_view;*/
 
     m_abstraction.update();
+    m_abstraction.setUniforms(program);
 
-    program.setUniform(VIEW_UNIFORM, m_abstraction.view());
-    program.setUniform(PROJECTION_UNIFORM, m_abstraction.projection());
-        
-    /*program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    program.setUniform(ZFAR_UNIFORM, m_zFar);*/
-
-    //Group::draw(program, transform);    
+    //Group::draw(program, transform);   
+    abstractionRenderScene(program);
 }
 
-void ParallelCamera::draw(
+void ParallelCamera::drawScene(
     const Program & program
 ,   const glm::mat4 & transform)
 {
@@ -193,11 +170,6 @@ void ParallelCamera::drawRedCyan(
     const Program & program)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-/*
-    glViewport(0, 0, m_viewport.x, m_viewport.y);
-    glError();
-*/
-    //program.setUniform(VIEWPORT_UNIFORM, m_viewport);
 
     setFromMatrix();
 
@@ -210,37 +182,31 @@ void ParallelCamera::drawRedCyan(
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
    
     m_abstraction.setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
-/*
-    if(target)
-        target->release();*/
 }
 
 void ParallelCamera::drawOculusRift(
-    const Program & program/*
-,   FrameBufferObject * target*/)
+    const Program & program)
 {
-    //initialize(program);
-    // if(m_invalidated)
-    //    update();
+    initialize(program);
     
     setFromMatrix();
     m_cameraSeparationVector = glm::normalize(glm::cross(m_center-m_virtualCameraPosition , m_up));
 
-    m_left->resize(m_abstraction.viewport().x, m_abstraction.viewport().y);
-    m_right->resize(m_abstraction.viewport().x, m_abstraction.viewport().y);
+    const glm::ivec2 & viewport(m_abstraction.viewport()); // to shorten the lines in this function a bit ..
+
+    m_left->resize(viewport.x, viewport.y);
+    m_right->resize(viewport.x, viewport.y);
 
     ///
     //render left camera
     ///
 
-    if(m_left){
-        m_left->bind();
-    }
+    m_left->bind();
 
-    //glViewport(0, 0, m_viewport.x , m_viewport.y);
-    //glError();
+    glViewport(0, 0, viewport.x, viewport.y);
+    glError();
     
-    activateOculusRiftLeftCamera(program,nullptr);
+    activateOculusRiftLeftCamera(program);
     m_left->release();
 
 
@@ -248,14 +214,12 @@ void ParallelCamera::drawOculusRift(
     //render right camera
     ///
 
-    if(m_right){
-        m_right->bind();
-    }
+    m_right->bind();
 
-    //glViewport(0, 0, m_viewport.x , m_viewport.y);
-    //glError();
+    glViewport(0, 0, viewport.x , viewport.y);
+    glError();
     
-    activateOculusRiftRightCamera(program,nullptr);
+    activateOculusRiftRightCamera(program);
     m_right->release();
 
 
@@ -276,7 +240,7 @@ void ParallelCamera::drawOculusRift(
         new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
     sideBySide->attach(
         new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/oculusRift.frag"));
-    sideBySide->setUniform("viewport", m_abstraction.viewport());
+    sideBySide->setUniform("viewport", viewport);
    
     //target->bind();
     bindSampler(sampler,*sideBySide);

@@ -2,7 +2,6 @@
 <ui version="4.0">
  <class>Viewer</class>
  <widget class="QMainWindow" name="Viewer">
-  <addaction name="toggleFullscreen"/>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -164,7 +163,7 @@
      </property>
      <addaction name="parallelRedCyanStereoCameraAction"/>
      <addaction name="convergentRedCyanStereoCameraAction"/>
-    </widget> 
+    </widget>
     <addaction name="standardCameraAction"/>
     <addaction name="separator"/>
     <addaction name="selectRedCyanStereoCameraTypeMenu"/>
@@ -176,23 +175,23 @@
     </property>
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
-    <addaction name="toggleFullscreen"/>   
+    <addaction name="toggleFullscreen"/>
    </widget>
-   <widget class="QMenu" name="menuCamera">
+   <widget class="QMenu" name="renderingMenu">
     <property name="title">
-     <string>Camera</string>
+     <string>&amp;Rendering</string>
     </property>
-    <addaction name="rasterizingCameraAction"/>
-    <addaction name="pathtracerAction"/>
+    <addaction name="renderingRasterizerAction"/>
+    <addaction name="renderingPathtracerAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
    <addaction name="menuView"/>
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
-   <addaction name="menuCamera"/>
    <addaction name="shadingMenu"/>
    <addaction name="cameraMenu"/>
+   <addaction name="renderingMenu"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -835,14 +834,14 @@
     <string>Shadow blur</string>
    </property>
   </action>
-  <action name="rasterizingCameraAction">
+  <action name="renderingRasterizerAction">
    <property name="text">
-    <string>Rasterizing Camera</string>
+    <string>Rasterization</string>
    </property>
   </action>
-  <action name="pathtracerAction">
+  <action name="renderingPathtracerAction">
    <property name="text">
-    <string>Pathtracer</string>
+    <string>Pathtracing</string>
    </property>
   </action>
   <action name="standardCameraAction">
@@ -877,10 +876,8 @@
     <string>Oculus Rift Stereo-Camera</string>
    </property>
   </action>
+  <addaction name="toggleFullscreen"/>
  </widget>
  <resources/>
  <connections/>
 </ui>
-
-
- 

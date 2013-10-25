@@ -42,7 +42,6 @@
 #include <core/assimploader.h>
 
 #include <core/camera.h>
-#include <core/convergentCamera.h>
 #include <core/parallelCamera.h>
 #include <core/coordinateprovider.h>
 
@@ -424,18 +423,22 @@ void Viewer::on_toggleExplorer_triggered()
 
 void Viewer::updateCameraSelection(QString cameraName) const
 {
-    m_qtCanvas->painter()->selectCamera(cameraName);
+}
+
+void Viewer::updateRenderingSelection(QString rendering) const
+{
+    m_qtCanvas->painter()->selectRendering(rendering);
     m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 }
 
-void Viewer::on_rasterizingCameraAction_triggered()
+void Viewer::on_renderingRasterizerAction_triggered()
 {
-    updateCameraSelection("RasterizationCamera");
+    updateRenderingSelection("Rasterization");
 }
 
-void Viewer::on_pathtracerAction_triggered()
+void Viewer::on_renderingPathtracerAction_triggered()
 {
-    updateCameraSelection("PathTracer");
+    updateRenderingSelection("PathTracing");
 }
 
 void Viewer::on_phongShadingAction_triggered()
@@ -576,30 +579,28 @@ void Viewer::on_fboColorIdAction_triggered()
 
 void Viewer::on_standardCameraAction_triggered()
 {
-    float zNear=m_camera->zNear();
-    float zFar=m_camera->zFar();
+    /*float zNear=m_camera->zNear();
+    float zFar=m_camera->zFar();*/
     glm::ivec2 tempViewport = m_camera->viewport();
-    m_camera = new Camera();
-    m_camera->setZFar(zFar);
-    m_camera->setZNear(zNear);
-    
-    //m_qtCanvas->painter()->setCamera(m_camera);
-    //m_qtCanvas->navigation()->setCamera(m_camera);
+    //m_camera = new Camera();
+    m_camera->selectImplementation("MonoCamera");
+    /*m_camera->setZFar(zFar);
+    m_camera->setZNear(zNear);*/
     
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
-    printf("%s\n", "Standard Mono Camera");
+    qDebug("Standard Mono Camera");
 }
 
 void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
 {
-    float zNear=m_camera->zNear();
-    float zFar=m_camera->zFar();
+    //float zNear=m_camera->zNear();
+    //float zFar=m_camera->zFar();
     glm::ivec2 tempViewport = m_camera->viewport();
     m_camera->selectImplementation("ParallelCamera");
     //m_camera = new ParallelCamera();
-    m_camera->setZFar(zFar);
-    m_camera->setZNear(zNear);
+    //m_camera->setZFar(zFar);
+    //m_camera->setZNear(zNear);
     //((ParallelCamera*)m_camera)->deactivateOculusRift();
     ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
     if (parallelCam != nullptr)
@@ -618,13 +619,13 @@ void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
 
 void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
 {
-    float zNear=m_camera->zNear();
-    float zFar=m_camera->zFar();
+    //float zNear=m_camera->zNear();
+    //float zFar=m_camera->zFar();
     glm::ivec2 tempViewport = m_camera->viewport();
     //m_camera = new ConvergentCamera();
     m_camera->selectImplementation("ConvergentCamera");
-    m_camera->setZFar(zFar);
-    m_camera->setZNear(zNear);
+    //m_camera->setZFar(zFar);
+    //m_camera->setZNear(zNear);
     
     //m_qtCanvas->painter()->setCamera(m_camera);
     //m_qtCanvas->navigation()->setCamera(m_camera);
@@ -636,13 +637,13 @@ void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
 
 void Viewer::on_oculusRiftStereoCameraAction_triggered()
 {
-    float zNear=m_camera->zNear();
-    float zFar=m_camera->zFar();
+    //float zNear=m_camera->zNear();
+    //float zFar=m_camera->zFar();
     glm::ivec2 tempViewport = m_camera->viewport();
     //m_camera = new ParallelCamera();
     m_camera->selectImplementation("ParallelCamera");
-    m_camera->setZFar(zFar);
-    m_camera->setZNear(zNear);
+    //m_camera->setZFar(zFar);
+    //m_camera->setZNear(zNear);
     //((ParallelCamera*)m_camera)->activateOculusRift();
     ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
     if (parallelCam != nullptr)

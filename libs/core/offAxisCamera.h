@@ -7,7 +7,7 @@ class OffAxisCamera :
 	public AbstractStereoCamera
 {
 public:
-	OffAxisCamera(Camera & abstraction); 
+	OffAxisCamera(Camera & abstraction);  
 	~OffAxisCamera(void);
 
     virtual const QString implementationName() const override;

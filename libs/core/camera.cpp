@@ -7,6 +7,9 @@
 
 #include "cameraimplementation.h"
 
+#include "rendering/rasterizer.h"
+#include "rendering/pathtracer.h"
+
 #include "program.h"
 #include "gpuquery.h"
 #include "framebufferobject.h"
@@ -31,19 +34,27 @@ Camera::Camera(const QString & name)
 // add a new camera of each implemented type to our list
 ,   m_implementations(CameraImplementation::newImplementations(*this))
 ,   m_activeCamera(nullptr)
+,   m_rasterizer(new Rasterizer(*this))
+,   m_pathTracer(new PathTracer(*this))
+,   m_activeRenderTechnique(nullptr)
 {
     m_rf = RF_Absolute;
 //     m_rf = RF_Relative;
+    selectImplementation("MonoCamera");
+    selectRenderingByName("Rasterization");
 }
 
 Camera::~Camera()
 {
     qDeleteAll(m_implementations);
+    delete m_rasterizer;
+    delete m_pathTracer;
 }
 
 void Camera::selectImplementation(QString name)
 {
     m_activeCamera = nullptr;
+
     for (CameraImplementation* impl: m_implementations) {
         if (impl->implementationName() == name) {
             m_activeCamera = impl;
@@ -55,9 +66,22 @@ void Camera::selectImplementation(QString name)
         }
     }
     if (m_activeCamera == nullptr) {
-        qDebug()<<"Selected camera \""<<name<<"\" which is not implemented.";
+        qDebug()<<"Selected camera"<<name<<"which is not implemented.";
         exit(2);
     }
+}
+
+bool Camera::selectRenderingByName(QString name)
+{
+    if (name == "Rasterization") {
+        m_activeRenderTechnique = m_rasterizer;
+        return true;
+    }
+    if (name == "PathTracing") {
+        m_activeRenderTechnique = m_pathTracer;
+        return true;
+    }
+    return false;
 }
 
 QString Camera::selectedImplementation()
@@ -72,12 +96,10 @@ CameraImplementation * Camera::activeImplementation() const
 
 int Camera::preferredRefreshTimeMSec() const
 {
-    if (m_activeCamera == nullptr)
-        return 0;
-    return m_activeCamera->preferredRefreshTimeMSec();
+    return m_activeRenderTechnique->preferredRefreshTimeMSec();
 }
 
-void Camera::draw( const Program & program, const glm::mat4 & transform )
+void Camera::drawScene( const Program & program, const glm::mat4 & transform )
 {
     if (m_activeCamera == nullptr)
         return;
@@ -90,17 +112,14 @@ void Camera::draw( const Program & program, const glm::mat4 & transform )
     glViewport(0, 0, m_viewport.x, m_viewport.y);
     glError();
 
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    program.setUniform(VIEW_UNIFORM, m_view);
-    program.setUniform(PROJECTION_UNIFORM, m_projection);
-    program.setUniform(TRANSFORM_UNIFORM, m_transform);
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+    setUniforms(program);
 
-    program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    program.setUniform(ZFAR_UNIFORM, m_zFar);
-    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
+    m_activeCamera->drawScene(program, transform);
+}
 
-    m_activeCamera->draw(program, transform);
+void Camera::renderScene(const Program & program)
+{
+    m_activeRenderTechnique->renderScene(program, m_transform);
 }
 
 void Camera::invalidate()
@@ -136,6 +155,18 @@ void Camera::update()
     m_invalidated = false;
 
     m_viewFrustum->update();
+}
+
+void Camera::setUniforms(const Program & program) const
+{
+    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
+    program.setUniform(VIEW_UNIFORM, m_view);
+    program.setUniform(PROJECTION_UNIFORM, m_projection);
+    program.setUniform(TRANSFORM_UNIFORM, m_transform);
+    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
+    program.setUniform(ZNEAR_UNIFORM, m_zNear);
+    program.setUniform(ZFAR_UNIFORM, m_zFar);
 }
 
 const glm::ivec2 & Camera::viewport() const
@@ -228,7 +259,8 @@ Camera * Camera::asCamera()
     return this;
 }
 
-glm::vec3 Camera::getEye(){
+glm::vec3 Camera::getEye() const
+{
     //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
 
     glm::mat4 modelViewT = glm::transpose(m_view);
@@ -254,7 +286,8 @@ glm::vec3 Camera::getEye(){
     return eye;
 }
 
-glm::vec3 Camera::getCenter(){
+glm::vec3 Camera::getCenter() const
+{
     glm::vec3 lookat = glm::row(m_view, 2).xyz;
     glm::vec3 eye = getEye();
 
@@ -262,6 +295,7 @@ glm::vec3 Camera::getCenter(){
 
 }
 
-glm::vec3 Camera::getUp(){
+glm::vec3 Camera::getUp() const
+{
     return glm::row(m_view, 1).xyz;
 }

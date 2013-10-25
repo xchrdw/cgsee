@@ -15,6 +15,7 @@ public:
     virtual ~AbstractScenePainter();
 
     virtual void selectCamera(QString cameraName) = 0;
+    virtual void selectRendering(QString rendering) = 0;
     virtual void setShading(char shader) = 0;
     virtual void setFrameBuffer(int frameBuffer) = 0;
     virtual void setEffect(int effect, bool active) = 0;

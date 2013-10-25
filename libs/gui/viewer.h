@@ -121,8 +121,13 @@ protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
 
-    void on_rasterizingCameraAction_triggered();
-    void on_pathtracerAction_triggered();
+    void on_standardCameraAction_triggered();
+    void on_parallelRedCyanStereoCameraAction_triggered();
+    void on_convergentRedCyanStereoCameraAction_triggered();
+    void on_oculusRiftStereoCameraAction_triggered();
+
+    void on_renderingRasterizerAction_triggered();
+    void on_renderingPathtracerAction_triggered();
 
     void on_reloadAllShadersAction_triggered();
     void on_phongShadingAction_triggered();
@@ -145,11 +150,6 @@ protected slots:
     void on_fboSSAOAction_triggered();
     void on_fboShadowMapAction_triggered();
     void on_fboColorIdAction_triggered();
-
-    void on_standardCameraAction_triggered();
-    void on_parallelRedCyanStereoCameraAction_triggered();
-    void on_convergentRedCyanStereoCameraAction_triggered();
-    void on_oculusRiftStereoCameraAction_triggered();
 
     void on_openFileDialogAction_triggered();
     void on_quitAction_triggered();
@@ -194,8 +194,9 @@ protected:
     bool m_visibleDockNavigator;
     bool m_visibleDockExplorer;
     bool m_isFullscreen;
-
+    
     void updateCameraSelection(QString cameraName) const;
+    void updateRenderingSelection(QString rendering) const;
 
     Canvas * m_qtCanvas;
     Camera * m_camera;

@@ -10,6 +10,9 @@
 
 class Program;
 class ViewFrustum;
+class RenderTechnique;
+class Rasterizer;
+class PathTracer;
 
 class CameraImplementation;
 
@@ -21,7 +24,8 @@ public:
 
     virtual Camera * asCamera();
 
-    virtual void draw( const Program & program, const glm::mat4 & transform) override;
+    // call camera implementations and renderer to create visual output
+    void drawScene(const Program & program, const glm::mat4 & transform);
 
     const glm::ivec2 & viewport() const;
     void setViewport(const glm::ivec2 & size);
@@ -49,22 +53,34 @@ public:
 
     // updates camera matrices
     void update();
+    void setUniforms(const Program & program) const;
 
     //
-    glm::vec3 getEye();
-    glm::vec3 getUp();
-    glm::vec3 getCenter();
+    glm::vec3 getEye() const;
+    glm::vec3 getUp() const;
+    glm::vec3 getCenter() const;
 
 public:
     void selectImplementation(QString name);
     QString selectedImplementation();
     CameraImplementation * activeImplementation() const;
 
+    bool selectRenderingByName(QString name);
+
     int preferredRefreshTimeMSec() const;
 
 protected:
     QVector<CameraImplementation*> m_implementations;
     CameraImplementation * m_activeCamera;
+
+    // let implementations start rendering as ofter as needed
+    void renderScene(const Program & program);
+    
+    // Create render techniques in constructor.
+    // const pointers, because we only need to construct the objects once but need to modify them
+    Rasterizer *const m_rasterizer;
+    PathTracer *const m_pathTracer;
+    RenderTechnique * m_activeRenderTechnique;
 
 protected:
     void invalidate();
@@ -83,5 +99,5 @@ protected:
 
     bool m_invalidated;
 
-// friend CameraImplementation;
+friend CameraImplementation;
 };

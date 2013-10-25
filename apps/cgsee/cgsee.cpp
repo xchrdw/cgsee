@@ -24,7 +24,7 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->initialize(format());
 
     Camera * camera = new Camera("main");
-    camera->selectImplementation("RasterizationCamera");
+    camera->selectImplementation("MonoCamera");
     
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);

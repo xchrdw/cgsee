@@ -11,9 +11,9 @@ class CGSEE_API ConvergentCamera :
 public:
 	ConvergentCamera(Camera & abstraction); 
 	~ConvergentCamera(void);
-    virtual void activateRightCamera(const Program & program/*,   FrameBufferObject * target*/);
-    virtual void activateLeftCamera(const Program & program/*,   FrameBufferObject * target*/);
-    virtual void draw(const Program & program, const glm::mat4 & transform) override;
+    virtual void activateRightCamera(const Program & program);
+    virtual void activateLeftCamera(const Program & program);
+    virtual void drawScene(const Program & program, const glm::mat4 & transform) override;
     virtual void setCameraSeparation(float cameraSeparation);
     void setFocusDistance(float focusDistance);
 

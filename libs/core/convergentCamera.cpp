@@ -1,10 +1,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
+
 #include "convergentCamera.h"
+#include "camera.h"
 #include "program.h"
 #include "gpuquery.h"
-#include "framebufferobject.h"
-#include "camera.h"
 #include <core/screenquad.h>
 #include <core/fileassociatedshader.h>
 
@@ -23,14 +23,6 @@ const QString ConvergentCamera::implementationName() const
 bool ConvergentCamera::isRegistered = CameraImplementation::registerImplementation(
     m_implementationName,
     createInstace<ConvergentCamera>);
-
-
-static const QString VIEWPORT_UNIFORM   ("viewport");
-static const QString VIEW_UNIFORM       ("view");
-static const QString PROJECTION_UNIFORM ("projection");
-
-static const QString ZNEAR_UNIFORM      ("znear");
-static const QString ZFAR_UNIFORM       ("zfar");
 
 ConvergentCamera::ConvergentCamera(Camera & abstraction)
     : AbstractStereoCamera(abstraction),
@@ -56,8 +48,7 @@ void ConvergentCamera::setFocusDistance(float focusDistance)
     m_focusDistance = focusDistance;
 }
 
-void ConvergentCamera::activateRightCamera(const Program & program 
-/*,   FrameBufferObject * target*/)
+void ConvergentCamera::activateRightCamera(const Program & program)
 {
     glClear( GL_DEPTH_BUFFER_BIT);
 
@@ -68,22 +59,19 @@ void ConvergentCamera::activateRightCamera(const Program & program
 
     m_abstraction.setView(glm::lookAt(
         cameraPosition, focusCenter, m_up));
-    //m_abstraction.setTransform(m_projection * m_view);
+    //m_abstraction.setTransform(m_projection * m_view); // done in update()
     //glm::mat4 transform = m_projection * m_view;
 
     m_abstraction.update();
-    //program.setUniform(VIEW_UNIFORM, m_view);
-    //program.setUniform(PROJECTION_UNIFORM, m_projection);
-        
-    //program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    //program.setUniform(ZFAR_UNIFORM, m_zFar);
+    m_abstraction.setUniforms(program);
+
     glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
     //Group::draw(program, transform);
+    abstractionRenderScene(program);
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 }
 
-void ConvergentCamera::activateLeftCamera(const Program & program
-/*,   FrameBufferObject * target*/)
+void ConvergentCamera::activateLeftCamera(const Program & program)
 {
     glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT );
 
@@ -94,35 +82,25 @@ void ConvergentCamera::activateLeftCamera(const Program & program
 
     m_abstraction.setView(glm::lookAt(
         cameraPosition, focusCenter, m_up));
-    //m_abstraction.setTransform(m_projection * m_view);
+    //m_abstraction.setTransform(m_projection * m_view); // done in update()
     //glm::mat4 transform = m_projection * m_view;
 
     m_abstraction.update();
+    m_abstraction.setUniforms(program);
 
-    program.setUniform(VIEW_UNIFORM, m_abstraction.view());
-    program.setUniform(PROJECTION_UNIFORM, m_abstraction.projection());
-        
-    /*program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    program.setUniform(ZFAR_UNIFORM, m_zFar);*/
     glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
     //Group::draw(program, transform);    
-    //glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+    abstractionRenderScene(program);
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 }
 
-void ConvergentCamera::draw(
+void ConvergentCamera::drawScene(
     const Program & program
 ,   const glm::mat4 & transform)
 {
-    //if(m_invalidated)
-    //    update();
-   
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //if(target)
-    //    target->bind();
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //glViewport(0, 0, m_viewport.x , m_viewport.y);   // done in [abstract] camera
+    //glViewport(0, 0, m_viewport.x , m_viewport.y);
     //glError();
 
     setFromMatrix();
@@ -130,12 +108,8 @@ void ConvergentCamera::draw(
     m_cameraSeparationVector = glm::cross(m_center-m_virtualCameraPosition , m_up);
     glm::normalize(m_cameraSeparationVector);
 
-    activateLeftCamera(program/*,target*/);
-    activateRightCamera(program/*,target*/);
+    activateLeftCamera(program);
+    activateRightCamera(program);
 
     m_abstraction.setView(glm::lookAt(m_virtualCameraPosition, m_center, m_up));
-   
-
-    //if(target)
-    //    target->release();
 }

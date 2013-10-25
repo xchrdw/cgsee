@@ -13,7 +13,6 @@ class DataBlockRegistry;
 class Camera;
 class Group;
 class ScreenQuad;
-class PathTracer;
 class Program;
 class FrameBufferObject;
 class AbstractProperty;
@@ -29,6 +28,7 @@ public:
     virtual void paint();
 
     virtual void selectCamera(QString cameraName) override;
+    virtual void selectRendering(QString rendering) override;
     virtual void setShading(char shader) override;
     virtual void setFrameBuffer(int frameBuffer);
     virtual void setEffect( int effect, bool active );
@@ -54,8 +54,6 @@ protected:
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
 
-    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
-
     static void bindSampler(const t_samplerByName & sampler, const Program & program);
 
     static void releaseSampler(const t_samplerByName & sampler);
@@ -71,9 +69,7 @@ protected:
     Program * m_gouraud;
     Program * m_phong;
     Program * m_gooch;
-    Program * m_pathTracing;
     Program * m_useProgram;
-    Program * m_lastUsedProgram;
     Program * m_flush;
     FrameBufferObject * m_fboColor;
     FrameBufferObject * m_fboTemp;

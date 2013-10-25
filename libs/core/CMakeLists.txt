@@ -49,20 +49,18 @@ set(SOURCES
     mathmacros.h
     messagehandler.cpp
     messagehandler.h
+    monocamera.h
+    monocamera.cpp
     objloader.cpp
     objloader.h
     offAxisCamera.h
     offAxisCamera.cpp
-    pathtracer.cpp
-    pathtracer.h
     parallelCamera.h
     parallelCamera.cpp
     plane.cpp
     plane.h
     program.cpp
     program.h
-    rasterizingcamera.cpp
-    rasterizingcamera.h
     screenquad.cpp
     screenquad.h
     shader.cpp
@@ -120,7 +118,13 @@ set(SOURCES
     property/abstractpropertyvisitor.cpp
     property/announcer.h
     property/announcer.cpp
-	
+
+    rendering/rendertechnique.h
+    rendering/rendertechnique.cpp
+    rendering/rasterizer.cpp
+    rendering/rasterizer.h
+    rendering/pathtracer.cpp
+    rendering/pathtracer.h
     rendering/blureffect.cpp
     rendering/blureffect.h
     rendering/boundingboxpass.cpp

@@ -19,7 +19,7 @@ public:
     CameraImplementation(Camera & abstraction);
     virtual ~CameraImplementation();
 
-    virtual void draw( const Program & program, const glm::mat4 & transform) = 0;
+    virtual void drawScene( const Program & program, const glm::mat4 & transform) = 0;
 
     // returns a new instance of the specified type, if the camera type is registered
     static CameraImplementation * newCameraByName(Camera & abstraction, QString name);
@@ -28,8 +28,9 @@ public:
 
     virtual const QString implementationName() const = 0;
 
-    int preferredRefreshTimeMSec() const;
-    void setPreferredRefreshTimeMSec(int msec);
+protected:
+    // call abstraction to render the scene using its current render technique
+    void abstractionRenderScene(const Program & program) const;
 
 protected:
     typedef std::function<CameraImplementation*(Camera * abstraction)> CamConstructor;
@@ -47,8 +48,6 @@ protected:
 
 protected:
     Camera & m_abstraction;
-
-    int m_preferredRefreshTimeMSec;
 
     virtual void onInvalidatedView();
     virtual void onInvalidatedViewport(const int width, const int height);
