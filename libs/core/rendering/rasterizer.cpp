@@ -18,14 +18,7 @@ Rasterizer::~Rasterizer()
 }
 
 void Rasterizer::renderScene(const Program & program, FrameBufferObject * target)
-{/*
-    if (target != nullptr)
-        target->bind();*/
-
-    /*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glError();*/
+{
     m_camera.drawWithPostprocessing(target);
-
-    //if (target != nullptr)
-    //    target->release();
 }
+

@@ -138,10 +138,11 @@ void Camera::drawScene( const Program & program)
     m_activeCamera->drawScene(program);
 }
 
-void Camera::draw( const Program & progam, const glm::mat4 & transform)
+void Camera::draw( const Program & program, const glm::mat4 & transform)
 {
     if (m_activeRenderTechnique == m_rasterizer)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    setUniforms(program);
 }
 
 void Camera::renderScene(const Program & program, FrameBufferObject * target)

@@ -41,25 +41,3 @@ void AbstractStereoCamera::setFromMatrix(){
     m_virtualCameraPosition = m_abstraction.getEye();    
     m_center = m_abstraction.getCenter();    
 }
-//void AbstractStereoCamera::bindSampler(
-//
-//    const t_samplerByName & sampler
-//, const Program & program)
-//{
-//    t_samplerByName::const_iterator i(sampler.cbegin());
-//    const t_samplerByName::const_iterator iEnd(sampler.cend());
-//
-//    for(glm::uint slot(0); i != iEnd; ++i, ++slot)
-//        i.value()->bindTexture2D(program, i.key(), slot);
-//}
-//
-//void AbstractStereoCamera::releaseSampler(
-//    const t_samplerByName & sampler)
-//{
-//    t_samplerByName::const_iterator i(sampler.cbegin());
-//    const t_samplerByName::const_iterator iEnd(sampler.cend());
-//
-//    for(; i != iEnd; ++i)
-//        i.value()->releaseTexture2D();
-//
-//}
