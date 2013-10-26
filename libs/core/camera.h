@@ -10,6 +10,11 @@
 
 class Program;
 class ViewFrustum;
+class FrameBufferObject;
+
+class Painter;
+
+class RenderingPass;
 class RenderTechnique;
 class Rasterizer;
 class PathTracer;
@@ -25,7 +30,8 @@ public:
     virtual Camera * asCamera();
 
     // call camera implementations and renderer to create visual output
-    void drawScene(const Program & program, const glm::mat4 & transform);
+    void drawScene(const Program & program);
+    virtual void draw(const Program & program, const glm::mat4 & transform) override;
 
     const glm::ivec2 & viewport() const;
     void setViewport(const glm::ivec2 & size);
@@ -69,14 +75,18 @@ public:
 
     int preferredRefreshTimeMSec() const;
 
-    bool rendererAllowsPostprocessing() const;
+    void setPainter(Painter * painter);
+    
+    void drawWithPostprocessing(FrameBufferObject * target);
 
 protected:
     QVector<CameraImplementation*> m_implementations;
     CameraImplementation * m_activeCamera;
 
+    Painter * m_painter;
+
     // let implementations start rendering as ofter as needed
-    void renderScene(const Program & program);
+    void renderScene(const Program & program, FrameBufferObject * target);
     
     // Create render techniques in constructor.
     // const pointers, because we only need to construct the objects once but need to modify them

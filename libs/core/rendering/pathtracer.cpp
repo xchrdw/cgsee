@@ -7,6 +7,7 @@
 #include <core/program.h>
 #include <core/fileassociatedshader.h>
 #include <core/bufferobject.h>
+#include <core/framebufferobject.h>
 #include <core/scenegraph/pathtracingbvh.h>
 #include <core/datacore/datablock.h>
 
@@ -20,15 +21,16 @@ std::mt19937 rng;
 std::uniform_real_distribution<float> aaOffsetDistribution(-1.0f, 1.0f);
 
 namespace {
+    static const int slotOffset = 10;
     QMap<QString, GLint> initTextureSlots() {
         QMap<QString, GLint> textureSlots;
-        textureSlots["indexBuffer"] = 0;
-        textureSlots["vertexBuffer"] = 1;
-        textureSlots["normalBuffer"] = 2;
-        textureSlots["geometryBuffer"] = 3;
-        textureSlots["randomVectors"] = 4;
-        textureSlots["accumulation"] = 5;
-        textureSlots["skyboxTexture"] = 6;
+        textureSlots["indexBuffer"] = slotOffset + 0;
+        textureSlots["vertexBuffer"] = slotOffset + 1;
+        textureSlots["normalBuffer"] = slotOffset + 2;
+        textureSlots["geometryBuffer"] = slotOffset + 3;
+        textureSlots["randomVectors"] = slotOffset + 4;
+        textureSlots["accumulation"] = slotOffset + 5;
+        textureSlots["skyboxTexture"] = slotOffset + 6;
         return textureSlots;
     }
 }
@@ -253,7 +255,7 @@ void PathTracer::resizeTextures(const glm::ivec2 & viewport) const
 
 void PathTracer::renderScene(
     const Program &
-    ,   const glm::mat4 & transform)
+,   FrameBufferObject * target)
 {
     initialize();
 
@@ -315,7 +317,12 @@ void PathTracer::renderScene(
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + writeIndex );
 
+    //if (target != nullptr)
+    //    target->bind();
     glBlitFramebuffer(0, 0, m_camera.viewport().x, m_camera.viewport().y, 0, 0, m_camera.viewport().x, m_camera.viewport().y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    //if (target != nullptr)
+    //    target->release();
+
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     
     m_program->release();

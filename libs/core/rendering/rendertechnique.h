@@ -1,13 +1,11 @@
 #pragma once
 #include <glm/glm.hpp>
-//
-//#include <QVector>
-//
+
 #include <core/declspec.h>
 #include <core/camera.h>
-//#include "scenegraph/group.h"
 
 class Program;
+class FrameBufferObject;
 
 class CGSEE_API RenderTechnique
 {
@@ -15,7 +13,7 @@ public:
     RenderTechnique(Camera & camera);
     virtual ~RenderTechnique();
 
-    virtual void renderScene(const Program & program, const glm::mat4 & transform) = 0;
+    virtual void renderScene(const Program & program, FrameBufferObject * target = nullptr) = 0;
 
     virtual int preferredRefreshTimeMSec() const = 0;
 

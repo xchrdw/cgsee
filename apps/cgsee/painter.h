@@ -25,7 +25,10 @@ public:
     Painter(Camera * camera);
     virtual ~Painter();
 
+    // paint the scene using m_camera to apply current camera and rendering configuration
     virtual void paint();
+    // let camera use my post processing pipeline if needed
+    virtual void drawWithPostprocessing(FrameBufferObject * target);
 
     virtual void selectCamera(QString cameraName) override;
     virtual void selectRendering(QString rendering) override;
@@ -53,6 +56,8 @@ protected:
     void setUniforms();
 
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
+
+    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
 
     static void bindSampler(const t_samplerByName & sampler, const Program & program);
 

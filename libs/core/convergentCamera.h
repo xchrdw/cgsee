@@ -13,7 +13,7 @@ public:
 	~ConvergentCamera(void);
     virtual void activateRightCamera(const Program & program);
     virtual void activateLeftCamera(const Program & program);
-    virtual void drawScene(const Program & program, const glm::mat4 & transform) override;
+    virtual void drawScene(const Program & program) override;
     virtual void setCameraSeparation(float cameraSeparation);
     void setFocusDistance(float focusDistance);
 

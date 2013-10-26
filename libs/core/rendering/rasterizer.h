@@ -14,7 +14,7 @@ public:
     Rasterizer(Camera & abstraction);
     virtual ~Rasterizer();
     
-    virtual void renderScene(const Program & program, const glm::mat4 & transform) override;
+    virtual void renderScene(const Program & program, FrameBufferObject * target = nullptr) override;
 
     virtual int preferredRefreshTimeMSec() const { return -1; };
 };

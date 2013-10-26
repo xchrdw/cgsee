@@ -39,9 +39,9 @@ CameraImplementation::~CameraImplementation()
 {
 }
 
-void CameraImplementation::abstractionRenderScene(const Program & program) const
+void CameraImplementation::abstractionRenderScene(const Program & program, FrameBufferObject * target) const
 {
-    m_abstraction.renderScene(program);
+    m_abstraction.renderScene(program, target);
 }
 
 void CameraImplementation::onInvalidatedView()

@@ -20,7 +20,7 @@ MonoCamera::~MonoCamera(void)
 {
 }
 
-void MonoCamera::drawScene( const Program & program, const glm::mat4 & transform)
+void MonoCamera::drawScene( const Program & program )
 {
     abstractionRenderScene(program);
 }

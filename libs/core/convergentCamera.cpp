@@ -95,8 +95,7 @@ void ConvergentCamera::activateLeftCamera(const Program & program)
 }
 
 void ConvergentCamera::drawScene(
-    const Program & program
-,   const glm::mat4 & transform)
+    const Program & program)
 {
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

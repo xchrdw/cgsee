@@ -24,11 +24,7 @@ public:
     PathTracer(Camera & abstraction);
     virtual ~PathTracer();
     
-    virtual void renderScene(const Program & program, const glm::mat4 & transform) override;
-
-    //virtual void draw(
-    //    const Program &,
-    //    const glm::mat4 & transform);
+    virtual void renderScene(const Program & program, FrameBufferObject * target = nullptr) override;
 
     virtual int preferredRefreshTimeMSec() const { return 1; };
 

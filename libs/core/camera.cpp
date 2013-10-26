@@ -7,6 +7,9 @@
 
 #include "cameraimplementation.h"
 
+#include "../../apps/cgsee/painter.h"
+
+#include "rendering/renderingpass.h"
 #include "rendering/rasterizer.h"
 #include "rendering/pathtracer.h"
 
@@ -92,10 +95,14 @@ bool Camera::selectRenderingByName(QString name)
     return false;
 }
 
-bool Camera::rendererAllowsPostprocessing() const
+void Camera::setPainter(Painter * painter)
 {
-    // applying postprocessing on path tracer does not make sense in current implementation
-    return m_activeRenderTechnique != m_pathTracer;
+    m_painter = painter;
+}
+
+void Camera::drawWithPostprocessing(FrameBufferObject * target)
+{
+    m_painter->drawWithPostprocessing(target);
 }
 
 QString Camera::selectedImplementation()
@@ -113,7 +120,7 @@ int Camera::preferredRefreshTimeMSec() const
     return m_activeRenderTechnique->preferredRefreshTimeMSec();
 }
 
-void Camera::drawScene( const Program & program, const glm::mat4 & transform )
+void Camera::drawScene( const Program & program)
 {
     if (m_activeCamera == nullptr)
         return;
@@ -128,12 +135,18 @@ void Camera::drawScene( const Program & program, const glm::mat4 & transform )
 
     setUniforms(program);
 
-    m_activeCamera->drawScene(program, transform);
+    m_activeCamera->drawScene(program);
 }
 
-void Camera::renderScene(const Program & program)
+void Camera::draw( const Program & progam, const glm::mat4 & transform)
 {
-    m_activeRenderTechnique->renderScene(program, m_transform);
+    if (m_activeRenderTechnique == m_rasterizer)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Camera::renderScene(const Program & program, FrameBufferObject * target)
+{
+    m_activeRenderTechnique->renderScene(program, target);
 }
 
 void Camera::invalidate()

@@ -2,6 +2,7 @@
 #include <glm/gtc/matrix_access.hpp>
 
 #include "rasterizer.h"
+#include <core/framebufferobject.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 
@@ -16,12 +17,15 @@ Rasterizer::~Rasterizer()
 {
 }
 
-void Rasterizer::renderScene(const Program & program, const glm::mat4 & transform)
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glError();
+void Rasterizer::renderScene(const Program & program, FrameBufferObject * target)
+{/*
+    if (target != nullptr)
+        target->bind();*/
 
-    SceneTraverser traverser;
-    DrawVisitor drawVisitor(&program, m_camera.transform());
-    traverser.traverse(m_camera, drawVisitor);
+    /*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glError();*/
+    m_camera.drawWithPostprocessing(target);
+
+    //if (target != nullptr)
+    //    target->release();
 }

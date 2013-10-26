@@ -10,7 +10,7 @@ public:
 	MonoCamera(Camera & abstraction);  
 	~MonoCamera(void);
 
-    virtual void drawScene( const Program & program, const glm::mat4 & transform) override;
+    virtual void drawScene( const Program & program ) override;
 
     virtual const QString implementationName() const override;
 

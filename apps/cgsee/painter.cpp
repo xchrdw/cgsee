@@ -144,6 +144,8 @@ const bool Painter::initialize()
         m_camera->append(m_scene);
     }
 
+    m_camera->setPainter(this);
+
     LimitedProperty<float> * cameraSeparationLevel = new LimitedProperty<float>("cameraSeparation", "Camera-Separation:", 0.5f, 0.0f, 12.3f);
     LimitedProperty<float> * focusdistanceLevel = new LimitedProperty<float>("focusdistance", "Focus-Distance:", 0.5f, 0.0f, 12.3f);
     
@@ -313,25 +315,20 @@ void Painter::setUniforms()
 void Painter::paint()
 {
     AbstractPainter::paint();
+    /*
+    It depends on the current camera configuration how we need to draw the scene.
+    CameraImplementation: needs to configure the cam position and can start rendering multiple times.
+    RenderTechniques: decide how to render the objects ( and whether using postprocessing )
+    */
+    m_camera->drawScene(*m_useProgram);
+}
 
-    if (!m_camera->rendererAllowsPostprocessing()) {
-        m_camera->drawScene(*m_useProgram, glm::mat4());
-        return;
-    }
-
+void Painter::drawWithPostprocessing(FrameBufferObject * target)
+{
     t_samplerByName sampler;
 
-    if(m_useColor) {
-        //drawScene(m_camera, m_useProgram, m_fboColor);
-        /*
-        It depends on the current camera configuration how we need to draw the scene.
-        CameraImplementation: needs to configure the cam position and can start rendering multiple times.
-        RenderTechniques: decide how to render the objects
-        */
-        m_fboColor->bind();
-        m_camera->drawScene(*m_useProgram, glm::mat4());
-        m_fboColor->release();
-    }
+    if(m_useColor)
+        drawScene(m_camera, m_useProgram, m_fboColor);
     else
         m_fboColor->clear();
 
@@ -351,8 +348,18 @@ void Painter::paint()
     }
 
     bindSampler(sampler, *m_flush);
-    m_quad->draw(*m_flush, nullptr);
+    // render scene to texture if needed (currently for oculus rift camera)
+    m_quad->draw(*m_flush, target);
     releaseSampler(sampler);
+}
+
+void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject * fbo)
+{
+    fbo->bind();
+    SceneTraverser traverser;
+    DrawVisitor drawVisitor(program, camera->transform());
+    traverser.traverse(*camera, drawVisitor);
+    fbo->release();
 }
 
 void Painter::resize(const int width, const int height)

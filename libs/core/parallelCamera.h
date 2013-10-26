@@ -12,11 +12,11 @@ public:
 	ParallelCamera(Camera & abstraction); 
 	~ParallelCamera(void);
     virtual void setCameraSeparation(float cameraSeparation);
-    virtual void activateOculusRiftRightCamera(const Program & program);
-    virtual void activateOculusRiftLeftCamera(const Program & program);
+    virtual void activateOculusRiftRightCamera(const Program & program, FrameBufferObject * target);
+    virtual void activateOculusRiftLeftCamera(const Program & program, FrameBufferObject * targe);
     virtual void activateRedCyanRightCamera(const Program & program);
     virtual void activateRedCyanLeftCamera(const Program & program);
-    virtual void drawScene(const Program & program, const glm::mat4 & transform) override;
+    virtual void drawScene(const Program & program) override;
     virtual void drawRedCyan(const Program & program);
     virtual void drawOculusRift(const Program & program);
     typedef QMap<QString, FrameBufferObject *> t_samplerByName;
