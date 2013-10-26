@@ -21,7 +21,8 @@ std::mt19937 rng;
 std::uniform_real_distribution<float> aaOffsetDistribution(-1.0f, 1.0f);
 
 namespace {
-    static const int slotOffset = 10;
+    // GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS is 16 on Intel HD3000
+    static const int slotOffset = 9;
     QMap<QString, GLint> initTextureSlots() {
         QMap<QString, GLint> textureSlots;
         textureSlots["indexBuffer"] = slotOffset + 0;
@@ -212,6 +213,7 @@ void PathTracer::initSkybox()
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glActiveTexture(GL_TEXTURE0 + textureSlots["skyboxTexture"]);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_staticCubeMap);
+    glError();
     return;
 }
 
