@@ -1,4 +1,4 @@
-#include "abstractStereoCamera.h"
+#include "abstractstereocamera.h"
 
 #include <glm/gtc/matrix_access.hpp>
 #include <QString>

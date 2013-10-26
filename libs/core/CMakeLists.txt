@@ -14,8 +14,8 @@ set(SOURCES
     abstractapplication.h
     abstractmodelloader.cpp
     abstractmodelloader.h
-    abstractStereoCamera.h
-    abstractStereoCamera.cpp
+    abstractstereocamera.h
+    abstractstereocamera.cpp
     abstracttimer.h
     assimploader.cpp
     assimploader.h
