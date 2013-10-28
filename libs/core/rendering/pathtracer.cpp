@@ -62,6 +62,9 @@ PathTracer::PathTracer(Camera & camera)
 PathTracer::~PathTracer()
 {
     delete m_bvh;
+    delete m_program;
+    delete m_vertexBO;
+    delete m_randomVectors;
 }
 
 void PathTracer::initialize()

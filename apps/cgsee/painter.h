@@ -30,8 +30,8 @@ public:
     // let camera use my post processing pipeline if needed
     virtual void drawWithPostprocessing(FrameBufferObject * target);
 
-    virtual void selectCamera(QString cameraName) override;
-    virtual void selectRendering(QString rendering) override;
+    virtual void selectCamera(const QString cameraName) override;
+    virtual void selectRendering(const QString rendering) override;
     virtual void setShading(char shader) override;
     virtual void setFrameBuffer(int frameBuffer);
     virtual void setEffect( int effect, bool active );

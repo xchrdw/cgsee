@@ -44,7 +44,7 @@ Camera::Camera(const QString & name)
     m_rf = RF_Absolute;
 //     m_rf = RF_Relative;
     selectImplementation("MonoCamera");
-    selectRenderingByName("Rasterization");
+    selectRendering(Rendering::Rasterization);
 }
 
 Camera::~Camera()
@@ -52,47 +52,83 @@ Camera::~Camera()
     qDeleteAll(m_implementations);
     delete m_rasterizer;
     delete m_pathTracer;
+    delete m_viewFrustum;
 }
 
-void Camera::selectImplementation(QString name)
+void Camera::selectImplementation(const QString name)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    CameraImplementation * oldCam = m_activeCamera;
     m_activeCamera = nullptr;
 
     for (CameraImplementation* impl: m_implementations) {
         if (impl->implementationName() == name) {
             m_activeCamera = impl;
-            // update selected camera
-            m_activeCamera->onInvalidatedView();
-            m_activeCamera->onInvalidatedViewport(m_viewport.x, m_viewport.y);
-            m_activeCamera->onInvalidatedChildren();
-            return;
+            break;
         }
     }
+
+    // path tracing only works with standard camera -> force rasterization when using 3D
+    if (m_activeCamera->implementationName() != "MonoCamera") {
+        selectRendering(Rendering::Rasterization);
+        qDebug("Forced to use rasterization as path tracing does not work with stereo cameras. #125 ...");
+    }
+
+    // update selected camera
+    m_activeCamera->onInvalidatedView();
+    m_activeCamera->onInvalidatedViewport(m_viewport.x, m_viewport.y);
+    m_activeCamera->onInvalidatedChildren();
+
     if (m_activeCamera == nullptr) {
         qDebug()<<"Selected camera"<<name<<"which is not implemented.";
-        exit(2);
+        m_activeCamera = m_activeCamera;
     }
 }
 
-bool Camera::selectRenderingByName(QString name)
+void Camera::selectRendering(const Rendering rendering)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if (name == "Rasterization") {
+    switch (rendering) {
+    case Rendering::Rasterization: 
         m_activeRenderTechnique = m_rasterizer;
-        m_activeRenderTechnique->onInvalidatedView();
-        m_activeRenderTechnique->onInvalidatedViewport(m_viewport.x, m_viewport.y);
-        m_activeRenderTechnique->onInvalidatedChildren();
-        return true;
-    }
-    if (name == "PathTracing") {
+        break;
+    case Rendering::PathTracing: 
+        // Path tracer only works with std camera -> force to select this 
+        if (m_activeCamera->implementationName() != "MonoCamera") {
+            selectImplementation("MonoCamera");
+            qDebug("Forced to use standard mono camera as path tracing does not work with stereo cameras. #125 ...");
+        }
         m_activeRenderTechnique = m_pathTracer;
-        m_activeRenderTechnique->onInvalidatedView();
-        m_activeRenderTechnique->onInvalidatedViewport(m_viewport.x, m_viewport.y);
-        m_activeRenderTechnique->onInvalidatedChildren();
-        return true;
+        break;
+    case Rendering::invalidRendering:
+        qDebug("Invalid rendering type selected.");
     }
-    return false;
+    m_activeRenderTechnique->onInvalidatedView();
+    m_activeRenderTechnique->onInvalidatedViewport(m_viewport.x, m_viewport.y);
+    m_activeRenderTechnique->onInvalidatedChildren();
+}
+
+QString Camera::renderingAsString(const Rendering rendering)
+{
+    if (rendering==Rendering::Rasterization)
+        return QString("Rasterization");
+    if (rendering==Rendering::PathTracing)
+        return QString("PathTracing");
+    return QString();
+}
+
+Camera::Rendering Camera::renderingFromString(const QString rendering)
+{
+    if (rendering == "Rasterization")
+        return Rendering::Rasterization;
+    if (rendering == "PathTracing")
+        return Rendering::PathTracing;
+    return Rendering::invalidRendering;
+}
+
+void Camera::selectRenderingByName(const QString rendering)
+{
+    selectRendering(renderingFromString(rendering));
 }
 
 void Camera::setPainter(Painter * painter)

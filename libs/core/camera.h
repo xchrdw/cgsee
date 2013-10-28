@@ -24,6 +24,12 @@ class CameraImplementation;
 class CGSEE_API Camera : public Group
 {
 public:
+    enum Rendering {
+        Rasterization,
+        PathTracing,
+        invalidRendering = -1
+    };
+
     Camera(const QString & name = "unnamed");
     virtual ~Camera();
 
@@ -67,11 +73,14 @@ public:
     glm::vec3 getCenter() const;
 
 public:
-    void selectImplementation(QString name);
+    void selectImplementation(const QString name);
     QString selectedImplementation();
     CameraImplementation * activeImplementation() const;
 
-    bool selectRenderingByName(QString name);
+    void selectRendering(const Rendering rendering);
+    void selectRenderingByName(const QString rendering);
+    static QString renderingAsString(const Rendering rendering);
+    static Rendering renderingFromString(const QString rendering);
 
     int preferredRefreshTimeMSec() const;
 

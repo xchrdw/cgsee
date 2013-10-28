@@ -22,13 +22,13 @@ PathTracingBVH::~PathTracingBVH() {
 }
 
 void PathTracingBVH::geometryToTexture(GLuint textureSlot) {
-    BufferObject *geometryBuffer = new BufferObject(GL_TEXTURE_BUFFER, GL_STATIC_READ);
-    geometryBuffer->data<glm::vec4>(m_geometry->data(), m_geometry->size(), GL_RGBA32F, sizeof(glm::vec4));
+    BufferObject geometryBuffer(GL_TEXTURE_BUFFER, GL_STATIC_READ);
+    geometryBuffer.data<glm::vec4>(m_geometry->data(), m_geometry->size(), GL_RGBA32F, sizeof(glm::vec4));
     glActiveTexture(textureSlot);
     GLuint textureHandle;
     glGenTextures(1, &textureHandle);
     glBindTexture(GL_TEXTURE_BUFFER, textureHandle);
-    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, geometryBuffer->buffer());
+    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, geometryBuffer.buffer());
     glError();
 }
 

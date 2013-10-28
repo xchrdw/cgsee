@@ -376,7 +376,7 @@ void Painter::resize(const int width, const int height)
     postShaderRelinked();
 }
 
-void Painter::selectCamera(QString cameraName)
+void Painter::selectCamera(const QString cameraName)
 {
     if (m_camera->selectedImplementation() == cameraName)
         return;
@@ -384,7 +384,7 @@ void Painter::selectCamera(QString cameraName)
     m_camera->selectImplementation(cameraName);
 }
 
-void Painter::selectRendering(QString rendering)
+void Painter::selectRendering(const QString rendering)
 {
     m_camera->selectRenderingByName(rendering);
 }
