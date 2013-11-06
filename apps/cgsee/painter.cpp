@@ -216,7 +216,7 @@ const bool Painter::initialize()
     m_gooch->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/gooch.vert"));
 
     //set UNIFORMS for selected shader
-    m_useProgram = m_gooch;
+    m_useProgram = m_phong;
     setUniforms();
 
     // Post Processing Shader
