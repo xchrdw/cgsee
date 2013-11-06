@@ -2,12 +2,10 @@
 #include "painter.h"
 
 #include <core/datacore/datablock.h>
-#include <core/assimploader.h>
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/navigation/arcballnavigation.h>
 #include <core/coordinateprovider.h>
-#include "core/parallelCamera.h"
 
 
 CGSee::CGSee(int & argc, char ** argv)

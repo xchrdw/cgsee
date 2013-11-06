@@ -2,6 +2,7 @@
 #include <glm/gtc/matrix_access.hpp>
 
 #include "rasterizer.h"
+#include <core/camera.h>
 #include <core/framebufferobject.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>

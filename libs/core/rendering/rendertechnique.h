@@ -2,8 +2,8 @@
 #include <glm/glm.hpp>
 
 #include <core/declspec.h>
-#include <core/camera.h>
 
+class Camera;
 class Program;
 class FrameBufferObject;
 

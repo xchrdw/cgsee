@@ -17,12 +17,8 @@
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
-#include <core/objloader.h>
-#include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
-#include <core/navigation/arcballnavigation.h>
-#include <core/navigation/flightnavigation.h>
 #include <core/rendering/ssaoeffect.h>
 #include <core/rendering/blureffect.h>
 #include <core/rendering/shadowmapping.h>
@@ -100,11 +96,6 @@ Painter::~Painter()
     delete m_fboColor;
 
     delete m_flush;
-}
-
-void Painter::helloWord(AbstractProperty & property)
-{
-    qDebug("hello world!");
 }
 
 void Painter::setConvergentCameraFocus(AbstractProperty & p)
@@ -386,6 +377,8 @@ void Painter::selectCamera(const QString cameraName)
 
 void Painter::selectRendering(const QString rendering)
 {
+    if (m_camera->selectedRendering() == rendering)
+        return;
     m_camera->selectRenderingByName(rendering);
 }
 

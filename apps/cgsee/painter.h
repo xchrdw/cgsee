@@ -38,8 +38,6 @@ public:
 
     virtual void resize(const int width, const int height);
 
-
-    void helloWord(AbstractProperty & property);
     void setStereoCameraSeparation(AbstractProperty & property);
     void setConvergentCameraFocus(AbstractProperty & property);
     virtual void postShaderRelinked() override;

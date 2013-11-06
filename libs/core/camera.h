@@ -74,11 +74,12 @@ public:
 
 public:
     void selectImplementation(const QString name);
-    QString selectedImplementation();
+    QString selectedImplementation() const;
     CameraImplementation * activeImplementation() const;
 
     void selectRendering(const Rendering rendering);
     void selectRenderingByName(const QString rendering);
+    QString selectedRendering() const;
     static QString renderingAsString(const Rendering rendering);
     static Rendering renderingFromString(const QString rendering);
 

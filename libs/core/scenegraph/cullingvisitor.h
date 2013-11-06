@@ -8,13 +8,14 @@
 
 #include <core/declspec.h>
 
-#include "core/framebufferobject.h"
-#include "core/camera.h"
-#include "node.h"
-#include "core/viewfrustum.h"
-
 #include "scenevisitorinterface.h"
 
+
+class Camera;
+class FrameBufferObject;
+class Node;
+class ViewFrustum;
+class Program;
 
 class CGSEE_API CullingVisitor final : public SceneVisitorInterface
 {

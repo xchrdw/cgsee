@@ -9,13 +9,11 @@
 
 #include "../../apps/cgsee/painter.h"
 
-#include "rendering/renderingpass.h"
 #include "rendering/rasterizer.h"
 #include "rendering/pathtracer.h"
 
 #include "program.h"
 #include "gpuquery.h"
-#include "framebufferobject.h"
 #include "core/viewfrustum.h"
 
 static const QString VIEWPORT_UNIFORM   ("viewport");
@@ -69,7 +67,7 @@ void Camera::selectImplementation(const QString name)
     }
 
     // path tracing only works with standard camera -> force rasterization when using 3D
-    if (m_activeCamera->implementationName() != "MonoCamera") {
+    if (m_activeRenderTechnique != m_rasterizer) {
         selectRendering(Rendering::Rasterization);
         qDebug("Forced to use rasterization as path tracing does not work with stereo cameras. #125 ...");
     }
@@ -81,7 +79,7 @@ void Camera::selectImplementation(const QString name)
 
     if (m_activeCamera == nullptr) {
         qDebug()<<"Selected camera"<<name<<"which is not implemented.";
-        m_activeCamera = m_activeCamera;
+        m_activeCamera = oldCam;
     }
 }
 
@@ -126,6 +124,15 @@ Camera::Rendering Camera::renderingFromString(const QString rendering)
     return Rendering::invalidRendering;
 }
 
+QString Camera::selectedRendering() const
+{
+    if (m_activeRenderTechnique == m_rasterizer)
+        return renderingAsString(Rendering::Rasterization);
+    if (m_activeRenderTechnique == m_pathTracer)
+        return renderingAsString(Rendering::PathTracing);
+    return QString();
+}
+
 void Camera::selectRenderingByName(const QString rendering)
 {
     selectRendering(renderingFromString(rendering));
@@ -141,7 +148,7 @@ void Camera::drawWithPostprocessing(FrameBufferObject * target)
     m_painter->drawWithPostprocessing(target);
 }
 
-QString Camera::selectedImplementation()
+QString Camera::selectedImplementation() const
 {
     return m_activeCamera->implementationName();
 }
