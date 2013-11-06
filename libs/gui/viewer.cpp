@@ -1,7 +1,6 @@
 #include <GL/glew.h>
 
 #include <cassert>
-#include <iostream>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -14,6 +13,7 @@
 #include <QDockWidget>
 #include <QMenu>
 #include <QDir>
+#include <QDebug>
 #include <QFileSystemModel>
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -35,13 +35,15 @@
 #include <core/navigation/fpsnavigation.h>
 #include <core/navigation/arcballnavigation.h>
 
-#include <core/abstractscenepainter.h>
+#include <core/painter/abstractscenepainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
 
-#include <core/coordinateprovider.h>
 #include <core/camera.h>
+#include <core/parallelCamera.h>
+#include <core/coordinateprovider.h>
+
 #include <core/aabb.h>
 
 #include <core/scenegraph/node.h>
@@ -70,6 +72,7 @@ Viewer::Viewer(
 ,   m_qtCanvas(nullptr)
 ,   m_camera(nullptr)
 ,   m_saved_views(4)
+,   m_isFullscreen(false)
 
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
@@ -419,18 +422,22 @@ void Viewer::on_toggleExplorer_triggered()
 
 void Viewer::updateCameraSelection(QString cameraName) const
 {
-    m_qtCanvas->painter()->selectCamera(cameraName);
+}
+
+void Viewer::updateRenderingSelection(QString rendering) const
+{
+    m_qtCanvas->painter()->selectRendering(rendering);
     m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 }
 
-void Viewer::on_rasterizingCameraAction_triggered()
+void Viewer::on_renderingRasterizerAction_triggered()
 {
-    updateCameraSelection("RasterizationCamera");
+    updateRenderingSelection("Rasterization");
 }
 
-void Viewer::on_pathtracerAction_triggered()
+void Viewer::on_renderingPathtracerAction_triggered()
 {
-    updateCameraSelection("PathTracer");
+    updateRenderingSelection("PathTracing");
 }
 
 void Viewer::on_phongShadingAction_triggered()
@@ -567,6 +574,93 @@ void Viewer::on_fboColorIdAction_triggered()
     m_ui->fboColorIdAction->setChecked(true);
     m_qtCanvas->painter()->setFrameBuffer(6);
     m_qtCanvas->repaint();
+}
+
+void Viewer::on_standardCameraAction_triggered()
+{
+    glm::ivec2 tempViewport = m_camera->viewport();
+    m_camera->selectImplementation("MonoCamera");
+    
+    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+
+    qDebug("Standard Mono Camera");
+}
+
+void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
+{
+    glm::ivec2 tempViewport = m_camera->viewport();
+    m_camera->selectImplementation("ParallelCamera");
+    ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
+    if (parallelCam != nullptr)
+        parallelCam->deactivateOculusRift();
+    else
+        qDebug() << "Expected ParallelCamera as active implementation but was"
+                << m_camera->selectedImplementation();
+    
+    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+
+    qDebug("(Parallel) Red Cyan Stereo Camera");
+}  
+
+void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
+{
+    glm::ivec2 tempViewport = m_camera->viewport();
+    m_camera->selectImplementation("ConvergentCamera");
+    
+    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+
+    qDebug("(Convergent) Red Cyan Stereo Camera");
+}
+
+void Viewer::on_oculusRiftStereoCameraAction_triggered()
+{
+    glm::ivec2 tempViewport = m_camera->viewport();
+    m_camera->selectImplementation("ParallelCamera");
+
+    ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
+    if (parallelCam != nullptr)
+        parallelCam->activateOculusRift();
+    else
+        qDebug() << "Expected ParallelCamera as active implementation but was"
+                << m_camera->selectedImplementation();
+    
+    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+
+    qDebug() << "Stereo Camera for Oculus Rift";
+
+    ((QWidget*)m_qtCanvas->parent())->showFullScreen();
+    m_visibleDockNavigator = m_dockNavigator->isVisible();
+    m_dockNavigator->setVisible(false);
+    m_visibleDockExplorer = m_dockExplorer->isVisible();
+    m_dockExplorer->setVisible(false);
+    menuBar()->setVisible(false);
+    statusBar()->setVisible(false);
+    m_isFullscreen=true;
+}
+
+void Viewer::on_toggleFullscreen_triggered()
+{
+    if(!m_isFullscreen)
+    {
+        ((QWidget*)m_qtCanvas->parent())->showFullScreen();
+        m_visibleDockNavigator = m_dockNavigator->isVisible();
+        m_dockNavigator->setVisible(false);
+        m_visibleDockExplorer = m_dockExplorer->isVisible();
+        m_dockExplorer->setVisible(false);
+        menuBar()->setVisible(false);
+        menuBar()->setShortcutEnabled(Qt::Key_Escape,true);
+        statusBar()->setVisible(false);
+        m_isFullscreen=true;
+    }
+    else
+    {
+        ((QWidget*)m_qtCanvas->parent())->showNormal();
+        m_dockExplorer->setVisible(m_visibleDockExplorer);
+        m_dockNavigator->setVisible(m_visibleDockNavigator);
+        menuBar()->setVisible(true);
+        statusBar()->setVisible(true);
+        m_isFullscreen=false;
+    }
 }
 
 void Viewer::setNavigation(AbstractNavigation * navigation)

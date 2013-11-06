@@ -10,18 +10,34 @@
 
 class Program;
 class ViewFrustum;
+class FrameBufferObject;
+
+class Painter;
+
+class RenderingPass;
+class RenderTechnique;
+class Rasterizer;
+class PathTracer;
 
 class CameraImplementation;
 
 class CGSEE_API Camera : public Group
 {
 public:
+    enum Rendering {
+        Rasterization,
+        PathTracing,
+        invalidRendering = -1
+    };
+
     Camera(const QString & name = "unnamed");
     virtual ~Camera();
 
     virtual Camera * asCamera();
 
-    virtual void draw( const Program & program, const glm::mat4 & transform) override;
+    // call camera implementations and renderer to create visual output
+    void drawScene(const Program & program);
+    virtual void draw(const Program & program, const glm::mat4 & transform) override;
 
     const glm::ivec2 & viewport() const;
     void setViewport(const glm::ivec2 & size);
@@ -49,21 +65,44 @@ public:
 
     // updates camera matrices
     void update();
+    void setUniforms(const Program & program) const;
 
     //
-    glm::vec3 getEye();
-    glm::vec3 getUp();
-    glm::vec3 getCenter();
+    glm::vec3 getEye() const;
+    glm::vec3 getUp() const;
+    glm::vec3 getCenter() const;
 
 public:
-    void selectImplementation(QString name);
-    QString selectedImplementation();
+    void selectImplementation(const QString name);
+    QString selectedImplementation() const;
+    CameraImplementation * activeImplementation() const;
+
+    void selectRendering(const Rendering rendering);
+    void selectRenderingByName(const QString rendering);
+    QString selectedRendering() const;
+    static QString renderingAsString(const Rendering rendering);
+    static Rendering renderingFromString(const QString rendering);
 
     int preferredRefreshTimeMSec() const;
+
+    void setPainter(Painter * painter);
+    
+    void drawWithPostprocessing(FrameBufferObject * target);
 
 protected:
     QVector<CameraImplementation*> m_implementations;
     CameraImplementation * m_activeCamera;
+
+    Painter * m_painter;
+
+    // let implementations start rendering as ofter as needed
+    void renderScene(const Program & program, FrameBufferObject * target);
+    
+    // Create render techniques in constructor.
+    // const pointers, because we only need to construct the objects once but need to modify them
+    Rasterizer *const m_rasterizer;
+    PathTracer *const m_pathTracer;
+    RenderTechnique * m_activeRenderTechnique;
 
 protected:
     void invalidate();
@@ -82,5 +121,5 @@ protected:
 
     bool m_invalidated;
 
-// friend CameraImplementation;
+friend CameraImplementation;
 };

@@ -1,7 +1,7 @@
 
 #include "abstractscenepainter.h"
-#include "scenegraph/group.h"
-#include "camera.h"
+#include <core/scenegraph/group.h>
+#include <core/camera.h>
 
 AbstractScenePainter::AbstractScenePainter()
 : AbstractPainter()

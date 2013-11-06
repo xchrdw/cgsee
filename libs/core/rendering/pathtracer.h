@@ -8,44 +8,41 @@
 
 #include <QMap>
 
-#include "declspec.h"
-#include "cameraimplementation.h"
+#include <core/declspec.h>
+#include "rendertechnique.h"
 
 
 class BufferObject;
 class Program;
-class FrameBufferObject;
 class PathTracingBVH;
 
-class CGSEE_API PathTracer : public CameraImplementation
+class CGSEE_API PathTracer : public RenderTechnique
 {
 public:
     const static QMap<QString, GLint> textureSlots;
 
     PathTracer(Camera & abstraction);
     virtual ~PathTracer();
+    
+    virtual void renderScene(const Program & program, FrameBufferObject * target = nullptr) override;
 
-    virtual void draw(
-        const Program & program,
-        const glm::mat4 & transform) override;
+    virtual int preferredRefreshTimeMSec() const { return 1; };
 
-    virtual const QString implementationName() const override;
+    const Program * program() const { return m_program; }
 
 protected:
-    void initialize(const Program & program);
-    void initVertexBuffer(const Program & program);
-    void initRandomVectorBuffer(const Program & program);
+    void initialize();
+    void initVertexBuffer();
+    void initRandomVectorBuffer();
 
     void initSkybox();
 
-    void setUniforms(const Program & program);
+    void setUniforms();
 
     void resizeTextures(const glm::ivec2 & viewport) const;
     
     virtual void onInvalidatedView() override;
-    virtual void onInvalidatedViewport(
-        const int width
-    ,   const int height) override;
+    virtual void onInvalidatedViewport(const int width, const int height) override;
     virtual void onInvalidatedChildren() override;
 
     static void pointsOnSphere(std::vector<glm::vec3> & points, const unsigned int minN);
@@ -54,6 +51,8 @@ protected:
     ,   const glm::uint b
     ,   std::vector<glm::vec3> & points
     ,   std::unordered_map<glm::highp_uint, glm::uint> & cache);
+
+    Program * m_program;
 
     PathTracingBVH *m_bvh;
 
@@ -74,8 +73,4 @@ protected:
     GLuint m_accuFramebuffer;
     
     GLuint m_staticCubeMap;
-
-private:
-    static const QString m_implementationName;
-    static bool isRegistered;
 };

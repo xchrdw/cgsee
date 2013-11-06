@@ -3,7 +3,7 @@
 // #include <glm/gtc/matrix_transform.hpp>
 
 #include <core/declspec.h>
-#include <core/abstractpainter.h>
+#include <core/painter/abstractpainter.h>
 
 class Group;
 class RenderingPass;
@@ -14,7 +14,8 @@ public:
     AbstractScenePainter();
     virtual ~AbstractScenePainter();
 
-    virtual void selectCamera(QString cameraName) = 0;
+    virtual void selectCamera(const QString cameraName) = 0;
+    virtual void selectRendering(const QString rendering) = 0;
     virtual void setShading(char shader) = 0;
     virtual void setFrameBuffer(int frameBuffer) = 0;
     virtual void setEffect(int effect, bool active) = 0;

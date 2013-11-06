@@ -3,7 +3,7 @@
 
 #include <QGLWidget>
 
-#include <core/abstractglparent.h>
+#include <core/painter/abstractglparent.h>
 #include <core/declspec.h>
 #include <core/glformat.h>
 

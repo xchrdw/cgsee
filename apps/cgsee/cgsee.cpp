@@ -2,7 +2,6 @@
 #include "painter.h"
 
 #include <core/datacore/datablock.h>
-#include <core/assimploader.h>
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/navigation/arcballnavigation.h>
@@ -23,11 +22,12 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->initialize(format());
 
     Camera * camera = new Camera("main");
-    camera->selectImplementation("RasterizationCamera");
+    camera->selectImplementation("MonoCamera");
     
     camera->setFovy (45.0f);
     camera->setZNear( 1.0f);
     camera->setZFar (20.0f);
+    // camera->setZFar (300.0f);
     m_viewer->setCamera(camera);
 
     m_painter = new Painter(camera);
@@ -41,10 +41,7 @@ CGSee::CGSee(int & argc, char ** argv)
 
     m_viewer->show();
 
-    AssimpLoader loader;
-    m_painter->assignScene(loader.importFromFile("data/shadow_test.obj"));
-    navigation->sceneChanged(&m_painter->getScene());
-
+    m_viewer->on_loadFile("data/shadow_test.obj");
 }
 
 CGSee::~CGSee()

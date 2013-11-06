@@ -3,24 +3,13 @@
 
 #include "pathtracer.h"
 
-#include "camera.h"
-
-#include "program.h"
-#include "bufferobject.h"
-#include "scenegraph/pathtracingbvh.h"
-#include "core/datacore/datablock.h"
-
-
-const QString PathTracer::m_implementationName("PathTracer");
-
-const QString PathTracer::implementationName() const
-{
-    return m_implementationName;
-}
-
-bool PathTracer::isRegistered = CameraImplementation::registerImplementation(
-    m_implementationName,
-    createInstace<PathTracer>);
+#include <core/camera.h>
+#include <core/program.h>
+#include <core/fileassociatedshader.h>
+#include <core/bufferobject.h>
+#include <core/framebufferobject.h>
+#include <core/scenegraph/pathtracingbvh.h>
+#include <core/datacore/datablock.h>
 
 
 static const QString RANDOM_INT_UNIFORM0("randomInt0");
@@ -32,15 +21,17 @@ std::mt19937 rng;
 std::uniform_real_distribution<float> aaOffsetDistribution(-1.0f, 1.0f);
 
 namespace {
+    // GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS is 16 on Intel HD3000
+    static const int slotOffset = 9;
     QMap<QString, GLint> initTextureSlots() {
         QMap<QString, GLint> textureSlots;
-        textureSlots["indexBuffer"] = 0;
-        textureSlots["vertexBuffer"] = 1;
-        textureSlots["normalBuffer"] = 2;
-        textureSlots["geometryBuffer"] = 3;
-        textureSlots["randomVectors"] = 4;
-        textureSlots["accumulation"] = 5;
-        textureSlots["skyboxTexture"] = 6;
+        textureSlots["indexBuffer"] = slotOffset + 0;
+        textureSlots["vertexBuffer"] = slotOffset + 1;
+        textureSlots["normalBuffer"] = slotOffset + 2;
+        textureSlots["geometryBuffer"] = slotOffset + 3;
+        textureSlots["randomVectors"] = slotOffset + 4;
+        textureSlots["accumulation"] = slotOffset + 5;
+        textureSlots["skyboxTexture"] = slotOffset + 6;
         return textureSlots;
     }
 }
@@ -48,10 +39,11 @@ namespace {
 const QMap<QString, GLint> PathTracer::textureSlots(initTextureSlots());
 
 
-PathTracer::PathTracer(Camera & abstraction)
-:   CameraImplementation(abstraction)
+PathTracer::PathTracer(Camera & camera)
+:   RenderTechnique(camera)
 ,   m_invalidatedGeometry(true)
 ,   m_invalidatedAccu(true)
+,   m_program(nullptr)
 ,   m_bvh(nullptr)
 ,   m_vao(-1)
 ,   m_vertexBO(nullptr)
@@ -61,7 +53,6 @@ PathTracer::PathTracer(Camera & abstraction)
 ,   m_accuFramebuffer(-1)
 ,   m_staticCubeMap(-1)
 {
-    m_preferredRefreshTimeMSec = 0;
     m_accuTexture[0] = m_accuTexture[1] = -1;
     /*this->setZFar(300.0);
     this->setZNear(1.0);
@@ -71,22 +62,33 @@ PathTracer::PathTracer(Camera & abstraction)
 PathTracer::~PathTracer()
 {
     delete m_bvh;
+    delete m_program;
+    delete m_vertexBO;
+    delete m_randomVectors;
 }
 
-void PathTracer::initialize(const Program & program)
+void PathTracer::initialize()
 {
+    if (m_program == nullptr) {
+        m_program = new Program();
+        m_program->attach(
+            new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/pathTracing.frag"));
+        m_program->attach(
+            new FileAssociatedShader(GL_VERTEX_SHADER, "data/pathTracing.vert"));
+    }
+
     if (m_bvh == nullptr) {
         m_bvh = new PathTracingBVH();
     }
     if(-1 == m_vao)
-        initVertexBuffer(program);
+        initVertexBuffer();
     if (-1 == m_randomVectorTexture)
-        initRandomVectorBuffer(program);
+        initRandomVectorBuffer();
     if (m_accuFramebuffer == -1) {
 
         glGenTextures(2, m_accuTexture);
 
-        resizeTextures(m_abstraction.viewport());
+        resizeTextures(m_camera.viewport());
    
         glGenFramebuffers(1, &m_accuFramebuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_accuFramebuffer);
@@ -108,7 +110,7 @@ void PathTracer::initialize(const Program & program)
     }
 }
 
-void PathTracer::initVertexBuffer(const Program & program)
+void PathTracer::initVertexBuffer()
 {
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
@@ -136,13 +138,13 @@ void PathTracer::initVertexBuffer(const Program & program)
 
     // bind all buffers to their attributes
 
-    m_vertexBO->bind(program.attributeLocation("a_vertex"));
+    m_vertexBO->bind(m_program->attributeLocation("a_vertex"));
 
     glBindVertexArray(0);
     glError();
 }
 
-void PathTracer::initRandomVectorBuffer(const Program & program)
+void PathTracer::initRandomVectorBuffer()
 {
     std::vector<glm::vec3> rndVecData;
 
@@ -214,22 +216,23 @@ void PathTracer::initSkybox()
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glActiveTexture(GL_TEXTURE0 + textureSlots["skyboxTexture"]);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_staticCubeMap);
+    glError();
     return;
 }
 
-void PathTracer::setUniforms(const Program & program)
+void PathTracer::setUniforms()
 {
-    program.setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
-    program.setUniform(RANDOM_INT_UNIFORM0, (unsigned int)(rng()));
-    program.setUniform(RANDOM_INT_UNIFORM1, (unsigned int)(rng()));
+    m_program->setUniform(FRAMECOUNTER_UNIFORM, m_frameCounter);
+    m_program->setUniform(RANDOM_INT_UNIFORM0, (unsigned int)(rng()));
+    m_program->setUniform(RANDOM_INT_UNIFORM1, (unsigned int)(rng()));
 
     glm::vec2 offset(aaOffsetDistribution(rng), aaOffsetDistribution(rng));
-    offset /= m_abstraction.viewport();
-    program.setUniform(ANTIALIASING_OFFSET_UNIFORM, offset);
+    offset /= m_camera.viewport();
+    m_program->setUniform(ANTIALIASING_OFFSET_UNIFORM, offset);
 
     for (auto it = PathTracer::textureSlots.cbegin(); it != PathTracer::textureSlots.cend(); ++it)
     {
-        program.setUniform(it.key(), it.value());
+        m_program->setUniform(it.key(), it.value());
     }
 }
 
@@ -255,11 +258,13 @@ void PathTracer::resizeTextures(const glm::ivec2 & viewport) const
     }
 }
 
-void PathTracer::draw(
-    const Program & program
-    ,   const glm::mat4 & transform)
+void PathTracer::renderScene(
+    const Program &
+,   FrameBufferObject * target)
 {
-    initialize(program);
+    initialize();
+
+    m_program->use();
 
     ++m_frameCounter;
     
@@ -270,12 +275,12 @@ void PathTracer::draw(
 
     if (m_invalidatedGeometry) {
         // rebuild bounding volume hierarchy :
-        m_bvh->buildBVHFromObjectsHierarchy(&this->m_abstraction);
+        m_bvh->buildBVHFromObjectsHierarchy(&m_camera);
         m_bvh->geometryToTexture(GL_TEXTURE0 + PathTracer::textureSlots["geometryBuffer"]);
         m_invalidatedGeometry = false;
     }
 
-    setUniforms(program);
+    setUniforms();
 
     // switch the rendering buffers for each pass
     m_whichBuffer = !m_whichBuffer;
@@ -298,7 +303,7 @@ void PathTracer::draw(
     glEnable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
 
-    glViewport(0, 0, m_abstraction.viewport().x, m_abstraction.viewport().y);
+    glViewport(0, 0, m_camera.viewport().x, m_camera.viewport().y);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glError();
@@ -317,10 +322,15 @@ void PathTracer::draw(
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_accuFramebuffer);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + writeIndex );
 
-    glBlitFramebuffer(0, 0, m_abstraction.viewport().x, m_abstraction.viewport().y, 0, 0, m_abstraction.viewport().x, m_abstraction.viewport().y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    //if (target != nullptr)
+    //    target->bind();
+    glBlitFramebuffer(0, 0, m_camera.viewport().x, m_camera.viewport().y, 0, 0, m_camera.viewport().x, m_camera.viewport().y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    //if (target != nullptr)
+    //    target->release();
+
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     
-    program.release();
+    m_program->release();
 }
 
 void PathTracer::onInvalidatedView()

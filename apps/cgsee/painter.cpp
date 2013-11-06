@@ -1,5 +1,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <QDebug>
+#include <QWidget>
 
 #include "painter.h"
 
@@ -7,7 +8,8 @@
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
-#include <core/pathtracer.h>
+#include <core/parallelCamera.h>
+#include <core/convergentCamera.h>
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
@@ -15,19 +17,23 @@
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
-#include <core/objloader.h>
-#include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
-#include "core/navigation/arcballnavigation.h"
-#include "core/navigation/flightnavigation.h"
-#include "core/rendering/ssaoeffect.h"
-#include "core/rendering/blureffect.h"
-#include "core/rendering/shadowmapping.h"
-#include "core/rendering/normalzpass.h"
-#include "core/rendering/coloridpass.h"
-#include "core/rendering/boundingboxpass.h"
-#include "core/rendering/lightsource.h"
+#include <core/rendering/ssaoeffect.h>
+#include <core/rendering/blureffect.h>
+#include <core/rendering/shadowmapping.h>
+#include <core/rendering/normalzpass.h>
+#include <core/rendering/coloridpass.h>
+#include <core/rendering/boundingboxpass.h>
+#include <core/rendering/lightsource.h>
+
+#include <core/property/advancedlistproperty.h>
+#include <core/property/valueproperty.h>
+#include <core/property/limitedproperty.h>
+#include <core/property/propertylist.h>
+#include <core/property/announcer.h>
+#include <gui/propertywidgetbuilder.h>
+
 
 
 //for phong, flat and gouraud
@@ -57,7 +63,6 @@ Painter::Painter(Camera * camera)
 ,   m_colorId(nullptr)
 ,   m_boundingBox(nullptr)
 ,   m_useProgram(nullptr)
-,   m_lastUsedProgram(nullptr)
 ,   m_fboColor(nullptr)
 ,   m_fboTemp(nullptr)
 ,   m_fboActiveBuffer(nullptr)
@@ -93,6 +98,35 @@ Painter::~Painter()
     delete m_flush;
 }
 
+void Painter::setConvergentCameraFocus(AbstractProperty & p)
+{
+    if(dynamic_cast<ConvergentCamera*>(m_camera))
+    {
+        qDebug("set ConvergentCameraFocus");
+        //((ConvergentCamera*)m_camera)->setFocusDistance(p.to<LimitedProperty<float>>()->value());
+        ConvergentCamera * convergent = dynamic_cast<ConvergentCamera*>(m_camera->activeImplementation());
+        if (convergent == nullptr) {
+            qDebug() << "Trying to configure ConvergentCamera but " << m_camera->selectedImplementation() << " is active.";
+            exit(2);
+        }
+        convergent->setFocusDistance(p.to<LimitedProperty<float>>()->value());
+        //resize(m_camera->viewport().x,m_camera->viewport().y);
+    }
+    
+}
+
+void Painter::setStereoCameraSeparation(AbstractProperty & p)
+{
+    
+    if(dynamic_cast<AbstractStereoCamera*>(m_camera))
+    {
+        qDebug("set StereoCameraSeparation");
+       ((AbstractStereoCamera*)m_camera)->setCameraSeparation(p.to<LimitedProperty<float>>()->value());
+       //resize(m_camera->viewport().x,m_camera->viewport().y);
+    }
+  
+}
+
 const bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
@@ -100,6 +134,14 @@ const bool Painter::initialize()
     if(m_scene) {
         m_camera->append(m_scene);
     }
+
+    m_camera->setPainter(this);
+
+    LimitedProperty<float> * cameraSeparationLevel = new LimitedProperty<float>("cameraSeparation", "Camera-Separation:", 0.5f, 0.0f, 12.3f);
+    LimitedProperty<float> * focusdistanceLevel = new LimitedProperty<float>("focusdistance", "Focus-Distance:", 0.5f, 0.0f, 12.3f);
+    
+    m_propertylist->add(cameraSeparationLevel);
+    cameraSeparationLevel->subscribe(LimitedProperty<float>::kValueChanged, this, &Painter::setStereoCameraSeparation);
 
     m_quad = new ScreenQuad();
 
@@ -165,7 +207,7 @@ const bool Painter::initialize()
     m_gooch->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/gooch.vert"));
 
     //set UNIFORMS for selected shader
-    m_useProgram = m_flat;
+    m_useProgram = m_phong;
     setUniforms();
 
     // Post Processing Shader
@@ -197,11 +239,19 @@ const bool Painter::initialize()
 
     m_fboActiveBuffer = m_fboColor;
 
-    m_pathTracing = new Program();
-    m_pathTracing->attach(
-        new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/pathTracing.frag"));
-    m_pathTracing->attach(
-        new FileAssociatedShader(GL_VERTEX_SHADER, "data/pathTracing.vert"));
+    PropertyWidgetBuilder builder;
+    builder.buildWidget(m_propertylist->list());
+
+    builder.retainWidget()->hide();
+
+    m_propertylist->add(focusdistanceLevel);
+    focusdistanceLevel->subscribe(LimitedProperty<float>::kValueChanged, this, &Painter::setConvergentCameraFocus);
+
+    PropertyWidgetBuilder builder2;
+    builder2.buildWidget(m_propertylist->list());
+    builder2.retainWidget()->hide();
+    //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
+
 
     return true;
 }
@@ -256,17 +306,17 @@ void Painter::setUniforms()
 void Painter::paint()
 {
     AbstractPainter::paint();
+    /*
+    It depends on the current camera configuration how we need to draw the scene.
+    CameraImplementation: needs to configure the cam position and can start rendering multiple times.
+    RenderTechniques: decide how to render the objects ( and whether using postprocessing )
+    */
+    m_camera->drawScene(*m_useProgram);
+}
 
+void Painter::drawWithPostprocessing(FrameBufferObject * target)
+{
     t_samplerByName sampler;
-
-    // camera.m_invalidated is evaluated after the call to transform(), this should be fixed!
-    // update() is called for each paint as a hot fix.
-    m_camera->update();
-
-    if (m_camera->selectedImplementation() == "PathTracer"){
-        m_camera->draw(*m_useProgram, glm::mat4());
-        return;
-    }
 
     if(m_useColor)
         drawScene(m_camera, m_useProgram, m_fboColor);
@@ -289,7 +339,8 @@ void Painter::paint()
     }
 
     bindSampler(sampler, *m_flush);
-    m_quad->draw(*m_flush, nullptr);
+    // render scene to texture if needed (currently for oculus rift camera)
+    m_quad->draw(*m_flush, target);
     releaseSampler(sampler);
 }
 
@@ -301,7 +352,6 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
     traverser.traverse(*camera, drawVisitor);
     fbo->release();
 }
-
 
 void Painter::resize(const int width, const int height)
 {
@@ -317,21 +367,19 @@ void Painter::resize(const int width, const int height)
     postShaderRelinked();
 }
 
-void Painter::selectCamera(QString cameraName)
+void Painter::selectCamera(const QString cameraName)
 {
     if (m_camera->selectedImplementation() == cameraName)
         return;
 
-    if (cameraName == "PathTracer") {
-        assert(m_useProgram != m_pathTracing);
-        m_lastUsedProgram = m_useProgram;
-        m_useProgram = m_pathTracing;
-    }
-    else {
-        m_useProgram = m_lastUsedProgram;
-    }
-
     m_camera->selectImplementation(cameraName);
+}
+
+void Painter::selectRendering(const QString rendering)
+{
+    if (m_camera->selectedRendering() == rendering)
+        return;
+    m_camera->selectRenderingByName(rendering);
 }
 
 void Painter::setShading(char shader)
@@ -349,7 +397,6 @@ void Painter::setShading(char shader)
     }
 
     setUniforms();
-    //repaint missing
 }
 
 void Painter::setFrameBuffer(int frameBuffer)

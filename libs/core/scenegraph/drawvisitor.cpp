@@ -3,7 +3,7 @@
 #include "drawvisitor.h"
 
 
-DrawVisitor::DrawVisitor(Program * p, glm::mat4 t) 
+DrawVisitor::DrawVisitor(const Program * p, glm::mat4 t) 
 : m_program(p)
 , m_transform(t)
 {}

@@ -1,13 +1,19 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
+#include <QDebug>
+
 #include "camera.h"
 
 #include "cameraimplementation.h"
 
+#include "../../apps/cgsee/painter.h"
+
+#include "rendering/rasterizer.h"
+#include "rendering/pathtracer.h"
+
 #include "program.h"
 #include "gpuquery.h"
-#include "framebufferobject.h"
 #include "core/viewfrustum.h"
 
 static const QString VIEWPORT_UNIFORM   ("viewport");
@@ -29,43 +35,135 @@ Camera::Camera(const QString & name)
 // add a new camera of each implemented type to our list
 ,   m_implementations(CameraImplementation::newImplementations(*this))
 ,   m_activeCamera(nullptr)
+,   m_rasterizer(new Rasterizer(*this))
+,   m_pathTracer(new PathTracer(*this))
+,   m_activeRenderTechnique(nullptr)
 {
     m_rf = RF_Absolute;
 //     m_rf = RF_Relative;
+    selectImplementation("MonoCamera");
+    selectRendering(Rendering::Rasterization);
 }
 
 Camera::~Camera()
 {
     qDeleteAll(m_implementations);
+    delete m_rasterizer;
+    delete m_pathTracer;
+    delete m_viewFrustum;
 }
 
-void Camera::selectImplementation(QString name)
+void Camera::selectImplementation(const QString name)
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    CameraImplementation * oldCam = m_activeCamera;
+    m_activeCamera = nullptr;
+
     for (CameraImplementation* impl: m_implementations) {
         if (impl->implementationName() == name) {
             m_activeCamera = impl;
-            // update selected camera
-            m_activeCamera->onInvalidatedView();
-            m_activeCamera->onInvalidatedViewport(m_viewport.x, m_viewport.y);
-            m_activeCamera->onInvalidatedChildren();
-            return;
+            break;
         }
+    }
+
+    // path tracing only works with standard camera -> force rasterization when using 3D
+    if (m_activeRenderTechnique != m_rasterizer) {
+        selectRendering(Rendering::Rasterization);
+        qDebug("Forced to use rasterization as path tracing does not work with stereo cameras. #125 ...");
+    }
+
+    // update selected camera
+    m_activeCamera->onInvalidatedView();
+    m_activeCamera->onInvalidatedViewport(m_viewport.x, m_viewport.y);
+    m_activeCamera->onInvalidatedChildren();
+
+    if (m_activeCamera == nullptr) {
+        qDebug()<<"Selected camera"<<name<<"which is not implemented.";
+        m_activeCamera = oldCam;
     }
 }
 
-QString Camera::selectedImplementation()
+void Camera::selectRendering(const Rendering rendering)
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    switch (rendering) {
+    case Rendering::Rasterization: 
+        m_activeRenderTechnique = m_rasterizer;
+        break;
+    case Rendering::PathTracing: 
+        // Path tracer only works with std camera -> force to select this 
+        if (m_activeCamera->implementationName() != "MonoCamera") {
+            selectImplementation("MonoCamera");
+            qDebug("Forced to use standard mono camera as path tracing does not work with stereo cameras. #125 ...");
+        }
+        m_activeRenderTechnique = m_pathTracer;
+        break;
+    case Rendering::invalidRendering:
+        qDebug("Invalid rendering type selected.");
+    }
+    m_activeRenderTechnique->onInvalidatedView();
+    m_activeRenderTechnique->onInvalidatedViewport(m_viewport.x, m_viewport.y);
+    m_activeRenderTechnique->onInvalidatedChildren();
+}
+
+QString Camera::renderingAsString(const Rendering rendering)
+{
+    if (rendering==Rendering::Rasterization)
+        return QString("Rasterization");
+    if (rendering==Rendering::PathTracing)
+        return QString("PathTracing");
+    return QString();
+}
+
+Camera::Rendering Camera::renderingFromString(const QString rendering)
+{
+    if (rendering == "Rasterization")
+        return Rendering::Rasterization;
+    if (rendering == "PathTracing")
+        return Rendering::PathTracing;
+    return Rendering::invalidRendering;
+}
+
+QString Camera::selectedRendering() const
+{
+    if (m_activeRenderTechnique == m_rasterizer)
+        return renderingAsString(Rendering::Rasterization);
+    if (m_activeRenderTechnique == m_pathTracer)
+        return renderingAsString(Rendering::PathTracing);
+    return QString();
+}
+
+void Camera::selectRenderingByName(const QString rendering)
+{
+    selectRendering(renderingFromString(rendering));
+}
+
+void Camera::setPainter(Painter * painter)
+{
+    m_painter = painter;
+}
+
+void Camera::drawWithPostprocessing(FrameBufferObject * target)
+{
+    m_painter->drawWithPostprocessing(target);
+}
+
+QString Camera::selectedImplementation() const
 {
     return m_activeCamera->implementationName();
 }
 
-int Camera::preferredRefreshTimeMSec() const
+CameraImplementation * Camera::activeImplementation() const
 {
-    if (m_activeCamera == nullptr)
-        return 0;
-    return m_activeCamera->preferredRefreshTimeMSec();
+    return m_activeCamera;
 }
 
-void Camera::draw( const Program & program, const glm::mat4 & transform )
+int Camera::preferredRefreshTimeMSec() const
+{
+    return m_activeRenderTechnique->preferredRefreshTimeMSec();
+}
+
+void Camera::drawScene( const Program & program)
 {
     if (m_activeCamera == nullptr)
         return;
@@ -78,17 +176,21 @@ void Camera::draw( const Program & program, const glm::mat4 & transform )
     glViewport(0, 0, m_viewport.x, m_viewport.y);
     glError();
 
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    program.setUniform(VIEW_UNIFORM, m_view);
-    program.setUniform(PROJECTION_UNIFORM, m_projection);
-    program.setUniform(TRANSFORM_UNIFORM, m_transform);
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+    setUniforms(program);
 
-    program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    program.setUniform(ZFAR_UNIFORM, m_zFar);
-    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
+    m_activeCamera->drawScene(program);
+}
 
-    m_activeCamera->draw(program, transform);
+void Camera::draw( const Program & program, const glm::mat4 & transform)
+{
+    if (m_activeRenderTechnique == m_rasterizer)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    setUniforms(program);
+}
+
+void Camera::renderScene(const Program & program, FrameBufferObject * target)
+{
+    m_activeRenderTechnique->renderScene(program, target);
 }
 
 void Camera::invalidate()
@@ -100,6 +202,8 @@ void Camera::invalidate()
 
     if (m_activeCamera)
         m_activeCamera->onInvalidatedView();
+
+    m_activeRenderTechnique->onInvalidatedView();
 }
 
 void Camera::invalidateChildren()
@@ -108,6 +212,8 @@ void Camera::invalidateChildren()
 
     if (m_activeCamera)
         m_activeCamera->onInvalidatedChildren();
+
+    m_activeRenderTechnique->onInvalidatedChildren();
 }
 
 const float Camera::aspect() const
@@ -124,6 +230,35 @@ void Camera::update()
     m_invalidated = false;
 
     m_viewFrustum->update();
+}
+
+void Camera::setUniforms(const Program & program) const
+{
+    if (m_activeRenderTechnique == m_pathTracer)
+    {
+        const Program * p(m_pathTracer->program());
+        if (p == nullptr)
+            return;
+        p->setUniform(VIEWPORT_UNIFORM, m_viewport);
+        p->setUniform(VIEW_UNIFORM, m_view);
+        p->setUniform(PROJECTION_UNIFORM, m_projection);
+        p->setUniform(TRANSFORM_UNIFORM, m_transform);
+        p->setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+        p->setUniform(CAMERAPOSITION_UNIFORM, getEye());
+        p->setUniform(ZNEAR_UNIFORM, m_zNear);
+        p->setUniform(ZFAR_UNIFORM, m_zFar);
+    }
+    else
+    {
+        program.setUniform(VIEWPORT_UNIFORM, m_viewport);
+        program.setUniform(VIEW_UNIFORM, m_view);
+        program.setUniform(PROJECTION_UNIFORM, m_projection);
+        program.setUniform(TRANSFORM_UNIFORM, m_transform);
+        program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+        program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
+        program.setUniform(ZNEAR_UNIFORM, m_zNear);
+        program.setUniform(ZFAR_UNIFORM, m_zFar);
+    }
 }
 
 const glm::ivec2 & Camera::viewport() const
@@ -144,6 +279,8 @@ void Camera::setViewport(
     invalidate();
     if (m_activeCamera)
         m_activeCamera->onInvalidatedViewport(width, height);
+
+    m_activeRenderTechnique->onInvalidatedViewport(width, height);
 }
 
 const glm::mat4 & Camera::projection()
@@ -216,7 +353,8 @@ Camera * Camera::asCamera()
     return this;
 }
 
-glm::vec3 Camera::getEye(){
+glm::vec3 Camera::getEye() const
+{
     //Get Camera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
 
     glm::mat4 modelViewT = glm::transpose(m_view);
@@ -242,7 +380,8 @@ glm::vec3 Camera::getEye(){
     return eye;
 }
 
-glm::vec3 Camera::getCenter(){
+glm::vec3 Camera::getCenter() const
+{
     glm::vec3 lookat = glm::row(m_view, 2).xyz;
     glm::vec3 eye = getEye();
 
@@ -250,6 +389,7 @@ glm::vec3 Camera::getCenter(){
 
 }
 
-glm::vec3 Camera::getUp(){
+glm::vec3 Camera::getUp() const
+{
     return glm::row(m_view, 1).xyz;
 }

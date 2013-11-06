@@ -45,6 +45,7 @@ public:
 
     void rescaleScene(Group * scene);
     void sceneChanged(Group * scene);
+    void setCamera(Camera * camera);
 
     glm::mat4 defaultView();
     glm::mat4 frontview();

@@ -79,7 +79,8 @@ Group * AssimpLoader::importFromFile(const QString & filePath) const
 {
     qDebug("Reading geometry with Assimp from \"%s\".", qPrintable(filePath));
 
-    const aiScene * scene = m_importer->ReadFile(filePath.toStdString(),
+    const std::string filePath_asStd = (filePath.toStdString());
+    const aiScene * scene = m_importer->ReadFile(filePath_asStd,
                                               aiProcess_Triangulate);
 
     if (!scene) {

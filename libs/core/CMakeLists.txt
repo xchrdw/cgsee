@@ -7,18 +7,15 @@ configure_file(meta.template meta.h)
 set(SOURCES
 
     declspec.h
-
+    
     aabb.cpp
     aabb.h
     abstractapplication.cpp
     abstractapplication.h
-    abstractglparent.h
     abstractmodelloader.cpp
     abstractmodelloader.h
-    abstractpainter.cpp
-    abstractpainter.h
-    abstractscenepainter.cpp
-    abstractscenepainter.h
+    abstractstereocamera.h
+    abstractstereocamera.cpp
     abstracttimer.h
     assimploader.cpp
     assimploader.h
@@ -30,6 +27,8 @@ set(SOURCES
     camera.h
     cameraimplementation.cpp
     cameraimplementation.h
+    convergentCamera.h
+    convergentCamera.cpp
     chronotimer.cpp
     chronotimer.h
     common.h
@@ -50,16 +49,18 @@ set(SOURCES
     mathmacros.h
     messagehandler.cpp
     messagehandler.h
+    monocamera.h
+    monocamera.cpp
     objloader.cpp
     objloader.h
-    pathtracer.cpp
-    pathtracer.h
+    offAxisCamera.h
+    offAxisCamera.cpp
+    parallelCamera.h
+    parallelCamera.cpp
     plane.cpp
     plane.h
     program.cpp
     program.h
-    rasterizingcamera.cpp
-    rasterizingcamera.h
     screenquad.cpp
     screenquad.h
     shader.cpp
@@ -96,7 +97,53 @@ set(SOURCES
     navigation/flightnavigation.h
     navigation/fpsnavigation.cpp
     navigation/fpsnavigation.h
-	
+    
+    painter/abstractglparent.h
+    painter/abstractpainter.h
+    painter/abstractpainter.cpp
+    painter/abstractscenepainter.h
+    painter/abstractscenepainter.cpp
+    
+    property/abstractproperty.h
+    property/abstractproperty.cpp
+    property/valueproperty.h
+    property/limitedproperty.h
+    property/propertylist.h
+    property/propertylist.cpp
+    property/listproperty.h
+    property/listproperty.cpp
+    property/advancedlistproperty.h
+    property/advancedlistproperty.cpp
+    property/abstractpropertyvisitor.h
+    property/abstractpropertyvisitor.cpp
+    property/announcer.h
+    property/announcer.cpp
+
+    rendering/rendertechnique.h
+    rendering/rendertechnique.cpp
+    rendering/rasterizer.cpp
+    rendering/rasterizer.h
+    rendering/pathtracer.cpp
+    rendering/pathtracer.h
+    rendering/blureffect.cpp
+    rendering/blureffect.h
+    rendering/boundingboxpass.cpp
+    rendering/boundingboxpass.h
+    rendering/coloridpass.cpp
+    rendering/coloridpass.h   
+    rendering/defaultpass.cpp
+    rendering/defaultpass.h   
+    rendering/lightsource.cpp
+    rendering/lightsource.h
+    rendering/normalzpass.cpp
+    rendering/normalzpass.h   
+    rendering/renderingpass.cpp
+    rendering/renderingpass.h
+    rendering/shadowmapping.cpp
+    rendering/shadowmapping.h
+    rendering/ssaoeffect.cpp
+    rendering/ssaoeffect.h
+
     scenegraph/absolutetransformator.cpp
     scenegraph/absolutetransformator.h
     scenegraph/cullingvisitor.cpp
@@ -123,25 +170,6 @@ set(SOURCES
     scenegraph/scenevisitorinterface.h
     scenegraph/triangleobject.cpp
     scenegraph/triangleobject.h
-	
-    rendering/blureffect.cpp
-    rendering/blureffect.h
-    rendering/boundingboxpass.cpp
-    rendering/boundingboxpass.h
-    rendering/coloridpass.cpp
-    rendering/coloridpass.h   
-    rendering/defaultpass.cpp
-    rendering/defaultpass.h   
-    rendering/lightsource.cpp
-    rendering/lightsource.h
-    rendering/normalzpass.cpp
-    rendering/normalzpass.h   
-    rendering/renderingpass.cpp
-    rendering/renderingpass.h
-    rendering/shadowmapping.cpp
-    rendering/shadowmapping.h
-    rendering/ssaoeffect.cpp
-    rendering/ssaoeffect.h
 )
 
 source_group_by_path(${CMAKE_CURRENT_SOURCE_DIR} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.ui$|\\\\.inl$" 

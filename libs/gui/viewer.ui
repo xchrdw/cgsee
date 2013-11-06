@@ -153,27 +153,45 @@
     <addaction name="ssaoAction"/>
     <addaction name="ssaoBlurAction"/>
    </widget>
+   <widget class="QMenu" name="cameraMenu">
+    <property name="title">
+     <string>&amp;Camera</string>
+    </property>
+    <widget class="QMenu" name="selectRedCyanStereoCameraTypeMenu">
+     <property name="title">
+      <string>Red Cyan Stereo Camera</string>
+     </property>
+     <addaction name="parallelRedCyanStereoCameraAction"/>
+     <addaction name="convergentRedCyanStereoCameraAction"/>
+    </widget>
+    <addaction name="standardCameraAction"/>
+    <addaction name="separator"/>
+    <addaction name="selectRedCyanStereoCameraTypeMenu"/>
+    <addaction name="oculusRiftStereoCameraAction"/>
+   </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>View</string>
     </property>
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
+    <addaction name="toggleFullscreen"/>
    </widget>
-   <widget class="QMenu" name="menuCamera">
+   <widget class="QMenu" name="renderingMenu">
     <property name="title">
-     <string>Camera</string>
+     <string>&amp;Rendering</string>
     </property>
-    <addaction name="rasterizingCameraAction"/>
-    <addaction name="pathtracerAction"/>
+    <addaction name="renderingRasterizerAction"/>
+    <addaction name="renderingPathtracerAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
    <addaction name="menuView"/>
    <addaction name="navigationMenu"/>
    <addaction name="canvasMenu"/>
-   <addaction name="menuCamera"/>
    <addaction name="shadingMenu"/>
+   <addaction name="cameraMenu"/>
+   <addaction name="renderingMenu"/>
    <addaction name="helpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -489,6 +507,14 @@
   <action name="toggleExplorer">
    <property name="text">
     <string>Show/Hide Explorer</string>
+   </property>
+  </action>
+  <action name="toggleFullscreen">
+   <property name="text">
+    <string>Fullscreen</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
    </property>
   </action>
   <action name="actionFrontView">
@@ -808,16 +834,49 @@
     <string>Shadow blur</string>
    </property>
   </action>
-  <action name="rasterizingCameraAction">
+  <action name="renderingRasterizerAction">
    <property name="text">
-    <string>Rasterizing Camera</string>
+    <string>Rasterization</string>
    </property>
   </action>
-  <action name="pathtracerAction">
+  <action name="renderingPathtracerAction">
    <property name="text">
-    <string>Pathtracer</string>
+    <string>Pathtracing</string>
    </property>
   </action>
+  <action name="standardCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Standard Camera</string>
+   </property>
+  </action>
+  <action name="parallelRedCyanStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>parallel Cameras</string>
+   </property>
+  </action>
+  <action name="convergentRedCyanStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>convergent Cameras</string>
+   </property>
+  </action>
+  <action name="oculusRiftStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Oculus Rift Stereo-Camera</string>
+   </property>
+  </action>
+  <addaction name="toggleFullscreen"/>
  </widget>
  <resources/>
  <connections/>

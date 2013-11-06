@@ -1,5 +1,5 @@
 
-#include "abstractpainter.h"
+#include "painter/abstractpainter.h"
 #include "datacore/datablock.h"
 #include "scenegraph/group.h"
 #include "abstractmodelloader.h"

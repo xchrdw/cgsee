@@ -117,12 +117,19 @@ public slots:
     void on_actionLoad_3_triggered();
     void on_actionLoad_4_triggered();
 
+    void on_loadFile(const QString & path);
+
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
 
-    void on_rasterizingCameraAction_triggered();
-    void on_pathtracerAction_triggered();
+    void on_standardCameraAction_triggered();
+    void on_parallelRedCyanStereoCameraAction_triggered();
+    void on_convergentRedCyanStereoCameraAction_triggered();
+    void on_oculusRiftStereoCameraAction_triggered();
+
+    void on_renderingRasterizerAction_triggered();
+    void on_renderingPathtracerAction_triggered();
 
     void on_reloadAllShadersAction_triggered();
     void on_phongShadingAction_triggered();
@@ -148,11 +155,10 @@ protected slots:
 
     void on_openFileDialogAction_triggered();
     void on_quitAction_triggered();
-
-    void on_loadFile(const QString & path);
     
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
+    void on_toggleFullscreen_triggered();
 
     void on_mouseMoveEventTriggered(int triggered);
     void on_mouseReleaseEventSignal(QMouseEvent * event);
@@ -185,8 +191,12 @@ protected:
 
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
-
+    bool m_visibleDockNavigator;
+    bool m_visibleDockExplorer;
+    bool m_isFullscreen;
+    
     void updateCameraSelection(QString cameraName) const;
+    void updateRenderingSelection(QString rendering) const;
 
     Canvas * m_qtCanvas;
     Camera * m_camera;
