@@ -117,6 +117,8 @@ public slots:
     void on_actionLoad_3_triggered();
     void on_actionLoad_4_triggered();
 
+    void on_loadFile(const QString & path);
+
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
@@ -153,8 +155,6 @@ protected slots:
 
     void on_openFileDialogAction_triggered();
     void on_quitAction_triggered();
-
-    void on_loadFile(const QString & path);
     
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();

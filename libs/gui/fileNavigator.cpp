@@ -48,7 +48,6 @@ void FileNavigator::emitClickedDirectory(const QModelIndex & index)
 	emit clickedDirectory(path);
 }
 
-#include <iostream>
 void FileNavigator::on_activatedDir(const QString & path)
 {
     m_model->setRootPath(path);

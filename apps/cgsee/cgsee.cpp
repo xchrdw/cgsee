@@ -43,10 +43,7 @@ CGSee::CGSee(int & argc, char ** argv)
 
     m_viewer->show();
 
-    AssimpLoader loader;
-    m_painter->assignScene(loader.importFromFile("data/shadow_test.obj"));
-    navigation->sceneChanged(&m_painter->getScene());
-
+    m_viewer->on_loadFile("data/shadow_test.obj");
 }
 
 CGSee::~CGSee()
