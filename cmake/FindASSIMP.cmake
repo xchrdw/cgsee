@@ -3,7 +3,7 @@
 # ASSIMP_INCLUDE_PATH
 # ASSIMP_LIBRARY
 
-IF(X64 AND NOT APPLE)
+IF(X64 AND WIN32)
 
     FIND_PATH(ASSIMP_INCLUDE_PATH assimp/Importer.hpp
         ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0/include
