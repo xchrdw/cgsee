@@ -1039,6 +1039,6 @@ void Viewer::selectionBBoxChanged()
         m_selectionBBox->extend(node->boundingBox());
     }
 
-    if (Painter * painter = dynamic_cast<Painter*>(this->painter()))
-        painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
+    Painter * painter = static_cast<Painter*>(this->painter());
+    painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
 }
