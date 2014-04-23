@@ -47,10 +47,10 @@ Node *AbsoluteTransformator::toAbsolute(Node *relativeRoot, glm::mat4 transform)
             auto vertices = relativeGeometry->copyVertices();
             auto absoluteGeometry = new TriangleObject();
             p_TriangleList triangles = absoluteGeometry->triangles();
-            
+
             for (auto index : relativeGeometry->indices()) {
                 glm::vec4 homogenous = newTransform * glm::vec4(vertices.at(index), 1.0f);
-                triangles->push_back(homogenous.xyz * (1 / homogenous.w));
+                triangles->push_back(homogenous.xyz() * (1 / homogenous.w));
             }
             absoluteRoot = absoluteGeometry;
         }

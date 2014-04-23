@@ -87,11 +87,11 @@ void Camera::selectRendering(const Rendering rendering)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     switch (rendering) {
-    case Rendering::Rasterization: 
+    case Rendering::Rasterization:
         m_activeRenderTechnique = m_rasterizer;
         break;
-    case Rendering::PathTracing: 
-        // Path tracer only works with std camera -> force to select this 
+    case Rendering::PathTracing:
+        // Path tracer only works with std camera -> force to select this
         if (m_activeCamera->implementationName() != "MonoCamera") {
             selectImplementation("MonoCamera");
             qDebug("Forced to use standard mono camera as path tracing does not work with stereo cameras. #125 ...");
@@ -382,7 +382,7 @@ glm::vec3 Camera::getEye() const
 
 glm::vec3 Camera::getCenter() const
 {
-    glm::vec3 lookat = glm::row(m_view, 2).xyz;
+    glm::vec3 lookat = glm::row(m_view, 2).xyz();
     glm::vec3 eye = getEye();
 
     return eye - lookat;
@@ -391,5 +391,5 @@ glm::vec3 Camera::getCenter() const
 
 glm::vec3 Camera::getUp() const
 {
-    return glm::row(m_view, 1).xyz;
+    return glm::row(m_view, 1).xyz();
 }

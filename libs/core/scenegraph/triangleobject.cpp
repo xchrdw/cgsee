@@ -23,7 +23,7 @@ const AxisAlignedBoundingBox TriangleObject::boundingBox() const
 
     if ( m_triangles->size() == 0 )
         return m_aabb = AxisAlignedBoundingBox();
-    
+
     for ( auto vertex : *m_triangles ) {
         m_aabb.extend( vertex );
     }
@@ -34,10 +34,10 @@ const AxisAlignedBoundingBox TriangleObject::boundingBox(glm::mat4 transform) co
 {
     AxisAlignedBoundingBox aabb = AxisAlignedBoundingBox();
     glm::mat4 newTransform;
-    
+
     if ( m_triangles->size() == 0 )
         return aabb;
-    
+
     if (m_rf == RF_Absolute) {
         newTransform = transform;
     } else {
@@ -46,7 +46,7 @@ const AxisAlignedBoundingBox TriangleObject::boundingBox(glm::mat4 transform) co
 
     for ( auto vertex : *m_triangles ) {
         glm::vec4 transformedVertex = newTransform * glm::vec4(vertex, 1.0f);
-        aabb.extend( transformedVertex.xyz * (1.0f / transformedVertex.w) );
+        aabb.extend( transformedVertex.xyz() * (1.0f / transformedVertex.w) );
     }
     return aabb;
 }
