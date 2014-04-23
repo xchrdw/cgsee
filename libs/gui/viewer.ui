@@ -96,6 +96,8 @@
      <addaction name="actionTopView"/>
      <addaction name="actionBottomView"/>
      <addaction name="actionTopRightView"/>
+     <addaction name="separator"/>
+     <addaction name="actionRandomView"/>
     </widget>
     <widget class="QMenu" name="menuSave_Load_View">
      <property name="title">
@@ -643,6 +645,14 @@
    </property>
    <property name="shortcut">
     <string>Alt+7</string>
+   </property>
+  </action>
+  <action name="actionRandomView">
+   <property name="text">
+    <string>Random</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+0</string>
    </property>
   </action>
   <action name="phongShadingAction">

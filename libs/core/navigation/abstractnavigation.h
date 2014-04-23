@@ -16,7 +16,7 @@ class QWidget;
 class Group;
 
 class CGSEE_API AbstractNavigation : QObject {
-    
+
 public:
 
     AbstractNavigation(Camera *camera);
@@ -55,7 +55,8 @@ public:
     glm::mat4 topview();
     glm::mat4 bottomview();
     glm::mat4 topRightView();
-    
+    glm::mat4 randomView();
+
     glm::mat4 sceneTransform();
 
     float getBBRadius();
@@ -71,12 +72,12 @@ protected:
 
     void updateCamera();
     virtual void onCameraChanged(); // override to get notified for camera changes
-    
+
 
 protected:
     int m_width;
     int m_height;
-    
+
     float m_BBRadius;
 
     float m_fovy;
