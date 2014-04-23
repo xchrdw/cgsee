@@ -820,6 +820,9 @@ void Viewer::on_actionBottomView_triggered() {
 void Viewer::on_actionTopRightView_triggered() {
     navigation()->loadView(navigation()->topRightView());
 }
+void Viewer::on_actionBottomLeftView_triggered() {
+    navigation()->loadView(navigation()->bottomLeftView());
+}
 void Viewer::on_actionRandomView_triggered() {
     navigation()->loadView(navigation()->randomView());
 }

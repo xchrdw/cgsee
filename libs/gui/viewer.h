@@ -107,6 +107,7 @@ public slots:
     void on_actionTopView_triggered();
     void on_actionBottomView_triggered();
     void on_actionTopRightView_triggered();
+    void on_actionBottomLeftView_triggered();
     void on_actionRandomView_triggered();
 
     void on_actionSave_1_triggered();

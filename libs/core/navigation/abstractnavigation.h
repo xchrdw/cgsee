@@ -55,6 +55,7 @@ public:
     glm::mat4 topview();
     glm::mat4 bottomview();
     glm::mat4 topRightView();
+    glm::mat4 bottomLeftView();
     glm::mat4 randomView();
 
     glm::mat4 sceneTransform();
