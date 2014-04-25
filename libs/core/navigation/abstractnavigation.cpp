@@ -220,7 +220,20 @@ glm::mat4 AbstractNavigation::bottomview()
 
 glm::mat4 AbstractNavigation::topRightView()
 {
-    return frontview() * glm::rotate(30.f, glm::vec3(1,0,0)) *  glm::rotate(45.f, glm::vec3(0,1,0));
+    return frontview() * glm::rotate(30.f, glm::vec3(1,0,0)) * glm::rotate(45.f, glm::vec3(0,1,0));
+}
+
+glm::mat4 AbstractNavigation::bottomLeftView()
+{
+    return frontview() * glm::rotate(-30.f, glm::vec3(1,0,0)) * glm::rotate(-45.f, glm::vec3(0,1,0));
+}
+
+glm::mat4 AbstractNavigation::randomView()
+{
+    float x = static_cast <float> (rand() % 180);
+    float y = static_cast <float> (rand() % 180);
+    float z = static_cast <float> (rand() % 180);
+    return frontview() * glm::rotate(x, glm::vec3(1,0,0)) * glm::rotate(y, glm::vec3(0,1,0)) * glm::rotate(z, glm::vec3(0,0,1));
 }
 
 glm::mat4 AbstractNavigation::sceneTransform()
