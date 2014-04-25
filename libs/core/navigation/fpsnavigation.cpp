@@ -23,7 +23,7 @@ FpsNavigation::FpsNavigation(Camera * camera)
 
 FpsNavigation::~FpsNavigation()
 {
-    
+
 }
 
 void FpsNavigation::keyPressEvent(QKeyEvent *event){
@@ -75,7 +75,7 @@ void FpsNavigation::mouseMoveEvent(QMouseEvent * event){
         if (m_lastMousePosition != glm::vec2(-1,-1)){
             float divX = event->x()-m_lastMousePosition.x;
             float divY = event->y()-m_lastMousePosition.y;
-            
+
             divX *= 0.3f;
             divY *= 0.3f;
             pitchYaw(-divY, divX);
@@ -92,7 +92,7 @@ void FpsNavigation::mousePressEvent(QMouseEvent * event){
 }
 
 void FpsNavigation::mouseReleaseEvent(QMouseEvent * event){
-    
+
 }
 
 
@@ -103,8 +103,8 @@ void FpsNavigation::pitchYaw(float pitchAngle, float yawAngle){
 
 void FpsNavigation::forward(float speed){
     glm::vec3 direction = (m_zView * speed);
-    m_center.xz += direction.xz;
-    m_eye.xz += direction.xz;
+    m_center.xz() += direction.xz();
+    m_eye.xz() += direction.xz();
     updateView();
 }
 
@@ -119,13 +119,13 @@ void FpsNavigation::onTimerEvent()
         forward(m_direction.y * speed * TIMER_MS);
         sideward(m_direction.x * speed * TIMER_MS);
     }
-    
+
 }
 
 void FpsNavigation::sideward(float speed){
     glm::vec3 direction = (m_xView * speed);
-    m_center.xz += direction.xz;
-    m_eye.xz += direction.xz;
+    m_center.xz() += direction.xz();
+    m_eye.xz() += direction.xz();
     updateView();
 }
 
