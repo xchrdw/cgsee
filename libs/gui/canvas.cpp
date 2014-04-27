@@ -221,6 +221,7 @@ void Canvas::setNavigation( AbstractNavigation * navigation )
 
 void Canvas::mousePressEvent( QMouseEvent * event )
 {
+    this->setFocus();
     m_navigation->mousePressEvent(event);
 }
 

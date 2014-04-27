@@ -715,6 +715,7 @@ void Viewer::keyReleaseEvent( QKeyEvent *event )
 }
 
 void Viewer::on_flightManipulatorAction_triggered() {
+    m_qtCanvas->setFocus();
     setNavigation(new FlightNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->flightManipulatorAction->setChecked(true);
