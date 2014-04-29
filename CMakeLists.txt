@@ -2,153 +2,154 @@
 cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
 
 
-# PROJECT CONFIG
+#
+# Project description
+#
 
-set(META_PROJECT_NAME "CGSee")
-
-set(META_VERSION_MAJOR "0")
-set(META_VERSION_MINOR "0")
-
-set(META_AUTHOR_ORGANIZATION "CGSee Group")
-set(META_AUTHOR_DOMAIN "https://github.com/cgcostume/cgsee/")
-
-
-option(OPTION_LIMIT_CONFIGS "Generate limited configs (Release; Debug)" ON)
-option(OPTION_LOCAL_INSTALL "Install to local directory instead of system" OFF)
+set(META_PROJECT_NAME        "cgsee")
+set(META_PROJECT_DESCRIPTION "Viewer for CG related data used for lectures and seminars.")
+set(META_VERSION_MAJOR       "0")
+set(META_VERSION_MINOR       "0")
+set(META_VERSION_PATCH       "0")
+set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
+set(META_AUTHOR_ORGANIZATION "hpicgs group")
+set(META_AUTHOR_DOMAIN       "https://github.com/hpicgs/cgsee/")
+set(META_AUTHOR_MAINTAINER   "daniel.limberger@hpi.uni-potsdam.de")
 
 
+#
+# Options
+#
+
+option(OPTION_LIMIT_CONFIGS    "Generate limited configs (Release; Debug)" ON)
+option(OPTION_PORTABLE_INSTALL "Install into a self-contained directory" OFF)
+option(OPTION_BUILD_STATIC     "Build static libraries" OFF)
+option(OPTION_BUILD_TESTS      "Build tests (if gmock and gtest are found)" ON)
+
+
+#
+# CMake configuration
+#
+
+# Include cmake modules from ./cmake
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+# Set output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# Set configuration types
 if(OPTION_LIMIT_CONFIGS)
     set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Limited Configs" FORCE)
 endif()
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: ${CMAKE_CONFIGURATION_TYPES}")
 
-set(PROJECT_NAME ${META_PROJECT_NAME})  
-project(${PROJECT_NAME} C CXX)
+# Project
+project(${META_PROJECT_NAME} C CXX)
 
-# check if x64 and provide this information
+# Generate folders for IDE targets (e.g., VisualStudio solutions)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(IDE_FOLDER "")  # Put projects in root folder by default
 
+# Include custom cmake functions
+include(cmake/Custom.cmake)
+include(cmake/GitRevision.cmake)
+
+
+#
+# Platform and architecture
+#
+
+# Architecture (32/64 bit)
 set(X64 OFF)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(X64 ON)
+    set(X64 ON)
 endif()
 
-# check for linux
-
-if(UNIX AND NOT APPLE)
-    set(LINUX 1)
-endif()
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-# root the bin and lib dirs to the project dir
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/install)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
-
-
-set(CMAKE_MODULE_PATH 
-    ${CMAKE_MODULE_PATH}
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-
-# RETRIEVE REPOSITORY VERSION AND GENERATE META HEADER
-
-# add a revision file containing the git-head tag for cpack and install
-
-include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-
-# generate a shorter, googlelike variation for rev
-
-string(SUBSTRING ${GIT_SHA1} 0 12 GIT_REV)
-file(WRITE ${CMAKE_BINARY_DIR}/revision ${GIT_REV})
-install(FILES ${CMAKE_BINARY_DIR}/revision DESTINATION .)
-
-
-# THIRD PARTIES
-
-find_package(OpenGL REQUIRED)
-find_package(GLM REQUIRED)
-find_package(GLEW REQUIRED)
-find_package(ASSIMP REQUIRED)
-
-set(CMAKE_AUTOMOC ON)
-set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
-
-# Probably works in the next cmake release -> http://www.cmake.org/Bug/view.php?id=13788
-# What we do not want is automocs beside the project -> http://www.cmake.org/Bug/view.php?id=13688
-
-set_property(GLOBAL PROPERTY AUTOMOC_FOLDER CMakeAutomocTargets)
-
-# try to find qt5
-# good resource: http://www.kdab.com/using-cmake-with-qt-5/
-
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Widgets REQUIRED) # this is important in order to get uic workin
-
-
-# SOURCES AND INCLUDES
-
-include_directories(
-    ${CMAKE_BINARY_DIR} # for Meta.h
-    ${OPENGL_INCLUDE_DIR}
-    ${GLM_INCLUDE_PATH}
-    ${GLEW_INCLUDE_PATH}
-    ${ASSIMP_INCLUDE_PATH}
-    ${CMAKE_SOURCE_DIR}/libs)
-
-set(CGSEE_LIB_FOLDER "CGSee Libs")
-set(CGSEE_APP_FOLDER "CGsee Apps")
-
-set(CGSEE_HEADER_GROUP "Header Files (API)")
-set(CGSEE_SOURCE_GROUP "Source Files")
-set(CGSEE_UIWRAP_GROUP "Ui-Wrap Files")
-
-
-# setup platform specifics (compile flags, etc., ...)
-
+# Setup platform specifics (compile flags, etc., ...)
 if(MSVC)
-    message(STATUS "Configuring for platform Windows/MSVC.")
-    include(${CMAKE_SOURCE_DIR}/cmake/PlatformWindowsMSVC.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PlatformWindowsMSVC.cmake)
 elseif(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
-    message(STATUS "Configuring for platform Windows/GCC.")
-    include(${CMAKE_SOURCE_DIR}/cmake/PlatformWindowsGCC.cmake)
-elseif(LINUX AND CMAKE_COMPILER_IS_GNUCXX)
-    message(STATUS "Configuring for platform Linux/GCC.")
-    include(${CMAKE_SOURCE_DIR}/cmake/PlatformLinuxGCC.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PlatformWindowsGCC.cmake)
 elseif(APPLE)
-    message(STATUS "Configuring for platform MacOS.")
-    include(${CMAKE_SOURCE_DIR}/cmake/PlatformMacOS.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PlatformMacOS.cmake)
+elseif(UNIX)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/PlatformLinuxGCC.cmake)
 else()
-    # TODO configure for apple        
     message(WARNING "Unsupported platform/compiler combination")
 endif()
 
+# Installation paths
+set(project ${META_PROJECT_NAME})
+if(WIN32)
+    set(INSTALL_ROOT          ".")                      # C:\Programme\<project>
+    set(INSTALL_DATA          "bin")                    # C:\Programme\<project>
+    set(INSTALL_BIN           "bin")                    # C:\Programme\<project>
+    set(INSTALL_SHARED        ".")                      # C:\Programme\<project>
+    set(INSTALL_LIB           "lib")                    # C:\Programme\<project>\lib
+    set(INSTALL_INCLUDE       "include")                # C:\Programme\<project>\include
+    set(INSTALL_DOC           "doc")                    # C:\Programme\<project>\doc
+    set(INSTALL_SHORTCUTS     ".")                      # Not available under Windows
+    set(INSTALL_ICONS         ".")                      # Not available under Windows
+    set(INSTALL_INIT          ".")                      # Not available under Windows
+else()
+    set(INSTALL_ROOT          "share/${project}")       # /usr/[local]/share/<project>
+    set(INSTALL_DATA          "share/${project}")       # /usr/[local]/share/<project>
+    set(INSTALL_BIN           "bin")                    # /usr/[local]/bin
+    set(INSTALL_SHARED        "lib")                    # /usr/[local]/lib
+    set(INSTALL_LIB           "lib")                    # /usr/[local]/lib
+    set(INSTALL_INCLUDE       "include")                # /usr/[local]/include
+    set(INSTALL_DOC           "share/doc/${project}")   # /usr/[local]/share/doc/<project>
+    set(INSTALL_SHORTCUTS     "share/applications")     # /usr/[local]/share/applications
+    set(INSTALL_ICONS         "share/pixmaps")          # /usr/[local]/share/pixmaps
+    set(INSTALL_INIT          "/etc/init")              # /etc/init (upstart init scripts)
 
-include(cmake/Custom.cmake)
+    # Adjust target paths for portable installs
+    if(OPTION_PORTABLE_INSTALL)
+        # Put binaries in root directory and keep data directory name
+        set(INSTALL_ROOT                      ".")           # /<INSTALL_PREFIX>
+        set(INSTALL_DATA                      ".")           # /<INSTALL_PREFIX>
+        set(INSTALL_BIN                       ".")           # /<INSTALL_PREFIX>
 
-add_subdirectory("libs")
-add_subdirectory("apps")
+        # We have to change the RPATH of binaries to achieve a usable local install.
+        # [TODO] For binaries, "$ORIGIN/lib" is right, so that libraries are found in ./lib.
+        #        However, I have not yet tested what happens when libraries use other libraries.
+        #        In that case, they might need the rpath $ORIGIN instead ...
+        set(CMAKE_SKIP_BUILD_RPATH            FALSE)         # Use automatic rpath for build
+        set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE)         # Use specific rpath for INSTALL
+        set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)         # NO automatic rpath for INSTALL
+        set(CMAKE_INSTALL_RPATH               "$ORIGIN/lib") # Libraries are relative to binary
+    endif()
+endif()
 
 
-# CPACK DEPLOY
+#
+# Global deployment
+#
 
-set(CPACK_GENERATOR "ZIP")
-set(CPACK_SOURCE_GENERATOR "ZIP")
+# Project meta files
+#install(FILES template-config.cmake DESTINATION ${INSTALL_ROOT})
+install(FILES AUTHORS               DESTINATION ${INSTALL_ROOT})
+install(FILES LICENSE               DESTINATION ${INSTALL_ROOT})
 
-set(CPACK_PACKAGE_VERSION_MAJOR ${META_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${META_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${GIT_REV})
+# Add a revision file containing the git-head tag for cpack and install
+create_revision_file(${CMAKE_BINARY_DIR}/revision ${INSTALL_ROOT})
 
-set(CPACK_INSTALL_DIRECTORIES ${CMAKE_BINARY_DIR}/install)
-set(CPACK_IGNORE_FILES "/.pdb/;/.ilk/;/.svn/;/.hg/;/.git/;.swp$;.#;/#")
-set(CPACK_OUTPUT_FILE_PREFIX ${CMAKE_BINARY_DIR}/install)
+# Data files
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/data DESTINATION ${INSTALL_DATA})
 
-include(CPack)
+
+#
+# Include projects
+#
+
+# Qt5 - Specials
+# http://qt-project.org/forums/viewthread/30006/
+if(MSVC)
+    cmake_policy(SET CMP0020 NEW)
+endif()
+
+add_subdirectory(source)
+add_subdirectory(docs)
+add_subdirectory(packages)
