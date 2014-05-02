@@ -6,6 +6,11 @@ message(STATUS "Lib ${target}")
 # External libraries
 #
 
+find_package(GLM        REQUIRED)
+find_package(GLEW       REQUIRED)
+find_package(OPENGL     REQUIRED)
+find_package(Assimp     REQUIRED)
+
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5Gui     REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -15,6 +20,9 @@ find_package(Qt5Widgets REQUIRED)
 #
 
 include_directories(
+    ${ASSIMP_INCLUDE_PATH}
+    ${GLEW_INCLUDE_PATH}
+    ${GLM_INCLUDE_PATH}
 )
 
 include_directories(
@@ -28,7 +36,10 @@ include_directories(
 #
 
 set(libs
-    # e.g., ${THIRDPARTY_LIBRARY}
+    ${ASSIMP_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${GLEW_LIBRARY}
+    core
 )
 
 #
@@ -53,7 +64,6 @@ set(api_includes
 
     ${include_path}/canvas.h
     ${include_path}/canvasexporter.h
-    ${include_path}/canvasexportconfig.h
     ${include_path}/fileExplorer.h
     ${include_path}/fileNavigator.h
     ${include_path}/propertywidgetbuilder.h
@@ -65,6 +75,7 @@ set(sources
     ${source_path}/canvasexporter.cpp
     ${source_path}/canvasexporter.ui
     ${source_path}/canvasexportconfig.cpp
+    ${source_path}/canvasexportconfig.h
     ${source_path}/fileExplorer.cpp
     ${source_path}/fileNavigator.cpp
     ${source_path}/propertywidgetbuilder.cpp
@@ -94,7 +105,7 @@ else()
     add_library(${target} SHARED ${api_includes} ${sources})
 endif()
 
-qt5_use_modules(${target} Core Gui Widgets)
+qt5_use_modules(${target} Core Gui Widgets OpenGL)
 target_link_libraries(${target} ${libs})
 
 set_target_properties(${target}

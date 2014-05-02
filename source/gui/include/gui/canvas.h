@@ -1,10 +1,11 @@
-
 #pragma once
 
+#include <gui/gui_api.h>
+
+#include <GL/glew.h>
 #include <QGLWidget>
 
 #include <core/painter/abstractglparent.h>
-#include <core/declspec.h>
 #include <core/glformat.h>
 
 class QBasicTimer;
@@ -13,7 +14,7 @@ class Timer;
 
 class AbstractScenePainter;
 class AbstractNavigation;
-class CGSEE_API Canvas : public QGLWidget, public AbstractGLParent
+class GUI_API Canvas : public QGLWidget, public AbstractGLParent
 {
     Q_OBJECT
 

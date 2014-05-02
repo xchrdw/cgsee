@@ -1,17 +1,17 @@
-
 #pragma once
+
+#include <gui/gui_api.h>
 
 #include <QListView>
 #include <QDir>
 
-#include <core/declspec.h>
 
 
 class QFileSystemModel;
 class QMenu;
 
 
-class CGSEE_API FileExplorer : public QListView
+class GUI_API FileExplorer : public QListView
 {
 	Q_OBJECT
 	

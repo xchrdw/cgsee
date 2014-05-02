@@ -1,18 +1,15 @@
-
 #pragma once
 
-
+#include <gui/gui_api.h>
 
 #include <QTreeView>
 #include <QDir>
-
-#include <core/declspec.h>
 
 
 class QFileSystemModel;
 
 
-class CGSEE_API FileNavigator : public QTreeView
+class GUI_API FileNavigator : public QTreeView
 {
 	Q_OBJECT
 

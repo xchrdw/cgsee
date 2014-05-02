@@ -1,5 +1,6 @@
 #pragma once
 
+#include <gui/gui_api.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -8,15 +9,13 @@
 #undef None
 #endif
 
-#include <QMainWindow>
-
 #include <memory>
 
+#include <QMainWindow>
+#include <QMap>
 
 #include <glm/glm.hpp>
 
-
-#include <core/declspec.h>
 
 
 class GLFormat;
@@ -45,7 +44,7 @@ class CoordinateProvider;
 class AxisAlignedBoundingBox;
 
 
-class CGSEE_API Viewer : public QMainWindow
+class GUI_API Viewer : public QMainWindow
 {
     Q_OBJECT
 

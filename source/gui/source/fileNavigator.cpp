@@ -1,7 +1,7 @@
 
-#include <QFileSystemModel>
+#include <gui/fileNavigator.h>
 
-#include "fileNavigator.h"
+#include <QFileSystemModel>
 
 
 FileNavigator::FileNavigator(

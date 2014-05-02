@@ -1,7 +1,8 @@
 
+#include "canvasexportconfig.h"
+
 #include <cassert>  
 
-#include "canvasexportconfig.h"
 
 
 const CanvasExportConfig::t_namedUnits CanvasExportConfig::m_namedUnits = 

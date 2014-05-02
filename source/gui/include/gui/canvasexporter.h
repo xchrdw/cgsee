@@ -1,15 +1,12 @@
-
 #pragma once
+
+#include <gui/gui_api.h>
 
 #include <memory>
 
 #include <QDialog>
 #include <QString>
 #include <QSize>
-
-#include <core/declspec.h>
-
-#include "canvasexportconfig.h"
 
 class QLineEdit;
 class QIntValidator;
@@ -19,10 +16,11 @@ class AbstractPainter;
 class Canvas;
 class QSettings;
 
+class CanvasExportConfig;
 
 class Ui_CanvasExporter;
 
-class CGSEE_API CanvasExporter : public QDialog
+class GUI_API CanvasExporter : public QDialog
 {
     Q_OBJECT
 

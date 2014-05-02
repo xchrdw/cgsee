@@ -1,4 +1,6 @@
 
+#include <gui/canvas.h>
+
 #include <GL/glew.h>
 
 #include <cassert>
@@ -6,15 +8,14 @@
 #include <QApplication>
 #include <QBasicTimer>
 
-#include "canvas.h"
-#include "core/navigation/abstractnavigation.h"
-#include "core/navigation/flightnavigation.h"
-#include "core/navigation/arcballnavigation.h"
+#include <core/navigation/abstractnavigation.h>
+#include <core/navigation/flightnavigation.h>
+#include <core/navigation/arcballnavigation.h>
 
 #include <core/painter/abstractscenepainter.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
-#include "core/timer.h"
+#include <core/timer.h>
 
 
 Canvas::Canvas(

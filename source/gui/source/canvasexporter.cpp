@@ -1,4 +1,6 @@
 
+#include <gui/canvasexporter.h>
+
 #include <cassert>
 
 #include <QImageReader>
@@ -10,13 +12,13 @@
 #include <QFileDialog>
 #include <QDateTime>
 
-#include "ui_canvasexporter.h"
-#include "canvasexporter.h"
+#include <core/painter/abstractpainter.h>
+
+#include <gui/canvas.h>
+
+#include "gui/ui_canvasexporter.h"
 #include "canvasexportconfig.h"
 
-#include "canvas.h"
-
-#include <core/painter/abstractpainter.h>
 
 namespace 
 {

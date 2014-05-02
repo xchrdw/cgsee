@@ -1,4 +1,6 @@
 ﻿
+#include <gui/propertywidgetbuilder.h>
+
 #include <QFormLayout>
 #include <QCheckBox>
 #include <QComboBox>
@@ -12,11 +14,12 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QStackedWidget>
-#include "propertywidgetbuilder.h"
+
 #include <core/property/valueproperty.h>
 #include <core/property/limitedproperty.h>
 #include <core/property/advancedlistproperty.h>
 #include <core/property/propertylist.h>
+
 
 PropertyWidgetBuilder::PropertyWidgetBuilder()
 : m_widget(new QWidget())

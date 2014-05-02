@@ -17,11 +17,12 @@
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/objloader.h>
-#include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
 #include <core/navigation/arcballnavigation.h>
 #include <core/navigation/flightnavigation.h>
+
+#include <core/assimploader.h>
 
 
 IdPainter::IdPainter(Camera * camera)

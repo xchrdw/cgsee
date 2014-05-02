@@ -1,7 +1,7 @@
-﻿
-#pragma once
+﻿#pragma once
 
-#include <core/declspec.h>
+#include <gui/gui_api.h>
+
 #include <core/property/abstractpropertyvisitor.h>
 
 class QWidget;
@@ -10,7 +10,7 @@ class QFormLayout;
 template <typename Type>
 class ValueProperty;
 
-class CGSEE_API PropertyWidgetBuilder : public AbstractPropertyVisitor
+class GUI_API PropertyWidgetBuilder : public AbstractPropertyVisitor
 {
 public:
     PropertyWidgetBuilder();

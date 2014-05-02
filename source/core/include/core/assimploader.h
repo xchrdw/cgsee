@@ -20,6 +20,7 @@ struct aiNode;
 struct aiScene;
 struct aiMesh;
 
+
 class CORE_API AssimpLoader : public AbstractModelLoader
 {
 public:
