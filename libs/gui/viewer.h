@@ -193,6 +193,10 @@ protected:
 
     void saveView(int i);
     void loadView(int i);
+    void saveViewHistory();
+    void undoViewHistory();
+    void redoViewHistory();
+    void resetViewHistory();
 
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
@@ -205,7 +209,9 @@ protected:
 
     Canvas * m_qtCanvas;
     Camera * m_camera;
-    QVector<glm::mat4> m_saved_views;
+    QVector<glm::mat4> m_savedViews;
+    QVector<glm::mat4> m_savedHistory;
+    int m_historyStep;
 
     QDockWidget * m_dockNavigator;
     QDockWidget * m_dockExplorer;
