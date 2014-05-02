@@ -1,4 +1,6 @@
 
+#include <core/abstractapplication.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,11 +9,10 @@
 #include <QStringList>
 #include <QSettings>
 
-#include "abstractapplication.h"
+#include <cgsee-version.h>
 
-#include "meta.h"
-#include "glformat.h"
-#include "messagehandler.h"
+#include <core/glformat.h>
+#include <core/messagehandler.h>
 
 
 AbstractApplication::AbstractApplication(
@@ -24,11 +25,11 @@ AbstractApplication::AbstractApplication(
 
     QApplication::setApplicationDisplayName(fi.baseName());
 
-    QApplication::setApplicationName(META_PROJECT_NAME);
-    QApplication::setApplicationVersion(META_VERSION);
+    QApplication::setApplicationName(CGSEE_PROJECT_NAME);
+    QApplication::setApplicationVersion(CGSEE_VERSION);
 
-    QApplication::setOrganizationName(META_AUTHOR_ORGANIZATION);
-    QApplication::setOrganizationDomain(META_AUTHOR_DOMAIN);
+    QApplication::setOrganizationName(CGSEE_AUTHOR_ORGANIZATION);
+    QApplication::setOrganizationDomain(CGSEE_AUTHOR_DOMAIN);
 
     qInstallMessageHandler(globalMessageHandler);
 

@@ -1,4 +1,5 @@
-#include "offAxisCamera.h"
+
+#include <core/offaxiscamera.h>
 
 const QString OffAxisCamera::m_implementationName("OffAxisCamera");
 

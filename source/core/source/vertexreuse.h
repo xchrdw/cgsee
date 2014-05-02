@@ -1,6 +1,7 @@
 #pragma once
 
-#include "common.h"
+#include <core/typedefs.h>
+
 #include "geometryoptimizer.h"
 
 class VertexReuse : public GeometryOptimizer
@@ -11,4 +12,3 @@ public:
 protected:
     static void reuseVertices(t_vec3s& vertices, t_vec3s& normals, t_vec2s& texcs, t_uints& indices);
 };
-

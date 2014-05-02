@@ -1,6 +1,8 @@
 
-#include "abstractpropertyvisitor.h"
-#include "valueproperty.h"
+#include <core/property/abstractpropertyvisitor.h>
+
+#include <core/property/valueproperty.h>
+
 
 void AbstractPropertyVisitor::iterateOverProperties(const QList<AbstractProperty *> & properties)
 {

@@ -1,5 +1,5 @@
 ﻿
-#include "aabb.h"
+#include <core/aabb.h>
 
 
 AxisAlignedBoundingBox::AxisAlignedBoundingBox()
@@ -9,11 +9,11 @@ AxisAlignedBoundingBox::AxisAlignedBoundingBox()
 }
 
 AxisAlignedBoundingBox::AxisAlignedBoundingBox(glm::vec3 llf, glm::vec3 urb)
-:   m_invalidated(false)
-,   m_llf(llf)
+:   m_llf(llf)
 ,   m_urb(urb)
 ,   m_center((urb + llf) * 0.5f)
 ,   m_radius(glm::distance(llf, urb) * 0.5f)
+,   m_invalidated(false)
 {
 }
 

@@ -1,8 +1,9 @@
 
+#include <core/rendering/defaultpass.h>
+
 #include <core/framebufferobject.h>
 #include <core/program.h>
 
-#include "defaultpass.h"
 
 DefaultPass::DefaultPass(Camera * camera)
 :   RenderingPass(camera)

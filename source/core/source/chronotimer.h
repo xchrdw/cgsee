@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-#include "abstracttimer.h"
+#include <core/abstracttimer.h>
 
 
 class ChronoTimer : public AbstractTimer

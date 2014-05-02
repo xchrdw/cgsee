@@ -1,6 +1,7 @@
 
-#include "node.h"
-#include "scenetraverser.h"
+#include <core/scenegraph/scenetraverser.h>
+
+#include <core/scenegraph/node.h>
 
 
 void SceneTraverser::traverse(Node & node, std::function<bool (Node &)> visitor)

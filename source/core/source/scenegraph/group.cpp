@@ -1,9 +1,11 @@
 
+#include <core/scenegraph/group.h>
+
 #include <core/program.h>
 
-#include "polygonaldrawable.h"
-#include "group.h"
-#include "core/aabb.h"
+#include <core/scenegraph/polygonaldrawable.h>
+#include <core/aabb.h>
+
 
 Group::Group(const QString & name)
 :   Node(name),

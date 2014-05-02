@@ -1,5 +1,5 @@
 
-#include "node.h"
+#include <core/scenegraph/node.h>
 
 
 Node::Node(const QString & name)

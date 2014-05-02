@@ -1,7 +1,8 @@
 
-#include "abstractproperty.h"
-#include "propertylist.h"
-#include "announcer.h"
+#include <core/property/abstractproperty.h>
+
+#include <core/property/propertylist.h>
+#include <core/property/announcer.h>
 
 
 AbstractProperty::AbstractProperty(QString name, QString description)
@@ -45,4 +46,3 @@ Announcer & AbstractProperty::announcer() const
 {
     return *m_announcer;
 }
-

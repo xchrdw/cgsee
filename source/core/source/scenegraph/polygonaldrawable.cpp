@@ -1,15 +1,20 @@
-#include <GL/glew.h>
 
-#include "polygonaldrawable.h"
+#include <core/scenegraph/polygonaldrawable.h>
+
+#include <GL/glew.h>
 
 #include <core/aabb.h>
 #include <core/bufferobject.h>
 #include <core/program.h>
 
-#include "polygonalgeometry.h"
-#include "defaultdrawmethod.h"
+#include <core/scenegraph/polygonalgeometry.h>
+#include <core/scenegraph/defaultdrawmethod.h>
 
-static const QString TRANSFORM_UNIFORM( "transform" );
+
+namespace
+{
+    static const QString TRANSFORM_UNIFORM( "transform" );
+}
 
 // TODO: wieder rueckgaengig machen...
 // PolygonalDrawable::PolygonalDrawable( DataBlockRegistry & registry, const QString & name )

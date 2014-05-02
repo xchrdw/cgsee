@@ -1,6 +1,8 @@
 
-#include "announcer.h"
-#include "abstractproperty.h"
+#include <core/property/announcer.h>
+
+#include <core/property/abstractproperty.h>
+
 
 Announcer::Announcer(AbstractProperty * property)
 :   m_subscriptions(new QHash<int, QList<std::function<void(AbstractProperty &)>> *>())

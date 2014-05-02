@@ -1,7 +1,9 @@
+
+#include <core/datacore/vertexlist.h>
+
 #include <cassert>
 
-#include "typefunctions.h"
-#include "vertexlist.h"
+#include <core/datacore/typefunctions.h>
 
 namespace
 {

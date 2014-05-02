@@ -1,4 +1,5 @@
-#include "vertexindexlist.h"
+
+#include <core/datacore/vertexindexlist.h>
 
 VertexIndexList::VertexIndexList(QObject* parent)
 {

@@ -1,11 +1,11 @@
 
-#include "screenquad.h"
+#include <core/screenquad.h>
 
-#include "bufferobject.h"
-#include "framebufferobject.h"
-#include "program.h"
-#include "shader.h"
-#include "gpuquery.h"
+#include <core/bufferobject.h>
+#include <core/framebufferobject.h>
+#include <core/program.h>
+#include <core/shader.h>
+#include <core/gpuquery.h>
 
 
 ScreenQuad::ScreenQuad()

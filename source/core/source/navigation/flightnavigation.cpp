@@ -1,9 +1,13 @@
+
+#include <core/navigation/flightnavigation.h>
+
 //glm to rotate around axis
+
+#define GLM_FORCE_RADIANS
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
-#include "flightnavigation.h"
-#include "../camera.h"
+#include <core/camera.h>
 
 
 float angle = 0.05f;

@@ -1,4 +1,6 @@
 
+#include <core/rendering/shadowmapping.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/random.hpp>
 
@@ -8,8 +10,8 @@
 #include <core/fileassociatedshader.h>
 #include <core/scenegraph/group.h>
 
-#include "shadowmapping.h"
-#include "lightsource.h"
+#include <core/rendering/lightsource.h>
+
 
 const glm::mat4 ShadowMappingPass::biasMatrix (
     0.5, 0.0, 0.0, 0.0,

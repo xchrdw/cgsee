@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
 set(META_PROJECT_NAME        "cgsee")
 set(META_PROJECT_DESCRIPTION "Viewer for CG related data used for lectures and seminars.")
 set(META_VERSION_MAJOR       "0")
-set(META_VERSION_MINOR       "0")
+set(META_VERSION_MINOR       "2")
 set(META_VERSION_PATCH       "0")
 set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
 set(META_AUTHOR_ORGANIZATION "hpicgs group")
@@ -143,12 +143,6 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/data DESTINATION ${INSTALL_DATA})
 #
 # Include projects
 #
-
-# Qt5 - Specials
-# http://qt-project.org/forums/viewthread/30006/
-if(MSVC)
-    cmake_policy(SET CMP0020 NEW)
-endif()
 
 add_subdirectory(source)
 add_subdirectory(docs)

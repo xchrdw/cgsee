@@ -1,6 +1,7 @@
-#include "cameraimplementation.h"
 
-#include "camera.h"
+#include <core/cameraimplementation.h>
+
+#include <core/camera.h>
 
 
 QMap<QString, CameraImplementation::CamConstructor> CameraImplementation::implementations;

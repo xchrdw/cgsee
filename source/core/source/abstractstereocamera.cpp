@@ -1,9 +1,12 @@
-#include "abstractstereocamera.h"
+
+#include <core/abstractstereocamera.h>
 
 #include <glm/gtc/matrix_access.hpp>
+
 #include <QString>
-#include "framebufferobject.h"
-#include "camera.h"
+
+#include <core/framebufferobject.h>
+#include <core/camera.h>
 
 AbstractStereoCamera::AbstractStereoCamera(Camera & abstraction)
     :  CameraImplementation(abstraction),

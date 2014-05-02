@@ -1,14 +1,15 @@
 
+#include <core/shader.h>
+
 #include <GL/glew.h>
 
 #include <map>
 #include <cassert>
 #include <iostream>
 
-#include "shader.h"
 
-#include "gpuquery.h"
-#include "program.h"
+#include <core/gpuquery.h>
+#include <core/program.h>
 
 
 

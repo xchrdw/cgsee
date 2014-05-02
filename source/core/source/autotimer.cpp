@@ -1,9 +1,10 @@
 
+#include <core/autotimer.h>
+
 #include <cassert>
 #include <cmath>
 
-#include "autotimer.h"
-#include "timer.h"
+#include <core/timer.h>
 
 
 int AutoTimer::m_numActiveInstances(0);

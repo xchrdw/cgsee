@@ -1,12 +1,14 @@
+
+#include <core/scenegraph/defaultdrawmethod.h>
+
 #include <GL/glew.h>
 
 #include <core/aabb.h>
 #include <core/bufferobject.h>
 #include <core/program.h>
 
-#include "polygonaldrawable.h"
-#include "polygonalgeometry.h"
-#include "defaultdrawmethod.h"
+#include <core/scenegraph/polygonaldrawable.h>
+#include <core/scenegraph/polygonalgeometry.h>
 
 
 const QString DefaultDrawMethod::TRANSFORM_UNIFORM("transform");

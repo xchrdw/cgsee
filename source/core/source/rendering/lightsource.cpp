@@ -1,12 +1,13 @@
 
-#include "glm/gtc/matrix_transform.hpp"
+#include <core/rendering/lightsource.h>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <core/camera.h>
 #include <core/program.h>
 #include <core/fileassociatedshader.h>
 #include <core/scenegraph/group.h>
 
-#include "lightsource.h"
 
 LightSourcePass::LightSourcePass(Camera * camera, FileAssociatedShader * depth_util)
 :   DefaultPass(camera)

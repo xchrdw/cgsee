@@ -1,14 +1,14 @@
 #pragma once
 
-#include <glm/gtc/matrix_transform.hpp>
 
 #include <memory>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <QString>
 #include <QMap>
 
-#include "painter/abstractscenepainter.h"
-
+#include <core/painter/abstractscenepainter.h>
 
 
 class DataBlockRegistry;

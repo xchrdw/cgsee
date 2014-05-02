@@ -1,6 +1,8 @@
 
-#include "listproperty.h"
-#include "abstractpropertyvisitor.h"
+#include <core/property/listproperty.h>
+
+#include <core/property/abstractpropertyvisitor.h>
+
 
 ListProperty::ListProperty(QString name, QString description)
 :   AbstractProperty(name, description)

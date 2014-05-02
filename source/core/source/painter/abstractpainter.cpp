@@ -1,17 +1,18 @@
 
+#include <core/painter/abstractpainter.h>
+
+#define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <QKeyEvent>
 #include <QPainter>
 #include <QImage>
 
-#include "abstractpainter.h"
-
-#include "abstractglparent.h"
 #include <core/camera.h>
 #include <core/gpuquery.h>
 #include <core/property/propertylist.h>
 
+#include <core/painter/abstractglparent.h>
 
 
 AbstractPainter::AbstractPainter()

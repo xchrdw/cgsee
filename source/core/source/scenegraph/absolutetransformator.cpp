@@ -1,17 +1,17 @@
+
+#include <core/scenegraph/absolutetransformator.h>
+
 #include <typeinfo>
 #include <assert.h>
 
 #include <glm/glm.hpp>
 
-#include "core/declspec.h"
+#include <core/scenegraph/node.h>
+#include <core/scenegraph/group.h>
+#include <core/scenegraph/polygonaldrawable.h>
+#include <core/scenegraph/polygonalgeometry.h>
+#include <core/scenegraph/triangleobject.h>
 
-#include "node.h"
-#include "group.h"
-#include "polygonaldrawable.h"
-#include "polygonalgeometry.h"
-#include "triangleobject.h"
-
-#include "absolutetransformator.h"
 
 AbsoluteTransformator::AbsoluteTransformator()
 {

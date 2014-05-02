@@ -1,9 +1,11 @@
+
+#include <core/scenegraph/triangleobject.h>
+
 #include <GL/glew.h>
 
 #include <core/aabb.h>
 #include <core/program.h>
 
-#include "triangleobject.h"
 
 TriangleObject::TriangleObject(const QString & name)
 :   Node( name )

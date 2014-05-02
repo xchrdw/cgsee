@@ -1,4 +1,5 @@
-#include "monocamera.h"
+
+#include <core/monocamera.h>
 
 const QString MonoCamera::m_implementationName("MonoCamera");
 

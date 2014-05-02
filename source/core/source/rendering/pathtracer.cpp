@@ -1,7 +1,9 @@
+
+#include <core/rendering/pathtracer.h>
+
 #include <random>
 #include <ctime>
 
-#include "pathtracer.h"
 
 #include <core/camera.h>
 #include <core/program.h>

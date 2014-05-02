@@ -1,14 +1,16 @@
+
+#include <core/scenegraph/pathtracingbvh.h>
+
 #include <qdebug.h>
 
 #include <qlist.h>
 #include <glm/glm.hpp>
 
-#include "group.h"
-#include "core/aabb.h"
-#include "core/bufferobject.h"
-#include "pathtracingbvh.h"
-#include "absolutetransformator.h"
-#include "triangleobject.h"
+#include <core/scenegraph/group.h>
+#include <core/aabb.h>
+#include <core/bufferobject.h>
+#include <core/scenegraph/absolutetransformator.h>
+#include <core/scenegraph/triangleobject.h>
 
 //TODO: pass float.infinity to shader
 

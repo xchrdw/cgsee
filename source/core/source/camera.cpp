@@ -1,20 +1,24 @@
+
+#include <core/camera.h>
+
+#define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
 #include <QDebug>
 
-#include "camera.h"
 
-#include "cameraimplementation.h"
+#include <core/cameraimplementation.h>
 
-#include "../../apps/cgsee/painter.h"
+#include "../../cgsee/painter.h"  // TODO!
 
-#include "rendering/rasterizer.h"
-#include "rendering/pathtracer.h"
+#include <core/rendering/rasterizer.h>
+#include <core/rendering/pathtracer.h>
 
-#include "program.h"
-#include "gpuquery.h"
-#include "core/viewfrustum.h"
+#include <core/program.h>
+#include <core/gpuquery.h>
+#include <core/viewfrustum.h>
+
 
 static const QString VIEWPORT_UNIFORM   ("viewport");
 static const QString VIEW_UNIFORM       ("view");

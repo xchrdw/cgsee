@@ -1,6 +1,7 @@
 
-#include "node.h"
-#include "drawvisitor.h"
+#include <core/scenegraph/drawvisitor.h>
+
+#include <core/scenegraph/node.h>
 
 
 DrawVisitor::DrawVisitor(const Program * p, glm::mat4 t) 

@@ -1,12 +1,13 @@
 
-#include "polygonalgeometry.h"
+#include <core/scenegraph/polygonalgeometry.h>
 
 #include <core/datacore/datablock.h>
 #include <core/aabb.h>
 #include <core/bufferobject.h>
 #include <core/program.h>
-#include <core/vertexcacheoptimizer.h>
-#include <core/vertexreuse.h>
+
+#include "../vertexreuse.h"
+#include "../vertexcacheoptimizer.h"
 
 PolygonalGeometry::PolygonalGeometry(std::shared_ptr<DataBlockRegistry> registry)
 :   m_registry( registry )

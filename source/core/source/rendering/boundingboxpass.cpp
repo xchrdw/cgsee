@@ -1,15 +1,16 @@
 
+#include <core/rendering/boundingboxpass.h>
+
 #include <core/bufferobject.h>
 #include <core/framebufferobject.h>
 #include <core/program.h>
 #include <core/fileassociatedshader.h>
 #include <core/camera.h>
 
-#include "boundingboxpass.h"
-
-
-const QString TRANSFORM_UNIFORM("transform");
-
+namespace 
+{
+    const QString TRANSFORM_UNIFORM("transform");
+}
 
 BoundingBoxPass::BoundingBoxPass(Camera * camera, FrameBufferObject * target)
 :   RenderingPass(camera)

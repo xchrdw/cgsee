@@ -1,8 +1,8 @@
 
-#include "framebufferobject.h"
+#include <core/framebufferobject.h>
 
-#include "gpuquery.h"
-#include "program.h"
+#include <core/gpuquery.h>
+#include <core/program.h>
 
 
 // http://www.swiftless.com/tutorials/opengl/framebuffer.html

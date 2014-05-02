@@ -1,8 +1,9 @@
 
+#include <core/bufferobject.h>
+
 #include <GL/glew.h>
 
-#include "bufferobject.h"
-#include "gpuquery.h"
+#include <core/gpuquery.h>
 
 
 BufferObject::BufferObject(

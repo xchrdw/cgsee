@@ -1,7 +1,9 @@
 
-#include "advancedlistproperty.h"
-#include "propertylist.h"
-#include "abstractpropertyvisitor.h"
+#include <core/property/advancedlistproperty.h>
+
+#include <core/property/propertylist.h>
+#include <core/property/abstractpropertyvisitor.h>
+
 
 AdvancedListProperty::AdvancedListProperty(QString name, QString description)
 :   ListProperty(name, description)

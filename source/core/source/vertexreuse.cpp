@@ -1,12 +1,15 @@
-#include <glm/glm.hpp>
+
+#include "vertexreuse.h"
 
 #include <vector>
 #include <unordered_map>
 #include <functional>
 
-#include "vertexreuse.h"
+#include <glm/glm.hpp>
 
-namespace {
+
+namespace 
+{
 
 struct VertexData
 {

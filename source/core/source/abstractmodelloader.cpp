@@ -1,8 +1,9 @@
 
-#include "painter/abstractpainter.h"
-#include "datacore/datablock.h"
-#include "scenegraph/group.h"
-#include "abstractmodelloader.h"
+#include <core/abstractmodelloader.h>
+
+#include <core/painter/abstractpainter.h>
+#include <core/datacore/datablock.h>
+#include <core/scenegraph/group.h>
 
 AbstractModelLoader::AbstractModelLoader(std::shared_ptr<DataBlockRegistry> registry)
 : m_registry(registry)

@@ -1,6 +1,8 @@
-#include <vector>
 
 #include "vertexcacheoptimizer.h"
+
+#include <vector>
+
 
 namespace 
 {

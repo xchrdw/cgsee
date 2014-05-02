@@ -1,7 +1,9 @@
 
-#include "abstractscenepainter.h"
+#include <core/painter/abstractscenepainter.h>
+
 #include <core/scenegraph/group.h>
 #include <core/camera.h>
+
 
 AbstractScenePainter::AbstractScenePainter()
 : AbstractPainter()
@@ -41,5 +43,3 @@ Group & AbstractScenePainter::getScene() const
 void AbstractScenePainter::sceneChanged(Group * scene)
 {
 }
-
-

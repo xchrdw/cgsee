@@ -1,7 +1,10 @@
+
+#include <core/datacore/typefunctions.h>
+
 #include <cassert>
+
 #include <QMetaType>
 
-#include "typefunctions.h"
 
 AbstractInPlaceTypeFunctions::~AbstractInPlaceTypeFunctions()
 {

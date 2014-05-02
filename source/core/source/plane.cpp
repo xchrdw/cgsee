@@ -1,6 +1,8 @@
-﻿#include "glm/glm.hpp"
+﻿
+#include <core/plane.h>
 
-#include "plane.h"
+#include <glm/glm.hpp>
+
 
 Plane::Plane() :
     m_distance(1.0),

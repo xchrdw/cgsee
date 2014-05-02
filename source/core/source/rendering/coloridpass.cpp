@@ -1,9 +1,10 @@
 
+#include <core/rendering/coloridpass.h>
+
 #include <core/framebufferobject.h>
 #include <core/program.h>
 #include <core/fileassociatedshader.h>
 
-#include "coloridpass.h"
 
 ColorIdPass::ColorIdPass(Camera * camera)
 :   RenderingPass(camera)

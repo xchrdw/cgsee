@@ -1,4 +1,6 @@
-#include "rendertechnique.h"
+
+#include <core/rendering/rendertechnique.h>
+
 
 RenderTechnique::RenderTechnique(Camera & camera)
     : m_camera(camera)

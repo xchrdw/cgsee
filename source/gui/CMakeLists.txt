@@ -36,9 +36,9 @@ set(libs
 #
 
 if (OPTION_BUILD_STATIC)
-    add_definitions("-DTEMPLATE_STATIC")
+    add_definitions("-DGUI_STATIC")
 else()
-    add_definitions("-DCGSEEGUILIB_EXPORTS")
+    add_definitions("-DGUI_EXPORTS")
 endif()
 
 #
@@ -50,23 +50,24 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 set(api_includes
     ${include_path}/gui_api.h
+
+    ${include_path}/canvas.h
+    ${include_path}/canvasexporter.h
+    ${include_path}/canvasexportconfig.h
+    ${include_path}/fileExplorer.h
+    ${include_path}/fileNavigator.h
+    ${include_path}/propertywidgetbuilder.h
+    ${include_path}/viewer.h
 )
 
 set(sources
-    ${source_path}/canvas.h
     ${source_path}/canvas.cpp
-    ${source_path}/canvasexporter.h
     ${source_path}/canvasexporter.cpp
     ${source_path}/canvasexporter.ui
-    ${source_path}/canvasexportconfig.h
     ${source_path}/canvasexportconfig.cpp
-    ${source_path}/fileExplorer.h
     ${source_path}/fileExplorer.cpp
-    ${source_path}/fileNavigator.h
     ${source_path}/fileNavigator.cpp
-    ${source_path}/propertywidgetbuilder.h
     ${source_path}/propertywidgetbuilder.cpp
-    ${source_path}/viewer.h
     ${source_path}/viewer.cpp
     ${source_path}/viewer.ui
 

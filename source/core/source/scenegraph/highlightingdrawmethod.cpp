@@ -1,3 +1,6 @@
+
+#include <core/scenegraph/highlightingdrawmethod.h>
+
 #include <GL/glew.h>
 
 #include <iostream>
@@ -6,9 +9,8 @@
 #include <core/bufferobject.h>
 #include <core/program.h>
 
-#include "polygonaldrawable.h"
-#include "polygonalgeometry.h"
-#include "highlightingdrawmethod.h"
+#include <core/scenegraph/polygonalgeometry.h>
+#include <core/scenegraph/polygonaldrawable.h>
 
 
 HighlightingDrawMethod::HighlightingDrawMethod()

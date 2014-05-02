@@ -1,14 +1,13 @@
 
+#include <core/program.h>
+
 #include <algorithm>
 #include <cassert>
 
 #include <glm/gtc/type_ptr.hpp>
 
-
-#include "program.h"
-
-#include "shader.h"
-#include "gpuquery.h"
+#include <core/shader.h>
+#include <core/gpuquery.h>
 
 
 

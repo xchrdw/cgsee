@@ -1,4 +1,6 @@
 
+#include <core/objloader.h>
+
 #include <glm/glm.hpp>
 
 #include <cstring>
@@ -9,12 +11,10 @@
 
 #include <QFile>
 
-#include "datacore/datablock.h"
-#include "scenegraph/group.h"
-#include "scenegraph/polygonaldrawable.h"
-#include "scenegraph/polygonalgeometry.h"
-
-#include "objloader.h"
+#include <core/datacore/datablock.h>
+#include <core/scenegraph/group.h>
+#include <core/scenegraph/polygonaldrawable.h>
+#include <core/scenegraph/polygonalgeometry.h>
 
 
 using namespace std;

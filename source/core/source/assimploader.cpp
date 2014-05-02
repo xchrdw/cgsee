@@ -1,9 +1,10 @@
 
-#include "assimploader.h"
-#include "datacore/datablock.h"
-#include "scenegraph/group.h"
-#include "scenegraph/polygonalgeometry.h"
-#include "scenegraph/polygonaldrawable.h"
+#include <core/assimploader.h>
+
+#include <core/datacore/datablock.h>
+#include <core/scenegraph/group.h>
+#include <core/scenegraph/polygonalgeometry.h>
+#include <core/scenegraph/polygonaldrawable.h>
 
 AssimpLoader::AssimpLoader(std::shared_ptr<DataBlockRegistry> registry)
 : AbstractModelLoader(registry)

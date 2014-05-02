@@ -1,17 +1,17 @@
-#include <glm/gtc/matrix_transform.hpp>
+
+#include <core/scenegraph/cullingvisitor.h>
 
 #include <vector>
 #include <memory>
 #include <functional>
 
-#include <core/declspec.h>
+#include <glm/gtc/matrix_transform.hpp>
 
-#include "cullingvisitor.h"
+#include <core/framebufferobject.h>
+#include <core/camera.h>
+#include <core/scenegraph/node.h>
+#include <core/viewfrustum.h>
 
-#include "core/framebufferobject.h"
-#include "core/camera.h"
-#include "node.h"
-#include "core/viewfrustum.h"
 
 CullingVisitor::CullingVisitor(Camera *camera, Program *program, glm::mat4 transform) :
     m_camera(camera),

@@ -1,5 +1,5 @@
 
-#include "gpuquery.h"
+#include <core/gpuquery.h>
 
 #ifdef WIN32
 #include <GL/wglew.h>

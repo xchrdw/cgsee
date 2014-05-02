@@ -1,8 +1,9 @@
 
+#include <core/rendering/normalzpass.h>
+
 #include <core/program.h>
 #include <core/fileassociatedshader.h>
 
-#include "normalzpass.h"
 
 NormalzPass::NormalzPass(Camera * camera, FileAssociatedShader * depth_util)
 :   DefaultPass(camera)
@@ -16,4 +17,3 @@ NormalzPass::~NormalzPass( void )
 {
 
 }
-

@@ -1,7 +1,10 @@
+
+#include <core/navigation/arcballnavigation.h>
+
+#define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
-#include "arcballnavigation.h"
-#include "../camera.h"
+#include <core/camera.h>
 
 ArcballNavigation::ArcballNavigation(Camera * camera) 
     : AbstractNavigation(camera)
@@ -105,4 +108,3 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
         m_zoom_on = false;
     }
 }
-

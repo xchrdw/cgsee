@@ -1,12 +1,13 @@
 
-#include <GL/glew.h>
+#include <core/glformat.h>
 
 #include <cassert>
 
+#include <GL/glew.h>
+
 #include <QGLFormat>
 
-#include "glformat.h"
-#include "gpuquery.h"
+#include <core/gpuquery.h>
 
 #ifndef WIN32
 #include <GL/glx.h>

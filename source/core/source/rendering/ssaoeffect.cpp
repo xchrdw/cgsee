@@ -1,4 +1,6 @@
 
+#include <core/rendering/ssaoeffect.h>
+
 #include <glm/gtx/random.hpp>
 
 #include <core/camera.h>
@@ -7,7 +9,6 @@
 #include <core/framebufferobject.h>
 #include <core/fileassociatedshader.h>
 
-#include "ssaoeffect.h"
 
 SSAOEffect::SSAOEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,  FrameBufferObject * normalz)
 :   DefaultPass(camera)

@@ -46,5 +46,5 @@ if(WIN32)
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ASSIMP REQUIRED_VARS ASSIMP_INCLUDE_DIR ASSIMP_LIBRARY)
-mark_as_advanced(ASSIMP_INCLUDE_DIR ASSIMP_LIBRARY)
+find_package_handle_standard_args(ASSIMP REQUIRED_VARS ASSIMP_INCLUDE_PATH ASSIMP_LIBRARY)
+mark_as_advanced(ASSIMP_INCLUDE_PATH ASSIMP_LIBRARY)

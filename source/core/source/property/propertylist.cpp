@@ -1,5 +1,6 @@
 
-#include "propertylist.h"
+#include <core/property/propertylist.h>
+
 
 PropertyList::PropertyList()
 :   m_properties(new QList<AbstractProperty *>())

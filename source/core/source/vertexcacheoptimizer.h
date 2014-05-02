@@ -1,6 +1,7 @@
 #pragma once
 
-#include "common.h"
+#include <core/typedefs.h>
+
 #include "geometryoptimizer.h"
 
 class VertexCacheOptimizer : public GeometryOptimizer
@@ -48,4 +49,3 @@ protected:
     static void updateCacheAndFindGreatestTriangle(std::vector<Vertex> &vertices, std::vector<Triangle> &triangles, int &greatestTriangleIndex, std::vector<int> &cache);
     static int findGreatestTriangle(const std::vector<Triangle> &triangles);
 };
-

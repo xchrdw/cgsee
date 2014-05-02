@@ -1,11 +1,12 @@
 
+#include <core/rendering/blureffect.h>
+
 #include <core/camera.h>
 #include <core/program.h>
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/screenquad.h>
 
-#include "blureffect.h"
 
 BlurEffect::BlurEffect(Camera * camera, ScreenQuad * quad, FileAssociatedShader * quadShader,
                        RenderingPass * target, FrameBufferObject * temp)
@@ -66,4 +67,3 @@ void BlurEffect::blurPass(FrameBufferObject * in, FrameBufferObject * out, Progr
     m_quad->draw(*program, out);
     in->releaseTexture2D();
 }
-

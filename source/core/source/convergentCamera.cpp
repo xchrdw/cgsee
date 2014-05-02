@@ -1,16 +1,17 @@
+
+#include <core/convergentcamera.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
+#include <glm/gtx/random.hpp>
 
-#include "convergentCamera.h"
-#include "camera.h"
-#include "program.h"
-#include "gpuquery.h"
+#include <QDebug>
+
+#include <core/camera.h>
+#include <core/program.h>
+#include <core/gpuquery.h>
 #include <core/screenquad.h>
 #include <core/fileassociatedshader.h>
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/random.hpp>
-#include <QDebug>
 
 
 const QString ConvergentCamera::m_implementationName("ConvergentCamera");

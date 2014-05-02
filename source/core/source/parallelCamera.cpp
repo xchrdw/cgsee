@@ -1,10 +1,13 @@
+
+#include <core/parallelcamera.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
-#include "parallelCamera.h"
-#include "camera.h"
-#include "program.h"
-#include "gpuquery.h"
-#include "framebufferobject.h"
+
+#include <core/camera.h>
+#include <core/program.h>
+#include <core/gpuquery.h>
+#include <core/framebufferobject.h>
 #include <core/screenquad.h>
 #include <core/fileassociatedshader.h>
 

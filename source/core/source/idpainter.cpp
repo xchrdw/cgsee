@@ -1,7 +1,9 @@
-#include <glm/gtc/matrix_transform.hpp>
-#include <QDebug>
 
 #include "idpainter.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <QDebug>
 
 #include <core/autotimer.h>
 #include <core/mathmacros.h>
@@ -18,8 +20,8 @@
 #include <core/assimploader.h>
 #include <core/program.h>
 #include <core/screenquad.h>
-#include "core/navigation/arcballnavigation.h"
-#include "core/navigation/flightnavigation.h"
+#include <core/navigation/arcballnavigation.h>
+#include <core/navigation/flightnavigation.h>
 
 
 IdPainter::IdPainter(Camera * camera)

@@ -1,4 +1,5 @@
-#include "datablock.h"
+
+#include <core/datacore/datablock.h>
 
 DataBlock::DataBlock(QObject * parent):
     QObject(parent)

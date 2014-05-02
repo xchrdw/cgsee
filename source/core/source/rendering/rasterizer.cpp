@@ -1,7 +1,9 @@
+
+#include <core/rendering/rasterizer.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
-#include "rasterizer.h"
 #include <core/camera.h>
 #include <core/framebufferobject.h>
 #include <core/scenegraph/scenetraverser.h>

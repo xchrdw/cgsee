@@ -1,11 +1,11 @@
-#include "viewfrustum.h"
 
-#include "declspec.h"
-#include "aabb.h"
-#include "scenegraph/node.h"
-#include "scenegraph/group.h"
-#include "camera.h"
-#include "plane.h"
+#include <core/viewfrustum.h>
+
+#include <core/aabb.h>
+#include <core/scenegraph/node.h>
+#include <core/scenegraph/group.h>
+#include <core/camera.h>
+#include <core/plane.h>
 
 ViewFrustum::ViewFrustum(Camera *camera) :
     m_camera(camera),
