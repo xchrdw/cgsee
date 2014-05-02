@@ -4,7 +4,7 @@
 # ASSIMP_LIBRARY
 # ASSIMP_BINARY
 
-FIND_PATH(ASSIMP_INCLUDE_PATH assimp/Importer.hpp
+find_path(ASSIMP_INCLUDE_PATH assimp/Importer.hpp
     $ENV{ASSIMPDIR}/include
     $ENV{ASSIMP_HOME}/include
     $ENV{PROGRAMFILES}/ASSIMP/include
@@ -14,12 +14,19 @@ FIND_PATH(ASSIMP_INCLUDE_PATH assimp/Importer.hpp
     /opt/local/include
     DOC "The directory where assimp/Importer.hpp etc. resides")
 
+if(MSVC AND X64)
+    set(ASSIMP_PF "64")
+else()
+    set(ASSIMP_PF "86")
+endif()
 
-FIND_LIBRARY(ASSIMP_LIBRARY
+find_library(ASSIMP_LIBRARY
     NAMES assimp
     PATHS
+    $ENV{ASSIMPDIR}/lib/x${ASSIMP_PF}
     $ENV{ASSIMPDIR}/lib
     $ENV{ASSIMPDIR}/lib/.libs
+    $ENV{ASSIMP_HOME}/lib/x${ASSIMP_PF}
     $ENV{ASSIMP_HOME}/lib
     $ENV{ASSIMP_HOME}/lib/.libs
     $ENV{ASSIMPDIR}
@@ -34,12 +41,14 @@ FIND_LIBRARY(ASSIMP_LIBRARY
     /opt/local/lib
     DOC "The Assimp library")
 
-if(WIN32)
+if(MSVC)
 
     find_file(ASSIMP_BINARY
-        NAMES assimp.dll
+        NAMES assimp.dll "assimp${ASSIMP_PF}.dll"
         PATHS
+        $ENV{ASSIMPDIR}/bin/x${ASSIMP_PF}
         $ENV{ASSIMPDIR}/bin
+        $ENV{ASSIMP_HOME}/bin/x${ASSIMP_PF}
         $ENV{ASSIMP_HOME}/bin
         DOC "The Assimp binary")
 

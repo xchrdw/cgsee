@@ -6,19 +6,22 @@ message(STATUS "App ${target}")
 # External libraries
 #
 
-# ...
+find_package(GLM        REQUIRED)
+find_package(GLEW       REQUIRED)
 
 #
 # Includes
 #
 
 include_directories(
-    # e.g., ${TRDP_INCLUDE_DIR}
+    ${GLEW_INCLUDE_PATH}
+    ${GLM_INCLUDE_PATH}
 )
 
 include_directories(
     BEFORE
-    ${CMAKE_SOURCE_DIR}/source/fiblib/include
+    ${CMAKE_SOURCE_DIR}/source/core/include
+    ${CMAKE_SOURCE_DIR}/source/gui/include
 )
 
 #
@@ -27,7 +30,8 @@ include_directories(
 
 set(libs
     # e.g., ${TRDP_LIBRARIES}
-    fiblib
+    core
+    gui
 )
 
 #
