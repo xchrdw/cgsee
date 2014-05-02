@@ -119,6 +119,9 @@ public slots:
     void on_actionLoad_3_triggered();
     void on_actionLoad_4_triggered();
 
+    void on_actionHistoryUndo_triggered();
+    void on_actionHistoryRedo_triggered();
+
     void on_loadFile(const QString & path);
 
 protected slots:

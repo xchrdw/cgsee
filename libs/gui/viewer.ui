@@ -100,22 +100,26 @@
      <addaction name="separator"/>
      <addaction name="actionRandomView"/>
     </widget>
-    <widget class="QMenu" name="menuSave_Load_View">
+    <widget class="QMenu" name="menuManageView">
      <property name="title">
-      <string>Save/Load View</string>
+      <string>Manage Views</string>
      </property>
      <addaction name="actionLoad_1"/>
      <addaction name="actionLoad_2"/>
      <addaction name="actionLoad_3"/>
      <addaction name="actionLoad_4"/>
+     <addaction name="separator"/>
      <addaction name="actionSave_1"/>
      <addaction name="actionSave_2"/>
      <addaction name="actionSave_3"/>
      <addaction name="actionSave_4"/>
     </widget>
+    <addaction name="actionHistoryUndo"/>
+    <addaction name="actionHistoryRedo"/>
+    <addaction name="separator"/>
     <addaction name="selectManipulatorMenu"/>
     <addaction name="selectViewMenu"/>
-    <addaction name="menuSave_Load_View"/>
+    <addaction name="menuManageView"/>
     <addaction name="separator"/>
     <addaction name="captureCameraPathAction"/>
     <addaction name="playCameraPathAction"/>
@@ -590,6 +594,22 @@
    </property>
    <property name="shortcut">
     <string>Alt+0</string>
+   </property>
+  </action>
+  <action name="actionHistoryUndo">
+   <property name="text">
+    <string>Last View</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionHistoryRedo">
+   <property name="text">
+    <string>Next View</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
   <action name="actionLoad_1">
