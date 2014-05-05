@@ -193,36 +193,40 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool history
 
 void AbstractNavigation::saveViewHistory(const glm::mat4 & viewmatrix)
 {
-    /* 
-    * todo: check if new view differs significantly from recently saved views
-    * this is needed to enable the use of this function in onCameraChanged()
-    * because it is called for substeps during interpolations and usage of manipulators
-    * define "threshold of change" !
-    */
-    m_viewHistory = new ViewHistory(m_viewHistory,viewmatrix,m_fovy);
-    qDebug() << "saved #" <<  m_viewHistory->getId();    
+    if(!m_viewHistory->isEqualTo(viewmatrix)){
+        m_viewHistory = new ViewHistory(m_viewHistory,viewmatrix,m_fovy);
+        qDebug() << "saved #" <<  m_viewHistory->getId();  
+    } else {
+        qDebug() << "not saved: no significant changes.";  
+    }  
 }
 
 void AbstractNavigation::undoViewHistory()
 {   
+    // debug, remove when done:
     if(!m_viewHistory->isFirst()){ // if not reached the oldest history element
         qDebug() << "undo #" << m_viewHistory->getId() << " / " << m_viewHistory->getSize() << " views in history.";        
-        m_viewHistory = m_viewHistory->getPrevious();                        
-        loadView(m_viewHistory->getViewMatrix(),true);
     } else {
         qDebug() << "# 0; nothing to undo!";
     }
+    // end debug
+
+    m_viewHistory = m_viewHistory->getPrevious();                        
+    loadView(m_viewHistory->getViewMatrix(),true);
 }
 
 void AbstractNavigation::redoViewHistory()
 {
+    m_viewHistory = m_viewHistory->getNext();         
+    loadView(m_viewHistory->getViewMatrix(),true);
+
+    // debug, remove when done:
     if(!m_viewHistory->isLast()){ // if not reached the youngest history element  
-        m_viewHistory = m_viewHistory->getNext();         
         qDebug() << "redo #" << m_viewHistory->getId() << " / " << m_viewHistory->getSize() << " views in history.";        
-        loadView(m_viewHistory->getViewMatrix(),true);
     } else {
         qDebug() << "nothing to redo!";
     }
+    // end debug
 }
 
 void AbstractNavigation::setFromMatrix(const glm::mat4 & view)

@@ -1,6 +1,8 @@
 #include "viewhistory.h"
 #include <glm/glm.hpp>
 
+#include <QDebug>
+
 int ViewHistory::m_size = 0;
 
 ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy)
@@ -9,6 +11,7 @@ ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy
 	, m_fovy(fovy)
 	, m_next(nullptr)
 {
+
 	m_id = m_size;
 	m_size++;
 	
@@ -25,7 +28,7 @@ ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy
 
 		// connect previous node with current
 		previous->setNext(this);
-	} 
+	}
 }
 
 ViewHistory::~ViewHistory(){
@@ -45,11 +48,19 @@ void ViewHistory::setPrevious(ViewHistory* previous){
 }
 
 ViewHistory* ViewHistory::getPrevious(){
-	return m_previous;
+	if(isFirst()){
+		return this;
+	}else{
+		return m_previous;
+	}
 }
 
 ViewHistory* ViewHistory::getNext(){
-	return m_next;
+	if(isLast()){
+		return this;
+	}else{
+		return m_next;
+	}
 }
 
 ViewHistory* ViewHistory::getLast(){
@@ -106,4 +117,13 @@ bool ViewHistory::isLast(){
 	}else{
 		return false;
 	}
+}
+
+bool ViewHistory::isEqualTo(const glm::mat4 & viewmatrix){
+	if(m_size!=0){
+		if(viewmatrix == m_viewmatrix){
+			return true;
+		}
+	}
+	return false;
 }

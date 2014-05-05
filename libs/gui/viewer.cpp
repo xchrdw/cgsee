@@ -95,7 +95,6 @@ Viewer::Viewer(
     restoreState(s.value(SETTINGS_STATE).toByteArray());
 
     restoreViews(s);
-    //navigation()->resetViewHistory();
     initializeExplorer();
     initializeSceneTree();
 

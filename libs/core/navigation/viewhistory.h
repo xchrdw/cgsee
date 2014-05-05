@@ -19,6 +19,7 @@ public:
 	ViewHistory* getFirst();	
 	bool isLast();
 	bool isFirst();
+	bool isEqualTo(const glm::mat4 & viewmatrix);
 	int getId();
 	int getSize();
 
@@ -31,10 +32,10 @@ private:
 
 	static int m_size;
 	int m_id;
-    ViewHistory* m_next;
-    ViewHistory* m_previous;
+	ViewHistory* m_next;
+	ViewHistory* m_previous;
 	float m_fovy;
-    glm::mat4 m_viewmatrix;
-    // small view screenshot m_thumbnail
-    // timestamp
+	glm::mat4 m_viewmatrix;
+	// small view screenshot m_thumbnail
+	// timestamp
 };
