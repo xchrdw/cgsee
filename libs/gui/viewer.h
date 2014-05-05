@@ -170,6 +170,7 @@ protected slots:
 
     void on_m_sceneHierarchyTree_clicked(const QModelIndex & index);
     void on_m_sceneHierarchy_itemChanged(QStandardItem * item);
+    
 protected:
 
     void initializeExplorer();
@@ -193,10 +194,6 @@ protected:
 
     void saveView(int i);
     void loadView(int i);
-    void saveViewHistory();
-    void undoViewHistory();
-    void redoViewHistory();
-    void resetViewHistory();
 
 protected:
     const std::unique_ptr<Ui_Viewer> m_ui;
@@ -210,8 +207,6 @@ protected:
     Canvas * m_qtCanvas;
     Camera * m_camera;
     QVector<glm::mat4> m_savedViews;
-    QVector<glm::mat4> m_savedHistory;
-    int m_historyStep;
 
     QDockWidget * m_dockNavigator;
     QDockWidget * m_dockExplorer;

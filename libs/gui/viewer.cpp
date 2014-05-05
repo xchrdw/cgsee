@@ -72,10 +72,7 @@ Viewer::Viewer(
 ,   m_qtCanvas(nullptr)
 ,   m_camera(nullptr)
 ,   m_savedViews(4)
-,   m_savedHistory(32)
-,   m_historyStep(0)
 ,   m_isFullscreen(false)
-
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
@@ -98,7 +95,7 @@ Viewer::Viewer(
     restoreState(s.value(SETTINGS_STATE).toByteArray());
 
     restoreViews(s);
-    resetViewHistory();
+    //navigation()->resetViewHistory();
     initializeExplorer();
     initializeSceneTree();
 
@@ -806,103 +803,51 @@ void Viewer::loadView(int i)
     else {
         navigation()->loadView(m_savedViews[i]);
     }
-    saveViewHistory();
 }
-
-void Viewer::saveViewHistory()
-{
-    qDebug() << "saved";
-    for (int i = m_savedHistory.size(); i > 0; --i)
-    {
-        m_savedHistory[i] = m_savedHistory[i-1];
-    }
-    m_savedHistory[0] = navigation()->viewMatrix();
-    if (m_historyStep > 0)
-        resetViewHistory();
-}
-
-void Viewer::undoViewHistory()
-{
-    if (m_savedHistory[m_historyStep] != glm::mat4(0))
-    {
-        if (m_historyStep < 32)
-            m_historyStep++;
-        qDebug() << "undo" << m_historyStep;
-        navigation()->loadView(m_savedHistory[m_historyStep]);
-    }
-}
-
-void Viewer::redoViewHistory()
-{
-    if (m_historyStep > 0)
-        m_historyStep--;
-    qDebug() << "redo" << m_historyStep;
-    if (m_savedHistory[m_historyStep] != glm::mat4(0))
-    {
-        navigation()->loadView(m_savedHistory[m_historyStep]);
-    }
-}
-
-void Viewer::resetViewHistory()
-{
-    for (int i = 0; i < m_savedHistory.size(); ++i)
-        m_savedHistory[i] = glm::mat4(0);
-    m_historyStep = 0;
-}
-
 
 void Viewer::on_actionFrontView_triggered()
 {
     navigation()->loadView(navigation()->frontview());
-    saveViewHistory();
 }
 
 void Viewer::on_actionLeftView_triggered()
 {
     navigation()->loadView(navigation()->leftview());
-    saveViewHistory();
 }
 
 void Viewer::on_actionBackView_triggered()
 {
     navigation()->loadView(navigation()->backview());
-    saveViewHistory();
 }
 
 void Viewer::on_actionRightView_triggered()
 {
     navigation()->loadView(navigation()->rightview());
-    saveViewHistory();
 }
 
 void Viewer::on_actionTopView_triggered()
 {
     navigation()->loadView(navigation()->topview());
-    saveViewHistory();
 }
 
 void Viewer::on_actionBottomView_triggered()
 {
     navigation()->loadView(navigation()->bottomview());
-    saveViewHistory();
 }
 
 void Viewer::on_actionTopRightView_triggered()
 {
     navigation()->loadView(navigation()->topRightView());
-    saveViewHistory();
 }
 
 void Viewer::on_actionBottomLeftView_triggered()
 {
     navigation()->loadView(navigation()->bottomLeftView());
-    saveViewHistory();
 }
 
 void Viewer::on_actionRandomView_triggered()
 {
     navigation()->loadView(navigation()->randomView());
-    saveViewHistory();
 }
 
 
@@ -916,8 +861,8 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
-void Viewer::on_actionHistoryUndo_triggered() { undoViewHistory(); }
-void Viewer::on_actionHistoryRedo_triggered() { redoViewHistory(); }
+void Viewer::on_actionHistoryUndo_triggered() { navigation()->undoViewHistory(); }
+void Viewer::on_actionHistoryRedo_triggered() { navigation()->redoViewHistory(); }
 
 
 void Viewer::on_mouseMoveEventTriggered(int triggered)

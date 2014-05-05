@@ -5,9 +5,12 @@
 #include <glm/gtx/transform.hpp>
 
 #include <QGLWidget>
+#include <QDebug>
 
 #include "abstractnavigation.h"
 #include "../camera.h"
+#include "viewhistory.h"
+
 
 const float AbstractNavigation::TIMER_MS = 1000.f / 60.f;
 
@@ -19,13 +22,14 @@ AbstractNavigation::AbstractNavigation(Camera * camera)
     , m_BBRadius(0)
     , m_fovy(camera->fovy())
     , m_viewmatrix(camera->view())
+    , m_viewHistory()
     , m_camera(camera)
     , m_canvas(0)
     , m_timer()
     , m_timer_requests(0)
     , m_animation_active(false)
 {
-    m_frontView = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    m_frontView = glm::lookAt(glm::vec3(0.f, 0.f, -2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));   
 }
 
 
@@ -50,7 +54,8 @@ void AbstractNavigation::updateCamera()
 }
 
 
-void AbstractNavigation::onCameraChanged() { }
+void AbstractNavigation::onCameraChanged() {
+}
 
 
 void AbstractNavigation::reset()
@@ -74,6 +79,7 @@ void AbstractNavigation::wheelEvent(QWheelEvent * event)
     m_fovy -= (event->delta() * 0.1); //sensitivity
     m_fovy = glm::clamp(m_fovy, 1.0f, 180.0f);
     updateCamera();
+    saveViewHistory(m_viewmatrix);
 }
 
 
@@ -162,7 +168,7 @@ bool AbstractNavigation::isTimerRunning()
     return m_timer.isActive();
 }
 
-void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix)
+void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool history)
 {
     m_old_rotation = glm::quat_cast(m_viewmatrix);
     m_new_rotation = glm::quat_cast(new_viewmatrix);
@@ -175,6 +181,47 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix)
 
     if(!isTimerRunning()) {
         startTimer();
+    }
+    // todo! find more beautiful solution for this:
+    if(!history){
+        saveViewHistory(new_viewmatrix);
+    } else {
+        // todo! implement interpolation for smooth transition of zoom history
+        m_fovy = m_viewHistory->getFovy();
+    }
+}
+
+void AbstractNavigation::saveViewHistory(const glm::mat4 & viewmatrix)
+{
+    /* 
+    * todo: check if new view differs significantly from recently saved views
+    * this is needed to enable the use of this function in onCameraChanged()
+    * because it is called for substeps during interpolations and usage of manipulators
+    * define "threshold of change" !
+    */
+    m_viewHistory = new ViewHistory(m_viewHistory,viewmatrix,m_fovy);
+    qDebug() << "saved #" <<  m_viewHistory->getId();    
+}
+
+void AbstractNavigation::undoViewHistory()
+{   
+    if(!m_viewHistory->isFirst()){ // if not reached the oldest history element
+        qDebug() << "undo #" << m_viewHistory->getId() << " / " << m_viewHistory->getSize() << " views in history.";        
+        m_viewHistory = m_viewHistory->getPrevious();                        
+        loadView(m_viewHistory->getViewMatrix(),true);
+    } else {
+        qDebug() << "# 0; nothing to undo!";
+    }
+}
+
+void AbstractNavigation::redoViewHistory()
+{
+    if(!m_viewHistory->isLast()){ // if not reached the youngest history element  
+        m_viewHistory = m_viewHistory->getNext();         
+        qDebug() << "redo #" << m_viewHistory->getId() << " / " << m_viewHistory->getSize() << " views in history.";        
+        loadView(m_viewHistory->getViewMatrix(),true);
+    } else {
+        qDebug() << "nothing to redo!";
     }
 }
 
@@ -241,6 +288,7 @@ glm::mat4 AbstractNavigation::sceneTransform()
     return m_sceneTransform;
 }
 
+// gets called at every program start and when a new file is opened in the viewer
 void AbstractNavigation::sceneChanged(Group * scene)
 {
     AxisAlignedBoundingBox bb = scene->boundingBox();
@@ -250,6 +298,8 @@ void AbstractNavigation::sceneChanged(Group * scene)
     m_frontView = glm::lookAt(bb.center() + glm::vec3(0.f, 0.f, bb.radius()*2.5), bb.center(), glm::vec3(0.f, 1.f, 0.f));
     setFromMatrix(topRightView());
     updateCamera();
+
+    saveViewHistory(m_viewmatrix);
 }
 
 float AbstractNavigation::getBBRadius(){

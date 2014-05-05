@@ -97,7 +97,9 @@ set(SOURCES
     navigation/flightnavigation.h
     navigation/fpsnavigation.cpp
     navigation/fpsnavigation.h
-    
+    navigation/viewhistory.h
+    navigation/viewhistory.cpp
+
     painter/abstractglparent.h
     painter/abstractpainter.h
     painter/abstractpainter.cpp

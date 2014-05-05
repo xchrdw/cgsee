@@ -10,6 +10,7 @@
 #include <QBasicTimer>
 
 #include "../declspec.h"
+#include "viewhistory.h"
 
 class Camera;
 class QWidget;
@@ -38,7 +39,11 @@ public:
     virtual void wheelEvent(QWheelEvent *event);
 
     virtual const glm::mat4 & viewMatrix();
-    void loadView(const glm::mat4 & viewmatrix);
+    void loadView(const glm::mat4 & viewmatrix, bool history = false);
+  
+    void saveViewHistory(const glm::mat4 & viewmatrix);
+    void undoViewHistory();
+    void redoViewHistory();
 
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
@@ -74,7 +79,6 @@ protected:
     void updateCamera();
     virtual void onCameraChanged(); // override to get notified for camera changes
 
-
 protected:
     int m_width;
     int m_height;
@@ -83,6 +87,7 @@ protected:
 
     float m_fovy;
     glm::mat4 m_viewmatrix;
+    ViewHistory* m_viewHistory; 
 
     Camera * m_camera;
     static const float TIMER_MS;
