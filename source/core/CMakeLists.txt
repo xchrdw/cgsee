@@ -282,9 +282,4 @@ install(TARGETS ${target}
 # Header files
 #install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/${target} DESTINATION ${INSTALL_INCLUDE})
 
-if(WIN32)
-    install(FILES ${ASSIMP_BINARY} DESTINATION ${INSTALL_BIN})
-endif()
-
-
 add_definitions("-DGLM_SWIZZLE")

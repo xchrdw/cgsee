@@ -41,3 +41,9 @@ add_subdirectory(cgsee)
 # Tests
 set(IDE_FOLDER "Tests")
 add_subdirectory(tests)
+
+
+if(MSVC)
+    install(FILES ${ASSIMP_BINARY} DESTINATION ${INSTALL_BIN})
+    install(FILES ${GLEW_BINARY} DESTINATION ${INSTALL_BIN})
+endif()
