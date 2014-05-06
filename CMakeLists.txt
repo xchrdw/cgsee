@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
 set(META_PROJECT_NAME        "cgsee")
 set(META_PROJECT_DESCRIPTION "Viewer for CG related data used for lectures and seminars.")
 set(META_VERSION_MAJOR       "0")
-set(META_VERSION_MINOR       "2")
+set(META_VERSION_MINOR       "1")
 set(META_VERSION_PATCH       "0")
 set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
 set(META_AUTHOR_ORGANIZATION "hpicgs group")
@@ -84,8 +84,8 @@ endif()
 set(project ${META_PROJECT_NAME})
 if(WIN32)
     set(INSTALL_ROOT          ".")                      # C:\Programme\<project>
-    set(INSTALL_DATA          "bin")                    # C:\Programme\<project>
-    set(INSTALL_BIN           "bin")                    # C:\Programme\<project>
+    set(INSTALL_DATA          ".")                      # C:\Programme\<project>
+    set(INSTALL_BIN           ".")                      # C:\Programme\<project>
     set(INSTALL_SHARED        ".")                      # C:\Programme\<project>
     set(INSTALL_LIB           "lib")                    # C:\Programme\<project>\lib
     set(INSTALL_INCLUDE       "include")                # C:\Programme\<project>\include

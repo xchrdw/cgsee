@@ -71,6 +71,11 @@ set_target_properties(${target}
 # Deployment
 #
 
+# deploy qt binaries (cgsee debug target should not be deployed)
+if(WIN32)
+    install_qt(${INSTALL_BIN} Core Gui Widgets OpenGL)
+endif()
+
 install(TARGETS ${target}
     RUNTIME DESTINATION ${INSTALL_BIN}
 #   LIBRARY DESTINATION ${INSTALL_SHARED}

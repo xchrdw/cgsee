@@ -46,3 +46,16 @@ macro(list_extract OUTPUT REGEX)
     endforeach()
 
 endmacro()
+
+
+macro(install_qt DEST)
+
+    set(args ${ARGV})
+    list(REMOVE_AT args 0)
+
+    foreach(target ${args})
+        get_target_property(qtrelease Qt5::${target} LOCATION_RELEASE)
+        install(FILES ${qtrelease} DESTINATION ${DEST})
+    endforeach()
+
+endmacro()
