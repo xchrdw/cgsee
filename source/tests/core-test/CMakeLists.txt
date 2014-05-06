@@ -3,11 +3,17 @@ set(target core-test)
 message(STATUS "Test ${target}")
 
 #
+# External libraries
+#
+
+find_package(GLM        REQUIRED)
+
+#
 # Includes
 #
 
 include_directories(
-    
+    ${GLM_INCLUDE_PATH}        
 )
 
 include_directories(
