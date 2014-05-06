@@ -1,14 +1,35 @@
-
 #include <gui/viewer.h>
 
-#include <GL/glew.h>
-
 #include <cassert>
+
+#include <GL/glew.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#ifdef __GLEW_H__
+#undef __GLEW_H__
 #include <QOpenGLContext>
+#define __GLEW_H__
+#else
+#include <QOpenGLContext>
+#endif
+
+#ifdef WIN32
+
+#elif __APPLE__
+
+#else
+//#include <GL/glx.h>
+
+extern "C" {
+
+extern void (*glXGetProcAddress(const unsigned char *procname))( void );
+extern GLXContext glXGetCurrentContext( void );
+
+}
+#endif
+
 #include <QSettings>
 #include <QTextStream>
 #include <QFileDialog>
@@ -43,7 +64,7 @@
 #include <core/assimploader.h>
 
 #include <core/camera.h>
-#include <core/parallelCamera.h>
+#include <core/parallelcamera.h>
 #include <core/coordinateprovider.h>
 
 #include <core/aabb.h>

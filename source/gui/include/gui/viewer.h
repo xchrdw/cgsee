@@ -5,8 +5,8 @@
 #ifdef WIN32
 #include <windows.h>
 #else
-#include <GL/glx.h>  // for GLXContext
-#undef None
+//from <GL/glew.h>
+typedef struct __GLXcontextRec *GLXContext;
 #endif
 
 #include <memory>

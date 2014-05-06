@@ -8,7 +8,7 @@ message(STATUS "Lib ${target}")
 
 find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
-find_package(OPENGL     REQUIRED)
+find_package(OpenGL     REQUIRED)
 find_package(Assimp     REQUIRED)
 
 find_package(Qt5Core    REQUIRED)
@@ -20,7 +20,8 @@ find_package(Qt5Widgets REQUIRED)
 #
 
 include_directories(
-    ${ASSIMP_INCLUDE_PATH}
+    ${ASSIMP_INCLUDE_DIRS}
+    #${ASSIMP_INCLUDE_PATH}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
 )
@@ -36,7 +37,8 @@ include_directories(
 #
 
 set(libs
-    ${ASSIMP_LIBRARY}
+    ${ASSIMP_LIBRARIES}
+    #${ASSIMP_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
     core
@@ -59,29 +61,27 @@ endif()
 set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/include/${target}")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
-set(api_includes
-    ${include_path}/gui_api.h
-
-    ${include_path}/canvas.h
-    ${include_path}/canvasexporter.h
-    ${include_path}/fileExplorer.h
-    ${include_path}/fileNavigator.h
-    ${include_path}/propertywidgetbuilder.h
-    ${include_path}/viewer.h
+set(sources
+	${source_path}/canvas.cpp
+	${source_path}/canvasexportconfig.cpp
+	${source_path}/canvasexportconfig.h
+	${source_path}/canvasexporter.cpp
+	${source_path}/canvasexporter.ui
+	${source_path}/fileExplorer.cpp
+	${source_path}/fileNavigator.cpp
+	${source_path}/propertywidgetbuilder.cpp
+	${source_path}/viewer.cpp
+	${source_path}/viewer.ui
 )
 
-set(sources
-    ${source_path}/canvas.cpp
-    ${source_path}/canvasexporter.cpp
-    ${source_path}/canvasexporter.ui
-    ${source_path}/canvasexportconfig.cpp
-    ${source_path}/canvasexportconfig.h
-    ${source_path}/fileExplorer.cpp
-    ${source_path}/fileNavigator.cpp
-    ${source_path}/propertywidgetbuilder.cpp
-    ${source_path}/viewer.cpp
-    ${source_path}/viewer.ui
-
+set(api_includes
+	${include_path}/canvasexporter.h
+	${include_path}/canvas.h
+	${include_path}/fileExplorer.h
+	${include_path}/fileNavigator.h
+	${include_path}/gui_api.h
+	${include_path}/propertywidgetbuilder.h
+	${include_path}/viewer.h
 )
 
 # Group source files
@@ -127,8 +127,8 @@ set_target_properties(${target}
 # Library
 install(TARGETS ${target}
     RUNTIME DESTINATION ${INSTALL_BIN}
-#    LIBRARY DESTINATION ${INSTALL_SHARED}
-#    ARCHIVE DESTINATION ${INSTALL_LIB}
+    LIBRARY DESTINATION ${INSTALL_SHARED}
+    ARCHIVE DESTINATION ${INSTALL_LIB}
 )
 
 # Header files

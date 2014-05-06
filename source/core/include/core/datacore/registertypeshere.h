@@ -10,5 +10,5 @@
 // 
 // from your main function.
 
-Q_DECLARE_METATYPE(glm::vec3);
-Q_DECLARE_METATYPE(glm::vec2);
+Q_DECLARE_METATYPE(glm::vec3)
+Q_DECLARE_METATYPE(glm::vec2)

@@ -8,8 +8,8 @@
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/camera.h>
-#include <core/parallelCamera.h>
-#include <core/convergentCamera.h>
+#include <core/parallelcamera.h>
+#include <core/convergentcamera.h>
 #include <core/fileassociatedshader.h>
 #include <core/framebufferobject.h>
 #include <core/gpuquery.h>
