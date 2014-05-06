@@ -50,6 +50,8 @@ else()
     add_definitions("-DCORE_EXPORTS")
 endif()
 
+add_definitions("-DGLM_SWIZZLE")
+
 #
 # Sources
 #
@@ -266,5 +268,3 @@ install(TARGETS ${target}
 
 # Header files
 #install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/${target} DESTINATION ${INSTALL_INCLUDE})
-
-add_definitions("-DGLM_SWIZZLE")
