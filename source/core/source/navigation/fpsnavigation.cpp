@@ -2,7 +2,7 @@
 #include <core/navigation/fpsnavigation.h>
 
 //glm to rotate around axis
-#define GLM_FORCE_RADIANS
+
 #include <glm/gtx/rotate_vector.hpp>
 
 #include <core/camera.h>

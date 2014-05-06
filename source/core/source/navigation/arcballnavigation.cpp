@@ -1,7 +1,6 @@
 
 #include <core/navigation/arcballnavigation.h>
 
-#define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
 #include <core/camera.h>

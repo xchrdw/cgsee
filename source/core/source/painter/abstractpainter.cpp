@@ -1,7 +1,6 @@
 
 #include <core/painter/abstractpainter.h>
 
-#define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <QKeyEvent>
