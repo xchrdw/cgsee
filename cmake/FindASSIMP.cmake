@@ -1,7 +1,7 @@
 
 # ASSIMP_FOUND
 # ASSIMP_INCLUDE_DIRS
-# ASSIMP_LIBRARY
+# ASSIMP_LIBRARIES
 # ASSIMP_BINARY
 
 find_path(ASSIMP_INCLUDE_DIRS assimp/Importer.hpp
@@ -20,7 +20,7 @@ else()
     set(ASSIMP_PF "86")
 endif()
 
-find_library(ASSIMP_LIBRARY
+find_library(ASSIMP_LIBRARIES
     NAMES assimp
     PATHS
     $ENV{ASSIMPDIR}/lib/x${ASSIMP_PF}
@@ -55,5 +55,5 @@ if(MSVC)
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ASSIMP REQUIRED_VARS ASSIMP_INCLUDE_DIRS ASSIMP_LIBRARY)
-mark_as_advanced(ASSIMP_INCLUDE_DIRS ASSIMP_LIBRARY)
+find_package_handle_standard_args(ASSIMP REQUIRED_VARS ASSIMP_INCLUDE_DIRS ASSIMP_LIBRARIES)
+mark_as_advanced(ASSIMP_INCLUDE_DIRS ASSIMP_LIBRARIES)

@@ -36,7 +36,6 @@ include_directories(
 
 set(libs
     ${ASSIMP_LIBRARIES}
-    #${ASSIMP_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
 )
