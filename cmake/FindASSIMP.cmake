@@ -1,10 +1,10 @@
 
 # ASSIMP_FOUND
-# ASSIMP_INCLUDE_PATH
+# ASSIMP_INCLUDE_DIRS
 # ASSIMP_LIBRARY
 # ASSIMP_BINARY
 
-find_path(ASSIMP_INCLUDE_PATH assimp/Importer.hpp
+find_path(ASSIMP_INCLUDE_DIRS assimp/Importer.hpp
     $ENV{ASSIMPDIR}/include
     $ENV{ASSIMP_HOME}/include
     $ENV{PROGRAMFILES}/ASSIMP/include
@@ -55,5 +55,5 @@ if(MSVC)
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ASSIMP REQUIRED_VARS ASSIMP_INCLUDE_PATH ASSIMP_LIBRARY)
-mark_as_advanced(ASSIMP_INCLUDE_PATH ASSIMP_LIBRARY)
+find_package_handle_standard_args(ASSIMP REQUIRED_VARS ASSIMP_INCLUDE_DIRS ASSIMP_LIBRARY)
+mark_as_advanced(ASSIMP_INCLUDE_DIRS ASSIMP_LIBRARY)

@@ -21,7 +21,6 @@ find_package(Qt5Widgets REQUIRED)
 
 include_directories(
     ${ASSIMP_INCLUDE_DIRS}
-    #${ASSIMP_INCLUDE_PATH}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
 )
