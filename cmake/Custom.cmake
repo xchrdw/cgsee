@@ -28,6 +28,8 @@ macro(source_group_by_path PARENT_PATH REGEX GROUP)
 endmacro()
 
 
+# Extract entries matching a given regex from a list
+
 macro(list_extract OUTPUT REGEX)
 
     set(args ${ARGV})
@@ -41,6 +43,19 @@ macro(list_extract OUTPUT REGEX)
             list(APPEND ${OUTPUT} ${FILENAME})
         endif()
 
+    endforeach()
+
+endmacro()
+
+
+macro(install_qt DEST)
+
+    set(args ${ARGV})
+    list(REMOVE_AT args 0)
+
+    foreach(target ${args})
+        get_target_property(qtrelease Qt5::${target} LOCATION_RELEASE)
+        install(FILES ${qtrelease} DESTINATION ${DEST})
     endforeach()
 
 endmacro()

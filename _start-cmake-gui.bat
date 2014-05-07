@@ -1,4 +1,4 @@
 
 call _configure.bat
 
-cmake-gui
+cmake-gui build
