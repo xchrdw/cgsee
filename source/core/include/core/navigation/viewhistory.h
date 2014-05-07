@@ -6,36 +6,41 @@ class ViewHistory
 {
 
 public:
-	ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy);
-	~ViewHistory();
-	void reset();
+  ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy);
+  ~ViewHistory();
 
-	void setNext(ViewHistory* next);
-	void setPrevious(ViewHistory* previous);
-	ViewHistory* getPrevious();
-	ViewHistory* getNext();
-	ViewHistory* getLast();
-	ViewHistory* getFirst();
-	bool isLast();
-	bool isFirst();
-	bool isEqualTo(const glm::mat4 & viewmatrix);
-	int getId();
-	int getSize();
+  void reset();
 
-	glm::mat4 getViewMatrix();
-	float getFovy();
+  void setNext(ViewHistory* next);
+  void setPrevious(ViewHistory* previous);
+
+  ViewHistory* getPrevious();
+  ViewHistory* getNext();
+  ViewHistory* getLast();
+  ViewHistory* getFirst();
+  int getId();
+  int getSize();
+  glm::mat4 getViewMatrix();
+  float getFovy();
+
+  bool isLast();
+  bool isFirst();
+
+  // @TODO really compare to mat4 ? or ViewHistory object?
+  bool isEqualTo(const glm::mat4 & viewmatrix);
 
 private:
 
-	void deleteOrphanedHistory();
-	void deleteOldestHistory();
+  void deleteOrphaned();
+  void deleteFirst();
 
-	static int m_size;
-	int m_id;
-	ViewHistory* m_next;
-	ViewHistory* m_previous;
-	float m_fovy;
-	glm::mat4 m_viewmatrix;
-	// small view screenshot m_thumbnail
-	// timestamp
+  static int m_size;
+  ViewHistory* m_previous;
+  ViewHistory* m_next;
+  int m_id;
+  glm::mat4 m_viewmatrix;
+  float m_fovy;
+
+  // @TODO small view screenshot m_thumbnail
+  // @TODO replace ID with m_timestamp
 };
