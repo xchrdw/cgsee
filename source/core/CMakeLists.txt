@@ -90,6 +90,7 @@ set(sources
 	${source_path}/navigation/fpsnavigation.cpp
 	${source_path}/navigation/abstractnavigation.cpp
 	${source_path}/navigation/arcballnavigation.cpp
+	${source_path}/navigation/viewhistory.cpp
 	${source_path}/objloader.cpp
 	${source_path}/offAxisCamera.cpp
 	${source_path}/painter/abstractscenepainter.cpp
@@ -173,6 +174,7 @@ set(api_includes
 	${include_path}/navigation/abstractnavigation.h
 	${include_path}/navigation/flightnavigation.h
 	${include_path}/navigation/arcballnavigation.h
+	${include_path}/navigation/viewhistory.h
 	${include_path}/objloader.h
 	${include_path}/offaxiscamera.h
 	${include_path}/painter/abstractscenepainter.h
@@ -225,9 +227,9 @@ set(api_includes
 # Group source files
 set(header_group "Header Files (API)")
 set(source_group "Source Files")
-source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$|\\\\.tli" 
+source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$|\\\\.tli"
     ${header_group} ${api_includes})
-source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.tli" 
+source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.tli"
     ${source_group} ${sources})
 
 #

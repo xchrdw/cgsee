@@ -1,6 +1,5 @@
 #pragma once
 
-#include "declspec.h"
 #include <glm/glm.hpp>
 
 class ViewHistory
@@ -16,7 +15,7 @@ public:
 	ViewHistory* getPrevious();
 	ViewHistory* getNext();
 	ViewHistory* getLast();
-	ViewHistory* getFirst();	
+	ViewHistory* getFirst();
 	bool isLast();
 	bool isFirst();
 	bool isEqualTo(const glm::mat4 & viewmatrix);

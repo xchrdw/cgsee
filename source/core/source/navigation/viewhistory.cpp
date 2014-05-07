@@ -1,4 +1,4 @@
-#include "viewhistory.h"
+#include <core/navigation/viewhistory.h>
 #include <glm/glm.hpp>
 
 #include <QDebug>
@@ -14,7 +14,7 @@ ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy
 
 	m_id = m_size;
 	m_size++;
-	
+
 	// todo! implement history size limit
 
 	if(previous != nullptr){
@@ -64,7 +64,7 @@ ViewHistory* ViewHistory::getNext(){
 }
 
 ViewHistory* ViewHistory::getLast(){
-	ViewHistory* temp {this};	
+	ViewHistory* temp {this};
 	while(!temp->isLast()){
 		temp = temp->getNext();
 	}
@@ -72,7 +72,7 @@ ViewHistory* ViewHistory::getLast(){
 }
 
 ViewHistory* ViewHistory::getFirst(){
-	ViewHistory* temp {this};	
+	ViewHistory* temp {this};
 	while(!temp->isFirst()){
 		temp = temp->getPrevious();
 	}
@@ -80,7 +80,7 @@ ViewHistory* ViewHistory::getFirst(){
 }
 
 void ViewHistory::deleteYoungerHistory(){
-	ViewHistory* temp {m_previous->getLast()};	
+	ViewHistory* temp {m_previous->getLast()};
 	while(temp != m_previous){
 		temp = temp->getPrevious();
 		delete temp->getNext();
@@ -94,7 +94,7 @@ glm::mat4 ViewHistory::getViewMatrix(){
 float ViewHistory::getFovy(){
 	return m_fovy;
 }
-	
+
 int ViewHistory::getSize(){
 	return m_size;
 }
