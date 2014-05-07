@@ -66,18 +66,13 @@ ViewFrustum::e_insideFrustum ViewFrustum::contains(const AxisAlignedBoundingBox 
     // in this case the function must have returned INTERSECTS_FRUSTUM yet
     if (contains_at_least_1_point) {
         return INSIDE_FRUSTUM;
-    } else {
-        for (auto vertex : this->m_vertices) {
-            if (aabb.inside(vertex)) {
-                return INTERSECTS_FRUSTUM;
-            }
-        }
-        if (true) {
+    } 
+    for (auto vertex : this->m_vertices) {
+        if (aabb.inside(vertex)) {
             return INTERSECTS_FRUSTUM;
-        } else {
-            return OUTSIDE_FRUSTUM;
         }
     }
+    return OUTSIDE_FRUSTUM;    
 }
 
 bool ViewFrustum::contains(glm::vec3 point) const {
