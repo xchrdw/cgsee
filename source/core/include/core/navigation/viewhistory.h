@@ -27,7 +27,8 @@ public:
 
 private:
 
-	void deleteYoungerHistory();
+	void deleteOrphanedHistory();
+	void deleteOldestHistory();
 
 	static int m_size;
 	int m_id;
