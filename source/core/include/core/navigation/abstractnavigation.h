@@ -17,7 +17,7 @@ class Camera;
 class QWidget;
 class Group;
 
-class CORE_API AbstractNavigation : QObject 
+class CORE_API AbstractNavigation : QObject
 {
 
 public:
@@ -42,7 +42,7 @@ public:
 
     virtual const glm::mat4 & viewMatrix();
     void loadView(const glm::mat4 & viewmatrix, bool history = false);
-  
+
     void saveViewHistory(const glm::mat4 & viewmatrix);
     void undoViewHistory();
     void redoViewHistory();
@@ -89,7 +89,7 @@ protected:
 
     float m_fovy;
     glm::mat4 m_viewmatrix;
-    ViewHistory* m_viewHistory; 
+    ViewHistory* m_viewHistory;
 
     Camera * m_camera;
     static const float TIMER_MS;

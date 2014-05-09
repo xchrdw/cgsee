@@ -5,7 +5,7 @@
 
 #include <core/camera.h>
 
-ArcballNavigation::ArcballNavigation(Camera * camera) 
+ArcballNavigation::ArcballNavigation(Camera * camera)
     : AbstractNavigation(camera)
     , m_mouse_last(0)
     , m_mouse_cur(0)
@@ -67,7 +67,7 @@ void ArcballNavigation::updateZoom()
 {
     float delta = (m_mouse_cur - m_mouse_last).y / m_height; // normalized height difference
     glm::vec3 zoom_in_camera = glm::vec3(0, 0, -delta*5) * glm::mat3(m_viewmatrix) ; // TODO relative to z-buffer
-    
+
     glm::mat4 translate = glm::translate(glm::mat4(), zoom_in_camera);
     m_viewmatrix = m_viewmatrix * translate;
 }

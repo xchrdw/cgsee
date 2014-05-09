@@ -11,7 +11,7 @@
 
 float angle = 0.05f;
 
-FlightNavigation::FlightNavigation(Camera * camera) 
+FlightNavigation::FlightNavigation(Camera * camera)
     : AbstractNavigation(camera)
     , m_direction(0)
     , m_yprAngle(0)
@@ -21,7 +21,7 @@ FlightNavigation::FlightNavigation(Camera * camera)
 
 FlightNavigation::~FlightNavigation()
 {
-    
+
 }
 
 void FlightNavigation::keyPressEvent(QKeyEvent *event){
@@ -59,7 +59,7 @@ void FlightNavigation::keyPressEvent(QKeyEvent *event){
         case Qt::Key_Right:
             m_direction.x = -1.0f;
             break;
-            
+
         default:
             return; // prevent startTimer
     }
@@ -99,7 +99,7 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
                 m_yprAngle.z = 0.0f;
             }
             break;
-            
+
         //Move forward, backward
         case Qt::Key_Up:
             if (m_direction.y == 1.0f) {
@@ -121,7 +121,7 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
                 m_direction.x = 0.0f;
             }
             break;
-            
+
         default:
             return; // prevent stopTimer
     }
@@ -129,11 +129,11 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event){
 }
 
 
-void FlightNavigation::setFromMatrix(const glm::mat4 & view){ 
+void FlightNavigation::setFromMatrix(const glm::mat4 & view){
     m_up = m_camera->getUp();
     m_eye = m_camera->getEye();
     m_center = m_camera->getCenter();
-    
+
     updateView();
 }
 
