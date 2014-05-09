@@ -15,7 +15,7 @@ class Camera;
 class QWidget;
 class Group;
 
-class CORE_API AbstractNavigation : QObject 
+class CORE_API AbstractNavigation : QObject
 {
 
 public:
