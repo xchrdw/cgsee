@@ -72,8 +72,7 @@ ViewHistory* ViewHistory::getPrevious()
 {
     if (isFirst())
     {
-        return this; // @TODO this should be NULL if isFirst(); ?
-        //return nullptr;
+        return this;
     }
     else
     {
@@ -85,8 +84,7 @@ ViewHistory* ViewHistory::getNext()
 {
     if (isLast())
     {
-        return this; // @TODO this should be NULL if isLast(); ?
-        //return nullptr;
+        return this;
     }
     else
     {
