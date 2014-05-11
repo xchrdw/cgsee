@@ -14,6 +14,7 @@ find_package(Assimp     REQUIRED)
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5Gui     REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(libzeug    REQUIRED)
 
 #
 # Includes
@@ -23,6 +24,7 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+    ${LIBZEUG_INCLUDES}
 )
 
 include_directories(
@@ -39,6 +41,8 @@ set(libs
     ${ASSIMP_LIBRARIES}
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
+    ${LIBZEUG_REFLECTION_LIBRARY}
+    ${LIBZEUG_PROPERTYGUI_LIBRARY}
     core
 )
 
@@ -70,6 +74,7 @@ set(sources
 	${source_path}/propertywidgetbuilder.cpp
 	${source_path}/viewer.cpp
 	${source_path}/viewer.ui
+    ${source_path}/exampleproperties.cpp
 )
 
 set(api_includes
@@ -80,6 +85,7 @@ set(api_includes
 	${include_path}/gui_api.h
 	${include_path}/propertywidgetbuilder.h
 	${include_path}/viewer.h
+    ${include_path}/exampleproperties.h
 )
 
 # Group source files
