@@ -13,8 +13,8 @@ ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy
     m_id = m_size;
     m_size++;
 
-    // limit history size to 128
-    if (m_size > 127) {
+    // limit history size to 8
+    if (m_size > 7) {
         deleteFirst();
     }
 
@@ -156,16 +156,19 @@ bool ViewHistory::isLast()
     }
 }
 
-bool ViewHistory::isEqualTo(const glm::mat4 & viewmatrix)
+bool ViewHistory::isEqualTo(const ViewHistory & viewhistory)
 {
-    // @TODO compare to ViewHistory objects
-    if (m_size != 0)
+    if (viewhistory.getViewMatrix() == m_viewmatrix)
     {
-        if (viewmatrix == m_viewmatrix)
+        if (viewhistory.getFovy() == m_fovy)
         {
-            return true;
+            if (viewhistory.getId() == m_id)
+            {
+                return true;
+            }
         }
     }
+
     return false;
 }
 

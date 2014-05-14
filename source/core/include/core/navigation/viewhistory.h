@@ -26,8 +26,7 @@ public:
     bool isLast();
     bool isFirst();
 
-    // @TODO really compare to mat4 ? or ViewHistory object?
-    bool isEqualTo(const glm::mat4 & viewmatrix);
+    bool isEqualTo(const ViewHistory & viewhistory);
 
 private:
 
