@@ -155,20 +155,11 @@ bool ViewHistory::isLast()
     }
 }
 
-bool ViewHistory::isEqualTo(ViewHistory &viewhistory)
+bool ViewHistory::isEqualViewMatrix(const glm::mat4 & viewmatrix)
 {
-    if (viewhistory.getViewMatrix() == m_viewmatrix)
-    {
-        if (viewhistory.getFovy() == m_fovy)
-        {
-            if (viewhistory.getTimestamp() == m_timestamp)
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
+    bool comparable = false;
+    (m_size != 0) ? comparable = (viewmatrix == m_viewmatrix) : comparable = false;
+    return comparable;
 }
 
 void ViewHistory::deleteOrphaned()

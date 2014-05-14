@@ -192,8 +192,8 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool history
 
 void AbstractNavigation::saveViewHistory(const glm::mat4 & viewmatrix)
 {
-    if(!m_viewHistory->isEqualTo(viewmatrix)){
-        m_viewHistory = new ViewHistory(m_viewHistory,viewmatrix,m_fovy);
+    if(!m_viewHistory->isEqualViewMatrix(viewmatrix)){
+        m_viewHistory = new ViewHistory(m_viewHistory, viewmatrix, m_fovy);
         qDebug() << "saved #" <<  m_viewHistory->getTimestamp();
     } else {
         qDebug() << "not saved: no significant changes.";

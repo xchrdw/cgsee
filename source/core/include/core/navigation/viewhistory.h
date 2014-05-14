@@ -27,7 +27,7 @@ public:
     bool isLast();
     bool isFirst();
 
-    bool isEqualTo(const ViewHistory & viewhistory) const;
+    bool isEqualViewMatrix(const glm::mat4 & viewmatrix);
 
 private:
 
