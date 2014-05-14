@@ -175,7 +175,7 @@ void ViewHistory::deleteOrphaned()
     while(temp != m_previous)
     {
         temp = temp->getPrevious();
-        delete temp->getNext();
+        temp->setNext(nullptr);
     }
 }
 
