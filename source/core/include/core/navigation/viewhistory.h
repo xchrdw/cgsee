@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDateTime>
 #include <glm/glm.hpp>
 
 class ViewHistory
@@ -18,7 +19,7 @@ public:
     ViewHistory* getNext();
     ViewHistory* getLast();
     ViewHistory* getFirst();
-    int getId();
+    qint64 getTimestamp();
     int getSize();
     glm::mat4 getViewMatrix();
     float getFovy();
@@ -26,7 +27,7 @@ public:
     bool isLast();
     bool isFirst();
 
-    bool isEqualTo(const ViewHistory & viewhistory);
+    bool isEqualTo(const ViewHistory & viewhistory) const;
 
 private:
 
@@ -36,10 +37,7 @@ private:
     static int m_size;
     ViewHistory* m_previous;
     ViewHistory* m_next;
-    int m_id;
+    qint64 m_timestamp;
     glm::mat4 m_viewmatrix;
     float m_fovy;
-
-    // @TODO small view screenshot m_thumbnail
-    // @TODO replace ID with m_timestamp
 };

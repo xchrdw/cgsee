@@ -194,7 +194,7 @@ void AbstractNavigation::saveViewHistory(const glm::mat4 & viewmatrix)
 {
     if(!m_viewHistory->isEqualTo(viewmatrix)){
         m_viewHistory = new ViewHistory(m_viewHistory,viewmatrix,m_fovy);
-        qDebug() << "saved #" <<  m_viewHistory->getId();
+        qDebug() << "saved #" <<  m_viewHistory->getTimestamp();
     } else {
         qDebug() << "not saved: no significant changes.";
     }
@@ -204,7 +204,7 @@ void AbstractNavigation::undoViewHistory()
 {
     // debug, remove when done:
     if(!m_viewHistory->isFirst()){ // if not reached the oldest history element
-        qDebug() << "undo #" << m_viewHistory->getId() << " / " << m_viewHistory->getSize() << " views in history.";
+        qDebug() << "undo #" << m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
     } else {
         qDebug() << "# 0; nothing to undo!";
     }
@@ -221,7 +221,7 @@ void AbstractNavigation::redoViewHistory()
 
     // debug, remove when done:
     if(!m_viewHistory->isLast()){ // if not reached the youngest history element
-        qDebug() << "redo #" << m_viewHistory->getId() << " / " << m_viewHistory->getSize() << " views in history.";
+        qDebug() << "redo #" << m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
     } else {
         qDebug() << "nothing to redo!";
     }

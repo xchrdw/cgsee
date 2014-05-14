@@ -9,8 +9,7 @@ ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy
     , m_next(nullptr)
 {
 
-    // @TODO debug remove id or replace with timestamp
-    m_id = m_size;
+    m_timestamp = QDateTime::currentMSecsSinceEpoch();
     m_size++;
 
     // limit history size to 8
@@ -112,9 +111,9 @@ ViewHistory* ViewHistory::getFirst()
     return temp;
 }
 
-int ViewHistory::getId()
+qint64 ViewHistory::getTimestamp()
 {
-    return m_id; // @TODO debg remove or replace with timestamp
+    return m_timestamp;
 }
 
 int ViewHistory::getSize()
@@ -156,13 +155,13 @@ bool ViewHistory::isLast()
     }
 }
 
-bool ViewHistory::isEqualTo(const ViewHistory & viewhistory)
+bool ViewHistory::isEqualTo(ViewHistory &viewhistory)
 {
     if (viewhistory.getViewMatrix() == m_viewmatrix)
     {
         if (viewhistory.getFovy() == m_fovy)
         {
-            if (viewhistory.getId() == m_id)
+            if (viewhistory.getTimestamp() == m_timestamp)
             {
                 return true;
             }
