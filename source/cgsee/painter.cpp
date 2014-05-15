@@ -464,6 +464,11 @@ void Painter::releaseSampler(
 
 }
 
+const Group * Painter::scene()
+{
+    return m_camera;
+}
+
 Camera * Painter::camera()
 {
     return m_camera;

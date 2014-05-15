@@ -46,9 +46,14 @@ public:
 
     virtual RenderingPass * getSharedPass();
     
+    
+public: //REFACTORING
+    const Group * scene();
+    virtual Camera * camera() override;
+    
 protected:
     virtual const bool initialize() override;
-    virtual Camera * camera() override;
+    
 
 protected:
     void setUniforms();

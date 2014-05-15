@@ -106,6 +106,7 @@ set(sources
 	${source_path}/rendering/blureffect.cpp
 	${source_path}/rendering/boundingboxpass.cpp
 	${source_path}/rendering/renderingpass.cpp
+    ${source_path}/rendering/renderstage.cpp
 	${source_path}/rendering/lightsource.cpp
 	${source_path}/rendering/rasterizer.cpp
 	${source_path}/rendering/normalzpass.cpp
@@ -190,6 +191,7 @@ set(api_includes
 	${include_path}/property/abstractproperty.h
 	${include_path}/property/propertylist.h
 	${include_path}/rendering/rendertechnique.h
+    ${include_path}/rendering/renderstage.h
 	${include_path}/rendering/shadowmapping.h
 	${include_path}/rendering/ssaoeffect.h
 	${include_path}/rendering/normalzpass.h
