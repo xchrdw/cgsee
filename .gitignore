@@ -17,3 +17,9 @@ codeblocks/
 
 *.bat
 *.sh
+
+cgsee.config
+cgsee.creator
+cgsee.files
+cgsee.includes
+
