@@ -17,9 +17,3 @@ codeblocks/
 
 *.bat
 *.sh
-
-*.config
-*.creator
-*.files
-*.includes
-
