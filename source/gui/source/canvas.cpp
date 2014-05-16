@@ -234,6 +234,7 @@ void Canvas::mouseReleaseEvent( QMouseEvent * event )
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
+    this->setFocus(); 
     m_navigation->mouseMoveEvent(event);
 
     emit mouseMoveEventTriggered(1);
