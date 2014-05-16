@@ -1,0 +1,11 @@
+source/cgsee
+source/core/include/core
+source/core/include/core/datacore
+source/core/include/core/navigation
+source/core/include/core/painter
+source/core/include/core/property
+source/core/include/core/rendering
+source/core/include/core/scenegraph
+source/core/source
+source/gui/include/gui
+source/gui/source
