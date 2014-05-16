@@ -177,6 +177,5 @@ void ViewHistory::deleteFirst()
     ViewHistory* first {this->getFirst()};
     ViewHistory* new_first {this->getFirst()->getNext()};
     new_first->setPrevious(nullptr);
-    delete first;
     m_size--;
 }
