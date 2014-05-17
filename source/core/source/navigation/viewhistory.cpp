@@ -4,18 +4,12 @@ int ViewHistory::m_size = 0;
 
 ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy)
     : m_previous(previous)
+    , m_next(nullptr)
     , m_viewmatrix(viewmatrix)
     , m_fovy(fovy)
-    , m_next(nullptr)
 {
-
     m_timestamp = QDateTime::currentMSecsSinceEpoch();
     m_size++;
-
-    // limit history size to 8
-    if (m_size > 7) {
-        deleteFirst();
-    }
 
     // if previos object in history exists, link it
     if (previous != nullptr)
@@ -23,13 +17,18 @@ ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy
 
         // if new history shall be saved before youngest state is the
         // the current view: delete orphaned history path (create new path)
-        if (previous->getNext() != nullptr)
+        if (previous->getNext() != nullptr && previous->getNext() != previous)
         {
             deleteOrphaned();
         }
 
         // connect previous node with current
         previous->setNext(this);
+    }
+
+    // limit history size to 8
+    if (m_size > 8) {
+        deleteFirst();
     }
 }
 
@@ -133,33 +132,19 @@ float ViewHistory::getFovy()
 
 bool ViewHistory::isFirst()
 {
-    if (m_previous == nullptr)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return (m_previous == nullptr);
 }
 
 bool ViewHistory::isLast()
 {
-    if (m_next == nullptr)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return (m_next == nullptr);
 }
 
 bool ViewHistory::isEqualViewMatrix(const glm::mat4 & viewmatrix)
 {
-    bool comparable = false;
-    (m_size != 0) ? comparable = (viewmatrix == m_viewmatrix) : comparable = false;
-    return comparable;
+    bool isEqual = false;
+    (m_size != 0) ? isEqual = (viewmatrix == m_viewmatrix) : isEqual = false;
+    return isEqual;
 }
 
 void ViewHistory::deleteOrphaned()
@@ -169,13 +154,13 @@ void ViewHistory::deleteOrphaned()
     {
         temp = temp->getPrevious();
         temp->setNext(nullptr);
+        --m_size;
     }
 }
 
 void ViewHistory::deleteFirst()
 {
-    ViewHistory* first {this->getFirst()};
     ViewHistory* new_first {this->getFirst()->getNext()};
     new_first->setPrevious(nullptr);
-    m_size--;
+    --m_size;
 }
