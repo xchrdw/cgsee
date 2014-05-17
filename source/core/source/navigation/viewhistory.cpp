@@ -7,9 +7,13 @@ ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy
     , m_next(nullptr)
     , m_viewmatrix(viewmatrix)
     , m_fovy(fovy)
+    , m_thumbnail(64, 64)
 {
     m_timestamp = QDateTime::currentMSecsSinceEpoch();
     m_size++;
+
+    // @TODO get canvas snapshot
+    m_thumbnail.fill(Qt::white);
 
     // if previos object in history exists, link it
     if (previous != nullptr)
@@ -130,6 +134,11 @@ float ViewHistory::getFovy()
     return m_fovy;
 }
 
+QPixmap ViewHistory::getThumbnail()
+{
+    return m_thumbnail;
+}
+
 bool ViewHistory::isFirst()
 {
     return (m_previous == nullptr);
@@ -144,6 +153,13 @@ bool ViewHistory::isEqualViewMatrix(const glm::mat4 & viewmatrix)
 {
     bool isEqual = false;
     (m_size != 0) ? isEqual = (viewmatrix == m_viewmatrix) : isEqual = false;
+    return isEqual;
+}
+
+bool ViewHistory::isEqualFovy(const float & fovy)
+{
+    bool isEqual = false;
+    (m_size != 0) ? isEqual = (fovy == m_fovy) : isEqual = false;
     return isEqual;
 }
 
