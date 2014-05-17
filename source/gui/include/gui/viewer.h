@@ -170,6 +170,7 @@ protected:
 
     void initializeExplorer();
     void initializeSceneTree();
+    void initializePropertyDemo();
     void initializeDockWidgets(QDockWidget * dockWidget,
     QWidget * widget, Qt::DockWidgetArea area);
     void createSceneHierarchy(QStandardItemModel * model, Node * parentNode);
@@ -206,6 +207,7 @@ protected:
     QDockWidget * m_dockNavigator;
     QDockWidget * m_dockExplorer;
     QDockWidget * m_dockScene;
+    QDockWidget * m_dockPropertyDemo;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;

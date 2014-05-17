@@ -45,7 +45,10 @@ extern GLXContext glXGetCurrentContext( void );
 #include <QTextEdit>
 #include <QVBoxLayout>
 
+#include <propertyguizeug/PropertyBrowser.h>
+
 #include "gui/ui_viewer.h"
+#include <gui/exampleproperties.h>
 #include <gui/canvas.h>
 #include <gui/canvasexporter.h>
 #include <gui/fileNavigator.h>
@@ -100,6 +103,7 @@ Viewer::Viewer(
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
+,   m_dockPropertyDemo(new QDockWidget(tr("PropertyDemo")))
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
@@ -121,7 +125,7 @@ Viewer::Viewer(
     restoreViews(s);
     initializeExplorer();
     initializeSceneTree();
-
+    initializePropertyDemo();
 };
 
 void Viewer::initializeExplorer()
@@ -189,6 +193,25 @@ void Viewer::initializeSceneTree()
     QObject::connect(
         this, SIGNAL(infoBoxChanged(const QString &)),
         sceneInfoText, SLOT(setPlainText(const QString &)));
+}
+
+void Viewer::initializePropertyDemo()
+{
+    m_dockPropertyDemo->setObjectName("propertyDemo");
+
+    // Yes, this is a memory leak, because the object is never destroyed.
+    // Please remove this test as soon as possible :)
+    ExampleProperties * obj = new ExampleProperties();
+
+    propertyguizeug::PropertyBrowser *propertyBrowser = new propertyguizeug::PropertyBrowser(obj);
+
+    QVBoxLayout * layout = new QVBoxLayout();
+    layout->addWidget(propertyBrowser);
+
+    QWidget * demoWidget = new QWidget(this);
+    demoWidget->setLayout(layout);
+
+    this->initializeDockWidgets(m_dockPropertyDemo, demoWidget, Qt::RightDockWidgetArea);
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
@@ -689,6 +712,7 @@ void Viewer::on_toggleFullscreen_triggered()
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
     m_qtCanvas->setNavigation(navigation);
+    this->setFocus();
 }
 
 AbstractNavigation * Viewer::navigation() {
