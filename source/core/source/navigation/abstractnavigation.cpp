@@ -147,6 +147,7 @@ void AbstractNavigation::updateTransition()
     glm::mat4 translation = glm::translate(glm::mix(m_old_pos, m_new_pos, step));
     glm::mat4 rotation = glm::mat4_cast(glm::slerp(m_old_rotation, m_new_rotation, step));
     m_viewmatrix = translation * rotation;
+    m_fovy = m_old_fovy + step * (m_new_fovy - m_old_fovy);
     updateCamera();
 }
 
@@ -155,6 +156,7 @@ void AbstractNavigation::finishTransition()
     m_animation_active = false;
     stopTimer();
     m_viewmatrix = glm::translate(m_new_pos) * glm::mat4_cast(m_new_rotation);
+    m_fovy = m_new_fovy;
     setFromMatrix(m_viewmatrix);
     updateCamera();
 }
@@ -175,18 +177,20 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool save_hi
     m_old_pos = glm::column(m_viewmatrix, 3).xyz();
     m_new_pos = glm::column(new_viewmatrix, 3).xyz();
 
+    m_old_fovy = m_fovy;
+
+    if(save_history){
+        m_new_fovy = m_fovy;
+        saveViewHistory(new_viewmatrix);
+    } else {
+        m_new_fovy = m_viewHistory->getFovy();
+    }
+
     m_animation_progress = 0;
     m_animation_active = true;
 
     if(!isTimerRunning()) {
         startTimer();
-    }
-
-    if(save_history){
-        saveViewHistory(new_viewmatrix);
-    } else {
-        // @TODO implement interpolation for smooth transition of zoom history
-        m_fovy = m_viewHistory->getFovy();
     }
 }
 

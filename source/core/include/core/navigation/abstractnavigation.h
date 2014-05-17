@@ -109,6 +109,8 @@ private:
     glm::vec3 m_new_pos;
     glm::quat m_old_rotation;
     glm::quat m_new_rotation;
+    float m_old_fovy;
+    float m_new_fovy;
     glm::mat4 m_frontView;
     glm::mat4 m_sceneTransform;
 };
