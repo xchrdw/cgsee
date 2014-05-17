@@ -18,6 +18,8 @@ codeblocks/
 *.bat
 *.sh
 
+.localconfig
+
 cgsee.config
 cgsee.creator
 cgsee.files
