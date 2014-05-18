@@ -7,7 +7,7 @@ ViewHistory::ViewHistory(ViewHistory* previous, glm::mat4 viewmatrix, float fovy
     , m_next(nullptr)
     , m_viewmatrix(viewmatrix)
     , m_fovy(fovy)
-    , m_thumbnail(64, 64)
+    , m_thumbnail(64, 64, QImage::Format_RGB32)
 {
     m_timestamp = QDateTime::currentMSecsSinceEpoch();
     m_size++;
@@ -134,7 +134,7 @@ float ViewHistory::getFovy()
     return m_fovy;
 }
 
-QPixmap ViewHistory::getThumbnail()
+QImage ViewHistory::getThumbnail()
 {
     return m_thumbnail;
 }

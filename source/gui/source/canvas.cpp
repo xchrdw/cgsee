@@ -7,6 +7,7 @@
 
 #include <QApplication>
 #include <QBasicTimer>
+#include <QSize>
 
 #include <core/navigation/abstractnavigation.h>
 #include <core/navigation/flightnavigation.h>
@@ -35,7 +36,7 @@ Canvas::Canvas(
     setMinimumSize(1, 1);
 
     // Important for overdraw, not occluding the scene.
-    setAutoFillBackground(false); 
+    setAutoFillBackground(false);
 }
 
 Canvas::~Canvas()
@@ -65,7 +66,7 @@ void Canvas::initializeGL()
 
     // http://stackoverflow.com/questions/10857335/opengl-glgeterror-returns-invalid-enum-after-call-to-glewinit
     // use glGetError instead of userdefined glError, to avoid console/log output
-    glGetError();   
+    glGetError();
     glError();
 
     if(GLEW_OK != error)
@@ -130,13 +131,13 @@ void Canvas::resizeGL(
 
 void Canvas::paintGL()
 {
-    glError();  
+    glError();
     if(m_painter)
         m_painter->paint();
-    else 
+    else
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-     
-    glError();  
+
+    glError();
 }
 
 void Canvas::timerEvent(QTimerEvent *event)
@@ -183,8 +184,6 @@ const QImage Canvas::capture(
     // aspect is false, since this accesses the cameras projection matrix with same aspect...
     return capture(size(), false, alpha);
 }
-
-#include <QSize>
 
 const QImage Canvas::capture(
     const QSize & size
@@ -234,7 +233,7 @@ void Canvas::mouseReleaseEvent( QMouseEvent * event )
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
-    this->setFocus(); 
+    this->setFocus();
     m_navigation->mouseMoveEvent(event);
 
     emit mouseMoveEventTriggered(1);

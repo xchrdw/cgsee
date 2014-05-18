@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QDateTime>
-#include <QPixmap>
+#include <QImage>
 #include <glm/glm.hpp>
 
 class ViewHistory
@@ -24,7 +24,7 @@ public:
     int getSize();
     glm::mat4 getViewMatrix();
     float getFovy();
-    QPixmap getThumbnail();
+    QImage getThumbnail();
 
     bool isLast();
     bool isFirst();
@@ -43,5 +43,5 @@ private:
     qint64 m_timestamp;
     glm::mat4 m_viewmatrix;
     float m_fovy;
-    QPixmap m_thumbnail;
+    QImage m_thumbnail;
 };

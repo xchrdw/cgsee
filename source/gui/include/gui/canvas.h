@@ -32,7 +32,7 @@ public:
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
     virtual void mouseReleaseEvent ( QMouseEvent * event );
-    
+
     virtual void wheelEvent(QWheelEvent *event);
 
     const QImage capture(
@@ -64,7 +64,7 @@ protected:
     //  widget, we implement a normal QWidget::paintEvent(). This
     //  allows us to mix OpenGL calls and QPainter operations in a
     //  controlled way."
-    
+
     //virtual void paintEvent(QPaintEvent * event); // Does not work for 3.2 anyway. :(
     //void paintOverlay(QPainter & painter);
 
