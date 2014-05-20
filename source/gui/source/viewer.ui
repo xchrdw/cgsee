@@ -1,0 +1,896 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Viewer</class>
+ <widget class="QMainWindow" name="Viewer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>734</width>
+    <height>541</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string/>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>734</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="canvasMenu">
+    <property name="title">
+     <string>&amp;Canvas</string>
+    </property>
+    <widget class="QMenu" name="selectFrameBufferMenu">
+     <property name="title">
+      <string>Select &amp;Frame Buffer</string>
+     </property>
+     <addaction name="fboColorAction"/>
+     <addaction name="fboNormalzAction"/>
+     <addaction name="fboShadowsAction"/>
+     <addaction name="fboShadowMapAction"/>
+     <addaction name="fboSSAOAction"/>
+     <addaction name="fboColorIdAction"/>
+     <addaction name="separator"/>
+     <addaction name="showFrameBuffersAction"/>
+    </widget>
+    <addaction name="reloadAllShadersAction"/>
+    <addaction name="selectFrameBufferMenu"/>
+    <addaction name="separator"/>
+    <addaction name="togglePrintModeAction"/>
+    <addaction name="toggleDebugModeAction"/>
+    <addaction name="separator"/>
+    <addaction name="toggleFullScreenAction"/>
+    <addaction name="specifyResolutionAction"/>
+    <addaction name="separator"/>
+    <addaction name="captureAsImageAction"/>
+    <addaction name="captureAsImageAdvancedAction"/>
+    <addaction name="separator"/>
+    <addaction name="loadPresentationAction"/>
+    <addaction name="separator"/>
+    <addaction name="enableCullingAction"/>
+   </widget>
+   <widget class="QMenu" name="fileMenu">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="openFileDialogAction"/>
+    <addaction name="separator"/>
+    <addaction name="quitAction"/>
+   </widget>
+   <widget class="QMenu" name="helpMenu">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="aboutAction"/>
+   </widget>
+   <widget class="QMenu" name="navigationMenu">
+    <property name="title">
+     <string>&amp;Navigation</string>
+    </property>
+    <widget class="QMenu" name="selectManipulatorMenu">
+     <property name="title">
+      <string>Select &amp;Manipulator</string>
+     </property>
+     <addaction name="treemapManipulatorAction"/>
+     <addaction name="fpsManipulatorAction"/>
+     <addaction name="separator"/>
+     <addaction name="driveManipulatorAction"/>
+     <addaction name="flightManipulatorAction"/>
+     <addaction name="terrainManipulatorAction"/>
+     <addaction name="trackballManipulatorAction"/>
+     <addaction name="ufoManipulatorAction"/>
+    </widget>
+    <widget class="QMenu" name="selectViewMenu">
+     <property name="title">
+      <string>Show View</string>
+     </property>
+     <addaction name="actionFrontView"/>
+     <addaction name="actionLeftView"/>
+     <addaction name="actionBackView"/>
+     <addaction name="actionRightView"/>
+     <addaction name="actionTopView"/>
+     <addaction name="actionBottomView"/>
+     <addaction name="actionTopRightView"/>
+    </widget>
+    <widget class="QMenu" name="menuSave_Load_View">
+     <property name="title">
+      <string>Save/Load View</string>
+     </property>
+     <addaction name="actionLoad_1"/>
+     <addaction name="actionLoad_2"/>
+     <addaction name="actionLoad_3"/>
+     <addaction name="actionLoad_4"/>
+     <addaction name="actionSave_1"/>
+     <addaction name="actionSave_2"/>
+     <addaction name="actionSave_3"/>
+     <addaction name="actionSave_4"/>
+    </widget>
+    <addaction name="selectManipulatorMenu"/>
+    <addaction name="selectViewMenu"/>
+    <addaction name="menuSave_Load_View"/>
+    <addaction name="separator"/>
+    <addaction name="captureCameraPathAction"/>
+    <addaction name="playCameraPathAction"/>
+    <addaction name="separator"/>
+    <addaction name="createVantagePointAction"/>
+    <addaction name="selectVantagePointAction"/>
+   </widget>
+   <widget class="QMenu" name="editMenu">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="manageConfigurationsAction"/>
+    <addaction name="separator"/>
+    <addaction name="specifyBenchmarkAction"/>
+    <addaction name="runBenchmarksAction"/>
+    <addaction name="separator"/>
+    <addaction name="preferencesAction"/>
+   </widget>
+   <widget class="QMenu" name="shadingMenu">
+    <property name="title">
+     <string>&amp;Shading</string>
+    </property>
+    <addaction name="flatShadingAction"/>
+    <addaction name="gouraudShadingAction"/>
+    <addaction name="phongShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="goochShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="wireframeShadingAction"/>
+    <addaction name="solidWireframeShadingAction"/>
+    <addaction name="primitiveWireframeShadingAction"/>
+    <addaction name="separator"/>
+    <addaction name="normalsAction"/>
+    <addaction name="separator"/>
+    <addaction name="colorRenderingAction"/>
+    <addaction name="shadowMappingAction"/>
+    <addaction name="shadowBlurAction"/>
+    <addaction name="ssaoAction"/>
+    <addaction name="ssaoBlurAction"/>
+   </widget>
+   <widget class="QMenu" name="cameraMenu">
+    <property name="title">
+     <string>&amp;Camera</string>
+    </property>
+    <widget class="QMenu" name="selectRedCyanStereoCameraTypeMenu">
+     <property name="title">
+      <string>Red Cyan Stereo Camera</string>
+     </property>
+     <addaction name="parallelRedCyanStereoCameraAction"/>
+     <addaction name="convergentRedCyanStereoCameraAction"/>
+    </widget>
+    <addaction name="standardCameraAction"/>
+    <addaction name="separator"/>
+    <addaction name="selectRedCyanStereoCameraTypeMenu"/>
+    <addaction name="oculusRiftStereoCameraAction"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="toggleNavigator"/>
+    <addaction name="toggleExplorer"/>
+    <addaction name="toggleFullscreen"/>
+   </widget>
+   <widget class="QMenu" name="renderingMenu">
+    <property name="title">
+     <string>&amp;Rendering</string>
+    </property>
+    <addaction name="renderingRasterizerAction"/>
+    <addaction name="renderingPathtracerAction"/>
+   </widget>
+   <addaction name="fileMenu"/>
+   <addaction name="editMenu"/>
+   <addaction name="menuView"/>
+   <addaction name="navigationMenu"/>
+   <addaction name="canvasMenu"/>
+   <addaction name="shadingMenu"/>
+   <addaction name="cameraMenu"/>
+   <addaction name="renderingMenu"/>
+   <addaction name="helpMenu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="toggleDebugModeAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Toggle &amp;Debug Mode</string>
+   </property>
+  </action>
+  <action name="togglePrintModeAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Toggle &amp;Print Mode</string>
+   </property>
+  </action>
+  <action name="toggleFullScreenAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Toggle Full Screen</string>
+   </property>
+  </action>
+  <action name="specifyResolutionAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Specify Resolution ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="captureCameraPathAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Capture Camera Path ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="aboutAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>About ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
+  </action>
+  <action name="openFileDialogAction">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Open…</string>
+   </property>
+   <property name="iconText">
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="quitAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
+  </action>
+  <action name="driveManipulatorAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Drive Manipulator</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="playCameraPathAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Play Camera Path ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="flightManipulatorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Flight Manipulator</string>
+   </property>
+   <property name="shortcut">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="terrainManipulatorAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Terrain Manipulator</string>
+   </property>
+  </action>
+  <action name="trackballManipulatorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Track&amp;ball Manipulator</string>
+   </property>
+   <property name="shortcut">
+    <string>2</string>
+   </property>
+  </action>
+  <action name="treemapManipulatorAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>3D Tree&amp;map Manipulator</string>
+   </property>
+  </action>
+  <action name="fpsManipulatorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FPS Manipulator</string>
+   </property>
+   <property name="shortcut">
+    <string>3</string>
+   </property>
+  </action>
+  <action name="specifyBenchmarkAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Specify Benchmark ...</string>
+   </property>
+  </action>
+  <action name="runBenchmarksAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Run Benchmarks ...</string>
+   </property>
+  </action>
+  <action name="manageConfigurationsAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Manage &amp;Configurations ...</string>
+   </property>
+  </action>
+  <action name="preferencesAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Preferences ...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
+  </action>
+  <action name="listOfFBOsAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>List of named FBOs</string>
+   </property>
+  </action>
+  <action name="showFrameBuffersAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Show Frame Buffers ...</string>
+   </property>
+  </action>
+  <action name="ufoManipulatorAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;UFO Manipulator</string>
+   </property>
+  </action>
+  <action name="selectVantagePointAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Select V&amp;antage Point ...</string>
+   </property>
+  </action>
+  <action name="createVantagePointAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Create Vantage Point</string>
+   </property>
+  </action>
+  <action name="toggleHpiLogoAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Toggle &amp;HPI Logo</string>
+   </property>
+  </action>
+  <action name="loadPresentationAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Load Presentation ...</string>
+   </property>
+  </action>
+  <action name="captureAsImageAction">
+   <property name="text">
+    <string>Capture as &amp;Image</string>
+   </property>
+   <property name="shortcut">
+    <string>F10</string>
+   </property>
+  </action>
+  <action name="captureAsImageAdvancedAction">
+   <property name="text">
+    <string>Capture as Image &amp;Advanced ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F10</string>
+   </property>
+  </action>
+  <action name="reloadAllShadersAction">
+   <property name="text">
+    <string>&amp;Reload All Shaders</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="toggleNavigator">
+   <property name="text">
+    <string>Show/Hide Navigator</string>
+   </property>
+  </action>
+  <action name="toggleExplorer">
+   <property name="text">
+    <string>Show/Hide Explorer</string>
+   </property>
+  </action>
+  <action name="toggleFullscreen">
+   <property name="text">
+    <string>Fullscreen</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
+   </property>
+  </action>
+  <action name="actionFrontView">
+   <property name="text">
+    <string>Front</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionLeftView">
+   <property name="text">
+    <string>Left</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="actionBackView">
+   <property name="text">
+    <string>Back</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionRightView">
+   <property name="text">
+    <string>Right</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="actionTopView">
+   <property name="text">
+    <string>Top</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+F1</string>
+   </property>
+  </action>
+  <action name="actionBottomView">
+   <property name="text">
+    <string>Bottom</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+F2</string>
+   </property>
+  </action>
+  <action name="actionLoad_1">
+   <property name="text">
+    <string>Load 1</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F1</string>
+   </property>
+  </action>
+  <action name="actionLoad_2">
+   <property name="text">
+    <string>Load 2</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F2</string>
+   </property>
+  </action>
+  <action name="actionLoad_3">
+   <property name="text">
+    <string>Load 3</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionLoad_4">
+   <property name="text">
+    <string>Load 4</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F4</string>
+   </property>
+  </action>
+  <action name="actionSave_1">
+   <property name="text">
+    <string>Save 1</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F1</string>
+   </property>
+  </action>
+  <action name="actionSave_2">
+   <property name="text">
+    <string>Save 2</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F2</string>
+   </property>
+  </action>
+  <action name="actionSave_3">
+   <property name="text">
+    <string>Save 3</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F3</string>
+   </property>
+  </action>
+  <action name="actionSave_4">
+   <property name="text">
+    <string>Save 4</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F4</string>
+   </property>
+  </action>
+  <action name="actionTopLeft">
+   <property name="text">
+    <string>TopLeft</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionTopRightView">
+   <property name="text">
+    <string>TopRight</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+F3</string>
+   </property>
+  </action>
+  <action name="phongShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Phong Shading</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F12</string>
+   </property>
+  </action>
+  <action name="flatShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Flat Shading</string>
+   </property>
+  </action>
+  <action name="gouraudShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Gouraud Shading</string>
+   </property>
+  </action>
+  <action name="goochShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>G&amp;ooch Shading</string>
+   </property>
+  </action>
+  <action name="wireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>W&amp;ireframe Shading</string>
+   </property>
+  </action>
+  <action name="solidWireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>S&amp;olidWireframe Shading</string>
+   </property>
+  </action>
+  <action name="primitiveWireframeShadingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pr&amp;imitiveWireframe Shading</string>
+   </property>
+  </action>
+  <action name="normalsAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Normals</string>
+   </property>
+  </action>
+  <action name="pathTracingAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Path&amp;Tracing</string>
+   </property>
+  </action>
+  <action name="fboColorAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Color</string>
+   </property>
+  </action>
+  <action name="fboNormalzAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NormalZ</string>
+   </property>
+  </action>
+  <action name="fboShadowMapAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ShadowMap</string>
+   </property>
+  </action>
+  <action name="fboTempBufferAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>TempBuffer</string>
+   </property>
+  </action>
+  <action name="shadowMappingAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ShadowMapping</string>
+   </property>
+  </action>
+  <action name="ssaoAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SSAO</string>
+   </property>
+  </action>
+  <action name="colorRenderingAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Color</string>
+   </property>
+  </action>
+  <action name="fboShadowsAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Shadows</string>
+   </property>
+  </action>
+  <action name="fboSSAOAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SSAO</string>
+   </property>
+  </action>
+  <action name="fboColorIdAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ColorId</string>
+   </property>
+  </action>
+  <action name="ssaoBlurAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SSAO blur</string>
+   </property>
+  </action>
+  <action name="shadowBlurAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Shadow blur</string>
+   </property>
+  </action>
+  <action name="enableCullingAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable Culling</string>
+   </property>
+  </action>
+  <action name="renderingRasterizerAction">
+   <property name="text">
+    <string>Rasterization</string>
+   </property>
+  </action>
+  <action name="renderingPathtracerAction">
+   <property name="text">
+    <string>Pathtracing</string>
+   </property>
+  </action>
+  <action name="standardCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Standard Camera</string>
+   </property>
+  </action>
+  <action name="parallelRedCyanStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>parallel Cameras</string>
+   </property>
+  </action>
+  <action name="convergentRedCyanStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>convergent Cameras</string>
+   </property>
+  </action>
+  <action name="oculusRiftStereoCameraAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Oculus Rift Stereo-Camera</string>
+   </property>
+  </action>
+  <addaction name="toggleFullscreen"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,63 +1,59 @@
 
 # ASSIMP_FOUND
-# ASSIMP_INCLUDE_PATH
-# ASSIMP_LIBRARY
+# ASSIMP_INCLUDE_DIRS
+# ASSIMP_LIBRARIES
+# ASSIMP_BINARY
 
-IF(X64 AND NOT APPLE)
+find_path(ASSIMP_INCLUDE_DIRS assimp/Importer.hpp
+    $ENV{ASSIMPDIR}/include
+    $ENV{ASSIMP_HOME}/include
+    $ENV{PROGRAMFILES}/ASSIMP/include
+    /usr/include
+    /usr/local/include
+    /sw/include
+    /opt/local/include
+    DOC "The directory where assimp/Importer.hpp etc. resides")
 
-    FIND_PATH(ASSIMP_INCLUDE_PATH assimp/Importer.hpp
-        ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0/include
-        $ENV{ASSIMP_DIR}/include
-        $ENV{ASSIMP_HOME}/include
-        /usr/include
-        /usr/local/include
-        /sw/include
-        /opt/local/include
-        DOC "The directory where assimp/Importer.hpp etc. resides")
+if(MSVC AND X64)
+    set(ASSIMP_PF "64")
+else()
+    set(ASSIMP_PF "86")
+endif()
 
-    FIND_LIBRARY(ASSIMP_LIBRARY
-        NAMES assimp
+find_library(ASSIMP_LIBRARIES
+    NAMES assimp
+    PATHS
+    $ENV{ASSIMPDIR}/lib/x${ASSIMP_PF}
+    $ENV{ASSIMPDIR}/lib
+    $ENV{ASSIMPDIR}/lib/.libs
+    $ENV{ASSIMP_HOME}/lib/x${ASSIMP_PF}
+    $ENV{ASSIMP_HOME}/lib
+    $ENV{ASSIMP_HOME}/lib/.libs
+    $ENV{ASSIMPDIR}
+    $ENV{ASSIMP_HOME}
+    /usr/lib64
+    /usr/local/lib64
+    /sw/lib64
+    /opt/local/lib64
+    /usr/lib
+    /usr/local/lib
+    /sw/lib
+    /opt/local/lib
+    DOC "The Assimp library")
+
+if(MSVC)
+
+    find_file(ASSIMP_BINARY
+        NAMES assimp.dll "assimp${ASSIMP_PF}.dll"
         PATHS
-        ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0-win64/lib
-        $ENV{ASSIMP_DIR}/lib
-        $ENV{ASSIMP_HOME}/lib
-        /usr/lib64
-        /usr/local/lib64
-        /sw/lib64
-        /opt/local/lib64
-        DOC "The Assimp library")
+        $ENV{ASSIMPDIR}/bin/x${ASSIMP_PF}
+        $ENV{ASSIMPDIR}/bin
+        $ENV{ASSIMP_HOME}/bin/x${ASSIMP_PF}
+        $ENV{ASSIMP_HOME}/bin
+        DOC "The Assimp binary")
 
-ELSE()
-    
-    FIND_PATH( ASSIMP_INCLUDE_PATH assimp/Importer.hpp
-        ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0/include
-        $ENV{ASSIMP_DIR}/include
-        $ENV{ASSIMP_HOME}/include
-        /usr/include
-        /usr/local/include
-        /sw/include
-        /opt/local/include
-        DOC "The directory where assimp/Importer.hpp etc. resides")
+endif()
 
-    FIND_LIBRARY(ASSIMP_LIBRARY
-        NAMES assimp
-        PATHS
-        ${PROJECT_SOURCE_DIR}/3rdparty/assimp-3.0/lib
-        $ENV{ASSIMP_DIR}/lib
-        $ENV{ASSIMP_HOME}/lib
-        /usr/lib
-        /usr/local/lib
-        /sw/lib
-        /opt/local/lib
-        DOC "The Assimp library")
-
-ENDIF()
-    
-IF(ASSIMP_INCLUDE_PATH AND ASSIMP_LIBRARY)
-    SET(ASSIMP_FOUND 1 CACHE STRING "Set to 1 if Assimp is found, 0 otherwise")
-ELSE()
-    SET(ASSIMP_FOUND 0 CACHE STRING "Set to 1 if Assimp is found, 0 otherwise")
-    MESSAGE(WARNING "Note: an envvar like ASSIMP_HOME assists this script to locate Assimp.")
-ENDIF()
-
-MARK_AS_ADVANCED( ASSIMP_FOUND )
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(ASSIMP REQUIRED_VARS ASSIMP_INCLUDE_DIRS ASSIMP_LIBRARIES)
+mark_as_advanced(ASSIMP_INCLUDE_DIRS ASSIMP_LIBRARIES)

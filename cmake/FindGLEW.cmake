@@ -2,6 +2,7 @@
 # GLEW_FOUND
 # GLEW_INCLUDE_PATH
 # GLEW_LIBRARY
+# GLEW_BINARY
 
 IF(X64 AND NOT APPLE)
 
@@ -24,6 +25,7 @@ IF(X64 AND NOT APPLE)
         $ENV{TMR_HOME}/../3rdparty/glew-1.9.0-win64/lib
         $ENV{GLEW_DIR}/lib
         $ENV{GLEW_HOME}/lib
+        $ENV{GLEW_HOME}/lib/Release/x64
         /usr/lib64
         /usr/local/lib64
         /sw/lib64
@@ -58,12 +60,18 @@ ELSE()
         DOC "The GLEW library")
 
 ENDIF()
-    
-IF(GLEW_INCLUDE_PATH AND GLEW_LIBRARY)
-    SET(GLEW_FOUND 1 CACHE STRING "Set to 1 if GLEW is found, 0 otherwise")
-ELSE()
-    SET(GLEW_FOUND 0 CACHE STRING "Set to 1 if GLEW is found, 0 otherwise")
-    MESSAGE(WARNING "Note: an envvar like GLEW_HOME assists this script to locate glew.")
-ENDIF()
 
-MARK_AS_ADVANCED( GLEW_FOUND )
+if(MSVC)
+
+    find_file(GLEW_BINARY
+        NAMES glew32.dll
+        PATHS
+        $ENV{GLEWDIR}/bin
+        $ENV{GLEW_HOME}/bin
+        DOC "The glew binary")
+
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(GLEW REQUIRED_VARS GLEW_INCLUDE_PATH GLEW_LIBRARY)
+mark_as_advanced(GLEW_INCLUDE_PATH GLEW_LIBRARY)
