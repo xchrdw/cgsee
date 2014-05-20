@@ -79,6 +79,8 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/scenegraph/defaultdrawmethod.h>
 #include <core/scenegraph/highlightingdrawmethod.h>
 
+#include <core/materialobject.h>
+
 
 namespace
 {
@@ -103,7 +105,7 @@ Viewer::Viewer(
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
-,   m_dockPropertyDemo(new QDockWidget(tr("PropertyDemo")))
+,   m_dockPropertyDemo(new QDockWidget(tr("Material Demo")))
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
@@ -197,11 +199,11 @@ void Viewer::initializeSceneTree()
 
 void Viewer::initializePropertyDemo()
 {
-    m_dockPropertyDemo->setObjectName("propertyDemo");
+    m_dockPropertyDemo->setObjectName("materialDemo");
 
     // Yes, this is a memory leak, because the object is never destroyed.
     // Please remove this test as soon as possible :)
-    ExampleProperties * obj = new ExampleProperties();
+	MaterialObject * obj = new MaterialObject();
 
     propertyguizeug::PropertyBrowser *propertyBrowser = new propertyguizeug::PropertyBrowser(obj);
 
