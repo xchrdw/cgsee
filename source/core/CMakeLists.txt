@@ -14,6 +14,7 @@ find_package(Assimp     REQUIRED)
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5OpenGL  REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(libzeug    REQUIRED)
 
 #
 # Includes
@@ -23,6 +24,7 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+	${LIBZEUG_INCLUDES}
 )
 
 include_directories(
@@ -38,6 +40,9 @@ set(libs
     ${ASSIMP_LIBRARIES}
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
+	${LIBZEUG_REFLECTION_LIBRARY}
+    ${LIBZEUG_PROPERTYGUI_LIBRARY}
+    ${LIBZEUG_SIGNAL_LIBRARY}
 )
 
 #
@@ -84,6 +89,7 @@ set(sources
 	${source_path}/gpuquery.cpp
 	${source_path}/idpainter.cpp
 	${source_path}/idpainter.h
+	${source_path}/materialobject.cpp
 	${source_path}/messagehandler.cpp
 	${source_path}/monocamera.cpp
 	${source_path}/navigation/flightnavigation.cpp
@@ -166,6 +172,7 @@ set(api_includes
 	${include_path}/framebufferobject.h
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
+	${include_path}/materialobject.h
 	${include_path}/mathmacros.h
 	${include_path}/messagehandler.h
 	${include_path}/monocamera.h
