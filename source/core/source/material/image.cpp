@@ -6,9 +6,13 @@
 
 Image::Image(const QString & filePath)
     : m_filePath(filePath)
+    , m_textureGenerated(false)
 { }
 
-Image::~Image() {}
+Image::~Image() {
+    if (m_textureGenerated)
+        glDeleteTextures(1, &m_texture);
+}
 
 bool Image::bind(const Program & program, const QString & uniformName, const GLubyte textureUnit) {
     if (textureUnit >= 32)
@@ -24,4 +28,32 @@ bool Image::bind(const Program & program, const QString & uniformName, const GLu
 
     program.setUniform(uniformName, textureUnit);
     return true;
+}
+
+GLuint Image::getTexture() {
+    if (m_textureGenerated)
+        return m_texture;
+
+    glGenTextures(1, &m_texture);
+    glError();
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glError();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glError();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glError();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glError();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glError();
+
+    if (!texImage())
+        return 0;
+    
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glError();
+    glEnable(GL_TEXTURE_2D);
+    glError();
+
+    return m_texture;
 }

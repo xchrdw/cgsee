@@ -87,6 +87,7 @@ set(sources
 	${source_path}/idpainter.cpp
 	${source_path}/idpainter.h
 	${source_path}/material/image.cpp
+	${source_path}/material/imageqt.cpp
 	${source_path}/messagehandler.cpp
 	${source_path}/monocamera.cpp
 	${source_path}/navigation/flightnavigation.cpp
@@ -172,6 +173,7 @@ set(api_includes
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
 	${include_path}/material/image.h
+	${include_path}/material/imageqt.h
 	${include_path}/mathmacros.h
 	${include_path}/messagehandler.h
 	${include_path}/monocamera.h
