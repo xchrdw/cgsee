@@ -63,6 +63,7 @@ set(sources
 	${source_path}/aabb.cpp
 	${source_path}/abstractapplication.cpp
 	${source_path}/abstractmodelloader.cpp
+	${source_path}/abstractloader.cpp
 	${source_path}/abstractstereocamera.cpp
 	${source_path}/assimploader.cpp
 	${source_path}/autotimer.cpp
@@ -141,6 +142,7 @@ set(api_includes
 	${include_path}/aabb.h
 	${include_path}/abstractapplication.h
 	${include_path}/abstractmodelloader.h
+	${include_path}/abstractloader.h
 	${include_path}/abstractstereocamera.h
 	${include_path}/abstracttimer.h
 	${include_path}/assimploader.h

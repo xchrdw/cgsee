@@ -20,7 +20,7 @@ AssimpLoader::~AssimpLoader()
 
 QStringList AssimpLoader::namedLoadableTypes() const
 {
-    QStringList types = AbstractModelLoader::namedLoadableTypes();
+    QStringList types = AbstractLoader::namedLoadableTypes();
     types
         << "Collada (*.dae *.xml)"
         << "Blender (*.blend)"
