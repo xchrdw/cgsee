@@ -8,7 +8,7 @@
 
 class QString;
 
-class ImageQt : Image
+class ImageQt : public Image
 {
 public:
     ImageQt(const QString & filePath);
