@@ -63,6 +63,7 @@ set(sources
 	${source_path}/aabb.cpp
 	${source_path}/abstractapplication.cpp
 	${source_path}/abstractmodelloader.cpp
+	${source_path}/abstractimageloader.cpp
 	${source_path}/abstractloader.cpp
 	${source_path}/abstractstereocamera.cpp
 	${source_path}/assimploader.cpp
@@ -85,6 +86,7 @@ set(sources
 	${source_path}/gpuquery.cpp
 	${source_path}/idpainter.cpp
 	${source_path}/idpainter.h
+	${source_path}/material/image.cpp
 	${source_path}/messagehandler.cpp
 	${source_path}/monocamera.cpp
 	${source_path}/navigation/flightnavigation.cpp
@@ -142,6 +144,7 @@ set(api_includes
 	${include_path}/aabb.h
 	${include_path}/abstractapplication.h
 	${include_path}/abstractmodelloader.h
+	${include_path}/abstractimageloader.h
 	${include_path}/abstractloader.h
 	${include_path}/abstractstereocamera.h
 	${include_path}/abstracttimer.h
@@ -168,6 +171,7 @@ set(api_includes
 	${include_path}/framebufferobject.h
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
+	${include_path}/material/image.h
 	${include_path}/mathmacros.h
 	${include_path}/messagehandler.h
 	${include_path}/monocamera.h
