@@ -6,7 +6,12 @@
 #include <core/scenegraph/group.h>
 
 AbstractModelLoader::AbstractModelLoader(std::shared_ptr<DataBlockRegistry> registry)
-    : AbstractLoader(registry) {}
+    : AbstractLoader()
+    , m_registry(registry)
+{
+    if (m_registry == nullptr)
+        m_registry = std::make_shared<DataBlockRegistry>();
+}
 
 AbstractModelLoader::~AbstractModelLoader()
 {

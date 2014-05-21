@@ -7,12 +7,10 @@
 
 #include <core/material/imageqt.h>
 
-ImageQtLoader::ImageQtLoader(std::shared_ptr<DataBlockRegistry> registry)
-    : AbstractImageLoader(registry) {}
+ImageQtLoader::ImageQtLoader()
+    : AbstractImageLoader() {}
 
-ImageQtLoader::~ImageQtLoader()
-{
-}
+ImageQtLoader::~ImageQtLoader() {}
 
 QStringList ImageQtLoader::namedLoadableTypes() const
 {

@@ -20,4 +20,7 @@ public:
     virtual Group * importFromFile(const QString & filePath) const;
     virtual bool exportToFile(const Group & group,
         const QString & filePath, const QString & extension) const;
+
+protected:
+    std::shared_ptr<DataBlockRegistry> m_registry;
 };

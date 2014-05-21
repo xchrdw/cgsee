@@ -12,7 +12,7 @@ class DataBlockRegistry;
 class CORE_API AbstractLoader
 {
 public:
-    AbstractLoader(std::shared_ptr<DataBlockRegistry> registry = nullptr);
+    AbstractLoader();
     virtual ~AbstractLoader() = 0;
     
     bool canLoad(const QString & extension) const;
@@ -27,7 +27,4 @@ public:
 protected:
     virtual QStringList loadableExtensions() const;
     virtual QStringList saveableExtensions() const;
-
-protected:
-    std::shared_ptr<DataBlockRegistry> m_registry;
 };

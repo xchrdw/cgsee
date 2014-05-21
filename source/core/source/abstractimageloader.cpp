@@ -7,8 +7,8 @@
 
 #include <core/material/image.h>
 
-AbstractImageLoader::AbstractImageLoader(std::shared_ptr<DataBlockRegistry> registry)
-    : AbstractLoader(registry) {}
+AbstractImageLoader::AbstractImageLoader()
+    : AbstractLoader() {}
 
 AbstractImageLoader::~AbstractImageLoader()
 {

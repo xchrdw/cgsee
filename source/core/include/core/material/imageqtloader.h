@@ -14,7 +14,7 @@ class Image;
 class CORE_API ImageQtLoader : public AbstractImageLoader
 {
 public:
-    ImageQtLoader(std::shared_ptr<DataBlockRegistry> registry = nullptr);
+    ImageQtLoader();
     virtual ~ImageQtLoader() = 0;
 
     virtual QStringList namedLoadableTypes() const;

@@ -14,7 +14,7 @@ class Image;
 class CORE_API AbstractImageLoader : public AbstractLoader
 {
 public:
-    AbstractImageLoader(std::shared_ptr<DataBlockRegistry> registry = nullptr);
+    AbstractImageLoader();
     virtual ~AbstractImageLoader() = 0;
 
     virtual Image * importFromFile(const QString & filePath) const;

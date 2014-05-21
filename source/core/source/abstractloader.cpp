@@ -5,11 +5,8 @@
 
 #include <core/datacore/datablock.h>
 
-AbstractLoader::AbstractLoader(std::shared_ptr<DataBlockRegistry> registry)
-: m_registry(registry)
+AbstractLoader::AbstractLoader()
 {
-    if( m_registry == nullptr )
-       m_registry = std::make_shared<DataBlockRegistry>();
 }
 
 AbstractLoader::~AbstractLoader()
