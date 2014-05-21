@@ -9,7 +9,11 @@
 
 #include <core/gpuquery.h>
 
-#ifndef WIN32
+#ifdef WIN32
+
+#elif defined(__APPLE__)
+
+#else
 #include <GL/glx.h>
 #endif
 
