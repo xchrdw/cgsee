@@ -4,20 +4,20 @@
 
 using namespace glm;
 
-typedef struct DirectionalLight{
+struct directionalLight{
 	vec3 m_direction;
-}directionalLight;
+};
 
-typedef struct PointLight{
+struct pointLight{
 	vec3 m_position;
 	vec3 m_intensity;
 	float m_kquad;
 	float m_klin;
 	float m_kcons;
 	bool enabled;
-}pointLight;
+};
 
-typedef struct SpotLight{
+struct spotLight{
 	vec3 m_position;
 	vec3 m_direction;
 	vec3 m_intensity;
@@ -26,9 +26,9 @@ typedef struct SpotLight{
 	float m_klin;
 	float m_kcons;
 	bool enabled;
-}spotLight;
+};
 
-typedef struct GoboLight{
+struct goboLight{
 	vec3 m_position;
 	vec3 m_direction;
 	//	texture* m_gobo_texture;
@@ -37,8 +37,8 @@ typedef struct GoboLight{
 	float m_klin;
 	float m_kcons;
 	bool enabled;
-}goboLight;
+};
 
-typedef struct AreaLight{
+struct areaLight{
 
-}areaLight
+};
