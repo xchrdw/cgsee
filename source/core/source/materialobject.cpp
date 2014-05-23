@@ -1,4 +1,6 @@
 #include <core/materialobject.h>
+
+#include <reflectionzeug/extensions/GlmProperties.hpp>
 //ambient
 //diffuse
 //specular
@@ -15,13 +17,13 @@ MaterialObject::MaterialObject()
 {
 	addProperty<std::string>("Name", this, &MaterialObject::name, &MaterialObject::setName);
 
-	//addProperty<glm::vec4>("Ambient", this, &MaterialObject::ambient, &MaterialObject::setAmbient);
+	addProperty<glm::vec4>("Ambient", this, &MaterialObject::ambient, &MaterialObject::setAmbient);
 
-	//addProperty<glm::vec4>("Diffuse", this, &MaterialObject::diffuse, &MaterialObject::setDiffuse);
+	addProperty<glm::vec4>("Diffuse", this, &MaterialObject::diffuse, &MaterialObject::setDiffuse);
 
-	//addProperty<glm::vec4>("Specular", this, &MaterialObject::specular, &MaterialObject::setSpecular);
+	addProperty<glm::vec4>("Specular", this, &MaterialObject::specular, &MaterialObject::setSpecular);
 
-	//addProperty<glm::vec4>("Emission", this, &MaterialObject::emission, &MaterialObject::setEmission);
+	addProperty<glm::vec4>("Emission", this, &MaterialObject::emission, &MaterialObject::setEmission);
 
 	addProperty<reflectionzeug::Color>("Color", this, &MaterialObject::color, &MaterialObject::setColor);
 }
