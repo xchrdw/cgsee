@@ -43,7 +43,7 @@ public:
     virtual const glm::mat4 & viewMatrix();
     void loadView(const glm::mat4 & viewmatrix, bool history = true);
 
-    void saveViewHistory(const glm::mat4 & viewmatrix);
+    void saveViewHistory();
     void undoViewHistory();
     void redoViewHistory();
 

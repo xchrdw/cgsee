@@ -106,5 +106,5 @@ void ArcballNavigation::mouseReleaseEvent(QMouseEvent * event)
     } else if (event->button() == Qt::MiddleButton) {
         m_zoom_on = false;
     }
-    saveViewHistory(m_viewmatrix);
+    saveViewHistory();
 }

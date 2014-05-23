@@ -78,7 +78,7 @@ void AbstractNavigation::wheelEvent(QWheelEvent * event)
     m_fovy -= (event->delta() * 0.1); //sensitivity
     m_fovy = glm::clamp(m_fovy, 1.0f, 180.0f);
     updateCamera();
-    saveViewHistory(m_viewmatrix);
+    saveViewHistory();
 }
 
 
@@ -181,7 +181,7 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool save_hi
 
     if(save_history){
         m_new_fovy = m_fovy;
-        saveViewHistory(new_viewmatrix);
+        saveViewHistory();
     } else {
         m_new_fovy = m_viewHistory->getFovy();
     }
@@ -194,10 +194,10 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool save_hi
     }
 }
 
-void AbstractNavigation::saveViewHistory(const glm::mat4 & viewmatrix)
+void AbstractNavigation::saveViewHistory()
 {
-    if(!m_viewHistory->isEqualViewMatrix(viewmatrix)){
-        m_viewHistory = new ViewHistory(m_viewHistory, viewmatrix, m_fovy);
+    if(!m_viewHistory->isEqualViewMatrix(m_viewmatrix)){
+        m_viewHistory = new ViewHistory(m_viewHistory, m_viewmatrix, m_fovy);
         qDebug() << "save #" <<  m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
     }
 }
@@ -206,8 +206,13 @@ void AbstractNavigation::undoViewHistory()
 {
     // if not reached the oldest history element
     if(!m_viewHistory->isFirst()){
+        if (m_viewHistory->isLast()) {
+
+            // save last object before undo
+            saveViewHistory();
+        }
         m_viewHistory = m_viewHistory->getPrevious();
-        loadView(m_viewHistory->getViewMatrix(), false);
+        loadView(m_viewHistory->getPrevious()->getViewMatrix(), false);
         qDebug() << "undo #" << m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
     }
 }
@@ -296,7 +301,7 @@ void AbstractNavigation::sceneChanged(Group * scene)
     setFromMatrix(topRightView());
     updateCamera();
 
-    saveViewHistory(m_viewmatrix);
+    saveViewHistory();
 }
 
 float AbstractNavigation::getBBRadius(){
