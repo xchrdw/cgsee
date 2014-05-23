@@ -8,22 +8,46 @@
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 
-
-
-RenderingPass::RenderStage(Painter &painter)
+RenderStage::RenderStage(Painter &painter)
     : m_painter(painter)
 {
 }
 
-RenderingPass::~RenderStage(void)
+RenderStage::~RenderStage(void)
 {
 }
 
-void RenderingPass::drawScene(glm::mat4 & transform, Program * program,  FrameBufferObject * fbo)
+void RenderStage::drawScene(glm::mat4 & transform, Program * program,  FrameBufferObject * fbo)
 {
     fbo->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, transform);
     traverser.traverse(*(m_painter.scene()), drawVisitor);
     fbo->release();
+
+}
+
+FrameBufferObject * RenderStage::getFramebuffer(u_int32_t slot)
+{
+    return m_painter.getFramebuffer(slot);
+}
+
+void RenderStage::setFramebuffer(u_int32_t slot, FrameBufferObject fbo)
+{
+    m_painter.setFramebuffer(slot, fbo);
+}
+
+void RenderStage::unsetFramebuffer(u_int32_t slot)
+{
+    m_painter.unsetFramebuffer(slot);
+}
+
+bool RenderStage::isSceneInvalid()
+{
+    return m_painter.isSceneInvalid();
+}
+
+bool RenderStage::isViewInvalid()
+{
+    return m_painter.isViewInvalid();
 }

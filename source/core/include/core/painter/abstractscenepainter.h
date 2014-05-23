@@ -22,6 +22,7 @@ public:
     virtual void setEffect(int effect, bool active) = 0;
     
     virtual void postShaderRelinked() = 0;
+    virtual void reloadShaders() = 0;
 
     // virtual void setBoundingBox(const glm::vec3 & llf, const glm::vec3 & urb) = 0;
 

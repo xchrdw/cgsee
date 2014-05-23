@@ -23,6 +23,7 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+    ${LIBZEUG_INCLUDES}
 )
 
 include_directories(
@@ -38,6 +39,7 @@ set(libs
     ${ASSIMP_LIBRARIES}
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
+    ${LIBZEUG_REFLECTION_LIBRARY}
 )
 
 #
@@ -94,6 +96,7 @@ set(sources
 	${source_path}/offAxisCamera.cpp
 	${source_path}/painter/abstractscenepainter.cpp
 	${source_path}/painter/abstractpainter.cpp
+    ${source_path}/painter/pipelinepainter.cpp
 	${source_path}/parallelCamera.cpp
 	${source_path}/plane.cpp
 	${source_path}/program.cpp
@@ -179,6 +182,7 @@ set(api_includes
 	${include_path}/painter/abstractscenepainter.h
 	${include_path}/painter/abstractglparent.h
 	${include_path}/painter/abstractpainter.h
+    ${include_path}/painter/pipelinepainter.h
 	${include_path}/parallelcamera.h
 	${include_path}/plane.h
 	${include_path}/program.h
