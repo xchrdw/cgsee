@@ -79,7 +79,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/scenegraph/defaultdrawmethod.h>
 #include <core/scenegraph/highlightingdrawmethod.h>
 
-#include <core/materialobject.h>
+#include <core/material/material.h>
 
 
 namespace
@@ -203,7 +203,7 @@ void Viewer::initializePropertyDemo()
 
     // Yes, this is a memory leak, because the object is never destroyed.
     // Please remove this test as soon as possible :)
-	MaterialObject * obj = new MaterialObject();
+	Material * obj = new Material();
 
     propertyguizeug::PropertyBrowser *propertyBrowser = new propertyguizeug::PropertyBrowser(obj);
 

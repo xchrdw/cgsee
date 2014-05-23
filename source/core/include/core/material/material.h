@@ -6,11 +6,11 @@
 #include <reflectionzeug/PropertyGroup.h>
 #include <glm/vec4.hpp>
 
-class CORE_API MaterialObject : public reflectionzeug::PropertyGroup
+class CORE_API Material : public reflectionzeug::PropertyGroup
 {
 public:
-	MaterialObject();
-	virtual ~MaterialObject();
+	Material();
+	virtual ~Material();
 
     std::string name() const;
     void setName(const std::string &name);
