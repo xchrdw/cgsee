@@ -35,7 +35,9 @@ class AbstractScenePainter;
 class FileNavigator;
 class FileExplorer;
 class Viewer;
+class AbstractLoader;
 class AbstractModelLoader;
+class AbstractImageLoader;
 class Group;
 class Node;
 class DataBlockRegistry;
@@ -175,6 +177,9 @@ protected:
     void fillSceneHierarchy(Node * node, QStandardItem * parent);
     void assignScene(Group * rootNode);
 
+    bool loadModel(const QString& path, AbstractModelLoader* loader);
+    bool loadImage(const QString& path, AbstractImageLoader* loader);
+
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
     static const HGLRC currentContextHandle();
@@ -211,7 +216,9 @@ protected:
     FileExplorer * m_explorer;
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
-    AbstractModelLoader * m_loader;
+    QList<AbstractLoader*> m_loaders;
+
+    QStringList allLoadableTypes();
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;

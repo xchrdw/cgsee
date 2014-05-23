@@ -15,7 +15,7 @@ class CORE_API ImageQtLoader : public AbstractImageLoader
 {
 public:
     ImageQtLoader();
-    virtual ~ImageQtLoader() = 0;
+    virtual ~ImageQtLoader();
 
     virtual QStringList namedLoadableTypes() const;
 

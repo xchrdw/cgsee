@@ -65,6 +65,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
+#include <core/material/imageqtloader.h>
 
 #include <core/camera.h>
 #include <core/parallelcamera.h>
@@ -110,9 +111,12 @@ Viewer::Viewer(
 ,   m_sceneHierarchyTree(new QTreeView())
 ,   m_coordinateProvider(nullptr)
 ,   m_selectionBBox(new AxisAlignedBoundingBox)
-,   m_loader(new AssimpLoader( registry ))
+,   m_loaders()
 ,   m_mouseMoving(false)
 {
+    m_loaders.append(new AssimpLoader(registry));
+    m_loaders.append(new ImageQtLoader());
+
 
     m_ui->setupUi(this);
     
@@ -135,7 +139,11 @@ void Viewer::initializeExplorer()
     this->initializeDockWidgets(m_dockNavigator, m_navigator, Qt::LeftDockWidgetArea);
     this->initializeDockWidgets(m_dockExplorer, m_explorer, Qt::BottomDockWidgetArea);
 
-    m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
+    QStringList allLoadableTypes;
+    for (AbstractLoader* loader : m_loaders) {
+        allLoadableTypes << loader->allLoadableTypes();
+    }
+    m_explorer->setAllLoadableTypes(allLoadableTypes);
         
     QObject::connect(
         m_navigator, SIGNAL(clickedDirectory(const QString &)),
@@ -376,7 +384,10 @@ Viewer::~Viewer()
     delete m_dockExplorer;
     delete m_dockScene;
     delete m_sceneHierarchy;
-    delete m_loader;
+    for (AbstractLoader* loader : m_loaders) {
+        delete loader;
+    }
+    m_loaders.clear();
     delete m_coordinateProvider;
     delete m_selectionBBox;
 }
@@ -420,13 +431,24 @@ void Viewer::on_reloadAllShadersAction_triggered()
 
 void Viewer::on_openFileDialogAction_triggered()
 {
+    static QStringList types = allLoadableTypes();
+
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
-        QDir::homePath(), m_loader->namedLoadableTypes().join(";;"), 
+        QDir::homePath(), types.join(";;"), 
         0, QFileDialog::HideNameFilterDetails);
     if (fileName.isEmpty())
         return;
     
     on_loadFile(fileName);
+}
+
+QStringList Viewer::allLoadableTypes()
+{
+    QStringList types;
+    for (AbstractLoader* loader : m_loaders) {
+        types << loader->namedLoadableTypes();
+    }
+    return types;
 }
     
 void Viewer::on_quitAction_triggered()
@@ -436,12 +458,27 @@ void Viewer::on_quitAction_triggered()
 
 void Viewer::on_loadFile(const QString & path)
 {
-    Group * scene = m_loader->importFromFile(path);
-    if (!scene)
-    {
-        QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
+    QFileInfo file(path);
+    for (AbstractLoader* loader : m_loaders) {
+        if (loader->canLoad(file.completeSuffix())) {
+            AbstractModelLoader* modelLoader = dynamic_cast<AbstractModelLoader*>(loader);
+            if (modelLoader && loadModel(path, modelLoader)) {
+                return;
+            }
+            AbstractImageLoader* imageLoader = dynamic_cast<AbstractImageLoader*>(loader);
+            if (imageLoader && loadImage(path, imageLoader)) {
+                return;
+            }
+        }
     }
-    else 
+
+    QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
+}
+
+bool Viewer::loadModel(const QString& path, AbstractModelLoader* loader)
+{
+    Group * scene = loader->importFromFile(path);
+    if (scene)
     {
         this->assignScene(scene);
         this->m_qtCanvas->navigation()->rescaleScene(scene);
@@ -451,7 +488,14 @@ void Viewer::on_loadFile(const QString & path)
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();
+        return true;
     }
+    return false;
+}
+
+bool Viewer::loadImage(const QString& path, AbstractImageLoader* loader)
+{
+    return false;
 }
 
 void Viewer::on_toggleNavigator_triggered()

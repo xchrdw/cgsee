@@ -20,8 +20,9 @@ AssimpLoader::~AssimpLoader()
 
 QStringList AssimpLoader::namedLoadableTypes() const
 {
-    QStringList types = AbstractLoader::namedLoadableTypes();
+    QStringList types;
     types
+        << "All Assimp Model Files (" + allLoadableTypes().join(" ") + ")"
         << "Collada (*.dae *.xml)"
         << "Blender (*.blend)"
         << "Biovision BVH (*.bvh)"

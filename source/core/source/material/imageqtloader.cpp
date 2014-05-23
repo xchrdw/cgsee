@@ -14,8 +14,9 @@ ImageQtLoader::~ImageQtLoader() {}
 
 QStringList ImageQtLoader::namedLoadableTypes() const
 {
-    QStringList types = AbstractLoader::namedLoadableTypes();
+    QStringList types;
     types
+        << "All Qt Image Files (" + allLoadableTypes().join(" ") + ")"
         << "Windows Bitmap (*.bmp)"
         << "Graphic Interchange Format (*.gif)"
         << "Joint Photographic Experts Group (*.jpg)"
