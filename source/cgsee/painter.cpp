@@ -21,7 +21,7 @@
 #include <core/screenquad.h>
 #include <core/rendering/ssaoeffect.h>
 #include <core/rendering/blureffect.h>
-#include <core/rendering/shadowmapping.h>
+#include <core/rendering/varianceshadowmapping.h>
 #include <core/rendering/normalzpass.h>
 #include <core/rendering/coloridpass.h>
 #include <core/rendering/boundingboxpass.h>
@@ -220,7 +220,7 @@ const bool Painter::initialize()
 
     m_normalz = new NormalzPass(m_camera, depth_util);
     m_lightsource = new LightSourcePass(m_camera, depth_util);
-    m_shadows = new ShadowMappingPass(m_camera, depth_util, m_lightsource);
+    m_shadows = new VarianceShadowMappingPass(m_camera);
     m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows, m_fboTemp);
     m_ssao = new SSAOEffect(m_camera, m_quad, screenQuadShader, m_normalz->output());
     m_ssaoBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_ssao, m_fboTemp);
@@ -230,7 +230,7 @@ const bool Painter::initialize()
     m_passes.append(m_normalz);
     m_passes.append(m_lightsource);
     m_passes.append(m_shadows);
-    m_passes.append(m_shadowBlur);
+    //m_passes.append(m_shadowBlur);
     m_passes.append(m_ssao);
     m_passes.append(m_ssaoBlur);
     m_passes.append(m_colorId);
