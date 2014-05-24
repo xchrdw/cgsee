@@ -25,16 +25,12 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+    ${LIBZEUG_INCLUDES}
 )
 
 include_directories(
     BEFORE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-include_directories(
-	BEFORE
-	${LIBZEUG_INCLUDES}
 )
 
 #
