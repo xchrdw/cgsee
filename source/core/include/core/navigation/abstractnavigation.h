@@ -12,6 +12,7 @@
 #include <QBasicTimer>
 
 #include <core/navigation/viewhistory.h>
+//#include <signalzeug/Signal.h>
 
 class Camera;
 class QWidget;
@@ -19,6 +20,7 @@ class Group;
 
 class CORE_API AbstractNavigation : QObject
 {
+
 
 public:
 
@@ -69,6 +71,7 @@ public:
 
     float getBBRadius();
     void setBBRadius(float radius);
+
 
 protected:
     void startTimer();

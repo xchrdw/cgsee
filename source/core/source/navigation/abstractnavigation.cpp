@@ -12,6 +12,9 @@
 #include <core/camera.h>
 #include <core/navigation/viewhistory.h>
 
+#include <signalzeug/Signal.h>
+
+
 const float AbstractNavigation::TIMER_MS = 1000.f / 60.f;
 
 static const float DURATION = 333.f;
@@ -30,6 +33,7 @@ AbstractNavigation::AbstractNavigation(Camera * camera)
     , m_animation_active(false)
 {
     m_frontView = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    signalzeug::Signal<> viewChanged;
 }
 
 

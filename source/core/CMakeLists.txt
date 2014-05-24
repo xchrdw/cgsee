@@ -14,6 +14,8 @@ find_package(Assimp     REQUIRED)
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5OpenGL  REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(libzeug    REQUIRED)
+
 
 #
 # Includes
@@ -23,6 +25,7 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+    ${LIBZEUG_INCLUDES}
 )
 
 include_directories(
@@ -38,6 +41,7 @@ set(libs
     ${ASSIMP_LIBRARIES}
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
+    ${LIBZEUG_SIGNAL_LIBRARY}
 )
 
 #
