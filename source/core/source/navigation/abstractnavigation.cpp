@@ -78,6 +78,10 @@ void AbstractNavigation::wheelEvent(QWheelEvent * event)
     m_fovy -= (event->delta() * 0.1); //sensitivity
     m_fovy = glm::clamp(m_fovy, 1.0f, 180.0f);
     updateCamera();
+
+    // @TODO  run a timer that is reset in every wheel event and when it times out, we know the user stopped scrolling: then saveViewHistory!
+    // now: for long wheelEvents, saveViewHistory is called multiple times.
+
     saveViewHistory();
 }
 
@@ -196,7 +200,7 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool save_hi
 
 void AbstractNavigation::saveViewHistory()
 {
-    if(!m_viewHistory->isEqualViewMatrix(m_viewmatrix)){
+    if(!m_viewHistory->isEqualViewMatrix(m_viewmatrix) || !m_viewHistory->isEqualFovy(m_fovy)){
         m_viewHistory = new ViewHistory(m_viewHistory, m_viewmatrix, m_fovy);
         qDebug() << "save #" <<  m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
     }
