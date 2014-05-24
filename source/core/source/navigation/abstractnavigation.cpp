@@ -33,7 +33,6 @@ AbstractNavigation::AbstractNavigation(Camera * camera)
     , m_animation_active(false)
 {
     m_frontView = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
-    signalzeug::Signal<> viewChanged;
 }
 
 

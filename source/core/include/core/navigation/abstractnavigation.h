@@ -12,7 +12,7 @@
 #include <QBasicTimer>
 
 #include <core/navigation/viewhistory.h>
-//#include <signalzeug/Signal.h>
+#include <signalzeug/Signal.h>
 
 class Camera;
 class QWidget;
@@ -71,6 +71,8 @@ public:
 
     float getBBRadius();
     void setBBRadius(float radius);
+
+    signalzeug::Signal<> viewChanged;
 
 
 protected:
