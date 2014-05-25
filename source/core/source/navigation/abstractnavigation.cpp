@@ -215,13 +215,13 @@ void AbstractNavigation::undoViewHistory()
     // if not reached the oldest history element
     if(!m_viewHistory->isFirst()){
         if (m_viewHistory->isLast()) {
-
+            qDebug() << "save last state before undo.";
             // save last object before undo
             saveViewHistory();
         }
         m_viewHistory = m_viewHistory->getPrevious();
-        loadView(m_viewHistory->getPrevious()->getViewMatrix(), false);
-        qDebug() << "undo #" << m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
+        loadView(m_viewHistory->getViewMatrix(), false);
+        qDebug() << "go back to #" << m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
     }
 }
 
