@@ -205,7 +205,6 @@ void Viewer::initializeMaterial()
 {
     m_dockMaterial->setObjectName("materialWidget");
 
-    // Yes, this is a memory leak, because the object is never destroyed.
 	Material * obj = new Material();
 
     propertyguizeug::PropertyBrowser *propertyBrowser = new propertyguizeug::PropertyBrowser(obj);
@@ -384,6 +383,7 @@ Viewer::~Viewer()
     delete m_loader;
     delete m_coordinateProvider;
     delete m_selectionBBox;
+    delete m_dockMaterial;
 }
 
 void Viewer::setPainter(AbstractScenePainter * painter)
