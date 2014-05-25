@@ -31,6 +31,7 @@ public:
     void setNavigation( AbstractNavigation * navigation );
     AbstractNavigation * navigation();
     ViewHistory * viewhistory();
+    void setViewHistory(AbstractNavigation * navigation);
     void saveHistory(glm::mat4 viewmatrix, float fovy);
 
     virtual void mouseMoveEvent ( QMouseEvent * event );

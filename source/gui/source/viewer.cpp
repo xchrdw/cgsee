@@ -711,6 +711,7 @@ void Viewer::on_toggleFullscreen_triggered()
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
     m_qtCanvas->setNavigation(navigation);
+    m_qtCanvas->setViewHistory(navigation);
     this->setFocus();
 }
 

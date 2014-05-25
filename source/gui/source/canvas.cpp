@@ -220,14 +220,21 @@ void Canvas::setNavigation( AbstractNavigation * navigation )
     m_navigation->setCanvas(this);
     if (bbRadius != 0)
         m_navigation->setBBRadius(bbRadius);
-
-    m_viewhistory = new ViewHistory(m_navigation);
-    m_navigation->viewChanged.connect(this,&Canvas::saveHistory);
 }
 
 ViewHistory * Canvas::viewhistory()
 {
     return m_viewhistory;
+}
+
+void Canvas::setViewHistory(AbstractNavigation * navigation)
+{
+    qDebug()<<"new history.";
+    if(m_viewhistory != nullptr){
+        delete m_viewhistory;
+    }
+    m_viewhistory = new ViewHistory(m_navigation);
+    m_navigation->viewChanged.connect(this,&Canvas::saveHistory);
 }
 
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)

@@ -6,9 +6,12 @@
 #include <QDebug>
 
 ViewHistory::ViewHistory(AbstractNavigation * navigation)
-{
-    m_navigation = navigation;
-    m_viewhistory = nullptr;
+    : m_navigation(navigation)
+    , m_viewhistory(nullptr)
+{   }
+
+ViewHistory::~ViewHistory(){
+    m_viewhistory->reset();
 }
 
 void ViewHistory::save(glm::mat4 viewmatrix, float fovy, QImage thumbnail)

@@ -133,13 +133,13 @@ void FlightNavigation::setFromMatrix(const glm::mat4 & view){
     m_up = m_camera->getUp();
     m_eye = m_camera->getEye();
     m_center = m_camera->getCenter();
-
     updateView();
 }
 
 void FlightNavigation::reset() {
     AbstractNavigation::reset();
     setFromMatrix(m_viewmatrix);
+    viewChanged(m_viewmatrix,m_fovy);
 }
 
 void FlightNavigation::onCameraChanged(){
@@ -151,6 +151,7 @@ void FlightNavigation::onCameraChanged(){
 void FlightNavigation::updateView(){
     m_viewmatrix =  glm::lookAt(m_eye, m_center, m_up);
     updateCamera();
+    viewChanged(m_viewmatrix,m_fovy);
 }
 
 
