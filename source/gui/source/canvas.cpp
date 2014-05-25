@@ -8,10 +8,12 @@
 #include <QApplication>
 #include <QBasicTimer>
 #include <QSize>
+#include <QDebug>
 
 #include <core/navigation/abstractnavigation.h>
 #include <core/navigation/flightnavigation.h>
 #include <core/navigation/arcballnavigation.h>
+#include <core/navigation/viewhistory.h>
 
 #include <core/painter/abstractscenepainter.h>
 #include <core/gpuquery.h>
@@ -159,6 +161,10 @@ void Canvas::setRefreshTimeMSec(int msec)
     }
 }
 
+void Canvas::pViewChanged(){
+       qDebug() << "Signal from navigation: history was saved.";
+}
+
 int Canvas::refreshTimeMSec() const
 {
     return m_refreshTimeMSec;
@@ -217,6 +223,9 @@ void Canvas::setNavigation( AbstractNavigation * navigation )
     m_navigation->setCanvas(this);
     if (bbRadius != 0)
         m_navigation->setBBRadius(bbRadius);
+
+    // connect viewHistory to react on navigation events
+    m_navigation->viewChanged.connect(this,&Canvas::pViewChanged);
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )

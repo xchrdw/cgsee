@@ -206,6 +206,7 @@ void AbstractNavigation::saveViewHistory()
     if(!m_viewHistory->isEqualViewMatrix(m_viewmatrix) || !m_viewHistory->isEqualFovy(m_fovy)){
         m_viewHistory = new ViewHistory(m_viewHistory, m_viewmatrix, m_fovy);
         qDebug() << "save #" <<  m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
+        viewChanged();
     }
 }
 

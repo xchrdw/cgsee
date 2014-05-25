@@ -8,6 +8,8 @@
 #include <core/painter/abstractglparent.h>
 #include <core/glformat.h>
 
+#include <core/navigation/viewhistory.h>
+
 class QBasicTimer;
 class QTimerEvent;
 class Timer;
@@ -46,6 +48,8 @@ public:
 
     virtual void setRefreshTimeMSec(int msec);
     int refreshTimeMSec() const;
+
+    void pViewChanged();
 
 signals:
     void mouseReleaseEventSignal ( QMouseEvent * event );
