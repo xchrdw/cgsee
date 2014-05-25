@@ -105,7 +105,7 @@ Viewer::Viewer(
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
-,   m_dockPropertyDemo(new QDockWidget(tr("Material Demo")))
+,   m_dockMaterial(new QDockWidget(tr("Material")))
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
@@ -127,10 +127,11 @@ Viewer::Viewer(
     restoreViews(s);
     initializeExplorer();
     initializeSceneTree();
-    initializePropertyDemo();
+    initializeMaterial();
 
-    this->tabifyDockWidget(m_dockScene, m_dockPropertyDemo);
+    this->tabifyDockWidget(m_dockScene, m_dockMaterial);
     m_dockScene->raise();
+    //m_dockMaterial->hide();
 };
 
 void Viewer::initializeExplorer()
@@ -200,12 +201,11 @@ void Viewer::initializeSceneTree()
         sceneInfoText, SLOT(setPlainText(const QString &)));
 }
 
-void Viewer::initializePropertyDemo()
+void Viewer::initializeMaterial()
 {
-    m_dockPropertyDemo->setObjectName("materialDemo");
+    m_dockMaterial->setObjectName("materialWidget");
 
     // Yes, this is a memory leak, because the object is never destroyed.
-    // Please remove this test as soon as possible :)
 	Material * obj = new Material();
 
     propertyguizeug::PropertyBrowser *propertyBrowser = new propertyguizeug::PropertyBrowser(obj);
@@ -213,10 +213,10 @@ void Viewer::initializePropertyDemo()
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget(propertyBrowser);
 
-    QWidget * demoWidget = new QWidget(this);
-    demoWidget->setLayout(layout);
+    QWidget * materialWidget = new QWidget(this);
+    materialWidget->setLayout(layout);
 
-    this->initializeDockWidgets(m_dockPropertyDemo, demoWidget, Qt::RightDockWidgetArea);
+    this->initializeDockWidgets(m_dockMaterial, materialWidget, Qt::RightDockWidgetArea);
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
