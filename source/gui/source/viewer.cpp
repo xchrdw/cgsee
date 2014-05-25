@@ -128,6 +128,9 @@ Viewer::Viewer(
     initializeExplorer();
     initializeSceneTree();
     initializePropertyDemo();
+
+    this->tabifyDockWidget(m_dockScene, m_dockPropertyDemo);
+    m_dockScene->raise();
 };
 
 void Viewer::initializeExplorer()
