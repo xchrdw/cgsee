@@ -7,10 +7,8 @@
 #include <glm/gtx/transform.hpp>
 
 #include <QGLWidget>
-#include <QDebug>
 
 #include <core/camera.h>
-#include <core/navigation/viewhistory.h>
 
 #include <signalzeug/Signal.h>
 
@@ -25,7 +23,6 @@ AbstractNavigation::AbstractNavigation(Camera * camera)
     , m_BBRadius(0)
     , m_fovy(camera->fovy())
     , m_viewmatrix(camera->view())
-    , m_viewHistory()
     , m_camera(camera)
     , m_canvas(0)
     , m_timer()
@@ -84,8 +81,7 @@ void AbstractNavigation::wheelEvent(QWheelEvent * event)
 
     // @TODO  run a timer that is reset in every wheel event and when it times out, we know the user stopped scrolling: then saveViewHistory!
     // now: for long wheelEvents, saveViewHistory is called multiple times.
-
-    saveViewHistory();
+    viewChanged(m_viewmatrix,m_fovy);
 }
 
 
@@ -176,7 +172,7 @@ bool AbstractNavigation::isTimerRunning()
     return m_timer.isActive();
 }
 
-void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool save_history)
+void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float fovy, bool save_history)
 {
     m_old_rotation = glm::quat_cast(m_viewmatrix);
     m_new_rotation = glm::quat_cast(new_viewmatrix);
@@ -187,10 +183,10 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool save_hi
     m_old_fovy = m_fovy;
 
     if(save_history){
-        m_new_fovy = m_fovy;
-        saveViewHistory();
-    } else {
-        m_new_fovy = m_viewHistory->getFovy();
+            m_new_fovy = m_fovy;
+            viewChanged(m_viewmatrix,m_fovy);
+        } else {
+            m_new_fovy = fovy;
     }
 
     m_animation_progress = 0;
@@ -201,38 +197,9 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, bool save_hi
     }
 }
 
-void AbstractNavigation::saveViewHistory()
+void AbstractNavigation::saveView()
 {
-    if(!m_viewHistory->isEqualViewMatrix(m_viewmatrix) || !m_viewHistory->isEqualFovy(m_fovy)){
-        m_viewHistory = new ViewHistory(m_viewHistory, m_viewmatrix, m_fovy);
-        qDebug() << "save #" <<  m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
-        viewChanged();
-    }
-}
-
-void AbstractNavigation::undoViewHistory()
-{
-    // if not reached the oldest history element
-    if(!m_viewHistory->isFirst()){
-        if (m_viewHistory->isLast()) {
-            qDebug() << "save last state before undo.";
-            // save last object before undo
-            saveViewHistory();
-        }
-        m_viewHistory = m_viewHistory->getPrevious();
-        loadView(m_viewHistory->getViewMatrix(), false);
-        qDebug() << "go back to #" << m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
-    }
-}
-
-void AbstractNavigation::redoViewHistory()
-{
-    // if not reached the youngest history element
-    if(!m_viewHistory->isLast()){
-        m_viewHistory = m_viewHistory->getNext();
-        loadView(m_viewHistory->getViewMatrix(), false);
-        qDebug() << "redo #" << m_viewHistory->getTimestamp() << " / " << m_viewHistory->getSize() << " views in history.";
-    }
+    viewChanged(m_viewmatrix,m_fovy);
 }
 
 void AbstractNavigation::setFromMatrix(const glm::mat4 & view)
@@ -309,7 +276,7 @@ void AbstractNavigation::sceneChanged(Group * scene)
     setFromMatrix(topRightView());
     updateCamera();
 
-    saveViewHistory();
+    viewChanged(m_viewmatrix,m_fovy);
 }
 
 float AbstractNavigation::getBBRadius(){
@@ -325,7 +292,6 @@ void AbstractNavigation::setBBRadius(float radius){
 void AbstractNavigation::rescaleScene( Group * scene )
 {
     AxisAlignedBoundingBox bb = scene->boundingBox();
-
     glm::mat4 scale_matrix = glm::scale(glm::vec3(5.0f / bb.radius()));
     m_sceneTransform = scale_matrix * scene->transform();
     scene->setTransform(m_sceneTransform);

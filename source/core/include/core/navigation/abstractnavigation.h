@@ -11,7 +11,6 @@
 #include <QMouseEvent>
 #include <QBasicTimer>
 
-#include <core/navigation/viewhistory.h>
 #include <signalzeug/Signal.h>
 
 class Camera;
@@ -20,7 +19,6 @@ class Group;
 
 class CORE_API AbstractNavigation : QObject
 {
-
 
 public:
 
@@ -43,11 +41,8 @@ public:
     virtual void wheelEvent(QWheelEvent *event);
 
     virtual const glm::mat4 & viewMatrix();
-    void loadView(const glm::mat4 & viewmatrix, bool history = true);
-
-    void saveViewHistory();
-    void undoViewHistory();
-    void redoViewHistory();
+    void loadView(const glm::mat4 & viewmatrix, const float fovy = 0, bool save_history=true);
+    void saveView();
 
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
@@ -72,8 +67,8 @@ public:
     float getBBRadius();
     void setBBRadius(float radius);
 
-    signalzeug::Signal<> viewChanged;
-
+    // has to pass m_viewmatrix and m_fovy to viewhistory in canvas
+    signalzeug::Signal<glm::mat4, float> viewChanged;
 
 protected:
     void startTimer();
@@ -94,7 +89,6 @@ protected:
 
     float m_fovy;
     glm::mat4 m_viewmatrix;
-    ViewHistory* m_viewHistory;
 
     Camera * m_camera;
     static const float TIMER_MS;

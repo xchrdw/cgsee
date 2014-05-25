@@ -29,6 +29,7 @@ Canvas::Canvas(
 ,   m_refreshTimeMSec(0)
 ,   m_painter(nullptr)
 ,   m_navigation(nullptr)
+,   m_viewhistory(nullptr)
 ,   m_timer(nullptr)
 ,   m_format(format)
 {
@@ -161,10 +162,6 @@ void Canvas::setRefreshTimeMSec(int msec)
     }
 }
 
-void Canvas::pViewChanged(){
-       qDebug() << "Signal from navigation: history was saved.";
-}
-
 int Canvas::refreshTimeMSec() const
 {
     return m_refreshTimeMSec;
@@ -224,8 +221,19 @@ void Canvas::setNavigation( AbstractNavigation * navigation )
     if (bbRadius != 0)
         m_navigation->setBBRadius(bbRadius);
 
-    // connect viewHistory to react on navigation events
-    m_navigation->viewChanged.connect(this,&Canvas::pViewChanged);
+    m_viewhistory = new ViewHistory(m_navigation);
+    m_navigation->viewChanged.connect(this,&Canvas::saveHistory);
+}
+
+ViewHistory * Canvas::viewhistory()
+{
+    return m_viewhistory;
+}
+
+void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
+{
+    // call viewHistory save with arguments from navigation signal + thumbnail
+    m_viewhistory->save(viewmatrix,fovy,this->capture());
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )

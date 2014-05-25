@@ -907,8 +907,8 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
-void Viewer::on_actionHistoryUndo_triggered() { navigation()->undoViewHistory(); }
-void Viewer::on_actionHistoryRedo_triggered() { navigation()->redoViewHistory(); }
+void Viewer::on_actionHistoryUndo_triggered() { m_qtCanvas->viewhistory()->undo(); }
+void Viewer::on_actionHistoryRedo_triggered() { m_qtCanvas->viewhistory()->redo(); }
 
 
 void Viewer::on_mouseMoveEventTriggered(int triggered)

@@ -60,7 +60,7 @@ public:
 
     void initialize(const GLFormat & format);
 
-   void setNavigation(AbstractNavigation * navigation);
+    void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
 
     void setPainter(AbstractScenePainter * painter);

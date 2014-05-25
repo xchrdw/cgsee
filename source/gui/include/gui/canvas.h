@@ -30,6 +30,8 @@ public:
     AbstractScenePainter * painter();
     void setNavigation( AbstractNavigation * navigation );
     AbstractNavigation * navigation();
+    ViewHistory * viewhistory();
+    void saveHistory(glm::mat4 viewmatrix, float fovy);
 
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
@@ -48,8 +50,6 @@ public:
 
     virtual void setRefreshTimeMSec(int msec);
     int refreshTimeMSec() const;
-
-    void pViewChanged();
 
 signals:
     void mouseReleaseEventSignal ( QMouseEvent * event );
@@ -82,6 +82,7 @@ protected:
 protected:
     AbstractScenePainter * m_painter;
     AbstractNavigation * m_navigation;
+    ViewHistory * m_viewhistory;
 
     QBasicTimer * m_timer;
     float m_lastEvent;
