@@ -1,44 +1,47 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <stdint.h>
 
 using namespace glm;
 
-struct directionalLight{
-	vec3 m_direction;
+struct LightInfo
+{
+	uint32_t numPointLights;
+	uint32_t numSpotLights;
+	DirectionalLight directionalLight;
 };
 
-struct pointLight{
+struct DirectionalLight{
+	vec3 m_direction;
+	vec3 m_intensity; // Color intensity (HDR)
+};
+
+struct PointLight{
 	vec3 m_position;
-	vec3 m_intensity;
-	float m_kquad;
-	float m_klin;
-	float m_kcons;
+	vec3 m_intensity; // Color intensity (HDR)
+	vec3 m_falloff;	// x = constant falloff, y = linaer falloff, z = quadratic falloff
 	bool enabled;
 };
 
-struct spotLight{
+struct SpotLight{
 	vec3 m_position;
 	vec3 m_direction;
-	vec3 m_intensity;
+	vec3 m_intensity; // Color intensity (HDR)
 	float m_angle;
-	float m_kquad;
-	float m_klin;
-	float m_kcons;
+	vec3 m_falloff;	// x = constant falloff, y = linaer falloff, z = quadratic falloff
 	bool enabled;
 };
 
-struct goboLight{
+struct GoboLight{
 	vec3 m_position;
 	vec3 m_direction;
 	//	texture* m_gobo_texture;
 	float m_angle;
-	float m_kquad;
-	float m_klin;
-	float m_kcons;
-	bool enabled;
+	vec3 m_falloff;	// x = constant falloff, y = linaer falloff, z = quadratic falloff
+//	bool enabled;
 };
 
-struct areaLight{
+struct AreaLight{
 
 };
