@@ -88,6 +88,7 @@ public:
     void clearSelection();
     void hideById(const unsigned int & id, const bool & hideStatus);
     void updateInfoBox();
+    void showMaterial();
     void selectionBBoxChanged();
 
 

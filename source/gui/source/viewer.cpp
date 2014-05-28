@@ -131,7 +131,7 @@ Viewer::Viewer(
 
     this->tabifyDockWidget(m_dockScene, m_dockMaterial);
     m_dockScene->raise();
-    //m_dockMaterial->hide();
+    m_dockMaterial->hide();
 };
 
 void Viewer::initializeExplorer()
@@ -955,6 +955,13 @@ void Viewer::selectById(const unsigned int & id)
         }
     }
     this->updateInfoBox();
+    this->showMaterial();
+}
+
+void Viewer::showMaterial()
+{
+    //Node* node = dynamic_cast<PolygonalDrawable*>(m_selectedNodes.first);
+    m_dockMaterial->show();
 }
 
 void Viewer::selectNode(Node * node)
