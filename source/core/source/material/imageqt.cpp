@@ -7,8 +7,8 @@
 
 ImageQt::ImageQt(const QString & filePath)
     : Image(filePath)
+    , m_image(filePath)
 {
-    m_image = QImage(filePath);
     if (isValid())
         m_image = QGLWidget::convertToGLFormat(m_image);
 }
