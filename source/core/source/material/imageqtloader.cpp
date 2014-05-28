@@ -1,4 +1,5 @@
 #include <QString>
+#include <QImageReader>
 
 #include <core/material/imageqtloader.h>
 
@@ -14,37 +15,41 @@ ImageQtLoader::~ImageQtLoader() {}
 
 QStringList ImageQtLoader::namedLoadableTypes() const
 {
+    QMap<QString, QString> typenames;
+    typenames.insert("bmp", "Windows Bitmap");
+    typenames.insert("gif", "Graphic Interchange Format");
+    typenames.insert("jpg", "Joint Photographic Experts Group");
+    typenames.insert("jpeg", "Joint Photographic Experts Group");
+    typenames.insert("png", "Portable Network Graphics");
+    typenames.insert("pbm", "Portable Bitmap");
+    typenames.insert("pgm", "Portable Graymap");
+    typenames.insert("ppm", "Portable Pixmap");
+    typenames.insert("xbm", "X11 Bitmap");
+    typenames.insert("xpm", "X11 Bitmap");
+
     QStringList types;
     types
-        << "All Qt Image Files (" + allLoadableTypes().join(" ") + ")"
-        << "Windows Bitmap (*.bmp)"
-        << "Graphic Interchange Format (*.gif)"
-        << "Joint Photographic Experts Group (*.jpg)"
-        << "Joint Photographic Experts Group (*.jpeg)"
-        << "Portable Network Graphics (*.png)"
-        << "Portable Bitmap (*.pbm)"
-        << "Portable Graymap (*.pgm)"
-        << "Portable Pixmap (*.ppm)"
-        << "X11 Bitmap (*.xbm)"
-        << "X11 Bitmap (*.xpm)";
+        << "All Qt Image Files (" + allLoadableTypes().join(" ") + ")";
+    QStringList loadable = loadableExtensions();
+    for (QString extension : loadable) {
+        if (typenames.contains(extension)) {
+            types << typenames[extension].append("(*.").append(extension).append(")");
+        }
+        else {
+            types << QString("(*.").append(extension).append(")");
+        }
+    }
 
     return types;
 }
 
 QStringList ImageQtLoader::loadableExtensions() const
 {
+    QList<QByteArray> sif = QImageReader::supportedImageFormats();
     QStringList extensions = QStringList();
-    extensions
-        << "bmp"
-        << "gif"
-        << "jpg"
-        << "jpeg"
-        << "png"
-        << "pbm"
-        << "pgm"
-        << "ppm"
-        << "xbm"
-        << "xpm";
+    for (QByteArray ba : sif) {
+        extensions << ba.constData();
+    }
 
     return extensions;
 }
