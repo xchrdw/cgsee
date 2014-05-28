@@ -46,7 +46,7 @@ QStringList ImageQtLoader::namedLoadableTypes() const
 QStringList ImageQtLoader::loadableExtensions() const
 {
     QList<QByteArray> sif = QImageReader::supportedImageFormats();
-    QStringList extensions = QStringList();
+    QStringList extensions;
     for (QByteArray ba : sif) {
         extensions << ba.constData();
     }
