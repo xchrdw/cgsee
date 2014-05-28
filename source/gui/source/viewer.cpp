@@ -293,6 +293,7 @@ void Viewer::assignScene(Group * rootNode)
     });
 
     createSceneHierarchy(m_sceneHierarchy, rootNode);
+    m_sceneHierarchyTree->setDisabled(false);
     m_sceneHierarchyTree->expandAll();
     this->updateInfoBox();
 }
@@ -499,6 +500,12 @@ bool Viewer::loadModel(const QString& path, AbstractModelLoader* loader)
 
 bool Viewer::loadImage(const QString& path, AbstractImageLoader* loader)
 {
+    Image * image = loader->importFromFile(path);
+    if (image){
+        m_sceneHierarchy->clear();
+        m_sceneHierarchyTree->setDisabled(true);
+        return true;
+    }
     return false;
 }
 
