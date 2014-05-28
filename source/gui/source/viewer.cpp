@@ -445,9 +445,13 @@ void Viewer::on_openFileDialogAction_triggered()
 QStringList Viewer::allLoadableTypes()
 {
     QStringList types;
+    QString allTypes = "All Supported Files (";
     for (AbstractLoader* loader : m_loaders) {
         types << loader->namedLoadableTypes();
+        allTypes.append(loader->allLoadableTypes().join(" "));
     }
+    allTypes.append(")");
+    types.prepend(allTypes);
     return types;
 }
     
