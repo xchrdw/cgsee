@@ -14,6 +14,8 @@ public:
     ImageQt(const QString & filePath);
     virtual ~ImageQt();
 
+    virtual bool isValid();
+
 protected:
     virtual bool texImage();
 

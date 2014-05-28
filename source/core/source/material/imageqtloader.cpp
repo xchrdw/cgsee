@@ -51,5 +51,12 @@ QStringList ImageQtLoader::loadableExtensions() const
 
 Image * ImageQtLoader::importFromFile(const QString & filePath) const
 {
-    return new ImageQt(filePath);
+    ImageQt * image = new ImageQt(filePath);
+    if (!image->isValid()) {
+        delete image;
+        return nullptr;
+    }
+    else {
+        return image;
+    }
 }

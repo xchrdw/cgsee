@@ -15,6 +15,8 @@ public:
 
     bool bind(const Program & program, const QString & uniformName, const GLubyte textureUnit);
 
+    virtual bool isValid() = 0;
+
 protected:
     virtual GLuint getTexture();
     virtual bool texImage() = 0;
