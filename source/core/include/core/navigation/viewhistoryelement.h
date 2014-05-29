@@ -37,6 +37,7 @@ private:
     void deleteFirst();
 
     static int m_length;
+    static int m_maxLength;
     static int m_thumbnailSize;
 
     ViewHistoryElement* m_previous;

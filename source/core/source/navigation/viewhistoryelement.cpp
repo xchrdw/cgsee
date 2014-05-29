@@ -3,8 +3,12 @@
 #include <QSize>
 #include <QDir>
 
-int ViewHistoryElement::m_length = 0;
+// these config values should be added to cgsee properties
+int ViewHistoryElement::m_maxLength = 16;
 int ViewHistoryElement::m_thumbnailSize = 128;
+// ---------->>
+
+int ViewHistoryElement::m_length = 0;
 
 ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail)
     : m_previous(previous)
@@ -33,8 +37,8 @@ ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 v
         previous->setNext(this);
     }
 
-    // limit history size to 8
-    if (m_length > 16) {
+    // limit history size to m_maxLength
+    if (m_length > m_maxLength) {
         deleteFirst();
     }
 }
