@@ -66,6 +66,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/glformat.h>
 #include <core/assimploader.h>
 #include <core/material/imageqtloader.h>
+#include <core/material/imagerawloader.h>
 
 #include <core/camera.h>
 #include <core/parallelcamera.h>
@@ -116,6 +117,7 @@ Viewer::Viewer(
 {
     m_loaders.append(new AssimpLoader(registry));
     m_loaders.append(new ImageQtLoader());
+    m_loaders.append(new ImageRawLoader());
 
 
     m_ui->setupUi(this);
