@@ -1,21 +1,26 @@
 #include <core/navigation/viewhistoryelement.h>
+#include <QImage>
+#include <QSize>
+#include <QDir>
 
-int ViewHistoryElement::m_size = 0;
+int ViewHistoryElement::m_length = 0;
+int ViewHistoryElement::m_thumbnailSize = 128;
 
-ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 viewmatrix, float fovy)
+ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail)
     : m_previous(previous)
     , m_next(nullptr)
     , m_viewmatrix(viewmatrix)
     , m_fovy(fovy)
-    , m_thumbnail(64, 64, QImage::Format_RGB32)
+    , m_thumbnail(thumbnail)
 {
     m_timestamp = QDateTime::currentMSecsSinceEpoch();
-    m_size++;
+    m_length++;
 
-    // @TODO get canvas snapshot
-    m_thumbnail.fill(Qt::white);
+    m_thumbnail = m_thumbnail.scaled(QSize(m_thumbnailSize,m_thumbnailSize), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    // @TODO remove:
+    m_thumbnail.save(QString("/%2.png").arg(m_timestamp).prepend(QDir::homePath()));
 
-    // if previos object in history exists, link it
+    // if previous object in history exists, link it
     if (previous != nullptr)
     {
         // if new history shall be saved before youngest state is the
@@ -29,7 +34,7 @@ ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 v
     }
 
     // limit history size to 8
-    if (m_size > 16) {
+    if (m_length > 16) {
         deleteFirst();
     }
 }
@@ -41,7 +46,7 @@ ViewHistoryElement::~ViewHistoryElement()
     ViewHistoryElement* next {this->getNext()};
     this->getNext()->setPrevious(previous);
     this->getPrevious()->setNext(next);
-    m_size--;
+    m_length--;
 }
 
 void ViewHistoryElement::reset()
@@ -55,7 +60,7 @@ void ViewHistoryElement::reset()
         delete last->getNext();
     }
     delete first;
-    m_size = 0;
+    m_length = 0;
 }
 
 void ViewHistoryElement::setNext(ViewHistoryElement* next)
@@ -119,7 +124,7 @@ qint64 ViewHistoryElement::getTimestamp()
 
 int ViewHistoryElement::getSize()
 {
-    return m_size;
+    return m_length;
 }
 
 glm::mat4 ViewHistoryElement::getViewMatrix()
@@ -150,14 +155,14 @@ bool ViewHistoryElement::isLast()
 bool ViewHistoryElement::isEqualViewMatrix(const glm::mat4 & viewmatrix)
 {
     bool isEqual = false;
-    (m_size != 0) ? isEqual = (viewmatrix == m_viewmatrix) : isEqual = false;
+    (m_length != 0) ? isEqual = (viewmatrix == m_viewmatrix) : isEqual = false;
     return isEqual;
 }
 
 bool ViewHistoryElement::isEqualFovy(const float & fovy)
 {
     bool isEqual = false;
-    (m_size != 0) ? isEqual = (fovy == m_fovy) : isEqual = false;
+    (m_length != 0) ? isEqual = (fovy == m_fovy) : isEqual = false;
     return isEqual;
 }
 
@@ -168,7 +173,7 @@ void ViewHistoryElement::deleteOrphaned()
     {
         temp = temp->getPrevious();
         temp->setNext(nullptr);
-        --m_size;
+        --m_length;
     }
 }
 
@@ -176,5 +181,5 @@ void ViewHistoryElement::deleteFirst()
 {
     ViewHistoryElement* new_first {this->getFirst()->getNext()};
     new_first->setPrevious(nullptr);
-    --m_size;
+    --m_length;
 }

@@ -229,7 +229,6 @@ ViewHistory * Canvas::viewhistory()
 
 void Canvas::setViewHistory(AbstractNavigation * navigation)
 {
-    qDebug()<<"new history.";
     if(m_viewhistory != nullptr){
         delete m_viewhistory;
     }
@@ -240,7 +239,7 @@ void Canvas::setViewHistory(AbstractNavigation * navigation)
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
 {
     // call viewHistory save with arguments from navigation signal + thumbnail
-    m_viewhistory->save(viewmatrix,fovy,this->capture());
+    m_viewhistory->save(viewmatrix,fovy,this->capture(QSize(512,512), true, false));
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )

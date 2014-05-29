@@ -8,7 +8,7 @@ class ViewHistoryElement
 {
 
 public:
-    ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 viewmatrix, float fovy);
+    ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail);
     ~ViewHistoryElement();
 
     void reset();
@@ -33,11 +33,12 @@ public:
     bool isEqualFovy(const float & fovy);
 
 private:
-
     void deleteOrphaned();
     void deleteFirst();
 
-    static int m_size;
+    static int m_length;
+    static int m_thumbnailSize;
+
     ViewHistoryElement* m_previous;
     ViewHistoryElement* m_next;
     qint64 m_timestamp;

@@ -16,8 +16,8 @@ ViewHistory::~ViewHistory(){
 
 void ViewHistory::save(glm::mat4 viewmatrix, float fovy, QImage thumbnail)
 {
-   if(!m_viewhistory->isEqualViewMatrix(viewmatrix) || !m_viewhistory->isEqualFovy(fovy)){
-        m_viewhistory = new ViewHistoryElement(m_viewhistory, viewmatrix, fovy);
+   if(!m_viewhistory->isEqualViewMatrix(viewmatrix) || !m_viewhistory->isEqualFovy(fovy)){                
+        m_viewhistory = new ViewHistoryElement(m_viewhistory, viewmatrix, fovy, thumbnail);
         qDebug() << "save #" <<  m_viewhistory->getTimestamp() << " / " << m_viewhistory->getSize() << " views in history.";
    }
 }
