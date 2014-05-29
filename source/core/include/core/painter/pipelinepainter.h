@@ -54,7 +54,7 @@ public:
 
 protected:
     void pipelineConfigChanged();
-    void setupPipeline(PipelineBuilder & builder);
+    //void setupPipeline(PipelineBuilder & builder);
 
 protected:
     void setUniforms();
