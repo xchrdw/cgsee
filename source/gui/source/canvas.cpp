@@ -40,6 +40,8 @@ Canvas::Canvas(
 
     // Important for overdraw, not occluding the scene.
     setAutoFillBackground(false);
+
+    m_viewhistory = new ViewHistory();
 }
 
 Canvas::~Canvas()
@@ -218,8 +220,11 @@ void Canvas::setNavigation( AbstractNavigation * navigation )
     }
     m_navigation = navigation;
     m_navigation->setCanvas(this);
-    if (bbRadius != 0)
+    if (bbRadius != 0){
         m_navigation->setBBRadius(bbRadius);
+    }
+    m_viewhistory->setNavigation(m_navigation);
+    m_navigation->viewChanged.connect(this,&Canvas::saveHistory);
 }
 
 ViewHistory * Canvas::viewhistory()
@@ -227,18 +232,8 @@ ViewHistory * Canvas::viewhistory()
     return m_viewhistory;
 }
 
-void Canvas::setViewHistory(AbstractNavigation * navigation)
-{
-    if(m_viewhistory != nullptr){
-        delete m_viewhistory;
-    }
-    m_viewhistory = new ViewHistory(m_navigation);
-    m_navigation->viewChanged.connect(this,&Canvas::saveHistory);
-}
-
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
 {
-    // call viewHistory save with arguments from navigation signal + thumbnail
     m_viewhistory->save(viewmatrix,fovy,this->capture(QSize(512,512), true, false));
 }
 

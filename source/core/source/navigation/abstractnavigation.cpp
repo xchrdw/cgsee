@@ -32,6 +32,7 @@ AbstractNavigation::AbstractNavigation(Camera * camera)
     , m_eventTimer()
 {
     m_frontView = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
+    navigated();
 }
 
 
@@ -188,9 +189,11 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
     m_old_fovy = m_fovy;
 
     if(save_history){
+            // this path: when a preset was selected in gui or a view was undone/redone.
             m_new_fovy = m_fovy;
-            navigated();
+            triggerViewChanged();
         } else {
+            // a user interaction / navigation event
             m_new_fovy = fovy;
     }
 

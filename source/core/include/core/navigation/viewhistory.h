@@ -6,12 +6,13 @@
 class ViewHistory
 {
 public:
-    ViewHistory(AbstractNavigation * navigation);
+    ViewHistory();
     ~ViewHistory();
-
+    void setNavigation(AbstractNavigation * navigation);
     void save(glm::mat4 viewmatrix, float fovy, QImage thumbnail);
     void undo();
     void redo();
+    bool isEmpty();
 
 private:
     AbstractNavigation * m_navigation;
