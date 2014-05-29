@@ -7,6 +7,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <QGLWidget>
+#include <QDebug>
 
 #include <core/camera.h>
 
@@ -28,6 +29,7 @@ AbstractNavigation::AbstractNavigation(Camera * camera)
     , m_timer()
     , m_timer_requests(0)
     , m_animation_active(false)
+    , m_eventTimer()
 {
     m_frontView = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
 }
@@ -54,7 +56,7 @@ void AbstractNavigation::updateCamera()
 }
 
 
-void AbstractNavigation::onCameraChanged() { }
+void AbstractNavigation::onCameraChanged() {}
 
 
 void AbstractNavigation::reset()
@@ -78,10 +80,7 @@ void AbstractNavigation::wheelEvent(QWheelEvent * event)
     m_fovy -= (event->delta() * 0.1); //sensitivity
     m_fovy = glm::clamp(m_fovy, 1.0f, 180.0f);
     updateCamera();
-
-    // @TODO  run a timer that is reset in every wheel event and when it times out, we know the user stopped scrolling: then saveViewHistory!
-    // now: for long wheelEvents, saveViewHistory is called multiple times.
-    viewChanged(m_viewmatrix,m_fovy);
+    navigated();
 }
 
 
@@ -131,6 +130,12 @@ void AbstractNavigation::stopTimer()
 
 void AbstractNavigation::timerEvent(QTimerEvent * event)
 {
+    // send viewChanged signal only after the n seconds of inactivity (see AbstractNavigation::onCameraChanged)
+    if(event->timerId()==m_eventTimer.timerId()){
+        m_eventTimer.stop();
+        triggerViewChanged();
+    }
+
     if (m_animation_active) {
         m_animation_progress += TIMER_MS / DURATION;
         if (m_animation_progress < 1.f) {
@@ -184,7 +189,7 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
 
     if(save_history){
             m_new_fovy = m_fovy;
-            viewChanged(m_viewmatrix,m_fovy);
+            navigated();
         } else {
             m_new_fovy = fovy;
     }
@@ -197,10 +202,15 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
     }
 }
 
-void AbstractNavigation::saveView()
-{
-    viewChanged(m_viewmatrix,m_fovy);
+void AbstractNavigation::triggerViewChanged(){
+       viewChanged(m_viewmatrix,m_fovy);
 }
+
+void AbstractNavigation::navigated(){
+    // send viewChanged signal only after the n seconds of inactivity (see AbstractNavigation:timerEvent)
+    m_eventTimer.start(DURATION,this);
+}
+
 
 void AbstractNavigation::setFromMatrix(const glm::mat4 & view)
 {
@@ -275,8 +285,6 @@ void AbstractNavigation::sceneChanged(Group * scene)
     m_frontView = glm::lookAt(bb.center() + glm::vec3(0.f, 0.f, bb.radius()*2.5), bb.center(), glm::vec3(0.f, 1.f, 0.f));
     setFromMatrix(topRightView());
     updateCamera();
-
-    viewChanged(m_viewmatrix,m_fovy);
 }
 
 float AbstractNavigation::getBBRadius(){

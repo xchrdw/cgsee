@@ -28,7 +28,7 @@ void ViewHistory::undo()
     if(!m_viewhistory->isFirst()){
         if (m_viewhistory->isLast()) {
             // save last object before undo
-            m_navigation->saveView();
+            m_navigation->triggerViewChanged();
         }
         m_viewhistory = m_viewhistory->getPrevious();
         m_navigation->loadView(m_viewhistory->getViewMatrix(),m_viewhistory->getFovy(),false);
