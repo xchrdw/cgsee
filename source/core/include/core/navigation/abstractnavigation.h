@@ -41,7 +41,7 @@ public:
 
     virtual const glm::mat4 & viewMatrix();
     void loadView(const glm::mat4 & viewmatrix, const float fovy = 0, bool save_history=true);
-    void triggerViewChanged();
+    void onViewChanged();
 
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
@@ -66,7 +66,7 @@ public:
     float getBBRadius();
     void setBBRadius(float radius);
 
-    void navigated();
+    void onNavigated();
     signalzeug::Signal<glm::mat4, float> viewChanged;
 
 protected:

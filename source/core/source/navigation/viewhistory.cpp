@@ -18,7 +18,7 @@ void ViewHistory::setNavigation(AbstractNavigation * navigation){
     m_navigation = navigation;
 
     // @TODO this has to be more beautiful. Initial save view on program start:
-    m_navigation->triggerViewChanged();
+    m_navigation->onViewChanged();
 }
 
 
@@ -36,7 +36,7 @@ void ViewHistory::undo()
     if(!m_viewhistory->isFirst() && !isEmpty()){
         if (m_viewhistory->isLast()) {
             // save last object before undo
-            m_navigation->triggerViewChanged();
+            m_navigation->onViewChanged();
         }
         m_viewhistory = m_viewhistory->getPrevious();
         m_navigation->loadView(m_viewhistory->getViewMatrix(),m_viewhistory->getFovy(),false);

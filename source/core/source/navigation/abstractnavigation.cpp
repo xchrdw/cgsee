@@ -80,7 +80,7 @@ void AbstractNavigation::wheelEvent(QWheelEvent * event)
     m_fovy -= (event->delta() * 0.1); //sensitivity
     m_fovy = glm::clamp(m_fovy, 1.0f, 180.0f);
     updateCamera();
-    navigated();
+    onNavigated();
 }
 
 
@@ -134,7 +134,7 @@ void AbstractNavigation::timerEvent(QTimerEvent * event)
     // (see AbstractNavigation::onCameraChanged)
     if(event->timerId()==m_eventTimer.timerId()){
         m_eventTimer.stop();
-        triggerViewChanged();
+        onViewChanged();
     }
 
     if (m_animation_active) {
@@ -191,7 +191,7 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
     if(save_history){
             // this path: when a preset was selected in gui or a view was undone/redone.
             m_new_fovy = m_fovy;
-            triggerViewChanged();
+            onViewChanged();
         } else {
             // a user interaction / navigation event
             m_new_fovy = fovy;
@@ -205,11 +205,11 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
     }
 }
 
-void AbstractNavigation::triggerViewChanged(){
+void AbstractNavigation::onViewChanged(){
        viewChanged(m_viewmatrix,m_fovy);
 }
 
-void AbstractNavigation::navigated(){
+void AbstractNavigation::onNavigated(){
     // send viewChanged signal only after the n seconds of inactivity
     // (see AbstractNavigation::timerEvent)
     m_eventTimer.start(DURATION,this);
