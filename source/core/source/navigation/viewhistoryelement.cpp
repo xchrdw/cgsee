@@ -3,7 +3,7 @@
 #include <QSize>
 #include <QDir>
 
-// these config values should be added to cgsee properties
+// @TODO these config values should be added to cgsee properties
 int ViewHistoryElement::m_maxLength = 16;
 int ViewHistoryElement::m_thumbnailSize = 128;
 // ---------->>
@@ -21,6 +21,7 @@ ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 v
     m_length++;
 
     m_thumbnail = m_thumbnail.scaled(QSize(m_thumbnailSize,m_thumbnailSize), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
     // @TODO remove:
     m_thumbnail.save(QString("/temp/%2.png").arg(m_timestamp).prepend(QDir::currentPath()));
 
@@ -38,7 +39,8 @@ ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 v
     }
 
     // limit history size to m_maxLength
-    if (m_length > m_maxLength) {
+    if (m_length > m_maxLength)
+    {
         deleteFirst();
     }
 }

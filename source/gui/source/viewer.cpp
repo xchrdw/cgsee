@@ -253,8 +253,14 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
     for (const auto & child : node->children())
     {
         QStandardItem * item = new QStandardItem(child->name());
-        if (child->name() == "") { item->setData(QVariant(node->name() + QString("_") + QString::number(count)), Qt::DisplayRole); }
-        else { item->setData(QVariant(child->name()), Qt::DisplayRole); }
+        if (child->name() == "")
+        {
+            item->setData(QVariant(node->name() + QString("_") + QString::number(count)), Qt::DisplayRole);
+        }
+        else
+        {
+            item->setData(QVariant(child->name()), Qt::DisplayRole);
+        }
 
         item->setData(QVariant(child->id()), Qt::UserRole + 1);
         item->setEditable(false);
@@ -563,7 +569,8 @@ void Viewer::on_ssaoBlurAction_triggered()
     m_qtCanvas->repaint();
 }
 
-void Viewer::uncheckFboActions() {
+void Viewer::uncheckFboActions()
+{
     m_ui->fboColorAction->setChecked(false);
     m_ui->fboNormalzAction->setChecked(false);
     m_ui->fboShadowMapAction->setChecked(false);
@@ -714,7 +721,8 @@ void Viewer::setNavigation(AbstractNavigation * navigation)
     this->setFocus();
 }
 
-AbstractNavigation * Viewer::navigation() {
+AbstractNavigation * Viewer::navigation()
+{
     if(!m_qtCanvas)
         return nullptr;
     return m_qtCanvas->navigation();
@@ -748,40 +756,46 @@ CoordinateProvider * Viewer::coordinateProvider()
 
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
-    if(!event->isAutoRepeat()) {
+    if(!event->isAutoRepeat())
+    {
         navigation()->keyPressEvent(event);
     }
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )
 {
-    if(!event->isAutoRepeat()) {
+    if(!event->isAutoRepeat())
+    {
         navigation()->keyReleaseEvent(event);
     }
 }
 
-void Viewer::on_flightManipulatorAction_triggered() {
+void Viewer::on_flightManipulatorAction_triggered()
+{
     setNavigation(new FlightNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->flightManipulatorAction->setChecked(true);
     qDebug("Flight navigation, use WASD and arrow keys");
 }
 
-void Viewer::on_trackballManipulatorAction_triggered() {
+void Viewer::on_trackballManipulatorAction_triggered()
+{
     setNavigation(new ArcballNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->trackballManipulatorAction->setChecked(true);
     qDebug("Arcball navigation, use left and right mouse buttons");
 }
 
-void Viewer::on_fpsManipulatorAction_triggered() {
+void Viewer::on_fpsManipulatorAction_triggered()
+{
     setNavigation(new FpsNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->fpsManipulatorAction->setChecked(true);
     qDebug("FPS Navigation, use mouse and WASD");
 }
 
-void Viewer::uncheckManipulatorActions() {
+void Viewer::uncheckManipulatorActions()
+{
     m_ui->flightManipulatorAction->setChecked(false);
     m_ui->fpsManipulatorAction->setChecked(false);
     m_ui->trackballManipulatorAction->setChecked(false);
@@ -789,11 +803,14 @@ void Viewer::uncheckManipulatorActions() {
 
 
 // helper to restore mat4
-glm::mat4 string2mat(QString s) {
+glm::mat4 string2mat(QString s)
+{
     glm::mat4 mat;
     QStringList list = s.split(';');
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
             mat[j][i] = list.at(j + 4*i).toFloat();
         }
     }
@@ -801,10 +818,13 @@ glm::mat4 string2mat(QString s) {
 }
 
 // helper to save mat4
-QString mat2string(glm::mat4 mat) {
+QString mat2string(glm::mat4 mat)
+{
     QString s("");
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
             s += QString::number(mat[j][i]);
             s += ';';
         }
@@ -950,7 +970,8 @@ void Viewer::selectById(const unsigned int & id)
     Node * result = nullptr;
     traverser.traverse(*m_camera, [&result, &id](Node & node)
     {
-        if( node.id() == id){
+        if(node.id() == id)
+        {
             result = &node;
             return false;
         }
@@ -1066,7 +1087,8 @@ void Viewer::hideById(const unsigned int & id, const bool & hideStatus)
     Node * result = nullptr;
     traverser.traverse(*m_camera, [&result, &id](Node & node)
     {
-        if( node.id() == id){
+        if( node.id() == id)
+        {
             result = &node;
             return false;
         }

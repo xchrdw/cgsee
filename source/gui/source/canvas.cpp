@@ -157,9 +157,12 @@ void Canvas::timerEvent(QTimerEvent *event)
 void Canvas::setRefreshTimeMSec(int msec)
 {
     m_refreshTimeMSec = msec;
-    if (msec < 0) {
+    if (msec < 0)
+    {
         m_timer->stop();
-    } else {
+    }
+    else
+    {
         m_timer->start(m_refreshTimeMSec, this);
     }
 }
@@ -214,17 +217,19 @@ AbstractNavigation * Canvas::navigation()
 void Canvas::setNavigation( AbstractNavigation * navigation )
 {
     float bbRadius = 0;
-    if (m_navigation){
+    if (m_navigation)
+    {
         bbRadius = m_navigation->getBBRadius();
         delete m_navigation;
     }
     m_navigation = navigation;
     m_navigation->setCanvas(this);
-    if (bbRadius != 0){
+    if (bbRadius != 0)
+    {
         m_navigation->setBBRadius(bbRadius);
     }
     m_viewhistory->setNavigation(m_navigation);
-    m_navigation->viewChanged.connect(this,&Canvas::saveHistory);
+    m_navigation->viewChanged.connect(this, &Canvas::saveHistory);
 }
 
 ViewHistory * Canvas::viewhistory()
@@ -234,7 +239,7 @@ ViewHistory * Canvas::viewhistory()
 
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
 {
-    m_viewhistory->save(viewmatrix,fovy,this->capture(QSize(512,512), true, false));
+    m_viewhistory->save(viewmatrix, fovy, this->capture(QSize(512, 512), true, false));
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )

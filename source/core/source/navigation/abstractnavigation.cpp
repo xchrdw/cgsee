@@ -67,13 +67,13 @@ void AbstractNavigation::reset()
 }
 
 
-void AbstractNavigation::keyPressEvent(QKeyEvent *event) { }
-void AbstractNavigation::keyReleaseEvent(QKeyEvent *event) { }
+void AbstractNavigation::keyPressEvent(QKeyEvent *event) {}
+void AbstractNavigation::keyReleaseEvent(QKeyEvent *event) {}
 
-void AbstractNavigation::mouseMoveEvent(QMouseEvent * event) { }
-void AbstractNavigation::mousePressEvent(QMouseEvent * event) { }
-void AbstractNavigation::mouseReleaseEvent(QMouseEvent * event) { }
-void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) { }
+void AbstractNavigation::mouseMoveEvent(QMouseEvent * event) {}
+void AbstractNavigation::mousePressEvent(QMouseEvent * event) {}
+void AbstractNavigation::mouseReleaseEvent(QMouseEvent * event) {}
+void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) {}
 
 void AbstractNavigation::wheelEvent(QWheelEvent * event)
 {
@@ -109,7 +109,8 @@ void AbstractNavigation::setCamera(Camera * camera)
 void AbstractNavigation::startTimer()
 {
     m_timer_requests++;
-    if(!m_timer.isActive()) {
+    if(!m_timer.isActive())
+    {
         m_timer.start(TIMER_MS, this);
     }
 }
@@ -122,7 +123,8 @@ void AbstractNavigation::stopTimer()
 {
     m_timer_requests = glm::max(0, m_timer_requests-1);
 
-    if(m_timer_requests == 0) {
+    if(m_timer_requests == 0)
+    {
         m_timer.stop();
     }
 }
@@ -132,16 +134,21 @@ void AbstractNavigation::timerEvent(QTimerEvent * event)
 {
     // send viewChanged signal only after the n seconds of inactivity
     // (see AbstractNavigation::onCameraChanged)
-    if(event->timerId()==m_eventTimer.timerId()){
+    if(event->timerId()==m_eventTimer.timerId())
+    {
         m_eventTimer.stop();
         onViewChanged();
     }
 
-    if (m_animation_active) {
+    if (m_animation_active)
+    {
         m_animation_progress += TIMER_MS / DURATION;
-        if (m_animation_progress < 1.f) {
+        if (m_animation_progress < 1.f)
+        {
             updateTransition();
-        } else {
+        }
+        else
+        {
             finishTransition();
         }
     }
@@ -170,7 +177,7 @@ void AbstractNavigation::finishTransition()
     updateCamera();
 }
 
-void AbstractNavigation::onTimerEvent() { }
+void AbstractNavigation::onTimerEvent() {}
 
 
 bool AbstractNavigation::isTimerRunning()
@@ -188,28 +195,34 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
 
     m_old_fovy = m_fovy;
 
-    if(save_history){
-            // this path: when a preset was selected in gui or a view was undone/redone.
-            m_new_fovy = m_fovy;
-            onViewChanged();
-        } else {
-            // a user interaction / navigation event
-            m_new_fovy = fovy;
+    if(save_history)
+    {
+        // this path: when a preset was selected in gui or a view was undone/redone.
+        m_new_fovy = m_fovy;
+        onViewChanged();
+    }
+    else
+    {
+        // a user interaction / navigation event
+        m_new_fovy = fovy;
     }
 
     m_animation_progress = 0;
     m_animation_active = true;
 
-    if(!isTimerRunning()) {
+    if(!isTimerRunning())
+    {
         startTimer();
     }
 }
 
-void AbstractNavigation::onViewChanged(){
+void AbstractNavigation::onViewChanged()
+{
        viewChanged(m_viewmatrix,m_fovy);
 }
 
-void AbstractNavigation::onNavigated(){
+void AbstractNavigation::onNavigated()
+{
     // send viewChanged signal only after the n seconds of inactivity
     // (see AbstractNavigation::timerEvent)
     m_eventTimer.start(DURATION,this);
@@ -291,11 +304,13 @@ void AbstractNavigation::sceneChanged(Group * scene)
     updateCamera();
 }
 
-float AbstractNavigation::getBBRadius(){
+float AbstractNavigation::getBBRadius()
+{
     return m_BBRadius;
 }
 
-void AbstractNavigation::setBBRadius(float radius){
+void AbstractNavigation::setBBRadius(float radius)
+{
     m_BBRadius = radius;
 }
 
