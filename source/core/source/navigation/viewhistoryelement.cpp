@@ -22,7 +22,7 @@ ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 v
 
     m_thumbnail = m_thumbnail.scaled(QSize(m_thumbnailSize,m_thumbnailSize), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     // @TODO remove:
-    m_thumbnail.save(QString("/%2.png").arg(m_timestamp).prepend(QDir::homePath()));
+    m_thumbnail.save(QString("/temp/%2.png").arg(m_timestamp).prepend(QDir::currentPath()));
 
     // if previous object in history exists, link it
     if (previous != nullptr)

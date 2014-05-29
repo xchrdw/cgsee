@@ -130,7 +130,8 @@ void AbstractNavigation::stopTimer()
 
 void AbstractNavigation::timerEvent(QTimerEvent * event)
 {
-    // send viewChanged signal only after the n seconds of inactivity (see AbstractNavigation::onCameraChanged)
+    // send viewChanged signal only after the n seconds of inactivity
+    // (see AbstractNavigation::onCameraChanged)
     if(event->timerId()==m_eventTimer.timerId()){
         m_eventTimer.stop();
         triggerViewChanged();
@@ -209,7 +210,8 @@ void AbstractNavigation::triggerViewChanged(){
 }
 
 void AbstractNavigation::navigated(){
-    // send viewChanged signal only after the n seconds of inactivity (see AbstractNavigation:timerEvent)
+    // send viewChanged signal only after the n seconds of inactivity
+    // (see AbstractNavigation::timerEvent)
     m_eventTimer.start(DURATION,this);
 }
 
