@@ -138,13 +138,7 @@ const bool Painter::initialize()
         "    float znear =  0.1;\n"
         "    float zfar  = 10.0;\n"
         "\n"
-        "    vec3 c = normalize(local) * 0.5 + 0.5;\n"
-        "\n"
-        "    float z = gl_FragCoord.z;\n"
-        "    z = - znear * z / (zfar * z - zfar - znear * z);\n"
-        "\n"
-        "    c = mix(c, bg, z);\n"
-        "    fragcolor = vec4(c, 1.0);\n"
+        "    fragcolor = vec4(1.0, 1.0, 0.0, 1.0);\n"
         "}\n";
 
 	glShaderSource(m_vert, 1, &srcv, nullptr);
@@ -184,7 +178,7 @@ const bool Painter::initialize()
 
 	// initialize geometry
 
-	static const GLfloat vertices[24] = 
+	static const GLfloat vertices[24] =
     {
         -1.f,-1.f,-1.f,	// 0
 	    -1.f,-1.f, 1.f,	// 1
@@ -221,7 +215,7 @@ const bool Painter::initialize()
 
 	// initialize state
 
-	glClearColor(.3f, .4f, .5f, 1.f);
+    glClearColor(1.f, 1.f, 1.f, 1.f);
 
     glUseProgram(m_program);
     glUniform3f(bg, .3f, .4f, .5f);
@@ -234,7 +228,7 @@ const bool Painter::initialize()
 	return true;
 }
 
-Timer t; 
+Timer t;
 float angleY(0.f);
 float angleZ(0.f);
 float angle (0.f);
@@ -249,7 +243,7 @@ void Painter::paint()
 
     angleY =  _deg(_PI2 * t.elapsed() / 8.f);
     angleZ =  _deg(sin(_PI * t.elapsed() / 16.f));
-    angle  =  ((sin(_PI2 * t.elapsed() / 16.f) + 1.f) * 0.5 + 1.0) * 0.1f;
+    angle  =  ((sin(_PI2 / 16.f) + 1.f) * 0.5 + 1.0) * 0.1f;
 
     m_model = glm::rotate(glm::mat4(1), angleY, glm::vec3(0.f, 1.f, 0.f));
     m_model = glm::rotate(m_model, angleZ, glm::vec3(0.f, 0.f, 1.f));
@@ -278,21 +272,16 @@ void Painter::paint()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
     glError();
 
-    for(int x = -7; x < 8; ++x)
-    for(int y = -7; y < 8; ++y)
-    for(int z = -7; z < 8; ++z)
-    {
-        glm::mat4 t = glm::translate(m_model, glm::vec3(x, y, z));
-        t = glm::scale(t, glm::vec3(angle, angle, angle));
+    glm::mat4 t = glm::translate(m_model, glm::vec3(0, 0, 0));
+    t = glm::scale(t, glm::vec3(angle, angle, angle));
 
-        const glm::mat4 T = m_projection * m_view * t;
-           
-        glUniformMatrix4fv(u_transform, 1, false, glm::value_ptr(T));
-	    glError();
+    const glm::mat4 T = m_projection * m_view * t;
 
-        glDrawElements(GL_TRIANGLE_STRIP, 14, GL_UNSIGNED_BYTE, 0);
-        glError();
-    }
+    glUniformMatrix4fv(u_transform, 1, false, glm::value_ptr(T));
+    glError();
+
+    glDrawElements(GL_TRIANGLE_STRIP, 14, GL_UNSIGNED_BYTE, 0);
+    glError();
 
     glDisableVertexAttribArray(a_vertex);
     glError();
@@ -310,10 +299,10 @@ void Painter::resize(
 ,   const int height)
 {
     AbstractPainter::resize(width, height);
-   
+
 	m_width = width;
 	m_height = height;
-	
+
 	m_aspect = static_cast<float>(width) / static_cast<float>(height);
 
 	m_projection = glm::perspective(m_fovy, m_aspect, m_zNear, m_zFar);
