@@ -4,22 +4,22 @@
 #include <QImage>
 #include <glm/glm.hpp>
 
-class ViewHistoryElement
+class NavigationHistoryElement
 {
 
 public:
-    ViewHistoryElement(ViewHistoryElement * previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail);
-    ~ViewHistoryElement();
+    NavigationHistoryElement(NavigationHistoryElement * previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail);
+    ~NavigationHistoryElement();
 
     void reset();
 
-    void setNext(ViewHistoryElement * next);
-    void setPrevious(ViewHistoryElement * previous);
+    void setNext(NavigationHistoryElement * next);
+    void setPrevious(NavigationHistoryElement * previous);
 
-    ViewHistoryElement * getPrevious();
-    ViewHistoryElement * getNext();
-    ViewHistoryElement * getLast();
-    ViewHistoryElement * getFirst();
+    NavigationHistoryElement * getPrevious();
+    NavigationHistoryElement * getNext();
+    NavigationHistoryElement * getLast();
+    NavigationHistoryElement * getFirst();
     qint64 getTimestamp();
     int getSize();
     glm::mat4 getViewMatrix();
@@ -40,8 +40,8 @@ private:
     static int m_maxLength;
     static int m_thumbnailSize;
 
-    ViewHistoryElement * m_previous;
-    ViewHistoryElement * m_next;
+    NavigationHistoryElement * m_previous;
+    NavigationHistoryElement * m_next;
     qint64 m_timestamp;
     glm::mat4 m_viewmatrix;
     float m_fovy;

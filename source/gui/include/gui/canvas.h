@@ -8,7 +8,7 @@
 #include <core/painter/abstractglparent.h>
 #include <core/glformat.h>
 
-#include <core/navigation/viewhistory.h>
+#include <core/navigation/navigationhistory.h>
 
 class QBasicTimer;
 class QTimerEvent;
@@ -30,8 +30,8 @@ public:
     AbstractScenePainter * painter();
     void setNavigation( AbstractNavigation * navigation );
     AbstractNavigation * navigation();
-    ViewHistory * viewhistory();
-    void setViewHistory(AbstractNavigation * navigation);
+    NavigationHistory * navigationhistory();
+    void setNavigationHistory(AbstractNavigation * navigation);
     void saveHistory(glm::mat4 viewmatrix, float fovy);
 
     virtual void mouseMoveEvent ( QMouseEvent * event );
@@ -83,7 +83,7 @@ protected:
 protected:
     AbstractScenePainter * m_painter;
     AbstractNavigation * m_navigation;
-    ViewHistory * m_viewhistory;
+    NavigationHistory * m_navigationhistory;
 
     QBasicTimer * m_timer;
     float m_lastEvent;

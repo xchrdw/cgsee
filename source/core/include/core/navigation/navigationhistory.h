@@ -1,16 +1,16 @@
 #pragma once
-#include <core/navigation/viewhistoryelement.h>
+#include <core/navigation/navigationhistoryelement.h>
 #include <core/navigation/abstractnavigation.h>
 #include <QImage>
 #include <signalzeug/Signal.h>
 
-class ViewHistory
+class NavigationHistory
 {
 public:
-    ViewHistory();
-    ~ViewHistory();
+    NavigationHistory();
+    ~NavigationHistory();
     void setNavigation(AbstractNavigation * navigation);
-    ViewHistoryElement * viewhistory();
+    NavigationHistoryElement * navigationhistory();
     void save(glm::mat4 viewmatrix, float fovy, QImage thumbnail);
     void undo();
     void redo();
@@ -21,5 +21,5 @@ public:
 
 private:
     AbstractNavigation * m_navigation;
-    ViewHistoryElement * m_viewhistory;
+    NavigationHistoryElement * m_navigationhistory;
 };

@@ -1,16 +1,16 @@
-#include <core/navigation/viewhistoryelement.h>
+#include <core/navigation/navigationhistoryelement.h>
 #include <QImage>
 #include <QSize>
 #include <QDir>
 
 // @TODO these config values should be added to cgsee properties
-int ViewHistoryElement::m_maxLength = 16;
-int ViewHistoryElement::m_thumbnailSize = 128;
+int NavigationHistoryElement::m_maxLength = 16;
+int NavigationHistoryElement::m_thumbnailSize = 128;
 // ---------->>
 
-int ViewHistoryElement::m_length = 0;
+int NavigationHistoryElement::m_length = 0;
 
-ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail)
+NavigationHistoryElement::NavigationHistoryElement(NavigationHistoryElement* previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail)
     : m_previous(previous)
     , m_next(nullptr)
     , m_viewmatrix(viewmatrix)
@@ -45,21 +45,21 @@ ViewHistoryElement::ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 v
     }
 }
 
-ViewHistoryElement::~ViewHistoryElement()
+NavigationHistoryElement::~NavigationHistoryElement()
 {
     // remove this object from the list
-    ViewHistoryElement* previous {this->getPrevious()};
-    ViewHistoryElement* next {this->getNext()};
+    NavigationHistoryElement* previous {this->getPrevious()};
+    NavigationHistoryElement* next {this->getNext()};
     this->getNext()->setPrevious(previous);
     this->getPrevious()->setNext(next);
     m_length--;
 }
 
-void ViewHistoryElement::reset()
+void NavigationHistoryElement::reset()
 {
     // remove the entire history
-    ViewHistoryElement* last {this->getLast()};
-    ViewHistoryElement* first {this->getFirst()};
+    NavigationHistoryElement* last {this->getLast()};
+    NavigationHistoryElement* first {this->getFirst()};
     while(last != first)
     {
         last = last->getPrevious();
@@ -69,17 +69,17 @@ void ViewHistoryElement::reset()
     m_length = 0;
 }
 
-void ViewHistoryElement::setNext(ViewHistoryElement* next)
+void NavigationHistoryElement::setNext(NavigationHistoryElement* next)
 {
     m_next = next;
 }
 
-void ViewHistoryElement::setPrevious(ViewHistoryElement* previous)
+void NavigationHistoryElement::setPrevious(NavigationHistoryElement* previous)
 {
     m_previous = previous;
 }
 
-ViewHistoryElement* ViewHistoryElement::getPrevious()
+NavigationHistoryElement* NavigationHistoryElement::getPrevious()
 {
     if (isFirst())
     {
@@ -91,7 +91,7 @@ ViewHistoryElement* ViewHistoryElement::getPrevious()
     }
 }
 
-ViewHistoryElement* ViewHistoryElement::getNext()
+NavigationHistoryElement* NavigationHistoryElement::getNext()
 {
     if (isLast())
     {
@@ -103,9 +103,9 @@ ViewHistoryElement* ViewHistoryElement::getNext()
     }
 }
 
-ViewHistoryElement* ViewHistoryElement::getLast()
+NavigationHistoryElement* NavigationHistoryElement::getLast()
 {
-    ViewHistoryElement* temp {this};
+    NavigationHistoryElement* temp {this};
     while(!temp->isLast())
     {
         temp = temp->getNext();
@@ -113,9 +113,9 @@ ViewHistoryElement* ViewHistoryElement::getLast()
     return temp;
 }
 
-ViewHistoryElement* ViewHistoryElement::getFirst()
+NavigationHistoryElement* NavigationHistoryElement::getFirst()
 {
-    ViewHistoryElement* temp {this};
+    NavigationHistoryElement* temp {this};
     while(!temp->isFirst())
     {
         temp = temp->getPrevious();
@@ -123,58 +123,58 @@ ViewHistoryElement* ViewHistoryElement::getFirst()
     return temp;
 }
 
-qint64 ViewHistoryElement::getTimestamp()
+qint64 NavigationHistoryElement::getTimestamp()
 {
     return m_timestamp;
 }
 
-int ViewHistoryElement::getSize()
+int NavigationHistoryElement::getSize()
 {
     return m_length;
 }
 
-glm::mat4 ViewHistoryElement::getViewMatrix()
+glm::mat4 NavigationHistoryElement::getViewMatrix()
 {
     return m_viewmatrix;
 }
 
-float ViewHistoryElement::getFovy()
+float NavigationHistoryElement::getFovy()
 {
     return m_fovy;
 }
 
-QImage ViewHistoryElement::getThumbnail()
+QImage NavigationHistoryElement::getThumbnail()
 {
     return m_thumbnail;
 }
 
-bool ViewHistoryElement::isFirst()
+bool NavigationHistoryElement::isFirst()
 {
     return (m_previous == nullptr);
 }
 
-bool ViewHistoryElement::isLast()
+bool NavigationHistoryElement::isLast()
 {
     return (m_next == nullptr);
 }
 
-bool ViewHistoryElement::isEqualViewMatrix(const glm::mat4 & viewmatrix)
+bool NavigationHistoryElement::isEqualViewMatrix(const glm::mat4 & viewmatrix)
 {
     bool isEqual = false;
     (m_length != 0) ? isEqual = (viewmatrix == m_viewmatrix) : isEqual = false;
     return isEqual;
 }
 
-bool ViewHistoryElement::isEqualFovy(const float & fovy)
+bool NavigationHistoryElement::isEqualFovy(const float & fovy)
 {
     bool isEqual = false;
     (m_length != 0) ? isEqual = (fovy == m_fovy) : isEqual = false;
     return isEqual;
 }
 
-void ViewHistoryElement::deleteOrphaned()
+void NavigationHistoryElement::deleteOrphaned()
 {
-    ViewHistoryElement* temp {m_previous->getLast()};
+    NavigationHistoryElement* temp {m_previous->getLast()};
     while(temp != m_previous)
     {
         temp = temp->getPrevious();
@@ -183,9 +183,9 @@ void ViewHistoryElement::deleteOrphaned()
     }
 }
 
-void ViewHistoryElement::deleteFirst()
+void NavigationHistoryElement::deleteFirst()
 {
-    ViewHistoryElement* new_first {this->getFirst()->getNext()};
+    NavigationHistoryElement* new_first {this->getFirst()->getNext()};
     new_first->setPrevious(nullptr);
     --m_length;
 }

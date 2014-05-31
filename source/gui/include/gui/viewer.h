@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gui/gui_api.h>
-#include <core/navigation/viewhistory.h>
+#include <core/navigation/navigationhistory.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -224,7 +224,7 @@ protected:
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
     QListView * m_historyList;
-    ViewHistory * m_viewHistory;
+    NavigationHistory * m_navigationHistory;
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;

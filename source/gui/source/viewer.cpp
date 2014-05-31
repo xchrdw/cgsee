@@ -115,7 +115,7 @@ Viewer::Viewer(
 ,   m_selectionBBox(new AxisAlignedBoundingBox)
 ,   m_loader(new AssimpLoader( registry ))
 ,   m_historyList(new QListView(this))
-,   m_viewHistory(nullptr)
+,   m_navigationHistory(nullptr)
 ,   m_mouseMoving(false)
 {
 
@@ -372,7 +372,7 @@ void Viewer::updateHistoryList()
 {
     QStandardItemModel * historyItems = new QStandardItemModel(this);
 
-    ViewHistoryElement * historyElements = m_viewHistory->viewhistory()->getLast();
+    NavigationHistoryElement * historyElements = m_navigationHistory->navigationhistory()->getLast();
 
     while(!historyElements->isFirst())
     {
@@ -391,8 +391,8 @@ void Viewer::initialize(const GLFormat & format)
 
     createQtContext(format);
 
-    m_viewHistory = m_qtCanvas->viewhistory();
-    m_viewHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
+    m_navigationHistory = m_qtCanvas->navigationhistory();
+    m_navigationHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
 
     QObject::connect(
         m_qtCanvas, SIGNAL(mouseReleaseEventSignal(QMouseEvent *)),
@@ -961,8 +961,8 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
-void Viewer::on_actionHistoryUndo_triggered() { m_qtCanvas->viewhistory()->undo(); }
-void Viewer::on_actionHistoryRedo_triggered() { m_qtCanvas->viewhistory()->redo(); }
+void Viewer::on_actionHistoryUndo_triggered() { m_qtCanvas->navigationhistory()->undo(); }
+void Viewer::on_actionHistoryRedo_triggered() { m_qtCanvas->navigationhistory()->redo(); }
 
 
 void Viewer::on_mouseMoveEventTriggered(int triggered)
