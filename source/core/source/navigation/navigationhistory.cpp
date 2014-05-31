@@ -18,9 +18,6 @@ NavigationHistory::~NavigationHistory()
 void NavigationHistory::setNavigation(AbstractNavigation * navigation)
 {
     m_navigation = navigation;
-
-    // @TODO this has to be more beautiful. Initial save view on program start:
-    m_navigation->onViewChanged();
 }
 
 NavigationHistoryElement * NavigationHistory::navigationhistory()

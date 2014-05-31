@@ -374,10 +374,12 @@ void Viewer::updateHistoryList()
 
     NavigationHistoryElement * historyElements = m_navigationHistory->navigationhistory()->getLast();
 
-    while(!historyElements->isFirst())
+    while (true)
     {
         QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString::number(historyElements->getTimestamp()));
         historyItems->appendRow(historyObject);
+        if (historyElements->isFirst())
+            break;
         historyElements = historyElements->getPrevious();
     }
 
