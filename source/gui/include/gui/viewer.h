@@ -172,6 +172,8 @@ protected slots:
     void on_m_sceneHierarchyTree_clicked(const QModelIndex & index);
     void on_m_sceneHierarchy_itemChanged(QStandardItem * item);
 
+    void on_m_historyList_clicked(const QModelIndex & index);
+
 protected:
 
     void initializeExplorer();

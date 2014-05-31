@@ -225,6 +225,8 @@ void Viewer::initializeNavigationHistory()
     m_dockNavigationHistory->setObjectName("navigationHistory");
     m_historyList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    QListView::connect(m_historyList, SIGNAL(clicked(const QModelIndex &)), this, SLOT(on_m_historyList_clicked(const QModelIndex &)));
+
     this->initializeDockWidgets(m_dockNavigationHistory, m_historyList, Qt::LeftDockWidgetArea);
 }
 
@@ -391,6 +393,29 @@ void Viewer::updateHistoryList()
     selectedIndex = selectedObject->index();
     m_historyList->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_historyList->setCurrentIndex(selectedIndex);
+}
+
+void Viewer::on_m_historyList_clicked(const QModelIndex & index)
+{
+    NavigationHistoryElement * currentHistory = m_qtCanvas->navigationHistory()->navigationHistory();
+    qint64 selectedElement = index.data(Qt::DisplayRole).toLongLong();
+
+    if (currentHistory->getTimestamp() > selectedElement)
+    {
+        while (currentHistory->getTimestamp() > selectedElement)
+        {
+            currentHistory = currentHistory->getPrevious();
+            m_qtCanvas->navigationHistory()->undo();
+        }
+    }
+    else
+    {
+        while (currentHistory->getTimestamp() < selectedElement)
+        {
+            currentHistory = currentHistory->getNext();
+            m_qtCanvas->navigationHistory()->redo();
+        }
+    }
 }
 
 void Viewer::initialize(const GLFormat & format)
