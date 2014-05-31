@@ -30,7 +30,7 @@ public:
     AbstractScenePainter * painter();
     void setNavigation( AbstractNavigation * navigation );
     AbstractNavigation * navigation();
-    NavigationHistory * navigationhistory();
+    NavigationHistory * navigationHistory();
     void setNavigationHistory(AbstractNavigation * navigation);
     void saveHistory(glm::mat4 viewmatrix, float fovy);
 
@@ -83,7 +83,7 @@ protected:
 protected:
     AbstractScenePainter * m_painter;
     AbstractNavigation * m_navigation;
-    NavigationHistory * m_navigationhistory;
+    NavigationHistory * m_navigationHistory;
 
     QBasicTimer * m_timer;
     float m_lastEvent;

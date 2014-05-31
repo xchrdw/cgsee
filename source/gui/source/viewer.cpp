@@ -371,19 +371,26 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 void Viewer::updateHistoryList()
 {
     QStandardItemModel * historyItems = new QStandardItemModel(this);
-
-    NavigationHistoryElement * historyElements = m_navigationHistory->navigationhistory()->getLast();
+    NavigationHistoryElement * historyElements = m_navigationHistory->navigationHistory()->getLast();
+    QModelIndex selectedIndex = historyItems->index(0, 0);
+    QStandardItem * selectedObject = new QStandardItem();
 
     while (true)
     {
         QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString::number(historyElements->getTimestamp()));
         historyItems->appendRow(historyObject);
+        if (historyElements->isLast())
+            selectedObject = historyObject;
         if (historyElements->isFirst())
             break;
         historyElements = historyElements->getPrevious();
     }
 
     m_historyList->setModel(historyItems);
+
+    selectedIndex = selectedObject->index();
+    m_historyList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_historyList->setCurrentIndex(selectedIndex);
 }
 
 void Viewer::initialize(const GLFormat & format)
@@ -393,7 +400,7 @@ void Viewer::initialize(const GLFormat & format)
 
     createQtContext(format);
 
-    m_navigationHistory = m_qtCanvas->navigationhistory();
+    m_navigationHistory = m_qtCanvas->navigationHistory();
     m_navigationHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
 
     QObject::connect(
@@ -963,8 +970,8 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
-void Viewer::on_actionHistoryUndo_triggered() { m_qtCanvas->navigationhistory()->undo(); }
-void Viewer::on_actionHistoryRedo_triggered() { m_qtCanvas->navigationhistory()->redo(); }
+void Viewer::on_actionHistoryUndo_triggered() { m_qtCanvas->navigationHistory()->undo(); }
+void Viewer::on_actionHistoryRedo_triggered() { m_qtCanvas->navigationHistory()->redo(); }
 
 
 void Viewer::on_mouseMoveEventTriggered(int triggered)

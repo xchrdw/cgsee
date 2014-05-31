@@ -29,7 +29,7 @@ Canvas::Canvas(
 ,   m_refreshTimeMSec(0)
 ,   m_painter(nullptr)
 ,   m_navigation(nullptr)
-,   m_navigationhistory(nullptr)
+,   m_navigationHistory(nullptr)
 ,   m_timer(nullptr)
 ,   m_format(format)
 {
@@ -41,7 +41,7 @@ Canvas::Canvas(
     // Important for overdraw, not occluding the scene.
     setAutoFillBackground(false);
 
-    m_navigationhistory = new NavigationHistory();
+    m_navigationHistory = new NavigationHistory();
 }
 
 Canvas::~Canvas()
@@ -228,19 +228,19 @@ void Canvas::setNavigation( AbstractNavigation * navigation )
     {
         m_navigation->setBBRadius(bbRadius);
     }
-    m_navigationhistory->setNavigation(m_navigation);
+    m_navigationHistory->setNavigation(m_navigation);
     m_navigation->viewChanged.connect(this, &Canvas::saveHistory);
 
 }
 
-NavigationHistory * Canvas::navigationhistory()
+NavigationHistory * Canvas::navigationHistory()
 {
-    return m_navigationhistory;
+    return m_navigationHistory;
 }
 
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
 {
-    m_navigationhistory->save(viewmatrix, fovy, this->capture(QSize(512, 512), true, false));
+    m_navigationHistory->save(viewmatrix, fovy, this->capture(QSize(512, 512), true, false));
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )

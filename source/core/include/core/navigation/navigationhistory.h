@@ -10,7 +10,7 @@ public:
     NavigationHistory();
     ~NavigationHistory();
     void setNavigation(AbstractNavigation * navigation);
-    NavigationHistoryElement * navigationhistory();
+    NavigationHistoryElement * navigationHistory();
     void save(glm::mat4 viewmatrix, float fovy, QImage thumbnail);
     void undo();
     void redo();
@@ -21,5 +21,5 @@ public:
 
 private:
     AbstractNavigation * m_navigation;
-    NavigationHistoryElement * m_navigationhistory;
+    NavigationHistoryElement * m_navigationHistory;
 };
