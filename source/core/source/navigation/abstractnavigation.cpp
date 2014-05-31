@@ -218,14 +218,14 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
 
 void AbstractNavigation::onViewChanged()
 {
-       viewChanged(m_viewmatrix,m_fovy);
+       viewChanged(m_viewmatrix, m_fovy);
 }
 
 void AbstractNavigation::onNavigated()
 {
     // send viewChanged signal only after the n seconds of inactivity
     // (see AbstractNavigation::timerEvent)
-    m_eventTimer.start(DURATION,this);
+    m_eventTimer.start(DURATION, this);
 }
 
 

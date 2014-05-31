@@ -8,18 +8,18 @@ class ViewHistoryElement
 {
 
 public:
-    ViewHistoryElement(ViewHistoryElement* previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail);
+    ViewHistoryElement(ViewHistoryElement * previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail);
     ~ViewHistoryElement();
 
     void reset();
 
-    void setNext(ViewHistoryElement* next);
-    void setPrevious(ViewHistoryElement* previous);
+    void setNext(ViewHistoryElement * next);
+    void setPrevious(ViewHistoryElement * previous);
 
-    ViewHistoryElement* getPrevious();
-    ViewHistoryElement* getNext();
-    ViewHistoryElement* getLast();
-    ViewHistoryElement* getFirst();
+    ViewHistoryElement * getPrevious();
+    ViewHistoryElement * getNext();
+    ViewHistoryElement * getLast();
+    ViewHistoryElement * getFirst();
     qint64 getTimestamp();
     int getSize();
     glm::mat4 getViewMatrix();
@@ -40,8 +40,8 @@ private:
     static int m_maxLength;
     static int m_thumbnailSize;
 
-    ViewHistoryElement* m_previous;
-    ViewHistoryElement* m_next;
+    ViewHistoryElement * m_previous;
+    ViewHistoryElement * m_next;
     qint64 m_timestamp;
     glm::mat4 m_viewmatrix;
     float m_fovy;

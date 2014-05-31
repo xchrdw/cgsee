@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gui/gui_api.h>
+#include <core/navigation/viewhistory.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -13,6 +14,7 @@ typedef struct __GLXcontextRec *GLXContext;
 
 #include <QMainWindow>
 #include <QMap>
+#include <QListView>
 
 #include <glm/glm.hpp>
 
@@ -169,17 +171,19 @@ protected slots:
 
     void on_m_sceneHierarchyTree_clicked(const QModelIndex & index);
     void on_m_sceneHierarchy_itemChanged(QStandardItem * item);
-    
+
 protected:
 
     void initializeExplorer();
     void initializeSceneTree();
     void initializePropertyDemo();
+    void initializeNavigationHistory();
     void initializeDockWidgets(QDockWidget * dockWidget,
     QWidget * widget, Qt::DockWidgetArea area);
     void createSceneHierarchy(QStandardItemModel * model, Node * parentNode);
     void fillSceneHierarchy(Node * node, QStandardItem * parent);
     void assignScene(Group * rootNode);
+    void updateHistoryList();
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -212,12 +216,15 @@ protected:
     QDockWidget * m_dockExplorer;
     QDockWidget * m_dockScene;
     QDockWidget * m_dockPropertyDemo;
+    QDockWidget * m_dockNavigationHistory;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
+    QListView * m_historyList;
+    ViewHistory * m_viewHistory;
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;

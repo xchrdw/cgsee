@@ -23,12 +23,20 @@ void ViewHistory::setNavigation(AbstractNavigation * navigation)
     m_navigation->onViewChanged();
 }
 
+ViewHistoryElement * ViewHistory::viewhistory()
+{
+    if (!this->isEmpty())
+        return m_viewhistory;
+    return false;
+}
+
 
 void ViewHistory::save(glm::mat4 viewmatrix, float fovy, QImage thumbnail)
 {
    if(!m_viewhistory->isEqualViewMatrix(viewmatrix) || !m_viewhistory->isEqualFovy(fovy))
    {
         m_viewhistory = new ViewHistoryElement(m_viewhistory, viewmatrix, fovy, thumbnail);
+        onHistoryChanged();
         qDebug() << "save #" <<  m_viewhistory->getTimestamp() << " / " << m_viewhistory->getSize() << " views in history.";
    }
 }
@@ -44,7 +52,7 @@ void ViewHistory::undo()
             m_navigation->onViewChanged();
         }
         m_viewhistory = m_viewhistory->getPrevious();
-        m_navigation->loadView(m_viewhistory->getViewMatrix(),m_viewhistory->getFovy(),false);
+        m_navigation->loadView(m_viewhistory->getViewMatrix(), m_viewhistory->getFovy(), false);
         qDebug() << "go back to #" << m_viewhistory->getTimestamp() << " / " << m_viewhistory->getSize() << " views in history.";
     }
 }
@@ -55,7 +63,7 @@ void ViewHistory::redo()
     if(!m_viewhistory->isLast() && !isEmpty())
     {
         m_viewhistory = m_viewhistory->getNext();
-        m_navigation->loadView(m_viewhistory->getViewMatrix(),m_viewhistory->getFovy(),false);
+        m_navigation->loadView(m_viewhistory->getViewMatrix(), m_viewhistory->getFovy(), false);
         qDebug() << "redo #" << m_viewhistory->getTimestamp() << " / " << m_viewhistory->getSize() << " views in history.";
     }
 }
@@ -70,4 +78,9 @@ bool ViewHistory::isEmpty()
     {
         return false;
     }
+}
+
+void ViewHistory::onHistoryChanged()
+{
+       historyChanged();
 }

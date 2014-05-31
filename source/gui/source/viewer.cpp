@@ -44,6 +44,9 @@ extern GLXContext glXGetCurrentContext( void );
 #include <QTreeView>
 #include <QTextEdit>
 #include <QVBoxLayout>
+#include <QListView>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include <propertyguizeug/PropertyBrowser.h>
 
@@ -103,6 +106,7 @@ Viewer::Viewer(
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
 ,   m_dockPropertyDemo(new QDockWidget(tr("PropertyDemo")))
+,   m_dockNavigationHistory(new QDockWidget(tr("NavigationHistory")))
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
@@ -110,6 +114,8 @@ Viewer::Viewer(
 ,   m_coordinateProvider(nullptr)
 ,   m_selectionBBox(new AxisAlignedBoundingBox)
 ,   m_loader(new AssimpLoader( registry ))
+,   m_historyList(new QListView(this))
+,   m_viewHistory(nullptr)
 ,   m_mouseMoving(false)
 {
 
@@ -125,6 +131,7 @@ Viewer::Viewer(
     initializeExplorer();
     initializeSceneTree();
     initializePropertyDemo();
+    initializeNavigationHistory();
 };
 
 void Viewer::initializeExplorer()
@@ -211,6 +218,14 @@ void Viewer::initializePropertyDemo()
     demoWidget->setLayout(layout);
 
     this->initializeDockWidgets(m_dockPropertyDemo, demoWidget, Qt::RightDockWidgetArea);
+}
+
+void Viewer::initializeNavigationHistory()
+{
+    m_dockNavigationHistory->setObjectName("navigationHistory");
+    m_historyList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    this->initializeDockWidgets(m_dockNavigationHistory, m_historyList, Qt::LeftDockWidgetArea);
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
@@ -353,12 +368,31 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     return qtContextHandle;
 }
 
+void Viewer::updateHistoryList()
+{
+    QStandardItemModel * historyItems = new QStandardItemModel(this);
+
+    ViewHistoryElement * historyElements = m_viewHistory->viewhistory()->getLast();
+
+    while(!historyElements->isFirst())
+    {
+        QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString::number(historyElements->getTimestamp()));
+        historyItems->appendRow(historyObject);
+        historyElements = historyElements->getPrevious();
+    }
+
+    m_historyList->setModel(historyItems);
+}
+
 void Viewer::initialize(const GLFormat & format)
 {
     if(!QGLFormat::hasOpenGL())
         qFatal("OpenGL not supported.");
 
     createQtContext(format);
+
+    m_viewHistory = m_qtCanvas->viewhistory();
+    m_viewHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
 
     QObject::connect(
         m_qtCanvas, SIGNAL(mouseReleaseEventSignal(QMouseEvent *)),

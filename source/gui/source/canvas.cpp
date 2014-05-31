@@ -230,6 +230,7 @@ void Canvas::setNavigation( AbstractNavigation * navigation )
     }
     m_viewhistory->setNavigation(m_navigation);
     m_navigation->viewChanged.connect(this, &Canvas::saveHistory);
+
 }
 
 ViewHistory * Canvas::viewhistory()

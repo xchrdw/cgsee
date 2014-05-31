@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <signalzeug/Signal.h>
 
 #include <QObject>
 #include <QKeyEvent>
@@ -12,7 +13,6 @@
 #include <QBasicTimer>
 #include <QTimer>
 
-#include <signalzeug/Signal.h>
 
 class Camera;
 class QWidget;
