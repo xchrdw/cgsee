@@ -1,12 +1,9 @@
 #include <core/navigation/navigationhistoryelement.h>
 #include <QImage>
 #include <QSize>
-#include <QDir>
 
-// @TODO these config values should be added to cgsee properties
-int NavigationHistoryElement::m_maxLength = 16;
-int NavigationHistoryElement::m_thumbnailSize = 128;
-// ---------->>
+const int NavigationHistoryElement::MAX_LENGTH = 16;
+const int NavigationHistoryElement::THUMBNAIL_SIZE = 128;
 
 int NavigationHistoryElement::m_length = 0;
 
@@ -20,7 +17,7 @@ NavigationHistoryElement::NavigationHistoryElement(NavigationHistoryElement* pre
     m_timestamp = QDateTime::currentMSecsSinceEpoch();
     m_length++;
 
-    m_thumbnail = m_thumbnail.scaled(QSize(m_thumbnailSize,m_thumbnailSize), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    m_thumbnail = m_thumbnail.scaled(QSize(THUMBNAIL_SIZE, THUMBNAIL_SIZE), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     // if previous object in history exists, link it
     if (previous != nullptr)
@@ -35,8 +32,8 @@ NavigationHistoryElement::NavigationHistoryElement(NavigationHistoryElement* pre
         previous->setNext(this);
     }
 
-    // limit history size to m_maxLength
-    if (m_length > m_maxLength)
+    // limit history size to MAX_LENGTH
+    if (m_length > MAX_LENGTH)
     {
         deleteFirst();
     }

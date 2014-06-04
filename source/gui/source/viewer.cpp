@@ -522,9 +522,8 @@ void Viewer::on_loadFile(const QString & path)
         if (m_coordinateProvider)
             this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
         this->painter()->assignScene(scene);
-        // the history widget has to be updated here:
-        // this->m_navigationHistory->reset();
         this->m_qtCanvas->navigation()->sceneChanged(scene);
+        // @TODO reset history or recapture the thumbnails
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();
     }

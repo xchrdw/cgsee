@@ -7,7 +7,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <QGLWidget>
-#include <QDebug>
 
 #include <core/camera.h>
 
@@ -217,7 +216,7 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
 
 void AbstractNavigation::onViewChanged()
 {
-       viewChanged(m_viewmatrix, m_fovy);
+    viewChanged(m_viewmatrix, m_fovy);
 }
 
 void AbstractNavigation::onNavigated()

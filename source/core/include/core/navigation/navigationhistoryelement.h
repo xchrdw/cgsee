@@ -37,8 +37,8 @@ private:
     void deleteFirst();
 
     static int m_length;
-    static int m_maxLength;
-    static int m_thumbnailSize;
+    static const int MAX_LENGTH;
+    static const int THUMBNAIL_SIZE;
 
     NavigationHistoryElement * m_previous;
     NavigationHistoryElement * m_next;
