@@ -311,7 +311,6 @@ void AbstractNavigation::sceneChanged(Group * scene)
     m_frontView = glm::lookAt(bb.center() + glm::vec3(0.f, 0.f, bb.radius()*2.5), bb.center(), glm::vec3(0.f, 1.f, 0.f));
     setFromMatrix(topRightView());
     updateCamera();
-    onNavigated();
 }
 
 float AbstractNavigation::getBBRadius()

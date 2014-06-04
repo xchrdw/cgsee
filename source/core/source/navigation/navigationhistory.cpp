@@ -64,7 +64,7 @@ void NavigationHistory::redo()
 
 void NavigationHistory::reset()
 {
-   if(m_navigationHistory != nullptr)
+   if(!isEmpty())
     {
         m_navigationHistory->reset();
     }
