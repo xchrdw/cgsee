@@ -182,6 +182,9 @@
     </property>
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
+    <addaction name="toggleNavigationHistory"/>
+    <addaction name="togglePropertyDemo"/>
+    <addaction name="separator"/>
     <addaction name="toggleFullscreen"/>
    </widget>
    <widget class="QMenu" name="renderingMenu">
@@ -514,6 +517,16 @@
   <action name="toggleExplorer">
    <property name="text">
     <string>Show/Hide Explorer</string>
+   </property>
+  </action>
+  <action name="toggleNavigationHistory">
+   <property name="text">
+    <string>Show/Hide History</string>
+   </property>
+  </action>
+  <action name="togglePropertyDemo">
+   <property name="text">
+    <string>Show/Hide Properties</string>
    </property>
   </action>
   <action name="toggleFullscreen">

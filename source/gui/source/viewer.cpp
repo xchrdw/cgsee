@@ -540,6 +540,18 @@ void Viewer::on_toggleExplorer_triggered()
     m_dockExplorer->setVisible(!visible);
 }
 
+void Viewer::on_toggleNavigationHistory_triggered()
+{
+    bool visible = m_dockNavigationHistory->isVisible();
+    m_dockNavigationHistory->setVisible(!visible);
+}
+
+void Viewer::on_togglePropertyDemo_triggered()
+{
+    bool visible = m_dockPropertyDemo->isVisible();
+    m_dockPropertyDemo->setVisible(!visible);
+}
+
 void Viewer::updateCameraSelection(QString cameraName) const
 {
 }

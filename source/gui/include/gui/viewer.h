@@ -164,6 +164,8 @@ protected slots:
 
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
+    void on_toggleNavigationHistory_triggered();
+    void on_togglePropertyDemo_triggered();
     void on_toggleFullscreen_triggered();
 
     void on_mouseMoveEventTriggered(int triggered);
