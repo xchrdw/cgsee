@@ -50,6 +50,7 @@ void NavigationHistory::undo()
         }
         m_navigationHistory = m_navigationHistory->getPrevious();
         m_navigation->loadView(m_navigationHistory->getViewMatrix(), m_navigationHistory->getFovy(), false);
+        onHistoryChanged();
         qDebug() << "go back to #" << m_navigationHistory->getTimestamp() << " / " << m_navigationHistory->getSize() << " views in history.";
     }
 }
@@ -61,6 +62,7 @@ void NavigationHistory::redo()
     {
         m_navigationHistory = m_navigationHistory->getNext();
         m_navigation->loadView(m_navigationHistory->getViewMatrix(), m_navigationHistory->getFovy(), false);
+        onHistoryChanged();
         qDebug() << "redo #" << m_navigationHistory->getTimestamp() << " / " << m_navigationHistory->getSize() << " views in history.";
     }
 }

@@ -374,6 +374,7 @@ void Viewer::updateHistoryList()
 {
     QStandardItemModel * historyItems = new QStandardItemModel(this);
     NavigationHistoryElement * historyElements = m_navigationHistory->navigationHistory()->getLast();
+    qint64 selectedTimestamp = m_navigationHistory->navigationHistory()->getTimestamp();
     QModelIndex selectedIndex = historyItems->index(0, 0);
     QStandardItem * selectedObject = new QStandardItem();
 
@@ -381,7 +382,7 @@ void Viewer::updateHistoryList()
     {
         QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString::number(historyElements->getTimestamp()));
         historyItems->appendRow(historyObject);
-        if (historyElements->isLast())
+        if (historyElements->getTimestamp() == selectedTimestamp)
             selectedObject = historyObject;
         if (historyElements->isFirst())
             break;
