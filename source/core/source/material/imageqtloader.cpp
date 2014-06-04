@@ -34,7 +34,7 @@ QStringList ImageQtLoader::namedLoadableTypes() const
     typenames.insert("tga", "Truevision Graphics Adapter");
     typenames.insert("tif", "Tagged Image File Format");
     typenames.insert("tiff", "Tagged Image File Format");
-    typenames.insert("wbmp", " Wireless Bitmap");
+    typenames.insert("wbmp", "Wireless Bitmap");
     typenames.insert("webp", "WebP");
     typenames.insert("xbm", "X11 Bitmap");
     typenames.insert("xpm", "X11 Bitmap");
