@@ -211,7 +211,7 @@ const bool Painter::initialize()
 
     //set UNIFORMS for selected shader
     m_useProgram = m_phong;
-    setUniforms();
+    //setUniforms();
 
     // Post Processing Shader
     m_flush = new Program();
@@ -258,7 +258,21 @@ const bool Painter::initialize()
 	// Light Manager
 	m_lightManager = new LightManager();
 	m_lightManager->initBuffers();
+	DirectionalLight dlight;
+	dlight.m_direction = glm::normalize(glm::vec3(1, 1, 1));
+	dlight.m_intensity = glm::vec3(1.0, 0.0, 0.0);
+	m_lightManager->setDirectionalLight(dlight);
 
+	for (uint t = 0; t < 4; t++)
+	{
+		PointLight light;
+		light.m_falloff = glm::vec3(t / 4, t / 4, t / 4);
+		light.m_position = glm::vec3(t, t, t);
+		light.m_intensity = glm::vec3(t * 0.25, 0, (4 - t) * 0.25);
+		m_lightManager->addPointLight(light);
+	}
+
+	setUniforms();
     return true;
 }
 
@@ -285,6 +299,7 @@ void Painter::setUniforms()
         lightMat2[3] = glm::vec4(0.002,0.002,0.0004,1.4); //attenuation1, attenuation2, attenuation3, shininess
 
         m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, false);
+		m_lightManager->updateBuffers(m_useProgram->program());
 
 //         glm::mat4 materialCoeff;
 //         materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);    //ambient

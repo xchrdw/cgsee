@@ -24,11 +24,11 @@ public:
 
 	void initBuffers();
 
-	void updateBuffers();
+	void updateBuffers(GLuint activeProgram);
 
 protected:
 
 	GLuint ubo_point; // Holds all point light structs, accessed through a function
 	GLuint ubo_spot;
-	GLuint ubo_count; // Holds info about how many point/spot/gobo lights there are. , also holds directional light direction + color
+	GLuint ubo_info; // Holds info about how many point/spot/gobo lights there are. , also holds directional light direction + color
 };

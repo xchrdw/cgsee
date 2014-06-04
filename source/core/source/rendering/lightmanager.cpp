@@ -3,7 +3,7 @@
 
 #include <list>
 
-LightManager::LightManager() : ubo_point(0xffffffff), ubo_spot(0xffffffff), ubo_count(0xffffffff)
+LightManager::LightManager() : ubo_point(0xffffffff), ubo_spot(0xffffffff), ubo_info(0xffffffff)
 {
 	memset(&m_lightInfo, 0, sizeof(LightInfo));
 }
@@ -14,8 +14,8 @@ LightManager::~LightManager()
 		glDeleteBuffers(1, &ubo_point);
 	if (ubo_spot != 0xffffffff)
 		glDeleteBuffers(1, &ubo_spot);
-	if (ubo_count != 0xffffffff)
-		glDeleteBuffers(1, &ubo_count);
+	if (ubo_info != 0xffffffff)
+		glDeleteBuffers(1, &ubo_info);
 }
 
 void LightManager::initBuffers()
@@ -23,19 +23,19 @@ void LightManager::initBuffers()
 	GLuint buffers[3];
 	glGenBuffers(3, buffers);
 	ubo_point = buffers[0];
-	ubo_count = buffers[1];
+	ubo_info = buffers[1];
 	ubo_spot = buffers[2];
 
 	// Bind buffers to create UBOs.
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
 	//glBindBuffer(GL_UNIFORM_BUFFER, ubo_spot);
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo_count);
 
 
 	// I feel so C++11 when I use nullptr :)
 	// Set buffer size and init the buffers on the GPU
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(PointLightBuffer), nullptr, GL_DYNAMIC_DRAW);
 	//glBufferData(GL_UNIFORM_BUFFER, sizeof(SpotLight)* MAX_SPOT_LIGHTS, nullptr, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo_info);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightInfo), nullptr, GL_DYNAMIC_DRAW);
 
 	/*
@@ -64,4 +64,32 @@ void LightManager::addPointLight(PointLight& pointLight)
 void LightManager::addSpotLight(SpotLight& spotLight)
 {
 	m_spotLightList.push_back(spotLight);
+}
+
+void LightManager::updateBuffers(GLuint activeProgram)
+{
+	m_lightInfo.numPointLights = m_pointLightList.size();
+	m_lightInfo.numSpotLights = m_spotLightList.size();
+	GLint uniformBlockSize;
+
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo_info);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightInfo), &m_lightInfo);
+	GLuint bindingLocation = glGetUniformBlockIndex(activeProgram, "LightInfo");
+	int size = sizeof(LightInfo);
+	glGetActiveUniformBlockiv(activeProgram, bindingLocation,GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSize);
+	glBindBufferBase(GL_UNIFORM_BUFFER, bindingLocation, ubo_info);
+
+	for (int t = 0; t < m_pointLightList.size(); t++)
+	{
+		m_pointLightBuffer.lights[t].m_position = m_pointLightList[t].m_position;
+		m_pointLightBuffer.lights[t].m_falloff = m_pointLightList[t].m_falloff;
+		m_pointLightBuffer.lights[t].m_intensity = m_pointLightList[t].m_intensity;
+	}
+
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PointLight) * m_lightInfo.numPointLights, m_pointLightBuffer.lights);
+	bindingLocation = glGetUniformBlockIndex(activeProgram, "PointLights");
+	size = sizeof(PointLightBuffer);
+	glGetActiveUniformBlockiv(activeProgram, bindingLocation, GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSize);
+	glBindBufferBase(GL_UNIFORM_BUFFER, bindingLocation, ubo_point);
 }

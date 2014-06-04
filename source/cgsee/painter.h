@@ -80,7 +80,7 @@ protected:
     FrameBufferObject * m_fboActiveBuffer;
 
     RenderingPass * m_normalz;
-    LightSourcePass * m_lightsource;
+    LightSourcePass *m_lightsource;
     RenderingPass * m_shadows;
     RenderingPass * m_shadowBlur;
     RenderingPass * m_ssao;
