@@ -139,7 +139,6 @@ void FlightNavigation::setFromMatrix(const glm::mat4 & view){
 void FlightNavigation::reset() {
     AbstractNavigation::reset();
     setFromMatrix(m_viewmatrix);
-    //view-Changed(m_viewmatrix,m_fovy);
 }
 
 void FlightNavigation::onCameraChanged(){
@@ -151,7 +150,6 @@ void FlightNavigation::onCameraChanged(){
 void FlightNavigation::updateView(){
     m_viewmatrix =  glm::lookAt(m_eye, m_center, m_up);
     updateCamera();
-    //view-Changed(m_viewmatrix,m_fovy);
 }
 
 
@@ -159,6 +157,7 @@ void FlightNavigation::yaw(float angle){
     glm::vec3 diffLR = glm::rotate( m_zView, -angle, m_yView) - m_zView;
     m_center += diffLR;
     updateView();
+    onNavigated();
 }
 
 void FlightNavigation::pitch(float angle){
@@ -167,12 +166,14 @@ void FlightNavigation::pitch(float angle){
     m_center += diffCenter;
     m_up += diffUp;
     updateView();
+    onNavigated();
 }
 
 void FlightNavigation::roll(float angle){
     glm::vec3 diffRotZ = glm::rotate(m_yView, angle, m_zView) - m_yView;
     m_up += diffRotZ;
     updateView();
+    onNavigated();
 }
 
 void FlightNavigation::forward(float speed){
@@ -180,6 +181,7 @@ void FlightNavigation::forward(float speed){
     m_center += step;
     m_eye += step;
     updateView();
+    onNavigated();
 }
 
 void FlightNavigation::sideward(float speed){
@@ -187,6 +189,7 @@ void FlightNavigation::sideward(float speed){
     m_center += step;
     m_eye += step;
     updateView();
+    onNavigated();
 }
 
 void FlightNavigation::onTimerEvent(){
