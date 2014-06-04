@@ -43,11 +43,6 @@ void NavigationHistory::undo()
     // if not reached the oldest history element
     if(!m_navigationHistory->isFirst() && !isEmpty())
     {
-        if (m_navigationHistory->isLast())
-        {
-            // save last object before undo
-            m_navigation->onViewChanged();
-        }
         m_navigationHistory = m_navigationHistory->getPrevious();
         m_navigation->loadView(m_navigationHistory->getViewMatrix(), m_navigationHistory->getFovy(), false);
         onHistoryChanged();

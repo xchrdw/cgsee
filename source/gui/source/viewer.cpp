@@ -938,6 +938,7 @@ void Viewer::loadView(int i)
     else {
         navigation()->loadView(m_savedViews[i]);
     }
+    navigation()->onNavigated();
 }
 
 void Viewer::on_actionFrontView_triggered()

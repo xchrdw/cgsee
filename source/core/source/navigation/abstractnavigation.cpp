@@ -15,8 +15,7 @@
 
 
 const float AbstractNavigation::TIMER_MS = 1000.f / 60.f;
-
-static const float DURATION = 333.f;
+const float AbstractNavigation::DELAY_MS = 1000.f / 3.f;
 
 AbstractNavigation::AbstractNavigation(Camera * camera)
     : m_width(camera->viewport().x)
@@ -32,7 +31,7 @@ AbstractNavigation::AbstractNavigation(Camera * camera)
     , m_eventTimer()
 {
     m_frontView = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
-    onViewChanged();
+    onNavigated();
 }
 
 
@@ -69,6 +68,7 @@ void AbstractNavigation::reset()
 
 
 void AbstractNavigation::keyPressEvent(QKeyEvent *event) {}
+
 void AbstractNavigation::keyReleaseEvent(QKeyEvent *event) {}
 
 void AbstractNavigation::mouseMoveEvent(QMouseEvent * event) {}
@@ -135,7 +135,7 @@ void AbstractNavigation::timerEvent(QTimerEvent * event)
 {
     // send viewChanged signal only after the n seconds of inactivity
     // (see AbstractNavigation::onCameraChanged)
-    if(event->timerId()==m_eventTimer.timerId())
+    if(event->timerId() == m_eventTimer.timerId())
     {
         m_eventTimer.stop();
         onViewChanged();
@@ -143,7 +143,7 @@ void AbstractNavigation::timerEvent(QTimerEvent * event)
 
     if (m_animation_active)
     {
-        m_animation_progress += TIMER_MS / DURATION;
+        m_animation_progress += TIMER_MS / DELAY_MS;
         if (m_animation_progress < 1.f)
         {
             updateTransition();
@@ -200,7 +200,6 @@ void AbstractNavigation::loadView(const glm::mat4 & new_viewmatrix, const float 
     {
         // this path: when a preset was selected in gui or a view was undone/redone.
         m_new_fovy = m_fovy;
-        onViewChanged();
     }
     else
     {
@@ -226,7 +225,7 @@ void AbstractNavigation::onNavigated()
 {
     // send viewChanged signal only after the n seconds of inactivity
     // (see AbstractNavigation::timerEvent)
-    m_eventTimer.start(DURATION, this);
+    m_eventTimer.start(DELAY_MS, this);
 }
 
 
@@ -237,46 +236,55 @@ void AbstractNavigation::setFromMatrix(const glm::mat4 & view)
 
 glm::mat4 AbstractNavigation::defaultView()
 {
+    onNavigated();
     return frontview();
 }
 
 glm::mat4 AbstractNavigation::frontview()
 {
+    onNavigated();
     return m_frontView;
 }
 
 glm::mat4 AbstractNavigation::rightview()
 {
+    onNavigated();
     return frontview() * glm::rotate(-90.f, glm::vec3(0,1,0));
 }
 
 glm::mat4 AbstractNavigation::backview()
 {
+    onNavigated();
     return frontview() * glm::rotate(180.0f, glm::vec3(0,1,0));
 }
 
 glm::mat4 AbstractNavigation::leftview()
 {
+    onNavigated();
     return frontview() * glm::rotate(90.f, glm::vec3(0,1,0));
 }
 
 glm::mat4 AbstractNavigation::topview()
 {
+    onNavigated();
     return frontview() * glm::rotate(-90.f, glm::vec3(1,0,0));
 }
 
 glm::mat4 AbstractNavigation::bottomview()
 {
+    onNavigated();
     return frontview() * glm::rotate(90.f, glm::vec3(1,0,0));
 }
 
 glm::mat4 AbstractNavigation::topRightView()
 {
+    onNavigated();
     return frontview() * glm::rotate(30.f, glm::vec3(1,0,0)) * glm::rotate(45.f, glm::vec3(0,1,0));
 }
 
 glm::mat4 AbstractNavigation::bottomLeftView()
 {
+    onNavigated();
     return frontview() * glm::rotate(-30.f, glm::vec3(1,0,0)) * glm::rotate(-45.f, glm::vec3(0,1,0));
 }
 
@@ -285,6 +293,7 @@ glm::mat4 AbstractNavigation::randomView()
     float x = static_cast <float> (rand() % 180);
     float y = static_cast <float> (rand() % 180);
     float z = static_cast <float> (rand() % 180);
+    onNavigated();
     return frontview() * glm::rotate(x, glm::vec3(1,0,0)) * glm::rotate(y, glm::vec3(0,1,0)) * glm::rotate(z, glm::vec3(0,0,1));
 }
 

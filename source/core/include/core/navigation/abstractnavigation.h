@@ -40,7 +40,7 @@ public:
     virtual void wheelEvent(QWheelEvent *event);
 
     virtual const glm::mat4 & viewMatrix();
-    void loadView(const glm::mat4 & viewmatrix, const float fovy = 0, bool save_history=true);
+    void loadView(const glm::mat4 & viewmatrix, const float fovy = 0, bool save_history = true);
     void onViewChanged();
 
     void setCanvas(QWidget * canvas);
@@ -91,6 +91,7 @@ protected:
 
     Camera * m_camera;
     static const float TIMER_MS;
+    static const float DELAY_MS;
 
 private:
     void timerEvent(QTimerEvent * event);
