@@ -14,6 +14,7 @@ public:
     void save(glm::mat4 viewmatrix, float fovy, QImage thumbnail);
     void undo();
     void redo();
+    void reset();
     bool isEmpty();
 
     void onHistoryChanged();
