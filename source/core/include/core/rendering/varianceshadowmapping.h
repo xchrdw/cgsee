@@ -15,8 +15,15 @@ public:
 	virtual void render() override;
 	virtual void setUniforms() override;
 	virtual void resize(const int width, const int height) override;
+	virtual FrameBufferObject* output() override;
 
 private:
 	static const glm::mat4 biasMatrix;
 	Camera *m_lightCamera;
+
+	Program *m_lightProgram;
+	Program *m_shadowProgram;
+
+	FrameBufferObject* m_shadowmapFBO;
+	FrameBufferObject* m_shadowFBO;
 };

@@ -219,7 +219,7 @@ const bool Painter::initialize()
     m_fboTemp = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
 
     m_normalz = new NormalzPass(m_camera, depth_util);
-    m_lightsource = new LightSourcePass(m_camera, depth_util);
+    //m_lightsource = new LightSourcePass(m_camera, depth_util);
     m_shadows = new VarianceShadowMappingPass(m_camera);
     m_shadowBlur = new BlurEffect(m_camera, m_quad, screenQuadShader, m_shadows, m_fboTemp);
     m_ssao = new SSAOEffect(m_camera, m_quad, screenQuadShader, m_normalz->output());
@@ -228,7 +228,7 @@ const bool Painter::initialize()
     m_boundingBox = new BoundingBoxPass(m_camera, m_fboColor);
     
     m_passes.append(m_normalz);
-    m_passes.append(m_lightsource);
+    //m_passes.append(m_lightsource);
     m_passes.append(m_shadows);
     //m_passes.append(m_shadowBlur);
     m_passes.append(m_ssao);
