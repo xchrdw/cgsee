@@ -1,20 +1,19 @@
 #pragma once
 
+#include <core/core_api.h>
 #include "core/rendering/lighttypes.h"
 #include <vector>
 
 #include <GL/glew.h>
 
-#define MAX_POINT_LIGHTS 12
-#define MAX_SPOT_LIGHTS 12
-
-class LightManager 
+class CORE_API LightManager
 {
+public:
 	LightManager();
 	virtual ~LightManager();
 
-public:	
 	LightInfo m_lightInfo;
+	PointLightBuffer m_pointLightBuffer;
 	std::vector<PointLight> m_pointLightList;
 	std::vector<SpotLight> m_spotLightList;
 	//std::vector<GoboLight> m_goboLightList;

@@ -1,16 +1,12 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <stdint.h>
+#include <glm/glm.hpp>
+
+#define MAX_POINT_LIGHTS 12
+#define MAX_SPOT_LIGHTS 12
 
 using namespace glm;
-
-struct LightInfo
-{
-	uint32_t numPointLights;
-	uint32_t numSpotLights;
-	DirectionalLight directionalLight;
-};
 
 struct DirectionalLight{
 	vec3 m_direction;
@@ -19,9 +15,11 @@ struct DirectionalLight{
 
 struct PointLight{
 	vec3 m_position;
+	float pad;
 	vec3 m_intensity; // Color intensity (HDR)
+	float pad1;
 	vec3 m_falloff;	// x = constant falloff, y = linaer falloff, z = quadratic falloff
-	bool enabled;
+	float pad2;
 };
 
 struct SpotLight{
@@ -30,8 +28,7 @@ struct SpotLight{
 	vec3 m_intensity; // Color intensity (HDR)
 	float m_angle;
 	vec3 m_falloff;	// x = constant falloff, y = linaer falloff, z = quadratic falloff
-	bool enabled;
-};
+	};
 
 struct GoboLight{
 	vec3 m_position;
@@ -39,9 +36,16 @@ struct GoboLight{
 	//	texture* m_gobo_texture;
 	float m_angle;
 	vec3 m_falloff;	// x = constant falloff, y = linaer falloff, z = quadratic falloff
-//	bool enabled;
 };
 
-struct AreaLight{
+struct LightInfo
+{
+	unsigned int numPointLights;
+	unsigned int numSpotLights;
+	DirectionalLight directionalLight;
+};
 
+__declspec(align(16)) struct PointLightBuffer
+{
+	PointLight lights[MAX_POINT_LIGHTS];
 };

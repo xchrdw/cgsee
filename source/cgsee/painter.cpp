@@ -26,6 +26,7 @@
 #include <core/rendering/coloridpass.h>
 #include <core/rendering/boundingboxpass.h>
 #include <core/rendering/lightsource.h>
+#include <core/rendering/lightmanager.h>
 
 #include <core/property/advancedlistproperty.h>
 #include <core/property/valueproperty.h>
@@ -71,6 +72,7 @@ Painter::Painter(Camera * camera)
 ,   m_camera(camera)
 ,   m_useColor(true)
 ,   m_passes()
+,	m_lightManager(nullptr)
 {
 
 }
@@ -94,6 +96,7 @@ Painter::~Painter()
     delete m_primitiveWireframe;
     delete m_solidWireframe;
     delete m_fboColor;
+	delete m_lightManager;
 
     delete m_flush;
 }
@@ -252,6 +255,9 @@ const bool Painter::initialize()
     builder2.retainWidget()->hide();
     //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
 
+	// Light Manager
+	m_lightManager = new LightManager();
+	m_lightManager->initBuffers();
 
     return true;
 }

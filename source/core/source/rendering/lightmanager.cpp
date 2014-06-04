@@ -3,7 +3,6 @@
 
 #include <list>
 
-
 LightManager::LightManager() : ubo_point(0xffffffff), ubo_spot(0xffffffff), ubo_count(0xffffffff)
 {
 	memset(&m_lightInfo, 0, sizeof(LightInfo));
@@ -29,14 +28,14 @@ void LightManager::initBuffers()
 
 	// Bind buffers to create UBOs.
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo_spot);
+	//glBindBuffer(GL_UNIFORM_BUFFER, ubo_spot);
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo_count);
 
 
 	// I feel so C++11 when I use nullptr :)
 	// Set buffer size and init the buffers on the GPU
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(PointLight)* MAX_POINT_LIGHTS, nullptr, GL_DYNAMIC_DRAW);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(SpotLight)* MAX_SPOT_LIGHTS, nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(PointLightBuffer), nullptr, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_UNIFORM_BUFFER, sizeof(SpotLight)* MAX_SPOT_LIGHTS, nullptr, GL_DYNAMIC_DRAW);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightInfo), nullptr, GL_DYNAMIC_DRAW);
 
 	/*
