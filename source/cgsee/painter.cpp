@@ -201,7 +201,7 @@ const bool Painter::initialize()
     //PHONG
     m_phong = new Program();
     m_phong->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/phong.frag"));
-    m_phong->attach(phongLighting);
+    //m_phong->attach(phongLighting);
     m_phong->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/phong.vert"));
 
     //GOOCH
@@ -260,19 +260,27 @@ const bool Painter::initialize()
 	m_lightManager->initBuffers();
 	DirectionalLight dlight;
 	dlight.m_direction = glm::normalize(glm::vec3(1, 1, 1));
-	dlight.m_intensity = glm::vec3(1.0, 0.0, 0.0);
+	dlight.m_intensity = glm::vec3(0.0, 0.0, 0.0);
 	m_lightManager->setDirectionalLight(dlight);
+
+	glm::vec3 colors[4] = 
+	{
+		glm::vec3(1.0, 0.0, 0.0),
+		glm::vec3(0.0, 1.0, 0.0),
+		glm::vec3(0.0, 1.0, 1.0),
+		glm::vec3(1.0, 0.6, 0.0),
+	};
 
 	for (uint t = 0; t < 4; t++)
 	{
+		/*
 		PointLight light;
 		light.m_falloff = glm::vec3(t / 4, t / 4, t / 4);
 		light.m_position = glm::vec3(t, t, t);
 		light.m_intensity = glm::vec3(t * 0.25, 0, (4 - t) * 0.25);
-		m_lightManager->addPointLight(light);
+		*/
+		m_lightManager->addPointLight(glm::vec4(t+1,t+1,t, 1.f), glm::vec4(1.0, 0.0, 0.0, 0.0f), 20.f);
 	}
-
-	setUniforms();
     return true;
 }
 
@@ -374,6 +382,7 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
     fbo->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, camera->transform());
+	m_lightManager->updateBuffers(m_useProgram->program());
     traverser.traverse(*camera, drawVisitor);
     fbo->release();
 }

@@ -29,6 +29,7 @@ void LightManager::initBuffers()
 	// Bind buffers to create UBOs.
 	//glBindBuffer(GL_UNIFORM_BUFFER, ubo_spot);
 
+
 	// I feel so C++11 when I use nullptr :)
 	// Set buffer size and init the buffers on the GPU
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
@@ -49,33 +50,33 @@ void LightManager::initBuffers()
 	fication commands
 	*/
 }
+void LightManager::addPointLight(glm::vec4 pos, glm::vec4 color, float radius)
+{
+	PointLight light;
+	light.m_position = pos;
+	light.m_intensity = color;
+	light.m_intensity.w = 1.f;
+	light.m_falloff = glm::vec4(1.f, 2.f / radius, 1.f / (radius * radius), 1.0); // Const, lin, exp
+	m_pointLightList.push_back(light);
+}
 
 void LightManager::setDirectionalLight(DirectionalLight& directionalLight)
 {
 	m_lightInfo.directionalLight = directionalLight;
 }
 
-void LightManager::addPointLight(glm::vec3 pos, glm::vec3 color, float radius)
+void LightManager::addPointLight(PointLight& pointLight)
 {
-	PointLight light;
-	light.m_position = pos;
-	light.m_intensity = color;
-	light.m_falloff = glm::vec3(1.f, 2.f / radius, 1.f / (radius * radius)); // Const, lin, exp
-	m_pointLightList.push_back(light);
+	m_pointLightList.push_back(pointLight);
 }
 
-void LightManager::addPointLight(PointLight& light)
+void LightManager::addSpotLight(SpotLight& spotLight)
 {
-	m_pointLightList.push_back(light);
-}
-void LightManager::addSpotLight(glm::vec3 pos, glm::vec3 direction, glm::vec3 intensity, float dist)
-{
+	m_spotLightList.push_back(spotLight);
 }
 
 void LightManager::updateBuffers(GLuint activeProgram)
 {
-	// Culling here
-
 	m_lightInfo.numPointLights = m_pointLightList.size();
 	m_lightInfo.numSpotLights = m_spotLightList.size();
 	GLint uniformBlockSize;
@@ -94,11 +95,10 @@ void LightManager::updateBuffers(GLuint activeProgram)
 		m_pointLightBuffer.lights[t].m_intensity = m_pointLightList[t].m_intensity;
 	}
 
-/*	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PointLight) * m_lightInfo.numPointLights, m_pointLightBuffer.lights);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
 	bindingLocation = glGetUniformBlockIndex(activeProgram, "PointLights");
-	size = sizeof(PointLightBuffer);
 	glGetActiveUniformBlockiv(activeProgram, bindingLocation, GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSize);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, uniformBlockSize, m_pointLightBuffer.lights);
+	size = sizeof(PointLightBuffer);
 	glBindBufferBase(GL_UNIFORM_BUFFER, bindingLocation, ubo_point);
-	*/
 }
