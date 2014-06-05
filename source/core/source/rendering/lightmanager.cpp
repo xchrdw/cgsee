@@ -1,5 +1,4 @@
 #include <core/rendering/lightmanager.h>
-#include <core/rendering/lighttypes.h>
 
 #include <list>
 
