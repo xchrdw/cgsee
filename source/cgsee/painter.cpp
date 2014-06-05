@@ -278,7 +278,7 @@ const bool Painter::initialize()
 
 void Painter::setUniforms()
 {
-    if(m_useProgram == m_flat || m_useProgram == m_gouraud || m_useProgram == m_phong)
+    if(m_useProgram == m_flat || m_useProgram == m_gouraud)
     {
         m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
         m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,-8.0,7.5));
@@ -299,7 +299,6 @@ void Painter::setUniforms()
         lightMat2[3] = glm::vec4(0.002,0.002,0.0004,1.4); //attenuation1, attenuation2, attenuation3, shininess
 
         m_useProgram->setUniform(LIGHT_UNIFORM2, lightMat2, false);
-		m_lightManager->updateBuffers(m_useProgram->program());
 
 //         glm::mat4 materialCoeff;
 //         materialCoeff[0] = glm::vec4(0.1,0.1,0.1,1.0);    //ambient
@@ -322,6 +321,11 @@ void Painter::setUniforms()
         warmColdColor[3] = glm::vec4(0.45,0.45,0,0);         //Diffuse Warm, DiffuseCool
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
+
+	else if (m_useProgram == m_phong)
+	{
+		m_lightManager->updateBuffers(m_useProgram->program());
+	}
 }
 
 void Painter::paint()

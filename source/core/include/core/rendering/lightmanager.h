@@ -19,8 +19,9 @@ public:
 	//std::vector<GoboLight> m_goboLightList;
 
 	void setDirectionalLight(DirectionalLight& directionalLight);
-	void addPointLight(PointLight& pointLight);
-	void addSpotLight(SpotLight& spotLight);
+	void addPointLight(PointLight& light);
+	void addPointLight(glm::vec3 pos, glm::vec3 color, float radius);
+	void addSpotLight(glm::vec3 pos, glm::vec3 direction, glm::vec3 intensity, float dist);
 
 	void initBuffers();
 

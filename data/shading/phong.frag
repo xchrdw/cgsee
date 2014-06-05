@@ -40,15 +40,15 @@ layout(std140) uniform PointLights
 	} lights[12];
 } PointLightBuffer;
 
-vec4 phongLighting(vec3 n, vec3 v_pos, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, mat4 light, mat4 light2, vec4 lightambientglobal, mat4 material);
+vec4 BlinnPhong(vec3 n, vec3 v, vec3 l, vec4 light_color, vec4 diff_color, vec4 spec_color, float spec_power, float attenuation);
+vec4 BlinnPhongDirectional(vec3 n, vec3 v, vec3 l, vec4 light_color, vec4 diff_color, vec4 spec_color, float spec_power);
 
 void main()
 {
 	vec3 n = normal;
-	vec3 dir = normalize(LightInfoData.DirectionalLight.direction);
-	float n_dot_l = dot(n, dir);
-	fragColor = n_dot_l * vec4(LightInfoData.DirectionalLight.intensity, 1.0);
-	fragColor = vec4(PointLightBuffer.lights[0].intensity, 1.0);
-	
-	//fragColor=phongLighting(n, position, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);
+	vec3 v = cameraposition - position;
+	vec3 l = normalize(LightInfoData.DirectionalLight.direction);
+	vec4 light_color = vec4(LightInfoData.instensity, 1.0);
+//	fragColor = BlinnPhongDirectional(n, v, l, light_color, vec4(1.0, 1.0, 1.0, 1.0) vec4(1.0, 1.0, 1.0, 1.0), 16.f);
+	fragColor = vec4(1.0);
 }
