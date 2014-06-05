@@ -2,6 +2,8 @@
 
 #include <core/core_api.h>
 
+#include <GL/glew.h>
+
 #include <core/property/valueproperty.h>
 #include <core/painter/pipelinepainter.h>
 
@@ -12,6 +14,8 @@ class FrameBufferObject;
 class CORE_API RenderStage
 {
 public:
+    typedef GLuint FrameBuffer;
+
     RenderStage(PipelinePainter & painter);
     virtual ~RenderStage(void);
 
@@ -20,11 +24,7 @@ public:
     virtual void render() = 0;
 
 protected:
-    void drawScene(glm::mat4 & transform, Program * program, FrameBufferObject * fbo);
-
-    FrameBufferObject *getFramebuffer(u_int32_t slot);
-    void setFramebuffer(u_int32_t slot, FrameBufferObject fbo);
-    void unsetFramebuffer(u_int32_t slot);
+    void drawScene(glm::mat4 & transform, Program * program);
 
     bool isSceneInvalid();
     bool isViewInvalid();

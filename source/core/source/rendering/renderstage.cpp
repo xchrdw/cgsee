@@ -19,13 +19,11 @@ RenderStage::~RenderStage(void)
 
 }
 
-void RenderStage::drawScene(glm::mat4 & transform, Program * program,  FrameBufferObject * fbo)
+void RenderStage::drawScene(glm::mat4 & transform, Program * program)
 {
-    fbo->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, transform);
     traverser.traverse(*(m_painter.scene()), drawVisitor);
-    fbo->release();
 
 }
 
