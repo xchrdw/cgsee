@@ -3,7 +3,6 @@
 #include <core/navigation/navigationhistory.h>
 #include <core/navigation/navigationhistoryelement.h>
 
-
 /// Include signalzeug from libzeug.
 #include <signalzeug/Signal.h>
 
@@ -115,10 +114,8 @@ void NavigationHistory::redo()
  */
 void NavigationHistory::reset()
 {
-   if(!this->isEmpty())
-    {
+    if(!this->isEmpty())
         m_navigationHistory->reset();
-    }
 }
 
 /**
