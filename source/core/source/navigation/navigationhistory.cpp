@@ -1,32 +1,72 @@
+/// Include navigation history wrapper and history elements list.
+#include <core/navigation/abstractnavigation.h>
 #include <core/navigation/navigationhistory.h>
 #include <core/navigation/navigationhistoryelement.h>
 
+
+/// Include signalzeug from libzeug.
 #include <signalzeug/Signal.h>
+
+/// Include QImage for thumbnails.
 #include <QImage>
 
+/**
+ * @brief Constructor for NavigationHistory class.
+ * @details NavigationHistory is a wrapper class which handles all commands for
+ *          the NavigationHistoryElements linked list which stores the complete
+ *          history.
+ */
 NavigationHistory::NavigationHistory()
     : m_navigation(nullptr)
     , m_navigationHistory(nullptr)
 { }
 
+/**
+ * @brief Destructor for NavigationHistory class.
+ * @details Resets the complete history, unlinks and deletes all list elements
+ *          and deletes member variables.
+ */
 NavigationHistory::~NavigationHistory()
 {
     m_navigationHistory->reset();
+    delete m_navigation;
+    delete m_navigationHistory;
 }
 
+/**
+ * @brief Setter for navigation type.
+ * @details Allows to link a navigation manipulator to the history.
+ *
+ * @param navigation Navigation manipulator object.
+ */
 void NavigationHistory::setNavigation(AbstractNavigation * navigation)
 {
     m_navigation = navigation;
 }
 
-NavigationHistoryElement * NavigationHistory::navigationHistory()
+/**
+ * @brief Getter for navigation history list elements.
+ * @details Allows to access the current history element from the linked list.
+ *
+ * @return NavigationHistoryElement or false if not available.
+ */
+NavigationHistoryElement * NavigationHistory::navigationHistoryElement()
 {
     if (!this->isEmpty())
         return m_navigationHistory;
     return false;
 }
 
-
+/**
+ * @brief Saves a new history element to the list.
+ * @details Verifies if this is not the same view matrix and field of view, adds
+ *          a new element to the linked history list and triggers an
+ *          onHistoryChanged() signal to update the GUI.
+ *
+ * @param viewmatrix The view matrix to save.
+ * @param fovy The field of view to save.
+ * @param thumbnail A snapshot of the canvas to save.
+ */
 void NavigationHistory::save(glm::mat4 viewmatrix, float fovy, QImage thumbnail)
 {
     if (!m_navigationHistory->isEqualViewMatrix(viewmatrix) || !m_navigationHistory->isEqualFovy(fovy))
@@ -36,9 +76,14 @@ void NavigationHistory::save(glm::mat4 viewmatrix, float fovy, QImage thumbnail)
     }
 }
 
+/**
+ * @brief Goes one step back in navigation history.
+ * @details Goes to the previous history element in list, loads the previous
+ *          view and triggers an onHistoryChanged() signal to update the GUI
+ *          until the first (oldest) item in history is reached.
+ */
 void NavigationHistory::undo()
 {
-    // if not reached the oldest history element
     if (!m_navigationHistory->isFirst() && !this->isEmpty())
     {
         m_navigationHistory = m_navigationHistory->getPrevious();
@@ -47,9 +92,14 @@ void NavigationHistory::undo()
     }
 }
 
+/**
+ * @brief Goes one step forward in navigation history.
+ * @details Goes to the next history element in list, loads the next view and
+ *          triggers an onHistoryChanged() signal to update the GUI until the
+ *          last (latest) item in history is reached.
+ */
 void NavigationHistory::redo()
 {
-    // if not reached the youngest history element
     if(!m_navigationHistory->isLast() && !this->isEmpty())
     {
         m_navigationHistory = m_navigationHistory->getNext();
@@ -58,6 +108,11 @@ void NavigationHistory::redo()
     }
 }
 
+/**
+ * @brief Resets the navigation history elements.
+ * @details Unlinks and deletes all history elements in the list and resets
+ *          size to 0.
+ */
 void NavigationHistory::reset()
 {
    if(!this->isEmpty())
@@ -66,6 +121,11 @@ void NavigationHistory::reset()
     }
 }
 
+/**
+ * @brief Checks if history is empty.
+ * @details Checks if items are already stored to the element list.
+ * @return True if at least one history element exists, or false if not.
+ */
 bool NavigationHistory::isEmpty()
 {
     if(m_navigationHistory == nullptr)
@@ -78,7 +138,12 @@ bool NavigationHistory::isEmpty()
     }
 }
 
+/**
+ * @brief Triggers history changed signal.
+ * @details Triggers the history changed signal which can be used to update
+ *          the GUI for example.
+ */
 void NavigationHistory::onHistoryChanged()
 {
-       historyChanged();
+    historyChanged();
 }

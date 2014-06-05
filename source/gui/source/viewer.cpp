@@ -373,8 +373,8 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 void Viewer::updateHistoryList()
 {
     QStandardItemModel * historyItems = new QStandardItemModel(this);
-    NavigationHistoryElement * historyElements = m_navigationHistory->navigationHistory()->getLast();
-    qint64 selectedTimestamp = m_navigationHistory->navigationHistory()->getTimestamp();
+    NavigationHistoryElement * historyElements = m_navigationHistory->navigationHistoryElement()->getLast();
+    qint64 selectedTimestamp = m_navigationHistory->navigationHistoryElement()->getTimestamp();
     QModelIndex selectedIndex = historyItems->index(0, 0);
     QStandardItem * selectedObject = new QStandardItem();
 
@@ -398,7 +398,7 @@ void Viewer::updateHistoryList()
 
 void Viewer::on_m_historyList_clicked(const QModelIndex & index)
 {
-    NavigationHistoryElement * currentHistory = m_qtCanvas->navigationHistory()->navigationHistory();
+    NavigationHistoryElement * currentHistory = m_qtCanvas->navigationHistory()->navigationHistoryElement();
     qint64 selectedElement = index.data(Qt::DisplayRole).toLongLong();
 
     if (currentHistory->getTimestamp() > selectedElement)
