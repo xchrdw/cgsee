@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <QMap>
+#include <QList>
 
 #include <core/painter/abstractscenepainter.h>
 
@@ -22,12 +23,17 @@ class LightSourcePass;
 class PipelinePainter : public AbstractScenePainter // , public PropertyGroup
 {
 public:
+    typedef GLuint Sampler;
 
-    PipelinePainter(Camera * camera);
+    PipelinePainter(Camera * camera, Group * scene);
     virtual ~PipelinePainter();
 
-    virtual void paint();
-    virtual void resize(const int width, const int height);
+    //external events
+    virtual void pipelineConfigChanged();
+    void sceneChanged();
+    void viewChanged();
+    virtual void paint() override;
+    virtual void resize(const int width, const int height) override;
     virtual void reloadShaders() override;
 
     /* will become properties:
@@ -43,58 +49,35 @@ public:
     void setConvergentCameraFocus(AbstractProperty & property);
     */
 
-    /* will become getColorIdFbo():
-    virtual RenderingPass * getSharedPass();
-    */
-
     const Group * scene();
+    const ScreenQuad * screenQuad();
     virtual Camera * camera() override;
 
     void addRenderStage(RenderStage * renderStage);
 
+    void setScene(Group * scene);
+    void setCamera(Camera * camera);
+
+    Sampler getSampler(QString name);
+    bool samplerExists(QString name);
+    void setSampler(QString name, Sampler sampler);
+    bool addSampler(QString name, Sampler sampler);
+    void removeSampler(QString name);
+
 protected:
-    void pipelineConfigChanged();
+
     void setupPipeline(PipelineBuilder & builder);
+    void clearRenderStages();
 
 protected:
-    void setUniforms();
 
-    typedef QMap<QString, FrameBufferObject *> t_samplerByName;
+    QList<RenderStage *> m_stages;
 
-    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
-
-    static void bindSampler(const t_samplerByName & sampler, const Program & program);
-
-    static void releaseSampler(const t_samplerByName & sampler);
-    void sceneChanged(Group * scene);
-
-protected:
-    ScreenQuad * m_quad;
-    Program * m_normals;
-    Program * m_wireframe;
-    Program * m_primitiveWireframe;
-    Program * m_solidWireframe;
-    Program * m_flat;
-    Program * m_gouraud;
-    Program * m_phong;
-    Program * m_gooch;
-    Program * m_useProgram;
-    Program * m_flush;
-    FrameBufferObject * m_fboColor;
-    FrameBufferObject * m_fboTemp;
-    FrameBufferObject * m_fboActiveBuffer;
-
-    RenderingPass * m_normalz;
-    LightSourcePass * m_lightsource;
-    RenderingPass * m_shadows;
-    RenderingPass * m_shadowBlur;
-    RenderingPass * m_ssao;
-    RenderingPass * m_ssaoBlur;
-    RenderingPass * m_colorId;
-    RenderingPass * m_boundingBox;
-    QList<RenderingPass*> m_passes;
+    QString m_samplerToDisplay;
+    QMap<QString, Sampler> m_samplers;
 
     Camera * m_camera;
-    bool m_useColor;
+    Group * m_scene;
 
+    ScreenQuad * m_quad;
 };
