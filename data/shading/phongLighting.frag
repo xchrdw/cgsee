@@ -1,6 +1,34 @@
 #version 150 core
 
-//Phong Lighting model with two light sources
+// Blinn-Phong for any light with attenuation
+vec4 BlinnPhong(vec3 n, vec3 v, vec3 l, vec4 light_color, vec4 diff_color, vec4 spec_color, float spec_power, float attenuation)
+{
+    vec3 h = normalize(v + l);
+    float n_dot_l = max(dot(n,l), 0);
+    float n_dot_h = max(dot(n,h), 0);
+
+    // Diffuse component
+    vec4 diff = diff_color * n_dot_l;
+    vec4 spec = spec_color * pow(n_dot_h, spec_power);
+
+    vec4 color_out = (diff + spec) * light_color * attenuation;
+    return color_out;
+}
+
+// Blinn-Phong for any light without attenuation
+vec4 BlinnPhongDirectional(vec3 n, vec3 v, vec3 l, vec4 light_color, vec4 diff_color, vec4 spec_color, float spec_power)
+{
+    vec3 h = normalize(v + l);
+    float n_dot_l = max(dot(n,l), 0);
+    float n_dot_h = max(dot(n,h), 0);
+
+    // Diffuse component
+    vec4 diff = diff_color * n_dot_l;
+    vec4 spec = spec_color * pow(n_dot_h, spec_power);
+
+    vec4 color_out = (diff + spec) * light_color;
+    return color_out;
+}
 
 vec4 phongLighting(vec3 n, vec3 v_pos, vec3 cameraposition, vec3 lightdir, vec3 lightdir2, mat4 light, mat4 light2, vec4 lightambientglobal, mat4 material)
 {

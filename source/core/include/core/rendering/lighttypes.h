@@ -14,12 +14,9 @@ struct DirectionalLight{
 };
 
 struct PointLight{
-	glm::vec3 m_position;
-	float pad;
-	glm::vec3 m_intensity; // Color intensity (HDR)
-	float pad1;
-	glm::vec3 m_falloff;	// x = constant falloff, y = linaer falloff, z = quadratic falloff
-	float pad2;
+	glm::vec4 m_position;
+	glm::vec4 m_intensity; // Color intensity (HDR)
+	glm::vec4 m_falloff;	// x = constant falloff, y = linaer falloff, z = quadratic falloff
 };
 
 struct SpotLight{

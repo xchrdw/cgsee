@@ -49,6 +49,15 @@ void LightManager::initBuffers()
 	fication commands
 	*/
 }
+void LightManager::addPointLight(glm::vec4 pos, glm::vec4 color, float radius)
+{
+	PointLight light;
+	light.m_position = pos;
+	light.m_intensity = color;
+	light.m_intensity.w = 1.f;
+	light.m_falloff = glm::vec4(1.f, 2.f / radius, 1.f / (radius * radius), 1.0); // Const, lin, exp
+	m_pointLightList.push_back(light);
+}
 
 void LightManager::setDirectionalLight(DirectionalLight& directionalLight)
 {
@@ -86,9 +95,9 @@ void LightManager::updateBuffers(GLuint activeProgram)
 	}
 
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(PointLight) * m_lightInfo.numPointLights, m_pointLightBuffer.lights);
 	bindingLocation = glGetUniformBlockIndex(activeProgram, "PointLights");
-	size = sizeof(PointLightBuffer);
 	glGetActiveUniformBlockiv(activeProgram, bindingLocation, GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSize);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, uniformBlockSize, m_pointLightBuffer.lights);
+	size = sizeof(PointLightBuffer);
 	glBindBufferBase(GL_UNIFORM_BUFFER, bindingLocation, ubo_point);
 }
