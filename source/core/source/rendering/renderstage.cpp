@@ -4,17 +4,19 @@
 #include <glm/mat4x4.hpp>
 
 #include <core/framebufferobject.h>
-#include <core/painter/framebufferprovider.h>
+#include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 
-RenderStage::RenderStage(Painter &painter)
+RenderStage::RenderStage(PipelinePainter & painter)
     : m_painter(painter)
 {
+
 }
 
 RenderStage::~RenderStage(void)
 {
+
 }
 
 void RenderStage::drawScene(glm::mat4 & transform, Program * program,  FrameBufferObject * fbo)

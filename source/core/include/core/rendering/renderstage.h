@@ -3,16 +3,16 @@
 #include <core/core_api.h>
 
 #include <core/property/valueproperty.h>
+#include <core/painter/pipelinepainter.h>
 
 class Group;
 class Program;
 class FrameBufferObject;
-class FrameBufferProvider;
 
 class CORE_API RenderStage
 {
 public:
-    RenderStage(Painter & painter);
+    RenderStage(PipelinePainter & painter);
     virtual ~RenderStage(void);
 
     virtual void reloadShaders() = 0;
@@ -31,5 +31,5 @@ protected:
 
 
 protected:
-    Painter & m_painter;
+    PipelinePainter & m_painter;
 };
