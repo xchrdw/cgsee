@@ -106,6 +106,7 @@ Viewer::Viewer(
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
 ,   m_dockMaterial(new QDockWidget(tr("Material")))
+,   m_propertyMaterialBrowser(nullptr)
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
@@ -207,10 +208,9 @@ void Viewer::initializeMaterial()
 
 	Material * obj = new Material();
 
-    propertyguizeug::PropertyBrowser *propertyBrowser = new propertyguizeug::PropertyBrowser(obj);
-
+    m_propertyMaterialBrowser = new propertyguizeug::PropertyBrowser(obj);
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget(propertyBrowser);
+    layout->addWidget(m_propertyMaterialBrowser);
 
     QWidget * materialWidget = new QWidget(this);
     materialWidget->setLayout(layout);
@@ -960,7 +960,9 @@ void Viewer::selectById(const unsigned int & id)
 
 void Viewer::showMaterial()
 {
-    //Node* node = dynamic_cast<PolygonalDrawable*>(m_selectedNodes.first);
+	Material * obj = new Material();
+	obj->setName(m_selectedNodes.first()->name().toStdString());
+	m_propertyMaterialBrowser->setRoot(obj);
     m_dockMaterial->show();
 }
 

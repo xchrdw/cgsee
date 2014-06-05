@@ -43,6 +43,10 @@ class DataBlockRegistry;
 class CoordinateProvider;
 class AxisAlignedBoundingBox;
 
+namespace propertyguizeug
+{
+	class PropertyBrowser;
+}
 
 class GUI_API Viewer : public QMainWindow
 {
@@ -207,6 +211,8 @@ protected:
     QDockWidget * m_dockExplorer;
     QDockWidget * m_dockScene;
     QDockWidget * m_dockMaterial;
+
+	propertyguizeug::PropertyBrowser * m_propertyMaterialBrowser;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
