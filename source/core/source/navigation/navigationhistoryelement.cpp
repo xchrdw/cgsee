@@ -196,6 +196,16 @@ int NavigationHistoryElement::getSize()
 }
 
 /**
+ * @brief Sets current history size.
+ * @details Checks if this element is the first in the history list.
+ * @param new length.
+ */
+void NavigationHistoryElement::setLength(int length)
+{
+    m_length = length;
+}
+
+/**
  * @brief Checks if element is first.
  * @details Checks if this element is the first in the history list.
  * @return True if it is first, else false.

@@ -52,6 +52,7 @@ public:
     int getSize();
 
     /// Public methods
+    void setLength(int length);
     bool isFirst();
     bool isLast();
     bool isEqualViewMatrix(const glm::mat4 & viewmatrix);

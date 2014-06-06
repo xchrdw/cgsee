@@ -130,6 +130,7 @@ void NavigationHistory::reset()
         }
         m_navigationHistory = newHandle;
         m_navigationHistory->setPrevious(nullptr);
+        m_navigationHistory->setLength(1);
         onHistoryChanged();
     }
 }
