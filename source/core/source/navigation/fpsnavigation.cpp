@@ -118,6 +118,7 @@ void FpsNavigation::forward(float speed)
     m_center += step;
     m_eye += step;
     updateView();
+    onNavigated();
 }
 
 void FpsNavigation::onTimerEvent()
@@ -141,6 +142,7 @@ void FpsNavigation::sideward(float speed)
     m_center += step;
     m_eye += step;
     updateView();
+    onNavigated();
 }
 
 void FpsNavigation::pitch(float angle)
@@ -151,6 +153,7 @@ void FpsNavigation::pitch(float angle)
         glm::vec3 diffCenter = glm::rotate(m_center-m_eye, -angle, m_xView) - (m_center - m_eye);
         m_center += diffCenter;
         updateView();
+        onNavigated();
     }
 }
 
