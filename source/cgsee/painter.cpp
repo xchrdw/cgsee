@@ -263,23 +263,25 @@ const bool Painter::initialize()
 	dlight.m_intensity = glm::vec3(0.0, 0.0, 0.0);
 	m_lightManager->setDirectionalLight(dlight);
 
-	glm::vec3 colors[4] = 
+	glm::vec4 colors[12] = 
 	{
-		glm::vec3(1.0, 0.0, 0.0),
-		glm::vec3(0.0, 1.0, 0.0),
-		glm::vec3(0.0, 1.0, 1.0),
-		glm::vec3(1.0, 0.6, 0.0),
+		glm::vec4(1.0, 0.0, 0.0, 1.f),
+		glm::vec4(1.0, 0.6, 0.0, 1.f),
+		glm::vec4(0.0, 1.0, 1.0, 1.f),
+		glm::vec4(1.0, 0.6, 0.0, 1.f),
+		glm::vec4(1.0, 0.0, 0.0, 1.f),
+		glm::vec4(1.0, 0.6, 0.0, 1.f),
+		glm::vec4(0.0, 1.0, 1.0, 1.f),
+		glm::vec4(1.0, 0.6, 0.0, 1.f),
+		glm::vec4(1.0, 0.0, 0.0, 1.f),
+		glm::vec4(1.0, 0.6, 0.0, 1.f),
+		glm::vec4(0.0, 1.0, 1.0, 1.f),
+		glm::vec4(1.0, 0.6, 0.0, 1.f)
 	};
 
-	for (uint t = 0; t < 4; t++)
+	for (uint t = 0; t < 12; t++)
 	{
-		/*
-		PointLight light;
-		light.m_falloff = glm::vec3(t / 4, t / 4, t / 4);
-		light.m_position = glm::vec3(t, t, t);
-		light.m_intensity = glm::vec3(t * 0.25, 0, (4 - t) * 0.25);
-		*/
-		m_lightManager->addPointLight(glm::vec4(t+1,t+1,t, 1.f), glm::vec4(1.0, 0.0, 0.0, 0.0f), 20.f);
+		m_lightManager->addPointLight(glm::vec4(t/4.f,1.f,t/4.f, 1.f), colors[t], 10.f);
 	}
     return true;
 }

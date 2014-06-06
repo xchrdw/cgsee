@@ -86,6 +86,7 @@ void LightManager::updateBuffers(GLuint activeProgram)
 	GLuint bindingLocation = glGetUniformBlockIndex(activeProgram, "LightInfo");
 	int size = sizeof(LightInfo);
 	glGetActiveUniformBlockiv(activeProgram, bindingLocation,GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSize);
+	glUniformBlockBinding(activeProgram, bindingLocation, bindingLocation);
 	glBindBufferBase(GL_UNIFORM_BUFFER, bindingLocation, ubo_info);
 
 	for (int t = 0; t < m_pointLightList.size(); t++)
@@ -97,6 +98,7 @@ void LightManager::updateBuffers(GLuint activeProgram)
 
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
 	bindingLocation = glGetUniformBlockIndex(activeProgram, "PointLights");
+	glUniformBlockBinding(activeProgram, bindingLocation, bindingLocation);
 	glGetActiveUniformBlockiv(activeProgram, bindingLocation, GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSize);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, uniformBlockSize, m_pointLightBuffer.lights);
 	size = sizeof(PointLightBuffer);
