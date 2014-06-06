@@ -114,19 +114,23 @@ void NavigationHistory::reset()
 {
     if(!this->isEmpty())
     {
-        NavigationHistoryElement * historyHandle {m_navigationHistory->getFirst()};
-        NavigationHistoryElement * next;
+        NavigationHistoryElement * historyHandle {m_navigationHistory->getLast()};
+        NavigationHistoryElement * prev;
+        NavigationHistoryElement * newHandle;
 
-        while(historyHandle->getNext() != nullptr)
+        // save one state with new object to history tail
+        m_navigation->onViewChanged();
+        newHandle = m_navigationHistory->getLast();
+
+        while(historyHandle->getPrevious() != nullptr)
         {
-            next = historyHandle->getNext();
+            prev = historyHandle->getPrevious();
             delete historyHandle;
-            historyHandle = next;
+            historyHandle = prev;
         }
-        m_navigationHistory = historyHandle;
-        m_navigationHistory->setNext(nullptr);
+        m_navigationHistory = newHandle;
         m_navigationHistory->setPrevious(nullptr);
-        m_navigation->onNavigated();
+        onHistoryChanged();
     }
 }
 
