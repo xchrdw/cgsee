@@ -526,7 +526,7 @@ void Viewer::on_loadFile(const QString & path)
             this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
         this->painter()->assignScene(scene);
         // @TODO reset history or recapture the thumbnails
-        //m_navigationHistory->reset();
+        m_navigationHistory->reset();
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();

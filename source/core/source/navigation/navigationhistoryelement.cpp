@@ -70,14 +70,7 @@ NavigationHistoryElement::NavigationHistoryElement(NavigationHistoryElement * pr
  *          and decreases history length by 1.
  */
 NavigationHistoryElement::~NavigationHistoryElement()
-{
-    NavigationHistoryElement * previous {this->getPrevious()};
-    NavigationHistoryElement * next {this->getNext()};
-    this->getNext()->setPrevious(previous);
-    this->getPrevious()->setNext(next);
-    --m_length;
-    delete this;
-}
+{}
 
 /**
  * @brief Setter for previous element in history list.
@@ -108,14 +101,7 @@ void NavigationHistoryElement::setNext(NavigationHistoryElement * next)
  */
 NavigationHistoryElement * NavigationHistoryElement::getPrevious()
 {
-    if (this->isFirst())
-    {
-        return this;
-    }
-    else
-    {
         return m_previous;
-    }
 }
 
 
@@ -126,14 +112,7 @@ NavigationHistoryElement * NavigationHistoryElement::getPrevious()
  */
 NavigationHistoryElement * NavigationHistoryElement::getNext()
 {
-    if (this->isLast())
-    {
-        return this;
-    }
-    else
-    {
         return m_next;
-    }
 }
 
 /**
@@ -214,23 +193,6 @@ qint64 NavigationHistoryElement::getTimestamp()
 int NavigationHistoryElement::getSize()
 {
     return m_length;
-}
-
-/**
- * @brief Removes the entire list of history elements.
- * @details Iterates through all history list items, unlinks and deletes them.
- */
-void NavigationHistoryElement::reset()
-{
-    NavigationHistoryElement * last {this->getLast()};
-    NavigationHistoryElement * first {this->getFirst()};
-    while(last != first)
-    {
-        last = last->getPrevious();
-        delete last->getNext();
-    }
-    delete first;
-    m_length = 0;
 }
 
 /**

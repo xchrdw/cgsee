@@ -27,9 +27,7 @@ NavigationHistory::NavigationHistory()
  */
 NavigationHistory::~NavigationHistory()
 {
-    m_navigationHistory->reset();
-    delete m_navigation;
-    delete m_navigationHistory;
+    reset();
 }
 
 /**
@@ -115,7 +113,21 @@ void NavigationHistory::redo()
 void NavigationHistory::reset()
 {
     if(!this->isEmpty())
-        m_navigationHistory->reset();
+    {
+        NavigationHistoryElement * historyHandle {m_navigationHistory->getFirst()};
+        NavigationHistoryElement * next;
+
+        while(historyHandle->getNext() != nullptr)
+        {
+            next = historyHandle->getNext();
+            delete historyHandle;
+            historyHandle = next;
+        }
+        m_navigationHistory = historyHandle;
+        m_navigationHistory->setNext(nullptr);
+        m_navigationHistory->setPrevious(nullptr);
+        m_navigation->onNavigated();
+    }
 }
 
 /**
