@@ -72,17 +72,16 @@ void main()
 	vec4 light_color = vec4(LightInfoData.DirectionalLight.intensity, 1.0);
 	fragColor = BlinnPhongDirectional(n, v, l, light_color, diff_color, diff_color, 16.0);
 
-	/*for (uint t = 0; t < LightInfoData.numPointLights; t++)
+	for (uint t = 0; t < LightInfoData.numPointLights; t++)
 	{
-	    l = PointLightBuffer.lights[t].pos - position;
-	    light_color = vec4(PointLightBuffer.lights[t].intensity, 1.0);
+	    l = PointLightBuffer.lights[t].pos.xyz - position;
+	    light_color = PointLightBuffer.lights[t].intensity;
 	    float dist = length(l);
 	    l = normalize(l);
-	    float att = PointLightBuffer.lights[t].falloff.x + PointLightBuffer.lights[t].falloff.y * dist + PointLightBuffer.lights[t].falloff.z * dist * dist;
+	    float att = 1 / (PointLightBuffer.lights[t].falloff.x + PointLightBuffer.lights[t].falloff.y * dist + PointLightBuffer.lights[t].falloff.z * dist * dist);
 	    fragColor += BlinnPhong(n, v, l, light_color, diff_color, diff_color, 16.0, att);
-	}*/
+	}
 
-	fragColor = PointLightBuffer.lights[0].pos;
+	fragColor.w = 1.0;
 
-	//fragColor=phongLighting(n, position, cameraposition, lightdir, lightdir2, light, light2, lightambientglobal, material);
 }
