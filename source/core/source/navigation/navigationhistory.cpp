@@ -1,7 +1,5 @@
 /// Include navigation history wrapper and history elements list.
-#include <core/navigation/abstractnavigation.h>
 #include <core/navigation/navigationhistory.h>
-#include <core/navigation/navigationhistoryelement.h>
 
 /// Include signalzeug from libzeug.
 #include <signalzeug/Signal.h>
@@ -22,8 +20,7 @@ NavigationHistory::NavigationHistory()
 
 /**
  * @brief Destructor for NavigationHistory class.
- * @details Resets the complete history, unlinks and deletes all list elements
- *          and deletes member variables.
+ * @details Resets the complete history, unlinks and deletes all list elements.
  */
 NavigationHistory::~NavigationHistory()
 {
@@ -107,8 +104,8 @@ void NavigationHistory::redo()
 
 /**
  * @brief Resets the navigation history elements.
- * @details Unlinks and deletes all history elements in the list and resets
- *          size to 0.
+ * @details Unlinks and deletes all history elements in the list, creates a new
+ *          item and resets size to 1.
  */
 void NavigationHistory::reset()
 {
@@ -116,11 +113,10 @@ void NavigationHistory::reset()
     {
         NavigationHistoryElement * historyHandle {m_navigationHistory->getLast()};
         NavigationHistoryElement * prev;
-        NavigationHistoryElement * newHandle;
 
-        // save one state with new object to history tail
+        /// Saves one state with new object to history tail
         m_navigation->onViewChanged();
-        newHandle = m_navigationHistory->getLast();
+        NavigationHistoryElement * newHandle {m_navigationHistory->getLast()};
 
         while(historyHandle->getPrevious() != nullptr)
         {
@@ -128,9 +124,10 @@ void NavigationHistory::reset()
             delete historyHandle;
             historyHandle = prev;
         }
+
         m_navigationHistory = newHandle;
         m_navigationHistory->setPrevious(nullptr);
-        m_navigationHistory->setLength(1);
+        m_navigationHistory->m_length = 1;
         onHistoryChanged();
     }
 }

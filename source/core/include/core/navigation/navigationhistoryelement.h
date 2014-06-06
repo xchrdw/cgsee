@@ -1,9 +1,6 @@
 /// Preprocessor directive
 #pragma once
 
-/// Include header file.
-#include <core/navigation/navigationhistoryelement.h>
-
 /// Include QImage and QSize for thumbnails.
 #include <QImage>
 #include <QSize>
@@ -29,12 +26,14 @@
 class NavigationHistoryElement
 {
 
+    /// Allow access to member variables for NavigationHistory.
+    friend class NavigationHistory;
+
 public:
 
     /// Constructor & destructor
     NavigationHistoryElement(NavigationHistoryElement * previous, glm::mat4 viewmatrix, float fovy, QImage thumbnail);
     ~NavigationHistoryElement();
-
 
     /// Setter
     void setPrevious(NavigationHistoryElement * previous);
@@ -52,7 +51,6 @@ public:
     int getSize();
 
     /// Public methods
-    void setLength(int length);
     bool isFirst();
     bool isLast();
     bool isEqualViewMatrix(const glm::mat4 & viewmatrix);

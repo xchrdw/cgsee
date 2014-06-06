@@ -3,7 +3,6 @@
 
 /// Include navigation history wrapper and history elements list.
 #include <core/navigation/abstractnavigation.h>
-#include <core/navigation/navigationhistory.h>
 #include <core/navigation/navigationhistoryelement.h>
 
 /// Include signalzeug from libzeug.

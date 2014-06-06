@@ -66,11 +66,8 @@ NavigationHistoryElement::NavigationHistoryElement(NavigationHistoryElement * pr
 
 /**
  * @brief Destructor for NavigationHistoryElement class.
- * @details Removes the current element, links the next item with the previous
- *          and decreases history length by 1.
  */
-NavigationHistoryElement::~NavigationHistoryElement()
-{}
+NavigationHistoryElement::~NavigationHistoryElement() {}
 
 /**
  * @brief Setter for previous element in history list.
@@ -97,7 +94,7 @@ void NavigationHistoryElement::setNext(NavigationHistoryElement * next)
 /**
  * @brief Getter for previous element in history list.
  * @details Allows to access the item before this element in the list.
- * @return Previous item in history list if available or this item if not.
+ * @return Previous item in history list.
  */
 NavigationHistoryElement * NavigationHistoryElement::getPrevious()
 {
@@ -108,7 +105,7 @@ NavigationHistoryElement * NavigationHistoryElement::getPrevious()
 /**
  * @brief Getter for next element in history list.
  * @details Allows to access the item after this element in the list.
- * @return Next item in history list if available or this item if not.
+ * @return Next item in history list.
  */
 NavigationHistoryElement * NavigationHistoryElement::getNext()
 {
@@ -193,16 +190,6 @@ qint64 NavigationHistoryElement::getTimestamp()
 int NavigationHistoryElement::getSize()
 {
     return m_length;
-}
-
-/**
- * @brief Sets current history size.
- * @details Checks if this element is the first in the history list.
- * @param new length.
- */
-void NavigationHistoryElement::setLength(int length)
-{
-    m_length = length;
 }
 
 /**

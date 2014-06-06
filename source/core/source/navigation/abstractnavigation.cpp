@@ -13,8 +13,8 @@
 #include <signalzeug/Signal.h>
 
 
-const float AbstractNavigation::TIMER_MS = 1000.f / 60.f;
-const float AbstractNavigation::DELAY_MS = 1000.f / 3.f;
+const float AbstractNavigation::TIMER_MS = 1000.f / 50.f;
+const float AbstractNavigation::DELAY_MS = 1000.f / 5.f;
 
 AbstractNavigation::AbstractNavigation(Camera * camera)
     : m_width(camera->viewport().x)
