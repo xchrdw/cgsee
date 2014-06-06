@@ -10,7 +10,6 @@ public:
     FpsNavigation(Camera * camera);
     ~FpsNavigation();
 
-
     virtual void keyPressEvent(QKeyEvent *event) override;
     virtual void keyReleaseEvent(QKeyEvent *event) override;
 
@@ -18,16 +17,13 @@ public:
     virtual void mousePressEvent(QMouseEvent * event) override;
     virtual void mouseReleaseEvent(QMouseEvent * event) override;
 
+
 protected:
     virtual void onTimerEvent() override;
-
-    void updateView();
 
 
 private:
     void pitchYaw(float pitchAngle, float yawAngle);
-    virtual void sideward(float speed) override;
-    virtual void forward(float speed) override;
 
     virtual void pitch(float angle) override;
 
