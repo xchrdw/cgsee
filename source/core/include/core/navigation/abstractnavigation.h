@@ -11,13 +11,14 @@
 #include <QMouseEvent>
 #include <QBasicTimer>
 
+#include <core/abstracteventhandler.h>
+
 class Camera;
 class QWidget;
 class Group;
 
-class CORE_API AbstractNavigation : QObject 
-{
-    
+class CORE_API AbstractNavigation : public QObject, public AbstractEventHandler
+{    
 public:
 
     AbstractNavigation(Camera *camera);
@@ -37,6 +38,9 @@ public:
     virtual void mouseReleaseEvent(QMouseEvent * event);
     virtual void mouseDoubleClickEvent(QMouseEvent * event);
     virtual void wheelEvent(QWheelEvent *event);
+
+    virtual void resizeEvent(QResizeEvent * event);
+    virtual void resize(const QSize & size);
 
     virtual const glm::mat4 & viewMatrix();
     void loadView(const glm::mat4 & viewmatrix);

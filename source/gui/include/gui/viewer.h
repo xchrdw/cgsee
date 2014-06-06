@@ -204,6 +204,8 @@ protected:
     void updateRenderingSelection(QString rendering) const;
 
     Canvas * m_qtCanvas;
+    AbstractNavigation * m_navigation;
+
     Camera * m_camera;
     QVector<glm::mat4> m_saved_views;
 
@@ -212,6 +214,7 @@ protected:
     QDockWidget * m_dockScene;
     QDockWidget * m_dockMaterial;
 
+    Canvas * m_materialCanvas;
 	propertyguizeug::PropertyBrowser * m_propertyMaterialBrowser;
 
     FileNavigator * m_navigator;

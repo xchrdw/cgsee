@@ -147,6 +147,7 @@ set(sources
 set(api_includes
 	${include_path}/aabb.h
 	${include_path}/abstractapplication.h
+	${include_path}/abstracteventhandler.h
 	${include_path}/abstractmodelloader.h
 	${include_path}/abstractstereocamera.h
 	${include_path}/abstracttimer.h
@@ -185,7 +186,6 @@ set(api_includes
 	${include_path}/objloader.h
 	${include_path}/offaxiscamera.h
 	${include_path}/painter/abstractscenepainter.h
-	${include_path}/painter/abstractglparent.h
 	${include_path}/painter/abstractpainter.h
 	${include_path}/parallelcamera.h
 	${include_path}/plane.h

@@ -70,6 +70,9 @@ void AbstractNavigation::mousePressEvent(QMouseEvent * event) { }
 void AbstractNavigation::mouseReleaseEvent(QMouseEvent * event) { }
 void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) { }
 
+void AbstractNavigation::resizeEvent(QResizeEvent * event) { }
+void AbstractNavigation::resize(const QSize & size) { }
+
 void AbstractNavigation::wheelEvent(QWheelEvent * event)
 {
     m_fovy += (event->delta() * 0.1); //sensitivity

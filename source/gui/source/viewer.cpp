@@ -98,7 +98,9 @@ Viewer::Viewer(
 :   QMainWindow(parent, flags)
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
+,   m_materialCanvas(nullptr)
 ,   m_camera(nullptr)
+,   m_navigation(nullptr)
 ,   m_saved_views(4)
 ,   m_isFullscreen(false)
 
@@ -126,13 +128,6 @@ Viewer::Viewer(
     restoreState(s.value(SETTINGS_STATE).toByteArray());
     
     restoreViews(s);
-    initializeExplorer();
-    initializeSceneTree();
-    initializeMaterial();
-
-    this->tabifyDockWidget(m_dockScene, m_dockMaterial);
-    m_dockScene->raise();
-    m_dockMaterial->hide();
 };
 
 void Viewer::initializeExplorer()
@@ -209,7 +204,12 @@ void Viewer::initializeMaterial()
 	Material * obj = new Material();
 
     m_propertyMaterialBrowser = new propertyguizeug::PropertyBrowser(obj);
+    m_materialCanvas = new Canvas(m_qtCanvas->format());
+    // ToDo: add Vertical splitter layout and handle this 
+    m_materialCanvas->setMinimumHeight(128);
+
     QVBoxLayout * layout = new QVBoxLayout();
+    layout->addWidget(m_materialCanvas);
     layout->addWidget(m_propertyMaterialBrowser);
 
     QWidget * materialWidget = new QWidget(this);
@@ -366,6 +366,15 @@ void Viewer::initialize(const GLFormat & format)
     QObject::connect(
         m_qtCanvas, SIGNAL(mouseMoveEventTriggered(int)),
         this, SLOT(on_mouseMoveEventTriggered(int)));
+
+    // ToDo: revisit initialization sequence
+    initializeExplorer();
+    initializeSceneTree();
+    initializeMaterial();
+
+    this->tabifyDockWidget(m_dockScene, m_dockMaterial);
+    m_dockScene->raise();
+    m_dockMaterial->hide();
 }
 
 Viewer::~Viewer()
@@ -399,9 +408,9 @@ AbstractScenePainter * Viewer::painter()
     if(!m_qtCanvas)
         return nullptr;
 
-    return m_qtCanvas->painter();
+    // ToDo: painter refactoring
+    return dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter());
 }
-
 
 void Viewer::on_captureAsImageAction_triggered()
 {
@@ -448,14 +457,14 @@ void Viewer::on_loadFile(const QString & path)
     }
     else 
     {
-        this->assignScene(scene);
-        this->m_qtCanvas->navigation()->rescaleScene(scene);
+        assignScene(scene);
+        m_navigation->rescaleScene(scene);
         if (m_coordinateProvider)
-            this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
-        this->painter()->assignScene(scene);
-        this->m_qtCanvas->navigation()->sceneChanged(scene);
-        this->m_qtCanvas->update();
-        this->selectionBBoxChanged();
+            m_coordinateProvider->assignPass(painter()->getSharedPass());
+        painter()->assignScene(scene);
+        m_navigation->sceneChanged(scene);
+        m_qtCanvas->update();
+        selectionBBoxChanged();
     }
 }
 
@@ -477,7 +486,7 @@ void Viewer::updateCameraSelection(QString cameraName) const
 
 void Viewer::updateRenderingSelection(QString rendering) const
 {
-    m_qtCanvas->painter()->selectRendering(rendering);
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->selectRendering(rendering);
     m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 }
 
@@ -493,79 +502,79 @@ void Viewer::on_renderingPathtracerAction_triggered()
 
 void Viewer::on_phongShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('p');
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('p');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_gouraudShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('g');
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('g');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_flatShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('f');
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('f');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_goochShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('o');
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('o');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_wireframeShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('w');
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('w');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_solidWireframeShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('s');
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('s');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_primitiveWireframeShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('r');
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('r');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_normalsAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('n');
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('n');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_colorRenderingAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(1, m_ui->colorRenderingAction->isChecked());
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(1, m_ui->colorRenderingAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_shadowMappingAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(2, m_ui->shadowMappingAction->isChecked());
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(2, m_ui->shadowMappingAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_shadowBlurAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(3, m_ui->shadowBlurAction->isChecked());
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(3, m_ui->shadowBlurAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_ssaoAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(4, m_ui->ssaoAction->isChecked());
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(4, m_ui->ssaoAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_ssaoBlurAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(5, m_ui->ssaoBlurAction->isChecked());
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(5, m_ui->ssaoBlurAction->isChecked());
     m_qtCanvas->repaint();
 }
 
@@ -583,7 +592,7 @@ void Viewer::on_fboColorAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboColorAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(1);
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setFrameBuffer(1);
     m_qtCanvas->repaint();
 }
 
@@ -591,7 +600,7 @@ void Viewer::on_fboNormalzAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboNormalzAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(2);
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setFrameBuffer(2);
     m_qtCanvas->repaint();
 }
 
@@ -599,7 +608,7 @@ void Viewer::on_fboShadowsAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboShadowsAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(3);
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setFrameBuffer(3);
     m_qtCanvas->repaint();
 }
 
@@ -607,7 +616,7 @@ void Viewer::on_fboShadowMapAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboShadowMapAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(4);
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setFrameBuffer(4);
     m_qtCanvas->repaint();
 }
 
@@ -615,7 +624,7 @@ void Viewer::on_fboSSAOAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboSSAOAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(5);
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setFrameBuffer(5);
     m_qtCanvas->repaint();
 }
 
@@ -623,7 +632,7 @@ void Viewer::on_fboColorIdAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboColorIdAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(6);
+    dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setFrameBuffer(6);
     m_qtCanvas->repaint();
 }
 
@@ -714,19 +723,23 @@ void Viewer::on_toggleFullscreen_triggered()
     }
 }
 
+// ToDo: refactor towards event handler and rethink ownership
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
-    m_qtCanvas->setNavigation(navigation);
+    m_navigation = navigation;
+    m_qtCanvas->setEventHandler(m_navigation);
+
     this->setFocus();
 }
 
-AbstractNavigation * Viewer::navigation() {
+AbstractNavigation * Viewer::navigation() 
+{
     if(!m_qtCanvas)
         return nullptr;
-    return m_qtCanvas->navigation();
+    return m_navigation;
 }
 
-void Viewer::setCamera(Camera * camera )
+void Viewer::setCamera(Camera * camera)
 {
     m_camera = camera;
     if ((m_camera != nullptr) && (m_qtCanvas != nullptr))
@@ -738,7 +751,7 @@ Camera * Viewer::camera()
     return m_camera;
 }
 
-void Viewer::setCoordinateProvider(CoordinateProvider * coordinateProvider )
+void Viewer::setCoordinateProvider(CoordinateProvider * coordinateProvider)
 {
     if (coordinateProvider)
     {
@@ -1101,5 +1114,5 @@ void Viewer::selectionBBoxChanged()
     }
 
     Painter * painter = static_cast<Painter*>(this->painter());
-    painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
+    painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_navigation->sceneTransform());
 }
