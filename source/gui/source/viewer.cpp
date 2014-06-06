@@ -372,28 +372,31 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 
 void Viewer::updateHistoryList()
 {
-    QStandardItemModel * historyItems = new QStandardItemModel(this);
-    NavigationHistoryElement * historyElements = m_navigationHistory->navigationHistoryElement()->getLast();
-    qint64 selectedTimestamp = m_navigationHistory->navigationHistoryElement()->getTimestamp();
-    QModelIndex selectedIndex = historyItems->index(0, 0);
-    QStandardItem * selectedObject = new QStandardItem();
-
-    while (true)
+    if (!m_navigationHistory->isEmpty())
     {
-        QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString::number(historyElements->getTimestamp()));
-        historyItems->appendRow(historyObject);
-        if (historyElements->getTimestamp() == selectedTimestamp)
-            selectedObject = historyObject;
-        if (historyElements->isFirst())
-            break;
-        historyElements = historyElements->getPrevious();
+        QStandardItemModel * historyItems = new QStandardItemModel(this);
+        NavigationHistoryElement * historyElements = m_navigationHistory->navigationHistoryElement()->getLast();
+        qint64 selectedTimestamp = m_navigationHistory->navigationHistoryElement()->getTimestamp();
+        QModelIndex selectedIndex = historyItems->index(0, 0);
+        QStandardItem * selectedObject = new QStandardItem();
+
+        while (true)
+        {
+            QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString::number(historyElements->getTimestamp()));
+            historyItems->appendRow(historyObject);
+            if (historyElements->getTimestamp() == selectedTimestamp)
+                selectedObject = historyObject;
+            if (historyElements->isFirst())
+                break;
+            historyElements = historyElements->getPrevious();
+        }
+
+        m_historyList->setModel(historyItems);
+
+        selectedIndex = selectedObject->index();
+        m_historyList->setSelectionBehavior(QAbstractItemView::SelectRows);
+        m_historyList->setCurrentIndex(selectedIndex);
     }
-
-    m_historyList->setModel(historyItems);
-
-    selectedIndex = selectedObject->index();
-    m_historyList->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_historyList->setCurrentIndex(selectedIndex);
 }
 
 void Viewer::on_m_historyList_clicked(const QModelIndex & index)
@@ -522,8 +525,9 @@ void Viewer::on_loadFile(const QString & path)
         if (m_coordinateProvider)
             this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
         this->painter()->assignScene(scene);
-        this->m_qtCanvas->navigation()->sceneChanged(scene);
         // @TODO reset history or recapture the thumbnails
+        //m_navigationHistory->reset();
+        this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();
     }
