@@ -21,6 +21,8 @@ public:
 protected:
     virtual void onTimerEvent() override;
 
+    void updateView();
+
 
 private:
     void pitchYaw(float pitchAngle, float yawAngle);
