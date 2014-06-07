@@ -372,36 +372,48 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 
 void Viewer::updateHistoryList()
 {
-    if (!m_navigationHistory->isEmpty())
+
+    // Avoid issues with empty history lists
+    if (!this->m_navigationHistory->isEmpty())
     {
         QStandardItemModel * historyItems = new QStandardItemModel(this);
-        NavigationHistoryElement * historyElements = m_navigationHistory->navigationHistoryElement()->getLast();
-        qint64 selectedTimestamp = m_navigationHistory->navigationHistoryElement()->getTimestamp();
+        NavigationHistoryElement * historyElements = this->m_navigationHistory->navigationHistoryElement()->getLast();
+        qint64 selectedTimestamp = this->m_navigationHistory->navigationHistoryElement()->getTimestamp();
         QModelIndex selectedIndex = historyItems->index(0, 0);
         QStandardItem * selectedObject = new QStandardItem();
+
+        // Add fallback to avoid endless loops
+        int step = 0;
+        int size = this->m_navigationHistory->navigationHistoryElement()->getSize();
 
         while (true)
         {
             QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString::number(historyElements->getTimestamp()));
             historyItems->appendRow(historyObject);
+
+            // Highlights the selected item
             if (historyElements->getTimestamp() == selectedTimestamp)
                 selectedObject = historyObject;
-            if (historyElements->isFirst())
+
+            // Stops the loop before calling getPrevious()
+            if (historyElements->isFirst() || step > size)
                 break;
+
             historyElements = historyElements->getPrevious();
+            ++step;
         }
 
-        m_historyList->setModel(historyItems);
+        this->m_historyList->setModel(historyItems);
 
         selectedIndex = selectedObject->index();
-        m_historyList->setSelectionBehavior(QAbstractItemView::SelectRows);
-        m_historyList->setCurrentIndex(selectedIndex);
+        this->m_historyList->setSelectionBehavior(QAbstractItemView::SelectRows);
+        this->m_historyList->setCurrentIndex(selectedIndex);
     }
 }
 
 void Viewer::on_m_historyList_clicked(const QModelIndex & index)
 {
-    NavigationHistoryElement * currentHistory = m_qtCanvas->navigationHistory()->navigationHistoryElement();
+    NavigationHistoryElement * currentHistory = this->m_qtCanvas->navigationHistory()->navigationHistoryElement();
     qint64 selectedElement = index.data(Qt::DisplayRole).toLongLong();
 
     if (currentHistory->getTimestamp() > selectedElement)
@@ -409,7 +421,7 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
         while (currentHistory->getTimestamp() > selectedElement)
         {
             currentHistory = currentHistory->getPrevious();
-            m_qtCanvas->navigationHistory()->undo();
+            this->m_qtCanvas->navigationHistory()->undo();
         }
     }
     else
@@ -417,7 +429,7 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
         while (currentHistory->getTimestamp() < selectedElement)
         {
             currentHistory = currentHistory->getNext();
-            m_qtCanvas->navigationHistory()->redo();
+            this->m_qtCanvas->navigationHistory()->redo();
         }
     }
 }
@@ -429,8 +441,8 @@ void Viewer::initialize(const GLFormat & format)
 
     createQtContext(format);
 
-    m_navigationHistory = m_qtCanvas->navigationHistory();
-    m_navigationHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
+    this->m_navigationHistory = this->m_qtCanvas->navigationHistory();
+    this->m_navigationHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
 
     QObject::connect(
         m_qtCanvas, SIGNAL(mouseReleaseEventSignal(QMouseEvent *)),
@@ -452,6 +464,8 @@ Viewer::~Viewer()
     delete m_dockNavigator;
     delete m_dockExplorer;
     delete m_dockScene;
+    delete m_dockNavigationHistory
+    delete m_dockPropertyDemo
     delete m_sceneHierarchy;
     delete m_loader;
     delete m_coordinateProvider;
@@ -528,7 +542,7 @@ void Viewer::on_loadFile(const QString & path)
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();
-        m_navigationHistory->reset();
+        this->m_navigationHistory->reset();
     }
 }
 
