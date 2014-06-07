@@ -388,12 +388,17 @@ void Viewer::updateHistoryList()
 
         while (true)
         {
-            QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString::number(historyElements->getTimestamp()));
-            historyItems->appendRow(historyObject);
+            QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString("Step ").append(QString::number(size - step)));
+            historyObject->setData(QVariant(historyElements->getTimestamp()), 1337);
 
             // Highlights the selected item
             if (historyElements->getTimestamp() == selectedTimestamp)
+            {
+                historyObject->setText("Current View");
                 selectedObject = historyObject;
+            }
+
+            historyItems->appendRow(historyObject);
 
             // Stops the loop before calling getPrevious()
             if (historyElements->isFirst() || step > size)
@@ -414,7 +419,7 @@ void Viewer::updateHistoryList()
 void Viewer::on_m_historyList_clicked(const QModelIndex & index)
 {
     NavigationHistoryElement * currentHistory = this->m_qtCanvas->navigationHistory()->navigationHistoryElement();
-    qint64 selectedElement = index.data(Qt::DisplayRole).toLongLong();
+    qint64 selectedElement = index.data(1337).toLongLong();
 
     if (currentHistory->getTimestamp() > selectedElement)
     {
@@ -464,8 +469,8 @@ Viewer::~Viewer()
     delete m_dockNavigator;
     delete m_dockExplorer;
     delete m_dockScene;
-    delete m_dockNavigationHistory
-    delete m_dockPropertyDemo
+    delete m_dockNavigationHistory;
+    delete m_dockPropertyDemo;
     delete m_sceneHierarchy;
     delete m_loader;
     delete m_coordinateProvider;
