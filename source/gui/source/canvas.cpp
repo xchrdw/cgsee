@@ -228,16 +228,31 @@ void Canvas::setNavigation( AbstractNavigation * navigation )
     {
         m_navigation->setBBRadius(bbRadius);
     }
+
+    /// Links navigation and navigation history and the view changed signal.
     m_navigationHistory->setNavigation(m_navigation);
     m_navigation->viewChanged.connect(this, &Canvas::saveHistory);
 
 }
 
+/**
+ * @brief Getter for navigation history.
+ * @details Allows access to the whole navigation history.
+ * @return The navigation history.
+ */
 NavigationHistory * Canvas::navigationHistory()
 {
     return m_navigationHistory;
 }
 
+/**
+ * @brief Saves the current view to history.
+ * @details Saves the current view to navigation history including an image of
+ *          the current canvas.
+ *
+ * @param viewmatrix The current view matrix.
+ * @param fovy The current field of view.
+ */
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
 {
     m_navigationHistory->save(viewmatrix, fovy, this->capture(QSize(512, 512), true, false));

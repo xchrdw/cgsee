@@ -220,6 +220,11 @@ void Viewer::initializePropertyDemo()
     this->initializeDockWidgets(m_dockPropertyDemo, demoWidget, Qt::RightDockWidgetArea);
 }
 
+/**
+ * @brief Initializes navigation history dock.
+ * @details Initializes navigation history dock, connects to history changed
+ *          signal and links the navigation history list.
+ */
 void Viewer::initializeNavigationHistory()
 {
     m_dockNavigationHistory->setObjectName("navigationHistory");
@@ -370,10 +375,15 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     return qtContextHandle;
 }
 
+/**
+ * @brief Updates the navigation history dock widget.
+ * @details Updates the navigation history dock widget, check for all available
+ *          items in navigation history and sets icons and descriptions.
+ */
 void Viewer::updateHistoryList()
 {
 
-    // Avoid issues with empty history lists
+    /// Avoids issues with empty history lists
     if (!this->m_navigationHistory->isEmpty())
     {
         QStandardItemModel * historyItems = new QStandardItemModel(this);
@@ -382,7 +392,7 @@ void Viewer::updateHistoryList()
         QModelIndex selectedIndex = historyItems->index(0, 0);
         QStandardItem * selectedObject = new QStandardItem();
 
-        // Add fallback to avoid endless loops
+        /// Adds fallback to avoid endless loops
         int step = 0;
         int size = this->m_navigationHistory->navigationHistoryElement()->getSize();
         bool curr = false;
@@ -392,7 +402,7 @@ void Viewer::updateHistoryList()
             QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString("Undo"));
             historyObject->setData(QVariant(historyElements->getTimestamp()), 1337);
 
-            // Highlights the selected item
+            /// Highlights the selected item
             if (historyElements->getTimestamp() == selectedTimestamp)
             {
                 historyObject->setText("Current View");
@@ -406,7 +416,7 @@ void Viewer::updateHistoryList()
 
             historyItems->appendRow(historyObject);
 
-            // Stops the loop before calling getPrevious()
+            /// Stops the loop before calling getPrevious()
             if (historyElements->isFirst() || step > size)
                 break;
 
@@ -422,13 +432,23 @@ void Viewer::updateHistoryList()
     }
 }
 
+/**
+ * @brief Handles the navigation history clicked signal.
+ * @details Handles the navigation history clicked signal and undoes/redoes the
+ *          steps to reach the clicked view.
+ *
+ * @param index The clicked index.
+ */
 void Viewer::on_m_historyList_clicked(const QModelIndex & index)
 {
     NavigationHistoryElement * currentHistory = this->m_qtCanvas->navigationHistory()->navigationHistoryElement();
     qint64 selectedElement = index.data(1337).toLongLong();
 
+    /// Avoids getting stuck in undo/redo loops.
     if (currentHistory->getTimestamp() > selectedElement)
     {
+
+        /// Goes back in navigation history (undo)
         while (currentHistory->getTimestamp() > selectedElement)
         {
             currentHistory = currentHistory->getPrevious();
@@ -437,6 +457,8 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
     }
     else
     {
+
+        /// Goes forward in navigation history (redo)
         while (currentHistory->getTimestamp() < selectedElement)
         {
             currentHistory = currentHistory->getNext();
@@ -569,6 +591,9 @@ void Viewer::on_toggleExplorer_triggered()
     m_dockExplorer->setVisible(!visible);
 }
 
+/**
+ * @brief Toggles navigation history dock.
+ */
 void Viewer::on_toggleNavigationHistory_triggered()
 {
     bool visible = m_dockNavigationHistory->isVisible();
@@ -1038,8 +1063,23 @@ void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
 
-void Viewer::on_actionHistoryUndo_triggered() { m_qtCanvas->navigationHistory()->undo(); }
-void Viewer::on_actionHistoryRedo_triggered() { m_qtCanvas->navigationHistory()->redo(); }
+/**
+ * @brief Goes back in history 1 step.
+ * @details Goes back in navigation history 1 step (undo).
+ */
+void Viewer::on_actionHistoryUndo_triggered()
+{
+    m_qtCanvas->navigationHistory()->undo();
+}
+
+/**
+ * @brief Goes forward in history 1 step.
+ * @details Goes forward in navigation history 1 step (redo).
+ */
+void Viewer::on_actionHistoryRedo_triggered()
+{
+    m_qtCanvas->navigationHistory()->redo();
+}
 
 
 void Viewer::on_mouseMoveEventTriggered(int triggered)
