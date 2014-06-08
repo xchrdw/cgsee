@@ -385,10 +385,11 @@ void Viewer::updateHistoryList()
         // Add fallback to avoid endless loops
         int step = 0;
         int size = this->m_navigationHistory->navigationHistoryElement()->getSize();
+        bool curr = false;
 
         while (true)
         {
-            QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString("Step ").append(QString::number(size - step)));
+            QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString("Undo"));
             historyObject->setData(QVariant(historyElements->getTimestamp()), 1337);
 
             // Highlights the selected item
@@ -396,6 +397,11 @@ void Viewer::updateHistoryList()
             {
                 historyObject->setText("Current View");
                 selectedObject = historyObject;
+                curr = true;
+            }
+            else if (!curr)
+            {
+                historyObject->setText(QString("Redo"));
             }
 
             historyItems->appendRow(historyObject);
