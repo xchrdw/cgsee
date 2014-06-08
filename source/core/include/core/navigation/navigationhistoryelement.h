@@ -40,15 +40,15 @@ public:
     void setNext(NavigationHistoryElement * next);
 
     /// Getter
-    NavigationHistoryElement * getPrevious();
-    NavigationHistoryElement * getNext();
-    NavigationHistoryElement * getFirst();
-    NavigationHistoryElement * getLast();
-    glm::mat4 getViewMatrix();
-    float getFovy();
-    QImage getThumbnail();
-    qint64 getTimestamp();
-    int getSize();
+    NavigationHistoryElement * previous();
+    NavigationHistoryElement * next();
+    NavigationHistoryElement * first();
+    NavigationHistoryElement * last();
+    glm::mat4 viewMatrix();
+    float fovy();
+    QImage thumbnail();
+    qint64 timestamp();
+    int size();
 
     /// Public methods
     bool isFirst();

@@ -33,9 +33,7 @@ AbstractNavigation::AbstractNavigation(Camera * camera)
 }
 
 
-AbstractNavigation::~AbstractNavigation()
-{
-}
+AbstractNavigation::~AbstractNavigation() { }
 
 
 const glm::mat4 & AbstractNavigation::viewMatrix()

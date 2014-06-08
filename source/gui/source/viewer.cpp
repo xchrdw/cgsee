@@ -387,23 +387,23 @@ void Viewer::updateHistoryList()
     if (!this->m_navigationHistory->isEmpty())
     {
         QStandardItemModel * historyItems = new QStandardItemModel(this);
-        NavigationHistoryElement * historyElements = this->m_navigationHistory->navigationHistoryElement()->getLast();
-        qint64 selectedTimestamp = this->m_navigationHistory->navigationHistoryElement()->getTimestamp();
+        NavigationHistoryElement * historyElements = this->m_navigationHistory->navigationHistoryElement()->last();
+        qint64 selectedTimestamp = this->m_navigationHistory->navigationHistoryElement()->timestamp();
         QModelIndex selectedIndex = historyItems->index(0, 0);
         QStandardItem * selectedObject = new QStandardItem();
 
         /// Adds fallback to avoid endless loops
         int step = 0;
-        int size = this->m_navigationHistory->navigationHistoryElement()->getSize();
+        int size = this->m_navigationHistory->navigationHistoryElement()->size();
         bool curr = false;
 
         while (true)
         {
-            QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->getThumbnail())), QString("Undo"));
-            historyObject->setData(QVariant(historyElements->getTimestamp()), 1337);
+            QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->thumbnail())), QString("Undo"));
+            historyObject->setData(QVariant(historyElements->timestamp()), 1337);
 
             /// Highlights the selected item
-            if (historyElements->getTimestamp() == selectedTimestamp)
+            if (historyElements->timestamp() == selectedTimestamp)
             {
                 historyObject->setText("Current View");
                 selectedObject = historyObject;
@@ -416,11 +416,11 @@ void Viewer::updateHistoryList()
 
             historyItems->appendRow(historyObject);
 
-            /// Stops the loop before calling getPrevious()
+            /// Stops the loop before calling previous()
             if (historyElements->isFirst() || step > size)
                 break;
 
-            historyElements = historyElements->getPrevious();
+            historyElements = historyElements->previous();
             ++step;
         }
 
@@ -445,13 +445,13 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
     qint64 selectedElement = index.data(1337).toLongLong();
 
     /// Avoids getting stuck in undo/redo loops.
-    if (currentHistory->getTimestamp() > selectedElement)
+    if (currentHistory->timestamp() > selectedElement)
     {
 
         /// Goes back in navigation history (undo)
-        while (currentHistory->getTimestamp() > selectedElement)
+        while (currentHistory->timestamp() > selectedElement)
         {
-            currentHistory = currentHistory->getPrevious();
+            currentHistory = currentHistory->previous();
             this->m_qtCanvas->navigationHistory()->undo();
         }
     }
@@ -459,9 +459,9 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
     {
 
         /// Goes forward in navigation history (redo)
-        while (currentHistory->getTimestamp() < selectedElement)
+        while (currentHistory->timestamp() < selectedElement)
         {
-            currentHistory = currentHistory->getNext();
+            currentHistory = currentHistory->next();
             this->m_qtCanvas->navigationHistory()->redo();
         }
     }

@@ -80,8 +80,8 @@ void NavigationHistory::undo()
 {
     if (!m_navigationHistory->isFirst() && !this->isEmpty())
     {
-        m_navigationHistory = m_navigationHistory->getPrevious();
-        m_navigation->loadView(m_navigationHistory->getViewMatrix(), m_navigationHistory->getFovy(), false);
+        m_navigationHistory = m_navigationHistory->previous();
+        m_navigation->loadView(m_navigationHistory->viewMatrix(), m_navigationHistory->fovy(), false);
         onHistoryChanged();
     }
 }
@@ -96,8 +96,8 @@ void NavigationHistory::redo()
 {
     if(!m_navigationHistory->isLast() && !this->isEmpty())
     {
-        m_navigationHistory = m_navigationHistory->getNext();
-        m_navigation->loadView(m_navigationHistory->getViewMatrix(), m_navigationHistory->getFovy(), false);
+        m_navigationHistory = m_navigationHistory->next();
+        m_navigation->loadView(m_navigationHistory->viewMatrix(), m_navigationHistory->fovy(), false);
         onHistoryChanged();
     }
 }
@@ -111,16 +111,16 @@ void NavigationHistory::reset()
 {
     if(!this->isEmpty())
     {
-        NavigationHistoryElement * historyHandle {m_navigationHistory->getLast()};
+        NavigationHistoryElement * historyHandle {m_navigationHistory->last()};
         NavigationHistoryElement * prev;
 
         /// Saves one state with new object to history tail
         m_navigation->onViewChanged();
-        NavigationHistoryElement * newHandle {m_navigationHistory->getLast()};
+        NavigationHistoryElement * newHandle {m_navigationHistory->last()};
 
-        while(historyHandle->getPrevious() != nullptr)
+        while(historyHandle->previous() != nullptr)
         {
-            prev = historyHandle->getPrevious();
+            prev = historyHandle->previous();
             delete historyHandle;
             historyHandle = prev;
         }

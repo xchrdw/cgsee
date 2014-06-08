@@ -53,7 +53,7 @@ NavigationHistoryElement::NavigationHistoryElement(NavigationHistoryElement * pr
     {
 
         /// Handles orphaned history branching, deletes unused elements.
-        if (previous->getNext() != nullptr && previous->getNext() != previous)
+        if (previous->next() != nullptr && previous->next() != previous)
             deleteOrphaned();
 
         previous->setNext(this);
@@ -96,7 +96,7 @@ void NavigationHistoryElement::setNext(NavigationHistoryElement * next)
  * @details Allows to access the item before this element in the list.
  * @return Previous item in history list.
  */
-NavigationHistoryElement * NavigationHistoryElement::getPrevious()
+NavigationHistoryElement * NavigationHistoryElement::previous()
 {
         return m_previous;
 }
@@ -107,7 +107,7 @@ NavigationHistoryElement * NavigationHistoryElement::getPrevious()
  * @details Allows to access the item after this element in the list.
  * @return Next item in history list.
  */
-NavigationHistoryElement * NavigationHistoryElement::getNext()
+NavigationHistoryElement * NavigationHistoryElement::next()
 {
         return m_next;
 }
@@ -117,12 +117,12 @@ NavigationHistoryElement * NavigationHistoryElement::getNext()
  * @details Allows to access the first item in this linked list.
  * @return The first item in the history list.
  */
-NavigationHistoryElement * NavigationHistoryElement::getFirst()
+NavigationHistoryElement * NavigationHistoryElement::first()
 {
     NavigationHistoryElement * temp {this};
     while(!temp->isFirst())
     {
-        temp = temp->getPrevious();
+        temp = temp->previous();
     }
     return temp;
 }
@@ -132,12 +132,12 @@ NavigationHistoryElement * NavigationHistoryElement::getFirst()
  * @details Allows to access the last item in this linked list.
  * @return The last item in the history list.
  */
-NavigationHistoryElement * NavigationHistoryElement::getLast()
+NavigationHistoryElement * NavigationHistoryElement::last()
 {
     NavigationHistoryElement * temp {this};
     while(!temp->isLast())
     {
-        temp = temp->getNext();
+        temp = temp->next();
     }
     return temp;
 }
@@ -147,7 +147,7 @@ NavigationHistoryElement * NavigationHistoryElement::getLast()
  * @details Allows to access the view matrix of the current history element.
  * @return The view matrix of the current history element.
  */
-glm::mat4 NavigationHistoryElement::getViewMatrix()
+glm::mat4 NavigationHistoryElement::viewMatrix()
 {
     return m_viewmatrix;
 }
@@ -157,7 +157,7 @@ glm::mat4 NavigationHistoryElement::getViewMatrix()
  * @details Allows to access the field of view of the current history element.
  * @return The field of view of the current history element.
  */
-float NavigationHistoryElement::getFovy()
+float NavigationHistoryElement::fovy()
 {
     return m_fovy;
 }
@@ -167,7 +167,7 @@ float NavigationHistoryElement::getFovy()
  * @details Allows to access the preview of the current history element.
  * @return The thumbnail of the current history element.
  */
-QImage NavigationHistoryElement::getThumbnail()
+QImage NavigationHistoryElement::thumbnail()
 {
     return m_thumbnail;
 }
@@ -177,7 +177,7 @@ QImage NavigationHistoryElement::getThumbnail()
  * @details Allows to access the timestamp of the current history element.
  * @return The timestamp of the current history element.
  */
-qint64 NavigationHistoryElement::getTimestamp()
+qint64 NavigationHistoryElement::timestamp()
 {
     return m_timestamp;
 }
@@ -187,7 +187,7 @@ qint64 NavigationHistoryElement::getTimestamp()
  * @details Allows to access the size of the current history list.
  * @return The size of the current history list.
  */
-int NavigationHistoryElement::getSize()
+int NavigationHistoryElement::size()
 {
     return m_length;
 }
@@ -249,10 +249,10 @@ bool NavigationHistoryElement::isEqualFovy(const float & fovy)
  */
 void NavigationHistoryElement::deleteOrphaned()
 {
-    NavigationHistoryElement * temp {m_previous->getLast()};
+    NavigationHistoryElement * temp {m_previous->last()};
     while(temp != m_previous)
     {
-        temp = temp->getPrevious();
+        temp = temp->previous();
         temp->setNext(nullptr);
         --m_length;
     }
@@ -265,7 +265,7 @@ void NavigationHistoryElement::deleteOrphaned()
  */
 void NavigationHistoryElement::deleteFirst()
 {
-    NavigationHistoryElement * new_first {this->getFirst()->getNext()};
+    NavigationHistoryElement * new_first {this->first()->next()};
     new_first->setPrevious(nullptr);
     --m_length;
 }
