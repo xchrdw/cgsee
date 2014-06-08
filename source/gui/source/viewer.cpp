@@ -448,7 +448,7 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
     if (currentHistory->timestamp() > selectedElement)
     {
 
-        /// Goes back in navigation history (undo)
+        /// Goes back in navigation history (undo).
         while (currentHistory->timestamp() > selectedElement)
         {
             currentHistory = currentHistory->previous();
@@ -458,13 +458,16 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
     else
     {
 
-        /// Goes forward in navigation history (redo)
+        /// Goes forward in navigation history (redo).
         while (currentHistory->timestamp() < selectedElement)
         {
             currentHistory = currentHistory->next();
             this->m_qtCanvas->navigationHistory()->redo();
         }
     }
+
+    /// Restores focus after clicking the history items.
+    this->setFocus();
 }
 
 void Viewer::initialize(const GLFormat & format)
