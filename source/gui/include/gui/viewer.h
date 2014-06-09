@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gui/gui_api.h>
+#include <core/navigation/navigationhistory.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -13,6 +14,7 @@ typedef struct __GLXcontextRec *GLXContext;
 
 #include <QMainWindow>
 #include <QMap>
+#include <QListView>
 
 #include <glm/glm.hpp>
 
@@ -60,7 +62,7 @@ public:
 
     void initialize(const GLFormat & format);
 
-   void setNavigation(AbstractNavigation * navigation);
+    void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
 
     void setPainter(AbstractScenePainter * painter);
@@ -118,6 +120,9 @@ public slots:
     void on_actionLoad_3_triggered();
     void on_actionLoad_4_triggered();
 
+    void on_actionHistoryUndo_triggered();
+    void on_actionHistoryRedo_triggered();
+
     void on_loadFile(const QString & path);
 
 protected slots:
@@ -159,6 +164,8 @@ protected slots:
 
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
+    void on_toggleNavigationHistory_triggered();
+    void on_togglePropertyDemo_triggered();
     void on_toggleFullscreen_triggered();
 
     void on_mouseMoveEventTriggered(int triggered);
@@ -166,16 +173,21 @@ protected slots:
 
     void on_m_sceneHierarchyTree_clicked(const QModelIndex & index);
     void on_m_sceneHierarchy_itemChanged(QStandardItem * item);
+
+    void on_m_historyList_clicked(const QModelIndex & index);
+
 protected:
 
     void initializeExplorer();
     void initializeSceneTree();
     void initializePropertyDemo();
+    void initializeNavigationHistory();
     void initializeDockWidgets(QDockWidget * dockWidget,
     QWidget * widget, Qt::DockWidgetArea area);
     void createSceneHierarchy(QStandardItemModel * model, Node * parentNode);
     void fillSceneHierarchy(Node * node, QStandardItem * parent);
     void assignScene(Group * rootNode);
+    void updateHistoryList();
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -202,18 +214,21 @@ protected:
 
     Canvas * m_qtCanvas;
     Camera * m_camera;
-    QVector<glm::mat4> m_saved_views;
+    QVector<glm::mat4> m_savedViews;
 
     QDockWidget * m_dockNavigator;
     QDockWidget * m_dockExplorer;
     QDockWidget * m_dockScene;
     QDockWidget * m_dockPropertyDemo;
+    QDockWidget * m_dockNavigationHistory;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
+    QListView * m_historyList;
+    NavigationHistory * m_navigationHistory;
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;

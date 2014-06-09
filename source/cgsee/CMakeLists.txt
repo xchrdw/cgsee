@@ -8,6 +8,7 @@ message(STATUS "App ${target}")
 
 find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
+find_package(libzeug    REQUIRED)
 
 #
 # Includes
@@ -16,6 +17,7 @@ find_package(GLEW       REQUIRED)
 include_directories(
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+    ${LIBZEUG_INCLUDES}
 )
 
 include_directories(
@@ -32,6 +34,7 @@ set(libs
     # e.g., ${TRDP_LIBRARIES}
     core
     gui
+    ${LIBZEUG_SIGNAL_LIBRARY}
 )
 
 #
