@@ -28,15 +28,15 @@ Plane::Plane(glm::vec3 normal, float distance, glm::mat4 transform) :
     m_normal(normal) // value of m_normal is not yet valid
 {
     glm::vec4 homogenousNormal = glm::normalize(transform * glm::vec4(normal, 1.0));
-    m_normal = (1 / homogenousNormal.w) * homogenousNormal.xyz;
-    
+    m_normal = (1 / homogenousNormal.w) * homogenousNormal.xyz();
+
     glm::vec4 homogenousSupportVector = transform * (homogenousNormal * distance);
-    glm::vec3 supportVector = (1 / homogenousSupportVector.w) * homogenousSupportVector.xyz;
+    glm::vec3 supportVector = (1 / homogenousSupportVector.w) * homogenousSupportVector.xyz();
 
     m_distance = glm::dot(supportVector, m_normal);
 }
 
-    
+
 Plane::~Plane() {
 }
 
