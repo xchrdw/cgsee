@@ -1,10 +1,10 @@
 #version 150 core
-//TODO: Layout setzen auf 0 für shadowmap
 uniform sampler2D shadowmap;
 uniform float znear;
 uniform float zfar;
 
 in vec4 v_shadow;
+in vec3 normal;
 
 out vec4 fragColor;
 
@@ -26,7 +26,7 @@ float vsm()
 		float depth = linearize(shadowCoords.z);
 		vec2 moments = texture(shadowmap, shadowCoords.xy).xy;
 		float p = smoothstep(depth - 0.01, depth, moments.x);
-		float variance = max(moments.y - moments.x * moments.x, 0.0);
+		float variance = max(moments.y - moments.x * moments.x, 0.0002);
 		float d = depth - moments.x;
 		float p_max = linstep(0.2, 1.0, variance / (d*d + variance));
 		p_max = variance / (d*d + variance);

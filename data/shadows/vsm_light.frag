@@ -3,6 +3,8 @@
 uniform float znear;
 uniform float zfar;
 
+in vec3 normal;
+
 out vec4 fragColor;
 
 float linearize(float depth) 
