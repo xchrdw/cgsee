@@ -214,6 +214,7 @@ protected:
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
+    Group * m_scene;
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;
