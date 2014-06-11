@@ -1,5 +1,6 @@
 /// Preprocessor directive
 #pragma once
+#include <core/core_api.h>
 
 /// Include navigation history wrapper and history elements list.
 #include <core/navigation/abstractnavigation.h>
@@ -17,7 +18,7 @@
  *          the NavigationHistoryElements linked list which stores the complete
  *          history.
  */
-class NavigationHistory
+class CORE_API NavigationHistory
 {
 
 public:

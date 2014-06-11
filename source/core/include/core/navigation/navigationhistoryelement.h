@@ -1,5 +1,6 @@
 /// Preprocessor directive
 #pragma once
+#include <core/core_api.h>
 
 /// Include QImage and QSize for thumbnails.
 #include <QImage>
@@ -23,7 +24,7 @@
  * @param fovy The current field of view.
  * @param thumbnail The current snapshot of the canvas.
  */
-class NavigationHistoryElement
+class CORE_API NavigationHistoryElement
 {
 
     /// Allow access to member variables for NavigationHistory.
