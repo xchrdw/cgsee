@@ -23,7 +23,6 @@ class LightSourcePass;
 class PipelinePainter : public AbstractScenePainter // , public PropertyGroup
 {
 public:
-    typedef GLuint Sampler;
 
     PipelinePainter(Camera * camera, Group * scene);
     virtual ~PipelinePainter();
@@ -58,11 +57,11 @@ public:
     void setScene(Group * scene);
     void setCamera(Camera * camera);
 
-    Sampler getSampler(QString name);
-    bool samplerExists(QString name);
-    void setSampler(QString name, Sampler sampler);
-    bool addSampler(QString name, Sampler sampler);
-    void removeSampler(QString name);
+    GLuint getTexture(QString name);
+    bool textureExists(QString name);
+    void setTexture(QString name, GLuint texture);
+    bool addTexture(QString name, GLuint texture);
+    void removeTexture(QString name);
 
 protected:
 
@@ -74,7 +73,7 @@ protected:
     QList<RenderStage *> m_stages;
 
     QString m_samplerToDisplay;
-    QMap<QString, Sampler> m_samplers;
+    QMap<QString, Sampler> m_texture;
 
     Camera * m_camera;
     Group * m_scene;

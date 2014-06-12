@@ -106,6 +106,7 @@ set(sources
 	${source_path}/property/listproperty.cpp
 	${source_path}/property/announcer.cpp
 	${source_path}/property/propertylist.cpp
+    ${source_path}/renderbufferobject.cpp
 	${source_path}/rendering/blureffect.cpp
 	${source_path}/rendering/boundingboxpass.cpp
 	${source_path}/rendering/renderingpass.cpp
@@ -137,6 +138,7 @@ set(sources
 	${source_path}/scenegraph/absolutetransformator.cpp
 	${source_path}/screenquad.cpp
 	${source_path}/shader.cpp
+    ${source_path}/textureobject.cpp
 	${source_path}/timer.cpp
 	${source_path}/vertexcacheoptimizer.cpp
 	${source_path}/vertexcacheoptimizer.h
@@ -198,6 +200,7 @@ set(api_includes
 	${include_path}/property/advancedlistproperty.h
 	${include_path}/property/abstractproperty.h
 	${include_path}/property/propertylist.h
+    ${include_path}/renderbufferobject.h
 	${include_path}/rendering/rendertechnique.h
     ${include_path}/rendering/renderstage.h
 	${include_path}/rendering/postprocessingstage.h
@@ -231,6 +234,7 @@ set(api_includes
 	${include_path}/scenegraph/cullingvisitor.h
 	${include_path}/screenquad.h
 	${include_path}/shader.h
+    ${include_path}/textureobject.h
 	${include_path}/timer.h
 	${include_path}/typedefs.h
 	${include_path}/viewfrustum.h

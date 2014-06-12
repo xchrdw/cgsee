@@ -10,13 +10,16 @@
 
 RenderStage::RenderStage(PipelinePainter & painter)
     : m_painter(painter)
+    , m_fbo(0)
 {
-
+    glGenFramebuffers(1, &m_fbo);
+    glError();
 }
 
 RenderStage::~RenderStage(void)
 {
-
+    glDeleteFramebuffers(1, &m_fbo);
+    glError();
 }
 
 void RenderStage::drawScene(glm::mat4 & transform, Program * program)
@@ -24,22 +27,18 @@ void RenderStage::drawScene(glm::mat4 & transform, Program * program)
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, transform);
     traverser.traverse(*(m_painter.scene()), drawVisitor);
-
 }
 
-FrameBufferObject * RenderStage::getFramebuffer(u_int32_t slot)
+GLuint RenderStage::bindFBO()
 {
-    return m_painter.getFramebuffer(slot);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glError();
 }
 
-void RenderStage::setFramebuffer(u_int32_t slot, FrameBufferObject fbo)
+void RenderStage::releaseFBO()
 {
-    m_painter.setFramebuffer(slot, fbo);
-}
-
-void RenderStage::unsetFramebuffer(u_int32_t slot)
-{
-    m_painter.unsetFramebuffer(slot);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glError();
 }
 
 bool RenderStage::isSceneInvalid()

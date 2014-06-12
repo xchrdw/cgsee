@@ -10,7 +10,7 @@ PipelinePainter(Camera * camera, Group * scene)
     , m_scene(scene)
     , m_quad(new ScreenQuad())
     , m_stages(QList<RenderStage *>())
-    , m_samplers(QMap<QString, Sampler>())
+    , m_textures(QMap<QString, GLuint>())
 {
 
 }
@@ -100,32 +100,32 @@ void setCamera(Camera * camera)
     pipelineConfigChanged();
 }
 
-Sampler getSampler(QString name)
+GLuint getTexture(QString name)
 {
-    return m_samplers.value(name, 0);
+    return m_texture.value(name, 0);
 }
 
-bool samplerExists(QString name)
+bool textureExists(QString name)
 {
-    return m_samplers.contains(name);
+    return m_texture.contains(name);
 }
 
-void setSampler(QString name, Sampler sampler)
+void setTexture(QString name, GLuint texture)
 {
-    m_samplers[name] = sampler;
+    m_texture[name] = texture;
 }
 
-bool addSampler(QString name, Sampler sampler)
+bool addTexture(QString name, GLuint texture)
 {
-    if(samplerExists(name))
+    if(textureExists(name))
         return false;
-    setSampler(name, sampler);
+    setTexture(name, texture);
     return true;
 }
 
-void removeSampler(QString name)
+void removeTexture(QString name)
 {
-    m_samplers.remove(name);
+    m_textures.remove(name);
 }
 
 void setupPipeline(PipelineBuilder & builder)

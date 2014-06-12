@@ -29,7 +29,18 @@ protected:
     bool isSceneInvalid();
     bool isViewInvalid();
 
+protected:
+    GLuint bindFBO();
+    void releaseFBO();
+
+    GLuint createRenderbuffer(GLuint width, GLuint height, GLenum internalFormat);
+    void deleteRenderbuffer(GLuint renderbuffer);
+    void attachRenderbuffer(GLenum attachment, GLuint renderbuffer);
 
 protected:
     PipelinePainter & m_painter;
+
+    GLuint m_fbo;
+    bool m_fboIsBound;
+
 };
