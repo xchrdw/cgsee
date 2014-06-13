@@ -20,9 +20,11 @@ public:
 private:
 	static const glm::mat4 biasMatrix;
 	Camera *m_lightCamera;
+	Camera *m_light2Camera;
 
 	Program *m_lightProgram;
 	FrameBufferObject* m_shadowmapFBO;
+	FrameBufferObject* m_shadowmap2FBO;
 
     Group *m_scene;
 };

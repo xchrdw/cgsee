@@ -350,3 +350,15 @@ void Program::setUniform(
     glUniformMatrix4fv(location, 1, transpose,  glm::value_ptr(mat));
     glError();
 }
+
+void Program::setUniform(
+	const QString & name
+	, const unsigned int count
+	, const glm::mat4 & mat
+	, const bool transpose) const
+{
+	const GLint location(uniformLocation(name));
+
+	glUniformMatrix4fv(location, count, transpose, glm::value_ptr(mat));
+	glError();
+}
