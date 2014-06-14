@@ -41,17 +41,22 @@ VarianceShadowMappingPass::VarianceShadowMappingPass(Camera * camera)
 	m_light2Camera->setViewport(glm::ivec2(ShadowMapSize, ShadowMapSize));
 	m_light2Camera->update();
 
+
 	m_lightProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/vsm_light.frag"));
 	m_lightProgram->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/vsm_light.vert"));
 
 	m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/vsm_shadow.frag"));
 	m_program->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/vsm_shadow.vert"));
 
-	m_shadowmapFBO = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-	m_shadowmapFBO->resize(ShadowMapSize, ShadowMapSize);
+	//m_shadowmapFBO3D = new FrameBufferObject(GL_RG32F, GL_RG, GL_FLOAT, 4, true);
+	m_shadowmapFBO3D = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, true, 4);
+	m_shadowmapFBO3D->resize(ShadowMapSize, ShadowMapSize);
 
-	m_shadowmap2FBO = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
-	m_shadowmap2FBO->resize(ShadowMapSize, ShadowMapSize);
+	//m_shadowmapFBO = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+	//m_shadowmapFBO->resize(ShadowMapSize, ShadowMapSize);
+
+	//m_shadowmap2FBO = new FrameBufferObject(GL_RGBA32F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, true);
+	//m_shadowmap2FBO->resize(ShadowMapSize, ShadowMapSize);
 }
 
 VarianceShadowMappingPass::~VarianceShadowMappingPass()
@@ -59,8 +64,9 @@ VarianceShadowMappingPass::~VarianceShadowMappingPass()
 	delete(m_lightCamera);
 	delete(m_light2Camera);
 	delete(m_lightProgram);
-	delete(m_shadowmapFBO);
-	delete(m_shadowmap2FBO);
+	delete(m_shadowmapFBO3D);
+	//delete(m_shadowmapFBO);
+	//delete(m_shadowmap2FBO);
 }
 
 void VarianceShadowMappingPass::render()
@@ -69,14 +75,21 @@ void VarianceShadowMappingPass::render()
 	biasLightViewProjection[0] = biasMatrix * m_lightCamera->transform();
 	biasLightViewProjection[1] = biasMatrix * m_light2Camera->transform();
 
-	drawScene(m_lightCamera, m_lightProgram, m_shadowmapFBO);
+	//drawScene(m_lightCamera, m_lightProgram, m_shadowmapFBO);
+	//m_lightProgram->invalidate();
+	//drawScene(m_light2Camera, m_lightProgram, m_shadowmap2FBO);
+
+	m_lightProgram->setUniform("useLayer", 0);
+	drawScene(m_lightCamera, m_lightProgram, m_shadowmapFBO3D);
 	m_lightProgram->invalidate();
-	drawScene(m_light2Camera, m_lightProgram, m_shadowmap2FBO);
+	m_lightProgram->setUniform("useLayer", 1);
+	drawScene(m_light2Camera, m_lightProgram, m_shadowmapFBO3D);
 
 	m_program->setUniform("inverseViewProjection", m_camera->transformInverse());
 	m_program->setUniform("biasLightViewProjection", 2, biasLightViewProjection[0]);
-	m_shadowmapFBO->bindTexture2D(*m_program, "shadowmap", 0);
-	m_shadowmap2FBO->bindTexture2D(*m_program, "shadowmap2", 1);
+	//m_shadowmapFBO->bindTexture2D(*m_program, "shadowmap", 0);
+	//m_shadowmap2FBO->bindTexture2D(*m_program, "shadowmap2", 1);
+	m_shadowmapFBO3D->bindTexture3D(*m_program, "shadowmap3D", 0);
 	drawScene(m_camera, m_program, m_fbo);
 }
 

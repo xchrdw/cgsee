@@ -21,6 +21,13 @@ public:
     ,   const GLenum attachment
     ,   const bool   depth);
 
+	FrameBufferObject(
+		const GLenum internalFormat
+		, const GLenum format
+		, const GLenum type
+		, const bool   depth
+		, const GLsizei layerCount);
+
     virtual ~FrameBufferObject();
 
     void bind() const;
@@ -31,7 +38,13 @@ public:
     ,   const QString & uniform
     ,   const glm::uint slot) const;
 
+	void bindTexture3D(
+		const Program & program
+	,	const QString & uniform
+	,	const glm::uint slot) const;
+
     void releaseTexture2D() const;
+	void releaseTexture3D() const;
 
     void clear();
 
@@ -61,8 +74,11 @@ protected:
     const GLenum m_format;
     const GLenum m_type;
     const GLenum m_attachment;
+	GLenum *m_multiAttachment;
     const bool   m_depth;
 
     unsigned int m_width;
     unsigned int m_height;
+
+	GLsizei m_layerCount;
 };

@@ -19,10 +19,13 @@ public:
 
 private:
 	static const glm::mat4 biasMatrix;
+	//std::vector<Camera *> lightCam;
 	Camera *m_lightCamera;
 	Camera *m_light2Camera;
 
 	Program *m_lightProgram;
+
+	FrameBufferObject* m_shadowmapFBO3D;
 	FrameBufferObject* m_shadowmapFBO;
 	FrameBufferObject* m_shadowmap2FBO;
 
