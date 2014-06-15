@@ -32,32 +32,33 @@ FrameBufferObject::FrameBufferObject(
 }
 
 FrameBufferObject::FrameBufferObject(
-	const GLenum internalFormat
-	, const GLenum format
-	, const GLenum type
-	, const bool   depth
-	, const GLsizei layerCount)
+    const GLenum internalFormat
+    , const GLenum  format
+    , const GLenum  type
+    , const GLenum  startAttachment
+    , const GLsizei layerCount
+    , const bool    depth)
 
-	: m_fbo(-1)
-	, m_render(-1)
-	, m_texture(-1)
+    : m_fbo(-1)
+    , m_render(-1)
+    , m_texture(-1)
 
-	, m_size(glm::ivec2(0))
+    , m_size(glm::ivec2(0))
 
-	, m_internal(internalFormat)
-	, m_format(format)
-	, m_type(type)
-	, m_layerCount(layerCount)
-	, m_attachment(GL_COLOR_ATTACHMENT0)
-	, m_multiAttachment(new GLenum[layerCount])
-	, m_depth(depth)
-	, m_width(0)
-	, m_height(0)
+    , m_internal(internalFormat)
+    , m_format(format)
+    , m_type(type)
+    , m_layerCount(layerCount)
+    , m_attachment(startAttachment)
+    , m_multiAttachment(new GLenum[layerCount])
+    , m_depth(depth)
+    , m_width(0)
+    , m_height(0)
 {
-	for (int i = 0; i < layerCount; i++)
-	{
-		m_multiAttachment[i] = GL_COLOR_ATTACHMENT0 + i;
-	}
+    for (int i = 0; i < layerCount; i++)
+    {
+        m_multiAttachment[i] = m_attachment + i;
+    }
 }
 
 FrameBufferObject::~FrameBufferObject()
@@ -171,8 +172,18 @@ void FrameBufferObject::initialize() const
 {
     if(m_depth) // Initialize Render Buffer for Depth
     {
-        glGenRenderbuffers(1, &m_render);
-        glError();
+        if (m_layerCount <= 0)
+        {
+            glGenRenderbuffers(1, &m_render);
+            glError();
+        }
+        else // or layered image for depth, if layered rendering is used
+        {
+            glGenTextures(1, &m_render);
+            glError();
+
+        }
+        
     }
 
     glGenTextures(1, &m_texture);
@@ -188,21 +199,22 @@ void FrameBufferObject::initialize() const
 
     if(m_depth)
     {
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
-        glError();
+        if (m_layerCount <= 0)
+        {
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render);
+            glError();
+        }
+        else{
+            glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_render, 0);
+            glError();
+        }
+        
     }
 
 	if (m_layerCount > 0)
 	{
-		for (int i = 0; i < m_layerCount; i++)
-		{
-			glFramebufferTexture3D(GL_FRAMEBUFFER, m_multiAttachment[i]
-				, GL_TEXTURE_3D, m_texture, 0, i);
-			glError();
-		}
-
-		glDrawBuffers(m_layerCount, m_multiAttachment);
-		glError();
+        glFramebufferTexture(GL_FRAMEBUFFER, m_attachment, m_texture, 0);
+        glError();
 	}
 	else 
 	{
@@ -248,13 +260,31 @@ unsigned int FrameBufferObject::height()
 
 void FrameBufferObject::resize() const
 {
-    if(m_depth && m_render != -1)
+    if(m_depth && m_render != -1 && m_layerCount <= 0)
     {
         glBindRenderbuffer(GL_RENDERBUFFER, m_render);
         glError();
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_size.x, m_size.y);
         glError();
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glError();
+    }
+
+    if (m_depth && m_render != -1 && m_layerCount > 0)
+    {
+        glBindTexture(GL_TEXTURE_2D_ARRAY, m_render);
+        glError();
+
+        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT24, m_size.x, m_size.y, m_layerCount, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+        glError();
+
+        glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
         glError();
     }
 

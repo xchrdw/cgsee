@@ -23,10 +23,11 @@ public:
 
 	FrameBufferObject(
 		const GLenum internalFormat
-		, const GLenum format
-		, const GLenum type
-		, const bool   depth
-		, const GLsizei layerCount);
+		, const GLenum  format
+		, const GLenum  type
+        , const GLenum  startAttachment
+		, const GLsizei layerCount
+        , const bool    depth);
 
     virtual ~FrameBufferObject();
 
