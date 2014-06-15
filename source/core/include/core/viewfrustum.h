@@ -25,7 +25,7 @@ public:
     };
 
     e_insideFrustum contains(const AxisAlignedBoundingBox &aabb, glm::mat4 transform) const;
-    bool contains(glm::vec4 point) const;
+    bool contains(glm::vec3 point) const;
     void update();
 
     bool isDirty() const;
@@ -35,5 +35,6 @@ protected:
 
     Camera *m_camera;
     std::array<Plane, 6> m_planes;
+    std::array<glm::vec3, 8> m_vertices;
     bool m_dirty;
 };

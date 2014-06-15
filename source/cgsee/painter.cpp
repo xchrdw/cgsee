@@ -17,6 +17,7 @@
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
+#include <core/scenegraph/cullingvisitor.h>
 #include <core/program.h>
 #include <core/screenquad.h>
 #include <core/rendering/ssaoeffect.h>
@@ -348,8 +349,14 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
 {
     fbo->bind();
     SceneTraverser traverser;
-    DrawVisitor drawVisitor(program, camera->transform());
-    traverser.traverse(*camera, drawVisitor);
+    if (m_viewFrustumCulling) {
+        CullingVisitor cullingVisitor(camera, program, camera->transform());
+        traverser.traverse(*camera, cullingVisitor);
+    }
+    else {
+        DrawVisitor drawVisitor(program, camera->transform());
+        traverser.traverse(*camera, drawVisitor);
+    }
     fbo->release();
 }
 
@@ -431,6 +438,14 @@ void Painter::postShaderRelinked()
     m_shadowBlur->setUniforms();
     m_ssao->setUniforms();
     m_ssaoBlur->setUniforms();
+}
+
+void Painter::setViewFrustumCulling(bool viewFrustumCullingEnabled) {
+    m_viewFrustumCulling = viewFrustumCullingEnabled;
+}
+
+bool Painter::isViewFrustumCullingEnabled() {
+    return m_viewFrustumCulling;
 }
 
 void Painter::setBoundingBox(const glm::vec3 & llf, const glm::vec3 & urb, const glm::mat4 & transform)

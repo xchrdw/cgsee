@@ -121,6 +121,7 @@ public slots:
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
+    void on_enableCullingAction_triggered();
 
     void on_standardCameraAction_triggered();
     void on_parallelRedCyanStereoCameraAction_triggered();

@@ -53,6 +53,8 @@
     <addaction name="captureAsImageAdvancedAction"/>
     <addaction name="separator"/>
     <addaction name="loadPresentationAction"/>
+    <addaction name="separator"/>
+    <addaction name="enableCullingAction"/>
    </widget>
    <widget class="QMenu" name="fileMenu">
     <property name="title">
@@ -832,6 +834,17 @@
    </property>
    <property name="text">
     <string>Shadow blur</string>
+   </property>
+  </action>
+  <action name="enableCullingAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable Culling</string>
    </property>
   </action>
   <action name="renderingRasterizerAction">
