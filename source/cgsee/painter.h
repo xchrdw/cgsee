@@ -42,6 +42,9 @@ public:
     void setConvergentCameraFocus(AbstractProperty & property);
     virtual void postShaderRelinked() override;
 
+    virtual void setViewFrustumCulling(bool viewFrustumCullingEnabled) override;
+    virtual bool isViewFrustumCullingEnabled() override;
+
     virtual void setBoundingBox(const glm::vec3 & llf, const glm::vec3 & urb, const glm::mat4 & transform);
 
     virtual RenderingPass * getSharedPass();

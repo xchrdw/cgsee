@@ -3,6 +3,8 @@
 
 #ifdef WIN32
 #include <GL/wglew.h>
+#elif defined(__APPLE__)
+
 #else
 #include <GL/glxew.h>
 #endif
