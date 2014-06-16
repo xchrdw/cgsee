@@ -91,7 +91,7 @@ protected:
 
     Camera * m_camera;
     static const float TIMER_MS;
-    static const float DELAY_MS;
+    static const float DURATION;
 
 private:
     void timerEvent(QTimerEvent * event);

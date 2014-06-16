@@ -13,8 +13,8 @@
 #include <signalzeug/Signal.h>
 
 
-const float AbstractNavigation::TIMER_MS = 1000.f / 50.f;
-const float AbstractNavigation::DELAY_MS = 1000.f / 5.f;
+const float AbstractNavigation::TIMER_MS = 1000.f / 60.f;
+const float AbstractNavigation::DURATION = 1000.f / 3.f;
 
 AbstractNavigation::AbstractNavigation(Camera * camera)
     : m_width(camera->viewport().x)
@@ -118,7 +118,7 @@ void AbstractNavigation::startTimer()
 */
 void AbstractNavigation::stopTimer()
 {
-    m_timer_requests = glm::max(0, m_timer_requests-1);
+    m_timer_requests = glm::max(0, m_timer_requests - 1);
 
     if(m_timer_requests == 0)
     {
@@ -139,7 +139,7 @@ void AbstractNavigation::timerEvent(QTimerEvent * event)
 
     if (m_animation_active)
     {
-        m_animation_progress += TIMER_MS / DELAY_MS;
+        m_animation_progress += TIMER_MS / DURATION;
         if (m_animation_progress < 1.f)
         {
             updateTransition();
@@ -221,7 +221,7 @@ void AbstractNavigation::onNavigated()
 {
     // send viewChanged signal only after the n seconds of inactivity
     // (see AbstractNavigation::timerEvent)
-    m_eventTimer.start(DELAY_MS, this);
+    m_eventTimer.start(DURATION * 1.5f, this);
 }
 
 
