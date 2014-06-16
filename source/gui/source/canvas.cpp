@@ -291,6 +291,8 @@ void Canvas::mouseReleaseEvent(QMouseEvent * event)
 {
     if (m_eventHandler)
         m_eventHandler->mouseReleaseEvent(event);
+
+	emit mouseReleaseEventSignal(event);
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent * event)
@@ -298,7 +300,9 @@ void Canvas::mouseMoveEvent(QMouseEvent * event)
     if (m_eventHandler)
         m_eventHandler->mouseMoveEvent(event);
     
-    this->setFocus(); 
+    this->setFocus();
+
+	emit mouseMoveEventTriggered(1);
 }
 
 void Canvas::wheelEvent(QWheelEvent * event)

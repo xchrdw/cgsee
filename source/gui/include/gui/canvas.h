@@ -51,6 +51,10 @@ public:
     virtual void setRefreshTimeMSec(int msec);
     int refreshTimeMSec() const;
 
+signals:
+	void mouseReleaseEventSignal(QMouseEvent * event);
+	void mouseMoveEventTriggered(int triggered);
+
 protected:
 
     // QGLWidget Interface
