@@ -54,14 +54,14 @@ extern GLXContext glXGetCurrentContext( void );
 #include <gui/fileNavigator.h>
 #include <gui/fileExplorer.h>
 
-#include "../../cgsee/painter.h" // TODO
-
 #include <core/navigation/abstractnavigation.h>
 #include <core/navigation/flightnavigation.h>
 #include <core/navigation/fpsnavigation.h>
 #include <core/navigation/arcballnavigation.h>
 
 #include <core/painter/abstractscenepainter.h>
+#include <core/painter/painter.h>
+#include <core/painter/imagepainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
@@ -99,6 +99,8 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
 ,   m_camera(nullptr)
+,   m_scenePainter(nullptr)
+,   m_imagePainter(nullptr)
 ,   m_saved_views(4)
 ,   m_isFullscreen(false)
 
@@ -394,9 +396,11 @@ Viewer::~Viewer()
     m_loaders.clear();
     delete m_coordinateProvider;
     delete m_selectionBBox;
+    delete m_imagePainter;
+    delete m_scenePainter;
 }
 
-void Viewer::setPainter(AbstractScenePainter * painter)
+void Viewer::setPainter(AbstractPainter * painter)
 {
     if(!m_qtCanvas)
         return;
@@ -404,7 +408,7 @@ void Viewer::setPainter(AbstractScenePainter * painter)
     m_qtCanvas->setPainter(painter);
 }
 
-AbstractScenePainter * Viewer::painter()
+AbstractPainter * Viewer::painter()
 {
     if(!m_qtCanvas)
         return nullptr;
@@ -429,7 +433,8 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
-    painter()->postShaderRelinked();
+    if (m_scenePainter)
+        m_scenePainter->postShaderRelinked();
     m_qtCanvas->repaint();
 }
 
@@ -488,11 +493,30 @@ bool Viewer::loadModel(const QString& path, AbstractModelLoader* loader)
     Group * scene = loader->importFromFile(path);
     if (scene)
     {
+        delete m_imagePainter;
+        m_imagePainter = 0;
+        if (!m_scenePainter)
+        {
+            Camera * camera = new Camera("main");
+            camera->selectImplementation("MonoCamera");
+
+            camera->setFovy(45.0f);
+            camera->setZNear(1.0f);
+            camera->setZFar(20.0f);
+            setCamera(camera);
+            m_scenePainter = new Painter(camera);
+            setPainter(m_scenePainter);
+            // "m_scenePainter->initialize();"
+
+            AbstractNavigation * navigation = new ArcballNavigation(camera);
+            setNavigation(navigation);
+        }
+
         this->assignScene(scene);
         this->m_qtCanvas->navigation()->rescaleScene(scene);
         if (m_coordinateProvider)
-            this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
-        this->painter()->assignScene(scene);
+            this->m_coordinateProvider->assignPass(m_scenePainter->getSharedPass());
+        m_scenePainter->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();
@@ -504,7 +528,16 @@ bool Viewer::loadModel(const QString& path, AbstractModelLoader* loader)
 bool Viewer::loadImage(const QString& path, AbstractImageLoader* loader)
 {
     Image * image = loader->importFromFile(path);
-    if (image){
+    if (image)
+    {
+        delete m_scenePainter;
+        m_scenePainter = 0;
+        if (!m_imagePainter)
+        {
+            m_imagePainter = new ImagePainter();
+            setPainter(m_imagePainter);
+        }
+        m_imagePainter->assignImage(image);
         m_sceneHierarchy->clear();
         m_dockScene->setDisabled(true);
         m_dockScene->hide();
@@ -531,7 +564,8 @@ void Viewer::updateCameraSelection(QString cameraName) const
 
 void Viewer::updateRenderingSelection(QString rendering) const
 {
-    m_qtCanvas->painter()->selectRendering(rendering);
+    if (m_scenePainter)
+        m_scenePainter->selectRendering(rendering);
     m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 }
 
@@ -547,79 +581,92 @@ void Viewer::on_renderingPathtracerAction_triggered()
 
 void Viewer::on_phongShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('p');
+    if (m_scenePainter)
+        m_scenePainter->setShading('p');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_gouraudShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('g');
+    if (m_scenePainter)
+        m_scenePainter->setShading('g');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_flatShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('f');
+    if (m_scenePainter)
+        m_scenePainter->setShading('f');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_goochShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('o');
+    if (m_scenePainter)
+        m_scenePainter->setShading('o');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_wireframeShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('w');
+    if (m_scenePainter)
+        m_scenePainter->setShading('w');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_solidWireframeShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('s');
+    if (m_scenePainter)
+        m_scenePainter->setShading('s');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_primitiveWireframeShadingAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('r');
+    if (m_scenePainter)
+        m_scenePainter->setShading('r');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_normalsAction_triggered()
 {
-    m_qtCanvas->painter()->setShading('n');
+    if (m_scenePainter)
+        m_scenePainter->setShading('n');
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_colorRenderingAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(1, m_ui->colorRenderingAction->isChecked());
+    if (m_scenePainter)
+        m_scenePainter->setEffect(1, m_ui->colorRenderingAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_shadowMappingAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(2, m_ui->shadowMappingAction->isChecked());
+    if (m_scenePainter)
+        m_scenePainter->setEffect(2, m_ui->shadowMappingAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_shadowBlurAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(3, m_ui->shadowBlurAction->isChecked());
+    if (m_scenePainter)
+        m_scenePainter->setEffect(3, m_ui->shadowBlurAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_ssaoAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(4, m_ui->ssaoAction->isChecked());
+    if (m_scenePainter)
+        m_scenePainter->setEffect(4, m_ui->ssaoAction->isChecked());
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_ssaoBlurAction_triggered()
 {
-    m_qtCanvas->painter()->setEffect(5, m_ui->ssaoBlurAction->isChecked());
+    if (m_scenePainter)
+        m_scenePainter->setEffect(5, m_ui->ssaoBlurAction->isChecked());
     m_qtCanvas->repaint();
 }
 
@@ -637,7 +684,8 @@ void Viewer::on_fboColorAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboColorAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(1);
+    if (m_scenePainter)
+        m_scenePainter->setFrameBuffer(1);
     m_qtCanvas->repaint();
 }
 
@@ -645,7 +693,8 @@ void Viewer::on_fboNormalzAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboNormalzAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(2);
+    if (m_scenePainter)
+        m_scenePainter->setFrameBuffer(2);
     m_qtCanvas->repaint();
 }
 
@@ -653,7 +702,8 @@ void Viewer::on_fboShadowsAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboShadowsAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(3);
+    if (m_scenePainter)
+        m_scenePainter->setFrameBuffer(3);
     m_qtCanvas->repaint();
 }
 
@@ -661,7 +711,8 @@ void Viewer::on_fboShadowMapAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboShadowMapAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(4);
+    if (m_scenePainter)
+        m_scenePainter->setFrameBuffer(4);
     m_qtCanvas->repaint();
 }
 
@@ -669,7 +720,8 @@ void Viewer::on_fboSSAOAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboSSAOAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(5);
+    if (m_scenePainter)
+        m_scenePainter->setFrameBuffer(5);
     m_qtCanvas->repaint();
 }
 
@@ -677,7 +729,8 @@ void Viewer::on_fboColorIdAction_triggered()
 {
     uncheckFboActions();
     m_ui->fboColorIdAction->setChecked(true);
-    m_qtCanvas->painter()->setFrameBuffer(6);
+    if (m_scenePainter)
+        m_scenePainter->setFrameBuffer(6);
     m_qtCanvas->repaint();
 }
 
@@ -1145,6 +1198,7 @@ void Viewer::selectionBBoxChanged()
         m_selectionBBox->extend(node->boundingBox());
     }
 
-    Painter * painter = static_cast<Painter*>(this->painter());
-    painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
+    Painter * painter = dynamic_cast<Painter*>(this->painter());
+    if (painter)
+        painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
 }

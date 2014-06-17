@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QWidget>
 
-#include "painter.h"
+#include <core/painter/painter.h>
 
 #include <core/autotimer.h>
 #include <core/mathmacros.h>
@@ -32,7 +32,6 @@
 #include <core/property/limitedproperty.h>
 #include <core/property/propertylist.h>
 #include <core/property/announcer.h>
-#include <gui/propertywidgetbuilder.h>
 
 
 
@@ -239,19 +238,8 @@ const bool Painter::initialize()
 
     m_fboActiveBuffer = m_fboColor;
 
-    PropertyWidgetBuilder builder;
-    builder.buildWidget(m_propertylist->list());
-
-    builder.retainWidget()->hide();
-
     m_propertylist->add(focusdistanceLevel);
     focusdistanceLevel->subscribe(LimitedProperty<float>::kValueChanged, this, &Painter::setConvergentCameraFocus);
-
-    PropertyWidgetBuilder builder2;
-    builder2.buildWidget(m_propertylist->list());
-    builder2.retainWidget()->hide();
-    //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
-
 
     return true;
 }

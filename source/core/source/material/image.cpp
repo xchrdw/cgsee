@@ -52,8 +52,6 @@ GLuint Image::getTexture() {
     
     glGenerateMipmap(GL_TEXTURE_2D);
     glError();
-    glEnable(GL_TEXTURE_2D);
-    glError();
 
     return m_texture;
 }

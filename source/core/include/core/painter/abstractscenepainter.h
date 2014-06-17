@@ -30,7 +30,15 @@ public:
     void assignScene(Group * scene);
     Group * retainScene();
     Group & getScene() const;
+
+    const QImage capture(
+        AbstractGLParent & parent
+        , const QSize & size
+        , const bool aspect
+        , const bool alpha);
+
 protected:
+    virtual Camera * camera() = 0;
     virtual void sceneChanged(Group * scene);
     Group * m_scene;
 };

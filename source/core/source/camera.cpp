@@ -9,7 +9,7 @@
 
 #include <core/cameraimplementation.h>
 
-#include "../../cgsee/painter.h"  // TODO!
+#include <core/painter/painter.h>
 
 #include <core/rendering/rasterizer.h>
 #include <core/rendering/pathtracer.h>

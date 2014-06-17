@@ -163,7 +163,7 @@ int Canvas::refreshTimeMSec() const
     return m_refreshTimeMSec;
 }
 
-void Canvas::setPainter(AbstractScenePainter * painter)
+void Canvas::setPainter(AbstractPainter * painter)
 {
     if(m_painter == painter)
         return;
@@ -172,7 +172,7 @@ void Canvas::setPainter(AbstractScenePainter * painter)
     update();
 }
 
-AbstractScenePainter * Canvas::painter()
+AbstractPainter * Canvas::painter()
 {
     return m_painter;
 }
@@ -194,7 +194,7 @@ const QImage Canvas::capture(
     if(!m_painter)
         return QImage();
 
-    return m_painter->capture(*this, size, aspect, alpha);
+    //return m_painter->capture(*this, size, aspect, alpha);
 }
 
 void Canvas::resize(int width, int height)

@@ -30,7 +30,9 @@ class Ui_Viewer;
 class Canvas;
 class AbstractNavigation;
 class Camera;
+class AbstractPainter;
 class AbstractScenePainter;
+class ImagePainter;
 
 class FileNavigator;
 class FileExplorer;
@@ -65,8 +67,8 @@ public:
    void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
     
-    void setPainter(AbstractScenePainter * painter);
-    AbstractScenePainter * painter();
+    void setPainter(AbstractPainter * painter);
+    AbstractPainter * painter();
 
     void setCamera(Camera * camera);
     Camera * camera();
@@ -202,6 +204,9 @@ protected:
     
     void updateCameraSelection(QString cameraName) const;
     void updateRenderingSelection(QString rendering) const;
+
+    AbstractScenePainter * m_scenePainter;
+    ImagePainter * m_imagePainter;
 
     Canvas * m_qtCanvas;
     Camera * m_camera;

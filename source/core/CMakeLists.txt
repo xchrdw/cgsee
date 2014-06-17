@@ -102,6 +102,8 @@ set(sources
 	${source_path}/offAxisCamera.cpp
 	${source_path}/painter/abstractscenepainter.cpp
 	${source_path}/painter/abstractpainter.cpp
+	${source_path}/painter/imagepainter.cpp
+	${source_path}/painter/painter.cpp
 	${source_path}/parallelCamera.cpp
 	${source_path}/plane.cpp
 	${source_path}/program.cpp
@@ -194,6 +196,8 @@ set(api_includes
 	${include_path}/painter/abstractscenepainter.h
 	${include_path}/painter/abstractglparent.h
 	${include_path}/painter/abstractpainter.h
+	${include_path}/painter/imagepainter.h
+	${include_path}/painter/painter.h
 	${include_path}/parallelcamera.h
 	${include_path}/plane.h
 	${include_path}/program.h

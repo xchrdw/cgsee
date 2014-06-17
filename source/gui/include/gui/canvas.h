@@ -12,7 +12,7 @@ class QBasicTimer;
 class QTimerEvent;
 class Timer;
 
-class AbstractScenePainter;
+class AbstractPainter;
 class AbstractNavigation;
 class GUI_API Canvas : public QGLWidget, public AbstractGLParent
 {
@@ -24,8 +24,8 @@ public:
         QWidget * parent = nullptr);
     virtual ~Canvas();
 
-    void setPainter(AbstractScenePainter * painter);
-    AbstractScenePainter * painter();
+    void setPainter(AbstractPainter * painter);
+    AbstractPainter * painter();
     void setNavigation( AbstractNavigation * navigation );
     AbstractNavigation * navigation();
 
@@ -76,7 +76,7 @@ protected:
     int m_refreshTimeMSec;
 
 protected:
-    AbstractScenePainter * m_painter;
+    AbstractPainter * m_painter;
     AbstractNavigation * m_navigation;
 
     QBasicTimer * m_timer;

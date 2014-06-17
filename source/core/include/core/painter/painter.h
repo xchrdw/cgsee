@@ -19,7 +19,7 @@ class AbstractProperty;
 class RenderingPass;
 class LightSourcePass;
 
-class Painter : public AbstractScenePainter
+class CORE_API Painter : public AbstractScenePainter
 {
 public:
     Painter(Camera * camera);

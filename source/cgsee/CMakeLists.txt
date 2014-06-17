@@ -42,8 +42,6 @@ set(sources
     cgsee.h
     cgsee.cpp
     main.cpp
-    painter.h
-    painter.cpp
 )
 
 #
