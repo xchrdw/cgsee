@@ -8,6 +8,7 @@ message(STATUS "App ${target}")
 
 find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
+find_package(GLOW       REQUIRED)
 
 #
 # Includes
@@ -16,6 +17,7 @@ find_package(GLEW       REQUIRED)
 include_directories(
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+    ${GLOW_INCLUDES}
 )
 
 include_directories(
@@ -29,7 +31,7 @@ include_directories(
 #
 
 set(libs
-    # e.g., ${TRDP_LIBRARIES}
+    ${GLOW_LIBRARIES}
     core
     gui
 )
