@@ -230,7 +230,6 @@ void AbstractNavigation::setFromMatrix(const glm::mat4 & view)
 
 glm::mat4 AbstractNavigation::defaultView()
 {
-    onNavigated();
     return frontview();
 }
 
@@ -242,43 +241,36 @@ glm::mat4 AbstractNavigation::frontview()
 
 glm::mat4 AbstractNavigation::rightview()
 {
-    onNavigated();
     return frontview() * glm::rotate(-90.f, glm::vec3(0,1,0));
 }
 
 glm::mat4 AbstractNavigation::backview()
 {
-    onNavigated();
     return frontview() * glm::rotate(180.0f, glm::vec3(0,1,0));
 }
 
 glm::mat4 AbstractNavigation::leftview()
 {
-    onNavigated();
     return frontview() * glm::rotate(90.f, glm::vec3(0,1,0));
 }
 
 glm::mat4 AbstractNavigation::topview()
 {
-    onNavigated();
     return frontview() * glm::rotate(-90.f, glm::vec3(1,0,0));
 }
 
 glm::mat4 AbstractNavigation::bottomview()
 {
-    onNavigated();
     return frontview() * glm::rotate(90.f, glm::vec3(1,0,0));
 }
 
 glm::mat4 AbstractNavigation::topRightView()
 {
-    onNavigated();
     return frontview() * glm::rotate(30.f, glm::vec3(1,0,0)) * glm::rotate(45.f, glm::vec3(0,1,0));
 }
 
 glm::mat4 AbstractNavigation::bottomLeftView()
 {
-    onNavigated();
     return frontview() * glm::rotate(-30.f, glm::vec3(1,0,0)) * glm::rotate(-45.f, glm::vec3(0,1,0));
 }
 
@@ -287,7 +279,6 @@ glm::mat4 AbstractNavigation::randomView()
     float x = static_cast <float> (rand() % 180);
     float y = static_cast <float> (rand() % 180);
     float z = static_cast <float> (rand() % 180);
-    onNavigated();
     return frontview() * glm::rotate(x, glm::vec3(1,0,0)) * glm::rotate(y, glm::vec3(0,1,0)) * glm::rotate(z, glm::vec3(0,0,1));
 }
 
