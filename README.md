@@ -15,7 +15,7 @@ If you are contributing to this project, please keep the following notes in mind
 * Use lazy initialization as often as possible for time consuming tasks.
 * Member Variables always start with m_ (e.g.,``` m_variable```).
 * Interface or abstract class names always start with Abstract (e.g., ```AbstractPainter```).
-* Enforce strict include sequence: gl, glew, std, glm, qt, header, cgsee (there might be few exceptions, e.g., gpuquery).
+* Enforce strict include sequence: own-header, gl, glew, std, glm, qt, other-3rdp, inhouse-party, cgsee (there might be few exceptions, e.g., gpuquery).
 
 ## Build Notes
 
