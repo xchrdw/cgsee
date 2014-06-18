@@ -21,6 +21,9 @@ public:
     virtual void setFrameBuffer(int frameBuffer) = 0;
     virtual void setEffect(int effect, bool active) = 0;
     
+    virtual void setViewFrustumCulling(bool viewFrustumCullingEnabled) = 0;
+    virtual bool isViewFrustumCullingEnabled() = 0;
+
     virtual void postShaderRelinked() = 0;
 
     // virtual void setBoundingBox(const glm::vec3 & llf, const glm::vec3 & urb) = 0;
@@ -33,4 +36,5 @@ public:
 protected:
     virtual void sceneChanged(Group * scene);
     Group * m_scene;
+    bool m_viewFrustumCulling;
 };

@@ -128,6 +128,7 @@ public slots:
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
+    void on_enableCullingAction_triggered();
 
     void on_standardCameraAction_triggered();
     void on_parallelRedCyanStereoCameraAction_triggered();
@@ -229,6 +230,7 @@ protected:
     AbstractModelLoader * m_loader;
     QListView * m_historyList;
     NavigationHistory * m_navigationHistory;
+    Group * m_scene;
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;

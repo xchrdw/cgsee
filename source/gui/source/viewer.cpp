@@ -116,6 +116,7 @@ Viewer::Viewer(
 ,   m_loader(new AssimpLoader( registry ))
 ,   m_historyList(new QListView(this))
 ,   m_navigationHistory(nullptr)
+,   m_scene(nullptr)
 ,   m_mouseMoving(false)
 {
 
@@ -496,7 +497,6 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_STATE, saveState());
 
     delete m_qtCanvas;
-
     delete m_dockNavigator;
     delete m_dockExplorer;
     delete m_dockScene;
@@ -538,6 +538,10 @@ void Viewer::on_captureAsImageAdvancedAction_triggered()
     CanvasExporter::save(*m_qtCanvas, this, true);
 }
 
+void Viewer::on_enableCullingAction_triggered() {
+    m_qtCanvas->painter()->setViewFrustumCulling(m_ui->enableCullingAction->isChecked());
+}
+
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
@@ -563,19 +567,20 @@ void Viewer::on_quitAction_triggered()
 
 void Viewer::on_loadFile(const QString & path)
 {
-    Group * scene = m_loader->importFromFile(path);
-    if (!scene)
+    m_scene = nullptr;
+    m_scene = m_loader->importFromFile(path);
+    if (!m_scene)
     {
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     }
     else
     {
-        this->assignScene(scene);
-        this->m_qtCanvas->navigation()->rescaleScene(scene);
+        this->assignScene(m_scene);
+        this->m_qtCanvas->navigation()->rescaleScene(m_scene);
         if (m_coordinateProvider)
             this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
-        this->painter()->assignScene(scene);
-        this->m_qtCanvas->navigation()->sceneChanged(scene);
+        this->painter()->assignScene(m_scene);
+        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();
         this->m_navigationHistory->reset();
@@ -913,6 +918,8 @@ void Viewer::on_flightManipulatorAction_triggered()
     setNavigation(new FlightNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->flightManipulatorAction->setChecked(true);
+    if (m_scene)
+        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("Flight navigation, use WASD and arrow keys");
 }
 
@@ -921,6 +928,8 @@ void Viewer::on_trackballManipulatorAction_triggered()
     setNavigation(new ArcballNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->trackballManipulatorAction->setChecked(true);
+    if (m_scene)
+        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("Arcball navigation, use left and right mouse buttons");
 }
 
@@ -929,6 +938,8 @@ void Viewer::on_fpsManipulatorAction_triggered()
     setNavigation(new FpsNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->fpsManipulatorAction->setChecked(true);
+    if (m_scene)
+        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("FPS Navigation, use mouse and WASD");
 }
 
@@ -1004,7 +1015,8 @@ void Viewer::loadView(int i)
     {
         navigation()->loadView(navigation()->defaultView());
     }
-    else {
+    else
+    {
         navigation()->loadView(m_savedViews[i]);
     }
     navigation()->onNavigated();

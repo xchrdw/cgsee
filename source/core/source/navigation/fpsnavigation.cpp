@@ -7,7 +7,6 @@
 #include <core/camera.h>
 
 
-
 FpsNavigation::FpsNavigation(Camera * camera)
 : FlightNavigation(camera)
 , m_inGameMode(false)
@@ -24,10 +23,7 @@ FpsNavigation::FpsNavigation(Camera * camera)
     m_pitchAngle= 180 - glm::degrees(std::acos(glm::dot(m_center, m_yView) / (glm::length(m_center) * glm::length(m_yView))));
 }
 
-FpsNavigation::~FpsNavigation()
-{
-
-}
+FpsNavigation::~FpsNavigation() { }
 
 void FpsNavigation::keyPressEvent(QKeyEvent *event)
 {
@@ -95,8 +91,6 @@ void FpsNavigation::mouseMoveEvent(QMouseEvent * event)
     }
 }
 
-
-
 void FpsNavigation::mousePressEvent(QMouseEvent * event)
 {
     m_inGameMode = true;
@@ -105,20 +99,10 @@ void FpsNavigation::mousePressEvent(QMouseEvent * event)
 
 void FpsNavigation::mouseReleaseEvent(QMouseEvent * event) { }
 
-
 void FpsNavigation::pitchYaw(float pitchAngle, float yawAngle)
 {
     pitch(pitchAngle);
     yaw(yawAngle);
-}
-
-void FpsNavigation::forward(float speed)
-{
-    glm::vec3 step = speed * m_zView;
-    m_center += step;
-    m_eye += step;
-    updateView();
-    onNavigated();
 }
 
 void FpsNavigation::onTimerEvent()
@@ -136,15 +120,6 @@ void FpsNavigation::onTimerEvent()
     }
 }
 
-void FpsNavigation::sideward(float speed)
-{
-    glm::vec3 step = speed * m_xView;
-    m_center += step;
-    m_eye += step;
-    updateView();
-    onNavigated();
-}
-
 void FpsNavigation::pitch(float angle)
 {
     if(m_pitchAngle + angle <  179.0f && m_pitchAngle + angle > 1.0f)
@@ -155,10 +130,4 @@ void FpsNavigation::pitch(float angle)
         updateView();
         onNavigated();
     }
-}
-
-void FpsNavigation::updateView()
-{
-    m_viewmatrix =  glm::lookAt(m_eye, m_center, m_up);
-    updateCamera();
 }
