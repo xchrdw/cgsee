@@ -17,3 +17,11 @@ codeblocks/
 
 *.bat
 *.sh
+
+.localconfig
+
+cgsee.config
+cgsee.creator
+cgsee.files
+cgsee.includes
+cgsee.creator.user

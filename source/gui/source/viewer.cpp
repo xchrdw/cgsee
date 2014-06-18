@@ -99,7 +99,6 @@ Viewer::Viewer(
 ,   m_camera(nullptr)
 ,   m_saved_views(4)
 ,   m_isFullscreen(false)
-
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
@@ -111,17 +110,18 @@ Viewer::Viewer(
 ,   m_coordinateProvider(nullptr)
 ,   m_selectionBBox(new AxisAlignedBoundingBox)
 ,   m_loader(new AssimpLoader( registry ))
+,   m_scene(nullptr)
 ,   m_mouseMoving(false)
 {
 
     m_ui->setupUi(this);
-    
+
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings s;
-    
+
     restoreGeometry(s.value(SETTINGS_GEOMETRY).toByteArray());
     restoreState(s.value(SETTINGS_STATE).toByteArray());
-    
+
     restoreViews(s);
     initializeExplorer();
     initializeSceneTree();
@@ -136,7 +136,7 @@ void Viewer::initializeExplorer()
     this->initializeDockWidgets(m_dockExplorer, m_explorer, Qt::BottomDockWidgetArea);
 
     m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
-        
+
     QObject::connect(
         m_navigator, SIGNAL(clickedDirectory(const QString &)),
         m_explorer, SLOT(setRoot(const QString &)));
@@ -218,9 +218,9 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
 {
     dockWidget->setWidget(widget);
     this->addDockWidget(area, dockWidget);
-    
+
 #ifdef __APPLE__
-    /** 
+    /**
      THIS IS A BUG WORKAROUND
      The bug lies somewhere in Canvas::Canvas().
      When called in Viewer::createQtContext(), the widgets get messed up.
@@ -228,7 +228,7 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
     static int count = 0;
     dockWidget->setFloating(true);
     dockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
-    
+
     dockWidget->move(QPoint(20, 40 + count++ * (dockWidget->height() + 35)));
 #endif
 }
@@ -261,7 +261,7 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
         item->setEditable(false);
         item->setCheckable(true);
         item->setCheckState(Qt::Checked);
-        
+
         parent->appendRow(item);
         fillSceneHierarchy(child, item);
 
@@ -278,7 +278,7 @@ void Viewer::assignScene(Group * rootNode)
 
     SceneTraverser traverser;
     unsigned int count = 0;
-    traverser.traverse(*rootNode, [&count] (Node & node) 
+    traverser.traverse(*rootNode, [&count] (Node & node)
     {
         node.setId(count++);
         return true;
@@ -335,7 +335,7 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     const GLXContext qtContextHandle = currentContextHandle();
 #endif
 
-    // NOTE: might work even if no context was returned. 
+    // NOTE: might work even if no context was returned.
     // This just double checks...
 
     if(nullptr == qtContextHandle)
@@ -371,7 +371,6 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_STATE, saveState());
 
     delete m_qtCanvas;
-
     delete m_dockNavigator;
     delete m_dockExplorer;
     delete m_dockScene;
@@ -424,15 +423,15 @@ void Viewer::on_reloadAllShadersAction_triggered()
 
 void Viewer::on_openFileDialogAction_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
-        QDir::homePath(), m_loader->namedLoadableTypes().join(";;"), 
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+        QDir::homePath(), m_loader->namedLoadableTypes().join(";;"),
         0, QFileDialog::HideNameFilterDetails);
     if (fileName.isEmpty())
         return;
-    
+
     on_loadFile(fileName);
 }
-    
+
 void Viewer::on_quitAction_triggered()
 {
     QApplication::quit();
@@ -440,19 +439,20 @@ void Viewer::on_quitAction_triggered()
 
 void Viewer::on_loadFile(const QString & path)
 {
-    Group * scene = m_loader->importFromFile(path);
-    if (!scene)
+    m_scene = nullptr;
+    m_scene = m_loader->importFromFile(path);
+    if (!m_scene)
     {
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     }
-    else 
+    else
     {
-        this->assignScene(scene);
-        this->m_qtCanvas->navigation()->rescaleScene(scene);
+        this->assignScene(m_scene);
+        this->m_qtCanvas->navigation()->rescaleScene(m_scene);
         if (m_coordinateProvider)
             this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
-        this->painter()->assignScene(scene);
-        this->m_qtCanvas->navigation()->sceneChanged(scene);
+        this->painter()->assignScene(m_scene);
+        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();
     }
@@ -630,7 +630,7 @@ void Viewer::on_standardCameraAction_triggered()
 {
     glm::ivec2 tempViewport = m_camera->viewport();
     m_camera->selectImplementation("MonoCamera");
-    
+
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
     qDebug("Standard Mono Camera");
@@ -646,17 +646,17 @@ void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
     else
         qDebug() << "Expected ParallelCamera as active implementation but was"
                 << m_camera->selectedImplementation();
-    
+
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
     qDebug("(Parallel) Red Cyan Stereo Camera");
-}  
+}
 
 void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
 {
     glm::ivec2 tempViewport = m_camera->viewport();
     m_camera->selectImplementation("ConvergentCamera");
-    
+
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
     qDebug("(Convergent) Red Cyan Stereo Camera");
@@ -673,7 +673,7 @@ void Viewer::on_oculusRiftStereoCameraAction_triggered()
     else
         qDebug() << "Expected ParallelCamera as active implementation but was"
                 << m_camera->selectedImplementation();
-    
+
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
     qDebug() << "Stereo Camera for Oculus Rift";
@@ -769,20 +769,26 @@ void Viewer::on_flightManipulatorAction_triggered() {
     setNavigation(new FlightNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->flightManipulatorAction->setChecked(true);
+    if (m_scene)
+        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("Flight navigation, use WASD and arrow keys");
 }
-    
+
 void Viewer::on_trackballManipulatorAction_triggered() {
     setNavigation(new ArcballNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->trackballManipulatorAction->setChecked(true);
+    if (m_scene)
+        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("Arcball navigation, use left and right mouse buttons");
 }
-    
+
 void Viewer::on_fpsManipulatorAction_triggered() {
     setNavigation(new FpsNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->fpsManipulatorAction->setChecked(true);
+    if (m_scene)
+        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("FPS Navigation, use mouse and WASD");
 }
 
@@ -871,6 +877,12 @@ void Viewer::on_actionBottomView_triggered() {
 void Viewer::on_actionTopRightView_triggered() {
     navigation()->loadView(navigation()->topRightView());
 }
+void Viewer::on_actionBottomLeftView_triggered() {
+    navigation()->loadView(navigation()->bottomLeftView());
+}
+void Viewer::on_actionRandomView_triggered() {
+    navigation()->loadView(navigation()->randomView());
+}
 
 
 void Viewer::on_actionLoad_1_triggered() { loadView(0); }
@@ -898,7 +910,7 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
         m_mouseMoving = false;
         return;
     }
-    
+
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
@@ -986,7 +998,7 @@ void Viewer::deselectNode(Node * node)
     node->setSelected(false);
     if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
         drawable->setDrawMethod(defaultDrawmethod);
-    
+
     this->selectionBBoxChanged();
     this->m_qtCanvas->update();
 
@@ -1070,7 +1082,7 @@ void Viewer::on_m_sceneHierarchy_itemChanged(QStandardItem * item)
 void Viewer::updateInfoBox()
 {
     int vertices = 0;
-    
+
     for ( auto node : m_selectedNodes )
     {
         if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))

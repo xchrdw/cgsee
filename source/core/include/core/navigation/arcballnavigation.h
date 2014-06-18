@@ -9,14 +9,14 @@ class CORE_API ArcballNavigation : public AbstractNavigation
 public:
     ArcballNavigation(Camera * camera);
     ~ArcballNavigation();
-    
+
     virtual void mouseMoveEvent(QMouseEvent * event) override;
     virtual void mousePressEvent(QMouseEvent * event) override;
     virtual void mouseReleaseEvent(QMouseEvent * event) override;
 
-private: 
+private:
     glm::vec3 getArcballVector(glm::vec2 v);
-    void updateArcball(); 
+    void updateArcball();
     void updateZoom();
     void updatePanning();
 
