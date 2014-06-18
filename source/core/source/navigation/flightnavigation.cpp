@@ -12,7 +12,7 @@
 float angle = 0.05f;
 
 FlightNavigation::FlightNavigation(Camera * camera) 
-    : AbstractNavigation(camera)
+    : AbstractSceneNavigation(camera)
     , m_direction(0)
     , m_yprAngle(0)
 {
@@ -138,7 +138,7 @@ void FlightNavigation::setFromMatrix(const glm::mat4 & view){
 }
 
 void FlightNavigation::reset() {
-    AbstractNavigation::reset();
+    AbstractSceneNavigation::reset();
     setFromMatrix(m_viewmatrix);
 }
 

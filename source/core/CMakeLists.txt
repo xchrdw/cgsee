@@ -97,7 +97,9 @@ set(sources
 	${source_path}/navigation/flightnavigation.cpp
 	${source_path}/navigation/fpsnavigation.cpp
 	${source_path}/navigation/abstractnavigation.cpp
+	${source_path}/navigation/abstractscenenavigation.cpp
 	${source_path}/navigation/arcballnavigation.cpp
+	${source_path}/navigation/imagenavigation.cpp
 	${source_path}/objloader.cpp
 	${source_path}/offAxisCamera.cpp
 	${source_path}/painter/abstractscenepainter.cpp
@@ -189,8 +191,10 @@ set(api_includes
 	${include_path}/monocamera.h
 	${include_path}/navigation/fpsnavigation.h
 	${include_path}/navigation/abstractnavigation.h
+	${include_path}/navigation/abstractscenenavigation.h
 	${include_path}/navigation/flightnavigation.h
 	${include_path}/navigation/arcballnavigation.h
+	${include_path}/navigation/imagenavigation.h
 	${include_path}/objloader.h
 	${include_path}/offaxiscamera.h
 	${include_path}/painter/abstractscenepainter.h

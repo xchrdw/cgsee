@@ -6,7 +6,7 @@
 #include <core/camera.h>
 
 ArcballNavigation::ArcballNavigation(Camera * camera) 
-    : AbstractNavigation(camera)
+    : AbstractSceneNavigation(camera)
     , m_mouse_last(0)
     , m_mouse_cur(0)
     , m_arcball_on(false)

@@ -58,6 +58,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/navigation/flightnavigation.h>
 #include <core/navigation/fpsnavigation.h>
 #include <core/navigation/arcballnavigation.h>
+#include <core/navigation/imagenavigation.h>
 
 #include <core/painter/abstractscenepainter.h>
 #include <core/painter/painter.h>
@@ -508,16 +509,18 @@ bool Viewer::loadModel(const QString& path, AbstractModelLoader* loader)
             setPainter(m_scenePainter);
             // "m_scenePainter->initialize();"
 
-            AbstractNavigation * navigation = new ArcballNavigation(camera);
-            setNavigation(navigation);
+            setNavigation(new ArcballNavigation(camera));
         }
 
         this->assignScene(scene);
-        this->m_qtCanvas->navigation()->rescaleScene(scene);
+        AbstractSceneNavigation * nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+        if (nav)
+            nav->rescaleScene(scene);
         if (m_coordinateProvider)
             this->m_coordinateProvider->assignPass(m_scenePainter->getSharedPass());
         m_scenePainter->assignScene(scene);
-        this->m_qtCanvas->navigation()->sceneChanged(scene);
+        if (nav)
+            nav->sceneChanged(scene);
         this->m_qtCanvas->update();
         this->selectionBBoxChanged();
         return true;
@@ -536,11 +539,16 @@ bool Viewer::loadImage(const QString& path, AbstractImageLoader* loader)
         {
             m_imagePainter = new ImagePainter();
             setPainter(m_imagePainter);
+            ImageNavigation * nav = new ImageNavigation();
+            nav->setPainter(m_imagePainter);
+            nav->setViewPort(m_qtCanvas->width(), m_qtCanvas->height());
+            setNavigation(nav);
         }
         m_imagePainter->assignImage(image);
         m_sceneHierarchy->clear();
         m_dockScene->setDisabled(true);
         m_dockScene->hide();
+        m_qtCanvas->setRefreshTimeMSec(1);
         return true;
     }
     return false;
@@ -942,42 +950,69 @@ void Viewer::restoreViews( QSettings &s ) {
 }
 
 void Viewer::saveView(int i) {
-    m_saved_views[i] = navigation()->viewMatrix();
+    AbstractSceneNavigation * nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
+    m_saved_views[i] = nav->viewMatrix();
     QSettings s;
     s.beginGroup(SETTINGS_SAVED_VIEWS);
-    s.setValue("view_" + QString::number(i+1), mat2string(navigation()->viewMatrix()));
+    s.setValue("view_" + QString::number(i+1), mat2string(nav->viewMatrix()));
     s.endGroup();
 }
 
 void Viewer::loadView(int i) {
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
     if (m_saved_views[i] == glm::mat4(0)) {
-        navigation()->loadView(navigation()->defaultView());
+        nav->loadView(nav->defaultView());
     } else {
-        navigation()->loadView(m_saved_views[i]);
+        nav->loadView(m_saved_views[i]);
     }
 }
 
 
 void Viewer::on_actionFrontView_triggered() {
-    navigation()->loadView(navigation()->frontview());
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
+    nav->loadView(nav->frontview());
 }
 void Viewer::on_actionLeftView_triggered() {
-    navigation()->loadView(navigation()->leftview());
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
+    nav->loadView(nav->leftview());
 }
 void Viewer::on_actionBackView_triggered() {
-    navigation()->loadView(navigation()->backview());
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
+    nav->loadView(nav->backview());
 }
 void Viewer::on_actionRightView_triggered() {
-    navigation()->loadView(navigation()->rightview());
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
+    nav->loadView(nav->rightview());
 }
 void Viewer::on_actionTopView_triggered() {
-    navigation()->loadView(navigation()->topview());
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
+    nav->loadView(nav->topview());
 }
 void Viewer::on_actionBottomView_triggered() {
-    navigation()->loadView(navigation()->bottomview());
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
+    nav->loadView(nav->bottomview());
 }
 void Viewer::on_actionTopRightView_triggered() {
-    navigation()->loadView(navigation()->topRightView());
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (!nav)
+        return;
+    nav->loadView(nav->topRightView());
 }
 
 
@@ -1006,7 +1041,8 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
         m_mouseMoving = false;
         return;
     }
-    
+    if (!dynamic_cast<AbstractScenePainter*>(painter()))
+        return;
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
@@ -1199,6 +1235,7 @@ void Viewer::selectionBBoxChanged()
     }
 
     Painter * painter = dynamic_cast<Painter*>(this->painter());
-    if (painter)
-        painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
+    AbstractSceneNavigation *nav = dynamic_cast<AbstractSceneNavigation*>(navigation());
+    if (painter && nav)
+        painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), nav->sceneTransform());
 }

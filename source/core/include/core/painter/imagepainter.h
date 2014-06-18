@@ -2,10 +2,11 @@
 
 #include <core/painter/abstractpainter.h>
 
+#include <glm/vec2.hpp>
+
 class Image;
 class ScreenQuad;
 class Program;
-class FrameBufferObject;
 
 class CORE_API ImagePainter : public AbstractPainter
 {
@@ -18,6 +19,9 @@ public:
 
     //virtual void resize(const int width, const int height);
     void assignImage(Image * image);
+
+    void setZoomDelta(float delta);
+    void setPanDelta(glm::vec2 delta);
     
 protected:
     virtual const bool initialize() override;
@@ -25,13 +29,14 @@ protected:
 protected:
     void setUniforms();
 
-    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
-
 protected:  
     ScreenQuad * m_quad;
     Program * m_program;
 
     Image * m_image;
 
-    bool m_image_bound;
+    bool m_dirty;
+
+    float m_zoom;
+    glm::vec2 m_pan;
 };

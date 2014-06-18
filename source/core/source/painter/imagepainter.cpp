@@ -14,11 +14,13 @@
 #include <core/screenquad.h>
 
 ImagePainter::ImagePainter()
-:   AbstractPainter()
-,   m_quad(nullptr)
-,   m_program(nullptr)
-,   m_image(nullptr)
-,   m_image_bound(false)
+    : AbstractPainter()
+    , m_quad(nullptr)
+    , m_program(nullptr)
+    , m_image(nullptr)
+    , m_dirty(true)
+    , m_zoom(1)
+    , m_pan(0,0)
 {
 }
 
@@ -50,20 +52,33 @@ void ImagePainter::setUniforms()
     if (m_image)
     {
         m_image->bind(*m_program, "image", 0);
-        m_image_bound = true;
+        m_program->setUniform("zoom", m_zoom);
+        m_program->setUniform("pan", m_pan);
+        m_dirty = false;
     }
 }
 
 void ImagePainter::paint()
 {
     AbstractPainter::paint();
-    if (!m_image_bound)
+    if (m_dirty)
         setUniforms();
     m_quad->draw(*m_program);
 }
 
 void ImagePainter::assignImage(Image * image) {
     delete m_image;
-    m_image_bound = false;
+    m_dirty = true;
     m_image = image;
+}
+
+void ImagePainter::setPanDelta(glm::vec2 delta) {
+    m_pan += delta;
+    m_dirty = true;
+}
+
+void ImagePainter::setZoomDelta(float delta) {
+    m_zoom += delta;
+    m_zoom = m_zoom < 0 ? 0 : m_zoom;
+    m_dirty = true;
 }

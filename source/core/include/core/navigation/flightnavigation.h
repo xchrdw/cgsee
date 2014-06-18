@@ -2,9 +2,9 @@
 
 #include <core/core_api.h>
 
-#include <core/navigation/abstractnavigation.h>
+#include <core/navigation/abstractscenenavigation.h>
 
-class CORE_API FlightNavigation : public AbstractNavigation
+class CORE_API FlightNavigation : public AbstractSceneNavigation
 {
 public:
     FlightNavigation(Camera * camera);
