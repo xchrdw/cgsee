@@ -22,6 +22,10 @@ public:
 
     void setZoomDelta(float delta);
     void setPanDelta(glm::vec2 delta);
+
+    virtual void resize(
+        const int width
+        , const int height);
     
 protected:
     virtual const bool initialize() override;
@@ -39,4 +43,6 @@ protected:
 
     float m_zoom;
     glm::vec2 m_pan;
+
+    glm::vec2 m_aspect;
 };

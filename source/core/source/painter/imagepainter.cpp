@@ -21,6 +21,7 @@ ImagePainter::ImagePainter()
     , m_dirty(true)
     , m_zoom(1)
     , m_pan(0,0)
+    , m_aspect(1,1)
 {
 }
 
@@ -54,6 +55,7 @@ void ImagePainter::setUniforms()
         m_image->bind(*m_program, "image", 0);
         m_program->setUniform("zoom", m_zoom);
         m_program->setUniform("pan", m_pan);
+        m_program->setUniform("aspect", m_aspect);
         m_dirty = false;
     }
 }
@@ -80,5 +82,23 @@ void ImagePainter::setPanDelta(glm::vec2 delta) {
 void ImagePainter::setZoomDelta(float delta) {
     m_zoom += delta;
     m_zoom = m_zoom < 0 ? 0 : m_zoom;
+    m_dirty = true;
+}
+
+void ImagePainter::resize(const int width, const int height) {
+    AbstractPainter::resize(width, height);
+    if (!m_image)
+        return;
+
+    float aX = m_image->width() / (float)width;
+    float aY = m_image->height() / (float)height;
+
+    if (aX > aY) {
+        m_aspect = glm::vec2(1, aY/aX);
+    }
+    else {
+        m_aspect = glm::vec2(aX/aY, 1);
+    }
+
     m_dirty = true;
 }

@@ -545,6 +545,7 @@ bool Viewer::loadImage(const QString& path, AbstractImageLoader* loader)
             setNavigation(nav);
         }
         m_imagePainter->assignImage(image);
+        m_imagePainter->resize(m_qtCanvas->width(), m_qtCanvas->height());
         m_sceneHierarchy->clear();
         m_dockScene->setDisabled(true);
         m_dockScene->hide();
