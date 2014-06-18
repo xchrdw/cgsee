@@ -89,7 +89,7 @@
     </widget>
     <widget class="QMenu" name="selectViewMenu">
      <property name="title">
-      <string>Show View</string>
+      <string>&amp;Show View</string>
      </property>
      <addaction name="actionFrontView"/>
      <addaction name="actionLeftView"/>
@@ -104,7 +104,7 @@
     </widget>
     <widget class="QMenu" name="menuManageView">
      <property name="title">
-      <string>Manage Views</string>
+      <string>Manage &amp;Views</string>
      </property>
      <addaction name="actionLoad_1"/>
      <addaction name="actionLoad_2"/>
@@ -180,7 +180,7 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>View</string>
+     <string>&amp;View</string>
     </property>
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
@@ -390,7 +390,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>FPS Manipulator</string>
+    <string>F&amp;PS Manipulator</string>
    </property>
    <property name="shortcut">
     <string>3</string>
@@ -513,27 +513,27 @@
   </action>
   <action name="toggleNavigator">
    <property name="text">
-    <string>Show/Hide Navigator</string>
+    <string>Show/Hide &amp;Navigator</string>
    </property>
   </action>
   <action name="toggleExplorer">
    <property name="text">
-    <string>Show/Hide Explorer</string>
+    <string>Show/Hide &amp;Explorer</string>
    </property>
   </action>
   <action name="toggleNavigationHistory">
    <property name="text">
-    <string>Show/Hide History</string>
+    <string>Show/Hide &amp;History</string>
    </property>
   </action>
   <action name="togglePropertyDemo">
    <property name="text">
-    <string>Show/Hide Properties</string>
+    <string>Show/Hide &amp;Properties</string>
    </property>
   </action>
   <action name="toggleFullscreen">
    <property name="text">
-    <string>Fullscreen</string>
+    <string>&amp;Fullscreen</string>
    </property>
    <property name="shortcut">
     <string>Esc</string>
@@ -541,7 +541,7 @@
   </action>
   <action name="actionFrontView">
    <property name="text">
-    <string>Front</string>
+    <string>&amp;Front</string>
    </property>
    <property name="shortcut">
     <string>Alt+1</string>
@@ -549,7 +549,7 @@
   </action>
   <action name="actionLeftView">
    <property name="text">
-    <string>Left</string>
+    <string>&amp;Left</string>
    </property>
    <property name="shortcut">
     <string>Alt+2</string>
@@ -557,7 +557,7 @@
   </action>
   <action name="actionBackView">
    <property name="text">
-    <string>Back</string>
+    <string>&amp;Back</string>
    </property>
    <property name="shortcut">
     <string>Alt+3</string>
@@ -565,7 +565,7 @@
   </action>
   <action name="actionRightView">
    <property name="text">
-    <string>Right</string>
+    <string>&amp;Right</string>
    </property>
    <property name="shortcut">
     <string>Alt+4</string>
@@ -573,7 +573,7 @@
   </action>
   <action name="actionTopView">
    <property name="text">
-    <string>Top</string>
+    <string>&amp;Top</string>
    </property>
    <property name="shortcut">
     <string>Alt+5</string>
@@ -581,7 +581,7 @@
   </action>
   <action name="actionBottomView">
    <property name="text">
-    <string>Bottom</string>
+    <string>B&amp;ottom</string>
    </property>
    <property name="shortcut">
     <string>Alt+6</string>
@@ -589,7 +589,7 @@
   </action>
   <action name="actionTopRightView">
    <property name="text">
-    <string>TopRight</string>
+    <string>TopR&amp;ight</string>
    </property>
    <property name="shortcut">
     <string>Alt+7</string>
@@ -597,7 +597,7 @@
   </action>
   <action name="actionBottomLeftView">
    <property name="text">
-    <string>BottomLeft</string>
+    <string>BottomL&amp;eft</string>
    </property>
    <property name="shortcut">
     <string>Alt+8</string>
@@ -605,7 +605,7 @@
   </action>
   <action name="actionRandomView">
    <property name="text">
-    <string>Random</string>
+    <string>R&amp;andom</string>
    </property>
    <property name="shortcut">
     <string>Alt+0</string>
@@ -613,7 +613,7 @@
   </action>
   <action name="actionHistoryUndo">
    <property name="text">
-    <string>Last View</string>
+    <string>&amp;Last View</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
@@ -621,7 +621,7 @@
   </action>
   <action name="actionHistoryRedo">
    <property name="text">
-    <string>Next View</string>
+    <string>&amp;Next View</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
