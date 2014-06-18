@@ -1,11 +1,11 @@
 /// Include navigation history wrapper and history elements list.
 #include <core/navigation/navigationhistory.h>
 
-/// Include signalzeug from libzeug.
-#include <signalzeug/Signal.h>
-
 /// Include QImage for thumbnails.
 #include <QImage>
+
+/// Include signalzeug from libzeug.
+#include <signalzeug/Signal.h>
 
 /**
  * @brief Constructor for NavigationHistory class.
@@ -46,9 +46,7 @@ void NavigationHistory::setNavigation(AbstractNavigation * navigation)
  */
 NavigationHistoryElement * NavigationHistory::navigationHistoryElement()
 {
-    if (!this->isEmpty())
-        return m_navigationHistory;
-    return false;
+    return m_navigationHistory;
 }
 
 /**
@@ -78,7 +76,11 @@ void NavigationHistory::save(glm::mat4 viewmatrix, float fovy, QImage thumbnail)
  */
 void NavigationHistory::undo()
 {
-    if (!m_navigationHistory->isFirst() && !this->isEmpty())
+    if(isEmpty() || m_navigationHistory->isFirst())
+    {
+        return;
+    }
+    else
     {
         m_navigationHistory = m_navigationHistory->previous();
         m_navigation->loadView(m_navigationHistory->viewMatrix(), m_navigationHistory->fovy(), false);
@@ -94,7 +96,11 @@ void NavigationHistory::undo()
  */
 void NavigationHistory::redo()
 {
-    if(!m_navigationHistory->isLast() && !this->isEmpty())
+    if(isEmpty() || m_navigationHistory->isLast())
+    {
+        return;
+    }
+    else
     {
         m_navigationHistory = m_navigationHistory->next();
         m_navigation->loadView(m_navigationHistory->viewMatrix(), m_navigationHistory->fovy(), false);
@@ -109,27 +115,27 @@ void NavigationHistory::redo()
  */
 void NavigationHistory::reset()
 {
-    if(!this->isEmpty())
+    if(isEmpty())
+        return;
+
+    NavigationHistoryElement * historyHandle {m_navigationHistory->last()};
+    NavigationHistoryElement * prev;
+
+    /// Saves one state with new object to history tail
+    m_navigation->onViewChanged();
+    NavigationHistoryElement * newHandle {m_navigationHistory->last()};
+
+    while(historyHandle->previous() != nullptr)
     {
-        NavigationHistoryElement * historyHandle {m_navigationHistory->last()};
-        NavigationHistoryElement * prev;
-
-        /// Saves one state with new object to history tail
-        m_navigation->onViewChanged();
-        NavigationHistoryElement * newHandle {m_navigationHistory->last()};
-
-        while(historyHandle->previous() != nullptr)
-        {
-            prev = historyHandle->previous();
-            delete historyHandle;
-            historyHandle = prev;
-        }
-
-        m_navigationHistory = newHandle;
-        m_navigationHistory->setPrevious(nullptr);
-        m_navigationHistory->m_length = 1;
-        onHistoryChanged();
+        prev = historyHandle->previous();
+        delete historyHandle;
+        historyHandle = prev;
     }
+
+    m_navigationHistory = newHandle;
+    m_navigationHistory->setPrevious(nullptr);
+    m_navigationHistory->m_length = 1;
+    onHistoryChanged();
 }
 
 /**
@@ -139,14 +145,7 @@ void NavigationHistory::reset()
  */
 bool NavigationHistory::isEmpty()
 {
-    if(m_navigationHistory == nullptr)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return m_navigationHistory == nullptr;
 }
 
 /**

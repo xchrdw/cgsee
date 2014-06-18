@@ -255,7 +255,7 @@ NavigationHistory * Canvas::navigationHistory()
  */
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
 {
-    m_navigationHistory->save(viewmatrix, fovy, this->capture(QSize(512, 512), true, false));
+    m_navigationHistory->save(viewmatrix, fovy, capture(QSize(512, 512), true, false));
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )
@@ -272,7 +272,7 @@ void Canvas::mouseReleaseEvent( QMouseEvent * event )
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
-    this->setFocus();
+    setFocus();
     m_navigation->mouseMoveEvent(event);
 
     emit mouseMoveEventTriggered(1);

@@ -1,6 +1,8 @@
 /// Preprocessor directive
 #pragma once
-#include <core/core_api.h>
+
+/// Include glm for matrices.
+#include <glm/glm.hpp>
 
 /// Include QImage and QSize for thumbnails.
 #include <QImage>
@@ -9,8 +11,7 @@
 /// Include QDateTime for timestamps.
 #include <QDateTime>
 
-/// Include glm for matrices.
-#include <glm/glm.hpp>
+#include <core/core_api.h>
 
 /**
  * @brief The NavigationHistoryElement class.
@@ -64,10 +65,6 @@ protected:
     void deleteFirst();
 
 private:
-
-    /// Properties
-    static const int MAX_LENGTH;
-    static const int THUMBNAIL_SIZE;
 
     /// Member variables
     NavigationHistoryElement * m_previous;

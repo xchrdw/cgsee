@@ -1,10 +1,7 @@
 #pragma once
 
-#include <core/core_api.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <signalzeug/Signal.h>
 
 #include <QObject>
 #include <QKeyEvent>
@@ -13,6 +10,9 @@
 #include <QBasicTimer>
 #include <QTimer>
 
+#include <signalzeug/Signal.h>
+
+#include <core/core_api.h>
 
 class Camera;
 class QWidget;

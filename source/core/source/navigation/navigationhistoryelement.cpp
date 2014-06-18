@@ -1,6 +1,9 @@
 /// Include header file.
 #include <core/navigation/navigationhistoryelement.h>
 
+/// Include glm for matrices.
+#include <glm/glm.hpp>
+
 /// Include QImage and QSize for thumbnails.
 #include <QImage>
 #include <QSize>
@@ -8,14 +11,14 @@
 /// Include QDateTime for timestamps.
 #include <QDateTime>
 
-/// Include glm for matrices.
-#include <glm/glm.hpp>
+namespace
+{
+    /// Property for setting the maximum number of stored history elements.
+    static const int MAX_LENGTH = 16;
 
-/// Property for setting the maximum number of stored history elements.
-const int NavigationHistoryElement::MAX_LENGTH = 16;
-
-/// Property for setting the thumbnail size.
-const int NavigationHistoryElement::THUMBNAIL_SIZE = 128;
+    /// Property for setting the thumbnail size.
+    static const int THUMBNAIL_SIZE = 128;
+}
 
 /// Member variable holding the current size of the history element list.
 int NavigationHistoryElement::m_length = 0;
@@ -38,12 +41,10 @@ NavigationHistoryElement::NavigationHistoryElement(NavigationHistoryElement * pr
     , m_viewmatrix(viewmatrix)
     , m_fovy(fovy)
     , m_thumbnail(thumbnail)
+    , m_timestamp(QDateTime::currentMSecsSinceEpoch())
 {
-    /// Tags each element with a unique timestamp.
-    m_timestamp = QDateTime::currentMSecsSinceEpoch();
-
     /// Increases history list length.
-    m_length++;
+    ++m_length;
 
     /// Scales thumbnail to defined size.
     m_thumbnail = m_thumbnail.scaled(QSize(THUMBNAIL_SIZE, THUMBNAIL_SIZE), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
@@ -221,8 +222,7 @@ bool NavigationHistoryElement::isLast()
  */
 bool NavigationHistoryElement::isEqualViewMatrix(const glm::mat4 & viewmatrix)
 {
-    bool isEqual = false;
-    (m_length != 0) ? isEqual = (viewmatrix == m_viewmatrix) : isEqual = false;
+    bool isEqual = (0 != m_length ? viewmatrix == m_viewmatrix : false);
     return isEqual;
 }
 
@@ -235,8 +235,7 @@ bool NavigationHistoryElement::isEqualViewMatrix(const glm::mat4 & viewmatrix)
  */
 bool NavigationHistoryElement::isEqualFovy(const float & fovy)
 {
-    bool isEqual = false;
-    (m_length != 0) ? isEqual = (fovy == m_fovy) : isEqual = false;
+    bool isEqual = (0 != m_length ? fovy == m_fovy : false);
     return isEqual;
 }
 
@@ -265,7 +264,7 @@ void NavigationHistoryElement::deleteOrphaned()
  */
 void NavigationHistoryElement::deleteFirst()
 {
-    NavigationHistoryElement * new_first {this->first()->next()};
+    NavigationHistoryElement * new_first {first()->next()};
     new_first->setPrevious(nullptr);
     --m_length;
 }

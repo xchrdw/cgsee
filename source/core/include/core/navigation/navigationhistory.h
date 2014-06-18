@@ -1,16 +1,17 @@
 /// Preprocessor directive
 #pragma once
-#include <core/core_api.h>
 
 /// Include navigation history wrapper and history elements list.
-#include <core/navigation/abstractnavigation.h>
 #include <core/navigation/navigationhistoryelement.h>
+
+/// Include QImage for thumbnails.
+#include <QImage>
 
 /// Include signalzeug from libzeug.
 #include <signalzeug/Signal.h>
 
-/// Include QImage for thumbnails.
-#include <QImage>
+#include <core/navigation/abstractnavigation.h>
+#include <core/core_api.h>
 
 /**
  * @brief The navigation history wrapper class.
