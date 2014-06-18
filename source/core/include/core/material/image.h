@@ -17,6 +17,9 @@ public:
 
     virtual bool isValid() = 0;
 
+    virtual int width() = 0;
+    virtual int height() = 0;
+
 protected:
     virtual GLuint getTexture();
     virtual bool texImage() = 0;

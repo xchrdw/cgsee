@@ -16,9 +16,16 @@ bool ImageRaw::isValid() {
     return m_image.isValid() && m_image.hasIntProperty("width") && m_image.hasIntProperty("height");
 }
 
+int ImageRaw::width() {
+    return m_image.intProperty("width");
+}
+int ImageRaw::height() {
+    return m_image.intProperty("height");
+}
+
 bool ImageRaw::texImage() {
-    int w = m_image.intProperty("width");
-    int h = m_image.intProperty("height");
+    int w = width();
+    int h = height();
 
     if (m_image.hasIntProperty("format"))
     {

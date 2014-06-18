@@ -16,6 +16,9 @@ public:
 
     virtual bool isValid();
 
+    virtual int width();
+    virtual int height();
+
 protected:
     virtual bool texImage();
 
