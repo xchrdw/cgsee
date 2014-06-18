@@ -62,7 +62,7 @@ public:
 
    void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
-    
+
     void setPainter(AbstractScenePainter * painter);
     AbstractScenePainter * painter();
 
@@ -71,7 +71,7 @@ public:
 
     void setCoordinateProvider(CoordinateProvider * coordinateProvider);
     CoordinateProvider * coordinateProvider();
-    
+
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent (QKeyEvent *event);
 
@@ -106,8 +106,10 @@ public slots:
     void on_actionTopView_triggered();
     void on_actionBottomView_triggered();
     void on_actionTopRightView_triggered();
+    void on_actionBottomLeftView_triggered();
+    void on_actionRandomView_triggered();
 
-    void on_actionSave_1_triggered();   
+    void on_actionSave_1_triggered();
     void on_actionSave_2_triggered();
     void on_actionSave_3_triggered();
     void on_actionSave_4_triggered();
@@ -145,7 +147,7 @@ protected slots:
     void on_shadowBlurAction_triggered();
     void on_ssaoAction_triggered();
     void on_ssaoBlurAction_triggered();
-   
+
     void on_fboColorAction_triggered();
     void on_fboNormalzAction_triggered();
     void on_fboShadowsAction_triggered();
@@ -155,7 +157,7 @@ protected slots:
 
     void on_openFileDialogAction_triggered();
     void on_quitAction_triggered();
-    
+
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
     void on_toggleFullscreen_triggered();
@@ -195,7 +197,7 @@ protected:
     bool m_visibleDockNavigator;
     bool m_visibleDockExplorer;
     bool m_isFullscreen;
-    
+
     void updateCameraSelection(QString cameraName) const;
     void updateRenderingSelection(QString rendering) const;
 
@@ -213,6 +215,7 @@ protected:
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
+    Group * m_scene;
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;
