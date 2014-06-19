@@ -12,5 +12,5 @@ uniform vec2 aspect;
 
 void main()
 {
-	fragColor = texture(image, (v_uv/aspect+pan)*zoom);
+	fragColor = texture(image, (v_uv/zoom+pan)/aspect);
 }

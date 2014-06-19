@@ -19,8 +19,9 @@ public:
 
     //virtual void resize(const int width, const int height);
     void assignImage(Image * image);
-
+    float getZoom();
     void setZoomDelta(float delta);
+    void setZoomFactor(float factor);
     void setPanDelta(glm::vec2 delta);
 
     virtual void resize(

@@ -79,9 +79,18 @@ void ImagePainter::setPanDelta(glm::vec2 delta) {
     m_dirty = true;
 }
 
+float ImagePainter::getZoom() {
+    return m_zoom;
+}
+
 void ImagePainter::setZoomDelta(float delta) {
     m_zoom += delta;
     m_zoom = m_zoom < 0 ? 0 : m_zoom;
+    m_dirty = true;
+}
+
+void ImagePainter::setZoomFactor(float factor) {
+    m_zoom *= factor;
     m_dirty = true;
 }
 

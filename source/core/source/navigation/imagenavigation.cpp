@@ -17,8 +17,8 @@ ImageNavigation::~ImageNavigation()
 
 void ImageNavigation::updatePanning()
 {
-    glm::vec2 delta = (m_mouse_cur - m_mouse_last) / (float)m_height; // normalized height difference
-    m_painter->setPanDelta(glm::vec2(-delta.x,delta.y));
+    glm::vec2 delta = (m_mouse_cur - m_mouse_last) / m_painter->getZoom(); // scale delta by zoom factor
+    m_painter->setPanDelta(glm::vec2(-delta.x / m_width,delta.y / m_height)); // divide each by total width or height
 }
 
 void ImageNavigation::updateZoom()
@@ -58,8 +58,8 @@ void ImageNavigation::mouseReleaseEvent(QMouseEvent * event)
 }
 
 void ImageNavigation::wheelEvent(QWheelEvent *event){
-    float delta = event->delta()*0.001;
-    m_painter->setZoomDelta(delta);
+    float factor = 1.0 + event->delta()*0.001;
+    m_painter->setZoomFactor(factor);
 }
 
 void ImageNavigation::setPainter(ImagePainter * painter) {
