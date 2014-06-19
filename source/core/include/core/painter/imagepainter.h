@@ -1,12 +1,14 @@
 #pragma once
 
 #include <core/painter/abstractpainter.h>
+#include <GL/glew.h>
 
 #include <glm/vec2.hpp>
 
 class Image;
 class ScreenQuad;
 class Program;
+class BufferObject;
 
 class CORE_API ImagePainter : public AbstractPainter
 {
@@ -16,6 +18,7 @@ public:
 
     // paint the scene
     virtual void paint();
+    virtual void paintGrid();
 
     //virtual void resize(const int width, const int height);
     void assignImage(Image * image);
@@ -35,9 +38,12 @@ protected:
 
 protected:  
     ScreenQuad * m_quad;
-    Program * m_program;
-
+    Program * m_imageProgram;
     Image * m_image;
+    
+    GLuint m_gridVao;
+    BufferObject * m_gridVertexBO;
+    Program * m_gridProgram;
 
     bool m_dirty;
 
@@ -45,4 +51,5 @@ protected:
     glm::vec2 m_pan;
 
     glm::vec2 m_aspect;
+    glm::vec2 m_viewport;
 };
