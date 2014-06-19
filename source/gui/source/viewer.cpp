@@ -385,6 +385,9 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_GEOMETRY, saveGeometry());
     s.setValue(SETTINGS_STATE, saveState());
 
+    delete m_imagePainter;
+    delete m_scenePainter;
+
     delete m_qtCanvas;
 
     delete m_dockNavigator;
@@ -397,8 +400,6 @@ Viewer::~Viewer()
     m_loaders.clear();
     delete m_coordinateProvider;
     delete m_selectionBBox;
-    delete m_imagePainter;
-    delete m_scenePainter;
 }
 
 void Viewer::setPainter(AbstractPainter * painter)
