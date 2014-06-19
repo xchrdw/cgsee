@@ -59,7 +59,7 @@ NavigationHistoryElement * NavigationHistory::navigationHistoryElement()
  * @param fovy The field of view to save.
  * @param thumbnail A snapshot of the canvas to save.
  */
-void NavigationHistory::save(glm::mat4 viewmatrix, float fovy, QImage thumbnail)
+void NavigationHistory::save(const glm::mat4 & viewmatrix, const float & fovy, const QImage & thumbnail)
 {
     if (!m_navigationHistory->isEqualViewMatrix(viewmatrix) || !m_navigationHistory->isEqualFovy(fovy))
     {

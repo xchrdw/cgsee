@@ -35,7 +35,7 @@ public:
     NavigationHistoryElement * navigationHistoryElement();
 
     /// Public methods
-    void save(glm::mat4 viewmatrix, float fovy, QImage thumbnail);
+    void save(const glm::mat4 & viewmatrix, const float & fovy, const QImage & thumbnail);
     void undo();
     void redo();
     void reset();
