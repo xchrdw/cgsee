@@ -192,10 +192,12 @@ const QImage Canvas::capture(
 ,   const bool aspect
 ,   const bool alpha)
 {
-    if(!m_painter)
+    AbstractScenePainter * asp = dynamic_cast<AbstractScenePainter *>(m_painter);
+
+    if(!asp)
         return QImage();
 
-    //return m_painter->capture(*this, size, aspect, alpha);
+    return asp->capture(*this, size, aspect, alpha);
 }
 
 void Canvas::resize(int width, int height)
