@@ -1,4 +1,3 @@
-//#version 330
 #version 150 core
 
 uniform mat4 transform;
