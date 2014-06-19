@@ -422,8 +422,8 @@ void Viewer::on_loadFile(const QString & path)
     {
         this->assignScene(scene);
         this->m_qtCanvas->navigation()->rescaleScene(scene);
-        if (m_coordinateProvider)
-            this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
+//        if (m_coordinateProvider)
+//            this->m_coordinateProvider->assignPass(this->painter()->getSharedPass()); TODO
         this->painter()->assignScene(scene);
         this->m_qtCanvas->navigation()->sceneChanged(scene);
         this->m_qtCanvas->update();
@@ -1055,13 +1055,13 @@ void Viewer::updateInfoBox()
 }
 
 void Viewer::selectionBBoxChanged()
-{
-    m_selectionBBox->invalidate();
-    for ( auto node : m_selectedNodes )
-    {
-        m_selectionBBox->extend(node->boundingBox());
-    }
+{//TODO
+//    m_selectionBBox->invalidate();
+//    for ( auto node : m_selectedNodes )
+//    {
+//        m_selectionBBox->extend(node->boundingBox());
+//    }
 
-    Painter * painter = static_cast<Painter*>(this->painter());
-    painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
+//    Painter * painter = static_cast<Painter*>(this->painter());
+//    painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
 }

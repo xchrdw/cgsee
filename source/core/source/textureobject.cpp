@@ -12,6 +12,15 @@ TextureObject::TextureObject()
 
 }
 
+TextureObject::TextureObject(GLenum internalFormat, GLenum format, GLenum type)
+    : m_texture(0)
+    , m_internalFormat(internalFormat)
+    , m_format(format)
+    , m_type(type)
+{
+
+}
+
 TextureObject::TextureObject(GLuint width, GLuint height, GLenum internalFormat, GLenum format, GLenum type)
     : m_texture(0)
     , m_width(width)
@@ -58,6 +67,18 @@ void TextureObject::attachTo(GLenum attachment)
 {
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, m_texture, 0);
     glError();
+}
+
+void TextureObject::bindTo(GLenum textureUnit)
+{
+    glActiveTexture(textureUnit);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+}
+
+void TextureObject::releaseFrom(GLenum textureUnit)
+{
+    glActiveTexture(textureUnit);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void TextureObject::generateGLTexture()

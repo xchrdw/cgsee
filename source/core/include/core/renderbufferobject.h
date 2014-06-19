@@ -10,6 +10,7 @@ class CORE_API RenderBufferObject
 {
 public:
     RenderBufferObject();
+    RenderBufferObject(GLenum internalFormat);
     RenderBufferObject(GLuint width, GLuint height, GLenum internalFormat);
     virtual ~RenderBufferObject();
 

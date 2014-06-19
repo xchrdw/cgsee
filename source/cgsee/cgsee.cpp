@@ -1,11 +1,11 @@
 #include "cgsee.h"
-#include "painter.h"
 
 #include <core/datacore/datablock.h>
 #include <gui/viewer.h>
 #include <core/camera.h>
 #include <core/navigation/arcballnavigation.h>
 #include <core/coordinateprovider.h>
+#include <core/painter/pipelinepainter.h>
 
 
 CGSee::CGSee(int & argc, char ** argv)
@@ -30,7 +30,7 @@ CGSee::CGSee(int & argc, char ** argv)
     // camera->setZFar (300.0f);
     m_viewer->setCamera(camera);
 
-    m_painter = new Painter(camera);
+    m_painter = new PipelinePainter(camera);
     m_viewer->setPainter(m_painter);
 
     AbstractNavigation * navigation = new ArcballNavigation(camera);

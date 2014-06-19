@@ -53,7 +53,7 @@ public: //REFACTORING
     virtual void reloadShaders() override;
     
 protected:
-    virtual const bool initialize() override;
+    virtual bool initialize() override;
     
 
 protected:

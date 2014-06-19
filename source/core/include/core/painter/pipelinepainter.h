@@ -23,13 +23,16 @@ class RenderingPass;
 class LightSourcePass;
 class RenderStage;
 class PipelineBuilder;
+class TextureObject;
 
 class PipelinePainter : public AbstractScenePainter // , public PropertyGroup
 {
 public:
-
+    PipelinePainter(Camera * camera);
     PipelinePainter(Camera * camera, Group * scene);
     virtual ~PipelinePainter();
+
+    virtual bool initialize() override;
 
     //external events
     virtual void pipelineConfigChanged();
@@ -39,18 +42,17 @@ public:
     virtual void resize(const int width, const int height) override;
     virtual void reloadShaders() override;
 
-    /* will become properties:
+    //TODO remove as soon as possible
     virtual void selectCamera(const QString cameraName) override;
     virtual void selectRendering(const QString rendering) override;
     virtual void setShading(char shader) override;
     virtual void setFrameBuffer(int frameBuffer);
     virtual void setEffect( int effect, bool active );
-    */
-
-    /* will become camera properties:
     void setStereoCameraSeparation(AbstractProperty & property);
     void setConvergentCameraFocus(AbstractProperty & property);
-    */
+    virtual void postShaderRelinked() override;
+    virtual RenderingPass *  getSharedPass() override;
+    //TODO remove as soon as possible </end>
 
     Group * scene();
     const ScreenQuad * screenQuad();
@@ -64,10 +66,10 @@ public:
     bool isSceneInvalid();
     bool isViewInvalid();
 
-    GLuint getTexture(QString name);
+    TextureObject * getTexture(QString name);
     bool textureExists(QString name);
-    void setTexture(QString name, GLuint texture);
-    bool addTexture(QString name, GLuint texture);
+    void setTexture(QString name, TextureObject * texture);
+    bool addTexture(QString name, TextureObject * texture);
     void removeTexture(QString name);
 
 protected:
@@ -81,10 +83,11 @@ protected:
     QList<RenderStage *> m_stages;
 
     QString m_samplerToDisplay;
-    QMap<QString, GLuint> m_textures;
+    QMap<QString, TextureObject*> m_textures;
 
     Camera * m_camera;
     Group * m_scene;
 
     ScreenQuad * m_quad;
+    Program * m_flush;
 };

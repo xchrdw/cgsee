@@ -10,6 +10,13 @@ RenderBufferObject::RenderBufferObject()
 
 }
 
+RenderBufferObject::RenderBufferObject(GLenum internalFormat)
+    : m_buffer(0)
+    , m_internalFormat(internalFormat)
+{
+
+}
+
 RenderBufferObject::RenderBufferObject(GLuint width, GLuint height, GLenum internalFormat)
     : m_buffer(0)
     , m_width(width)

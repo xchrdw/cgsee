@@ -48,7 +48,7 @@ IdPainter::~IdPainter()
     m_scene = nullptr;
 }
 
-const bool IdPainter::initialize()
+bool IdPainter::initialize()
 {
     AutoTimer t("Initialization of ID-Painter");
 

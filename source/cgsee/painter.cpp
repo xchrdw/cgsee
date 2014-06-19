@@ -127,7 +127,7 @@ void Painter::setStereoCameraSeparation(AbstractProperty & p)
   
 }
 
-const bool Painter::initialize()
+bool Painter::initialize()
 {
     AutoTimer t("Initialization of Painter");
 
@@ -251,7 +251,6 @@ const bool Painter::initialize()
     builder2.buildWidget(m_propertylist->list());
     builder2.retainWidget()->hide();
     //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
-
 
     return true;
 }

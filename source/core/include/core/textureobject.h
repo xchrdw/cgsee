@@ -10,6 +10,7 @@ class CORE_API TextureObject
 {
 public:
     TextureObject();
+    TextureObject(GLenum internalFormat, GLenum format, GLenum type);
     TextureObject(GLuint width, GLuint height, GLenum internalFormat, GLenum format, GLenum type);
     virtual ~TextureObject();
 
@@ -20,6 +21,8 @@ public:
 
     void attachTo(GLenum attachment);
 
+    void bindTo(GLenum textureUnit);
+    void releaseFrom(GLenum textureUnit);
 
 protected:
     void generateGLTexture();

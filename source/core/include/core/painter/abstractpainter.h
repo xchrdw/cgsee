@@ -32,7 +32,7 @@ public:
 
 
 protected:
-    virtual const bool initialize() = 0;
+    virtual bool initialize() = 0;
     virtual Camera * camera() = 0;
 
 protected:

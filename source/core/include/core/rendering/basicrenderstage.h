@@ -2,8 +2,9 @@
 
 #include <core/core_api.h>
 #include <core/rendering/scenerenderstage.h>
+#include <core/textureobject.h>
+#include <core/renderbufferobject.h>
 
-// under construction
 class CORE_API BasicRenderStage : public SceneRenderStage
 {
 public:
@@ -12,4 +13,9 @@ public:
 
     virtual void reloadShaders() override;
     virtual void resize(const int width, const int height) override;
+
+protected:
+    TextureObject * m_normalz;
+    TextureObject * m_colorId;
+    RenderBufferObject * m_depth;
 };

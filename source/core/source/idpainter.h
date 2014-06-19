@@ -36,7 +36,7 @@ public:
         const int width
     ,   const int height);
 protected:
-    virtual const bool initialize() override;
+    virtual bool initialize() override;
     virtual Camera * camera() override;
 
 protected:
