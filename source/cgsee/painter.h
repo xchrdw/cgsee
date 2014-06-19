@@ -50,6 +50,7 @@ public:
 public: //REFACTORING
     const Group * scene();
     virtual Camera * camera() override;
+    virtual void reloadShaders() override;
     
 protected:
     virtual const bool initialize() override;

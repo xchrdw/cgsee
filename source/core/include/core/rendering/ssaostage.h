@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/core_api.h>
-#include <core/rendering/postprocessingStage.h>
+#include <core/rendering/postprocessingstage.h>
 
 
 // under construction
@@ -13,8 +13,4 @@ public:
 
     virtual void reloadShaders() override;
     virtual void resize(const int width, const int height) override;
-    virtual void render() ;
-
-protected:
-	Program * m_program;
 };

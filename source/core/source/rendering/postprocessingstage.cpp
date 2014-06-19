@@ -7,6 +7,7 @@
 #include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
+#include <core/screenquad.h>
 
 PostProcessingStage::PostProcessingStage(PipelinePainter & painter)
     : RenderStage(painter)
@@ -17,4 +18,11 @@ PostProcessingStage::PostProcessingStage(PipelinePainter & painter)
 PostProcessingStage::~PostProcessingStage(void)
 {
 	delete m_program;
+}
+
+void PostProcessingStage::render()
+{
+    bindFBO();
+    m_painter.screenQuad()->draw(*m_program);
+    releaseFBO();
 }

@@ -1,11 +1,14 @@
 #include <core/painter/pipelinepainter.h>
 
+#include <core/rendering/renderstage.h>
+#include <core/rendering/pipelinebuilder.h>
+
 #include <core/camera.h>
 #include <core/scenegraph/group.h>
 #include <core/screenquad.h>
 #include <core/program.h>
 
-PipelinePainter(Camera * camera, Group * scene)
+PipelinePainter::PipelinePainter(Camera * camera, Group * scene)
     : m_camera(camera)
     , m_scene(scene)
     , m_quad(new ScreenQuad())
@@ -15,34 +18,28 @@ PipelinePainter(Camera * camera, Group * scene)
 
 }
 
-virtual ~PipelinePainter()
+PipelinePainter::~PipelinePainter()
 {
     clearRenderStages();
 }
 
-virtual void pipelineConfigChanged()
+void PipelinePainter::pipelineConfigChanged()
 {
     // select and configure appropriate builder
-    setupPipeline(PipelineBuilder());
+    // setupPipeline(PipelineBuilder(*this));
 }
 
-void sceneChanged()
+void PipelinePainter::sceneChanged()
 {
-    foreach (RenderStage * renderStage, m_stages)
-    {
-        renderStage->sceneChanged();
-    }
+    //TODO think!
 }
 
-void viewChanged()
+void PipelinePainter::viewChanged()
 {
-    foreach (RenderStage * renderStage, m_stages)
-    {
-        renderStage->viewChanged();
-    }
+    //TODO think!
 }
 
-void paint()
+void PipelinePainter::paint()
 {
     foreach (RenderStage * renderStage, m_stages)
     {
@@ -51,7 +48,7 @@ void paint()
     // show ScreenQuad
 }
 
-void resize(const int width, const int height)
+void PipelinePainter::resize(const int width, const int height)
 {
     foreach (RenderStage * renderStage, m_stages)
     {
@@ -59,7 +56,7 @@ void resize(const int width, const int height)
     }
 }
 
-void reloadShaders()
+void PipelinePainter::reloadShaders()
 {
     foreach (RenderStage * renderStage, m_stages)
     {
@@ -68,54 +65,64 @@ void reloadShaders()
 }
 
 
-const Group * scene()
+Group * PipelinePainter::scene()
 {
     return m_scene;
 }
 
-const ScreenQuad * screenQuad()
+const ScreenQuad * PipelinePainter::screenQuad()
 {
     return m_quad;
 }
 
-Camera * camera()
+Camera * PipelinePainter::camera()
 {
     return m_camera;
 }
 
-void addRenderStage(RenderStage * renderStage)
+void PipelinePainter::addRenderStage(RenderStage * renderStage)
 {
     m_stages.push_back(renderStage);
 }
 
-void setScene(Group * scene)
+void PipelinePainter::setScene(Group * scene)
 {
     m_scene = scene;
     sceneChanged();
 }
 
-void setCamera(Camera * camera)
+void PipelinePainter::setCamera(Camera * camera)
 {
     m_camera = camera;
     pipelineConfigChanged();
 }
 
-GLuint getTexture(QString name)
+bool PipelinePainter::isSceneInvalid()
 {
-    return m_texture.value(name, 0);
+    return true;//TODO
 }
 
-bool textureExists(QString name)
+bool PipelinePainter::isViewInvalid()
 {
-    return m_texture.contains(name);
+    return true;//TODO
 }
 
-void setTexture(QString name, GLuint texture)
+GLuint PipelinePainter::getTexture(QString name)
 {
-    m_texture[name] = texture;
+    return m_textures.value(name, 0);
 }
 
-bool addTexture(QString name, GLuint texture)
+bool PipelinePainter::textureExists(QString name)
+{
+    return m_textures.contains(name);
+}
+
+void PipelinePainter::setTexture(QString name, GLuint texture)
+{
+    m_textures[name] = texture;
+}
+
+bool PipelinePainter::addTexture(QString name, GLuint texture)
 {
     if(textureExists(name))
         return false;
@@ -123,37 +130,22 @@ bool addTexture(QString name, GLuint texture)
     return true;
 }
 
-void removeTexture(QString name)
+void PipelinePainter::removeTexture(QString name)
 {
     m_textures.remove(name);
 }
 
-void setupPipeline(PipelineBuilder & builder)
+void PipelinePainter::setupPipeline(PipelineBuilder & builder)
 {
     clearRenderStages();
     //TODO invoke builder
 }
 
-void clearRenderStages()
+void PipelinePainter::clearRenderStages()
 {
-    for(QList::iterator i = m_stages.begin(); i != m_stages.end(); i++)
+    for(QList<RenderStage*>::iterator i = m_stages.begin(); i != m_stages.end(); i++)
     {
-        delete (*i.pointer);
+        delete (*i);
     }
     m_stages.clear();
-}
-
-
-#include <core/painter/pipelinepainter.h>
-
-PipelinePainter::PipelinePainter(Camera * camera)
-	: AbstractScenePainter()
-	, m_camera(camera)
-{
-
-}
-
-PipelinePainter::~PipelinePainter()
-{
-
 }

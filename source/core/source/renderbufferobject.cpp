@@ -1,5 +1,5 @@
 
-#include <core/RenderBufferObject.h>
+#include <core/renderbufferobject.h>
 
 #include <GL/glew.h>
 
@@ -60,7 +60,7 @@ void RenderBufferObject::generateGLRenderBuffer()
     glError();
     glBindRenderbuffer(GL_RENDERBUFFER, m_buffer);
     glError();
-    glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
+    glRenderbufferStorage(GL_RENDERBUFFER, m_internalFormat, m_width, m_height);
     glError();
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glError();
@@ -70,7 +70,7 @@ void RenderBufferObject::deleteGLRenderBuffer()
 {
     if (m_buffer != 0)
     {
-        glDeleteRenderbuffers(1, &m_renderbuffer);
+        glDeleteRenderbuffers(1, &m_buffer);
         glError();
     }
 }

@@ -24,7 +24,7 @@ public:
     virtual void render() = 0;
 
 protected:
-    void drawScene(glm::mat4 & transform, Program * program);
+    void drawScene(const glm::mat4 & transform, Program * program);
 
     bool isSceneInvalid();
     bool isViewInvalid();

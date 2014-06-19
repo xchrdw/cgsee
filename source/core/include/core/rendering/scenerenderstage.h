@@ -10,12 +10,9 @@ public:
     SceneRenderStage(PipelinePainter & painter);
     virtual ~SceneRenderStage(void);
 
-    virtual void reloadShaders() override;
-    virtual void resize(const int width, const int height) override;
     virtual void render() override;
 
 protected:
-	Program * m_program;
-	FrameBufferObject * m_fbo;
+    Program * m_program;
 
 };

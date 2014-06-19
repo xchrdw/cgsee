@@ -1,12 +1,14 @@
-
 #include <core/rendering/renderstage.h>
 
 #include <glm/mat4x4.hpp>
+#include <core/gpuquery.h>
 
 #include <core/framebufferobject.h>
 #include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
+#include <core/scenegraph/group.h>
+
 
 RenderStage::RenderStage(PipelinePainter & painter)
     : m_painter(painter)
@@ -22,7 +24,7 @@ RenderStage::~RenderStage(void)
     glError();
 }
 
-void RenderStage::drawScene(glm::mat4 & transform, Program * program)
+void RenderStage::drawScene(const glm::mat4 & transform, Program * program)
 {
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, transform);

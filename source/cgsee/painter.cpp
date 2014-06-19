@@ -474,6 +474,11 @@ Camera * Painter::camera()
     return m_camera;
 }
 
+void Painter::reloadShaders()
+{
+    // no-op
+}
+
 void Painter::sceneChanged(Group * scene)
 {
     for (RenderingPass * pass : m_passes) 

@@ -10,10 +10,19 @@
 SsaoStage::SsaoStage(PipelinePainter & painter)
     : PostProcessingStage(painter)
 {
-	m_program = new Program();
+    //m_program->attach(myFancyShader);
 }
 
 SsaoStage::~SsaoStage(void)
 {
-	delete m_program;
+}
+
+void SsaoStage::reloadShaders()
+{
+    //TODO
+}
+
+void SsaoStage::resize(const int width, const int height)
+{
+    //TODO
 }

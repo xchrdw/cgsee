@@ -11,9 +11,7 @@ public:
     PostProcessingStage(PipelinePainter & painter);
     virtual ~PostProcessingStage(void);
 
-    virtual void reloadShaders() override;
-    virtual void resize(const int width, const int height) override;
-    virtual void render() ;
+    virtual void render() override;
 
 protected:
 	Program * m_program;

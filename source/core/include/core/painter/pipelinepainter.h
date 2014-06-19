@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/gpuquery.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <memory>
@@ -19,6 +21,8 @@ class FrameBufferObject;
 class AbstractProperty;
 class RenderingPass;
 class LightSourcePass;
+class RenderStage;
+class PipelineBuilder;
 
 class PipelinePainter : public AbstractScenePainter // , public PropertyGroup
 {
@@ -48,7 +52,7 @@ public:
     void setConvergentCameraFocus(AbstractProperty & property);
     */
 
-    const Group * scene();
+    Group * scene();
     const ScreenQuad * screenQuad();
     virtual Camera * camera() override;
 
@@ -56,6 +60,9 @@ public:
 
     void setScene(Group * scene);
     void setCamera(Camera * camera);
+
+    bool isSceneInvalid();
+    bool isViewInvalid();
 
     GLuint getTexture(QString name);
     bool textureExists(QString name);
@@ -68,12 +75,13 @@ protected:
     void setupPipeline(PipelineBuilder & builder);
     void clearRenderStages();
 
+
 protected:
 
     QList<RenderStage *> m_stages;
 
     QString m_samplerToDisplay;
-    QMap<QString, Sampler> m_texture;
+    QMap<QString, GLuint> m_textures;
 
     Camera * m_camera;
     Group * m_scene;

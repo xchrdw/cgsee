@@ -28,6 +28,8 @@ protected:
 protected:
     GLuint m_buffer;
 
+    GLuint m_width;
+    GLuint m_height;
     GLenum m_internalFormat;
 
-}
+};

@@ -12,10 +12,4 @@ public:
 
     virtual void reloadShaders() override;
     virtual void resize(const int width, const int height) override;
-    virtual void render() override;
-
-protected:
-	Program * m_program;
-    FrameBuffer m_fbo;
-
 };

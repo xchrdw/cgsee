@@ -7,23 +7,24 @@
 #include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
+#include <core/camera.h>
 
 BasicRenderStage::BasicRenderStage(PipelinePainter & painter)
     : SceneRenderStage(painter)
 {
-
-    m_program = new Program();
+    //m_program->attach(myFancyShader);
 }
 
 BasicRenderStage::~BasicRenderStage(void)
 {
-	delete m_program;
-	delete m_fbo;
 }
 
-void BasicRenderStage::render()
+void BasicRenderStage::reloadShaders()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    drawScene(m_painter.camera()->transform(), m_program);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //TODO
+}
+
+void BasicRenderStage::resize(const int width, const int height)
+{
+    //TODO
 }

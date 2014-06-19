@@ -34,4 +34,4 @@ protected:
     GLenum m_format;
     GLenum m_type;
 
-}
+};
