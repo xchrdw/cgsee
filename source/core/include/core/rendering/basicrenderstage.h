@@ -11,6 +11,8 @@ public:
     BasicRenderStage(PipelinePainter & painter);
     virtual ~BasicRenderStage(void);
 
+    virtual void render() override;
+
     virtual void reloadShaders() override;
     virtual void resize(const int width, const int height) override;
 

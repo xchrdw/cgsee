@@ -29,6 +29,13 @@ BasicRenderStage::~BasicRenderStage(void)
 
 }
 
+void BasicRenderStage::render()
+{
+    m_painter.camera()->setUniforms(*m_program);
+    bindFBO();
+    drawScene(m_painter.camera()->transform(), m_program);
+    releaseFBO();
+}
 void BasicRenderStage::reloadShaders()
 {
     //TODO

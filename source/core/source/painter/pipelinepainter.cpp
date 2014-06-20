@@ -20,7 +20,6 @@ PipelinePainter::PipelinePainter(Camera * camera, Group * scene)
     , m_flush(nullptr)
 {
 
-
 }
 
 PipelinePainter::PipelinePainter(Camera * camera)
@@ -45,10 +44,6 @@ bool PipelinePainter::initialize()
 
     addRenderStage(new BasicRenderStage(*this));
 
-    glm::vec2 viewport = m_camera->viewport();
-
-    resize(viewport.x, viewport.y);
-
     return true;
 }
 
@@ -71,6 +66,7 @@ void PipelinePainter::viewChanged()
 
 void PipelinePainter::paint()
 {
+    AbstractPainter::paint();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     foreach (RenderStage * renderStage, m_stages)
@@ -83,12 +79,14 @@ void PipelinePainter::paint()
         return;
 
     texture->bindTo(GL_TEXTURE0);
+    m_flush->setUniform("selectedBuffer", 0);
     m_quad->draw(*m_flush);
     texture->releaseFrom(GL_TEXTURE0);
 }
 
 void PipelinePainter::resize(const int width, const int height)
 {
+    AbstractPainter::resize(width, height);
     foreach (RenderStage * renderStage, m_stages)
     {
         renderStage->resize(width, height);
