@@ -3,11 +3,9 @@
 in vec4 gl_FragCoord;
 out vec4 fragColor;
 
-uniform float zoom;
-uniform vec2 pan;
-uniform vec2 aspect;
+uniform float pixelWidth;
 
 void main()
 {
-	fragColor = vec4(1,1,1,1);
+	fragColor = mix( vec4(1,1,1,0), vec4(1,1,1,1), smoothstep(49,55,pixelWidth) );
 }

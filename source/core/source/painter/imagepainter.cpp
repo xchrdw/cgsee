@@ -124,6 +124,11 @@ void ImagePainter::paintGrid()
     glError();
     glDepthMask(GL_FALSE);
     glError();
+    glEnable(GL_BLEND);
+    glError();
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    m_gridProgram->setUniform("pixelWidth", pixelWidth);
 
     float lines = m_viewport.x / pixelWidth;
     m_gridProgram->setUniform("lines", lines);
@@ -138,6 +143,8 @@ void ImagePainter::paintGrid()
     glDisable(GL_CULL_FACE);
     glError();
     glDepthMask(GL_TRUE);
+    glError();
+    glDisable(GL_BLEND);
     glError();
 
     glBindVertexArray(0);
