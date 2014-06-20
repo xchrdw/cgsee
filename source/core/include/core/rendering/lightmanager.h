@@ -14,14 +14,15 @@ public:
 
 	LightInfo m_lightInfo;
 	PointLightBuffer m_pointLightBuffer;
-	std::vector<PointLight> m_pointLightList;
-	std::vector<SpotLight> m_spotLightList;
+	SpotLightBuffer m_spotLightBuffer;
+	std::vector<PointLight> m_pointLights;
+	std::vector<SpotLight> m_spotLights;
 	//std::vector<GoboLight> m_goboLightList;
 
-	void setDirectionalLight(DirectionalLight& directionalLight);
+	void setDirectionalLight(glm::vec3 direction, glm::vec3 intensity);
+	void disableDirectionalLight();
 	void addPointLight(glm::vec4 pos, glm::vec4 color, float radius);
-	void addPointLight(PointLight& pointLight);
-	void addSpotLight(SpotLight& spotLight);
+	void addSpotLight(glm::vec3 pos, glm::vec3 direction, glm::vec3 color, float range, float conePower);
 
 	void initBuffers();
 

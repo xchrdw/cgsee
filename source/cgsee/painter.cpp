@@ -255,33 +255,35 @@ const bool Painter::initialize()
     builder2.retainWidget()->hide();
     //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
 
-	// Light Manager
+	// Lighting system code starts here
 	m_lightManager = new LightManager();
 	m_lightManager->initBuffers();
-	DirectionalLight dlight;
-	dlight.m_direction = glm::normalize(glm::vec3(1, 1, 1));
-	dlight.m_intensity = glm::vec3(0.0, 0.0, 0.0);
-	m_lightManager->setDirectionalLight(dlight);
+	//m_lightManager->setDirectionalLight(glm::normalize(glm::vec3(1, 1, 1)), glm::vec3(0.2, 0.5, 0));
 
-	glm::vec4 colors[12] = 
+	glm::vec4 colors[3] = 
 	{
 		glm::vec4(1.0, 0.0, 0.0, 1.f),
 		glm::vec4(1.0, 0.6, 0.0, 1.f),
 		glm::vec4(0.0, 1.0, 1.0, 1.f),
-		glm::vec4(1.0, 0.6, 0.0, 1.f),
-		glm::vec4(1.0, 0.0, 0.0, 1.f),
-		glm::vec4(1.0, 0.6, 0.0, 1.f),
-		glm::vec4(0.0, 1.0, 1.0, 1.f),
-		glm::vec4(1.0, 0.6, 0.0, 1.f),
-		glm::vec4(1.0, 0.0, 0.0, 1.f),
-		glm::vec4(1.0, 0.6, 0.0, 1.f),
-		glm::vec4(0.0, 1.0, 1.0, 1.f),
-		glm::vec4(1.0, 0.6, 0.0, 1.f)
 	};
 
-	for (uint t = 0; t < 12; t++)
+	for (uint t = 0; t < 3; t++)
 	{
-		m_lightManager->addPointLight(glm::vec4(t/4.f,1.f,t/4.f, 1.f), colors[t], 10.f);
+		m_lightManager->addPointLight(glm::vec4(t/4.f,1.f,t/4.f, 1.f), colors[t], 4.f);
+	}
+	
+	glm::vec3 spotlight_positions[4] =
+	{
+		glm::vec3(3, 2, -3),
+		glm::vec3(-3, 2, -6),
+		glm::vec3(6, 2, -6),
+		glm::vec3(3, 2, 3)
+	};
+	for (int t = 0; t < 4; t++)
+	{
+		// Shine on origin!
+		glm::vec3 direction = glm::normalize(-spotlight_positions[t]);
+		m_lightManager->addSpotLight(spotlight_positions[t], direction, glm::vec3(0.0, 0, 1.f), 10.f, 16.f);
 	}
     return true;
 }
