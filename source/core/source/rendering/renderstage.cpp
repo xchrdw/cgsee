@@ -31,7 +31,7 @@ void RenderStage::drawScene(const glm::mat4 & transform, Program * program)
     traverser.traverse(*(m_painter.scene()), drawVisitor);
 }
 
-GLuint RenderStage::bindFBO()
+void RenderStage::bindFBO()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glError();

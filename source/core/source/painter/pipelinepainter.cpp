@@ -11,20 +11,18 @@
 #include <core/textureobject.h>
 #include <core/fileassociatedshader.h>
 
+
+PipelinePainter::PipelinePainter(Camera * camera)
+	: PipelinePainter(camera, camera)
+{
+
+}
+
 PipelinePainter::PipelinePainter(Camera * camera, Group * scene)
     : m_camera(camera)
     , m_scene(scene)
     , m_quad(new ScreenQuad())
-    , m_stages(QList<RenderStage *>())
-    , m_textures(QMap<QString, TextureObject*>())
     , m_flush(nullptr)
-{
-
-
-}
-
-PipelinePainter::PipelinePainter(Camera * camera)
-    : PipelinePainter(camera, camera)
 {
 
 }
