@@ -131,6 +131,10 @@ void ImagePainter::paintGrid()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_gridProgram->setUniform("pixelWidth", pixelWidth);
+    m_gridProgram->setUniform("width", (float)(m_image->width()));
+    m_gridProgram->setUniform("height", (float)(m_image->height()));
+    m_gridProgram->setUniform("aspect", m_aspect);
+    m_gridProgram->setUniform("pan", m_pan);
 
     float lines = m_viewport.x / pixelWidth;
     m_gridProgram->setUniform("lines", lines);
