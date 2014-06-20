@@ -155,6 +155,9 @@ void ImagePainter::assignImage(Image * image) {
     delete m_image;
     m_dirty = true;
     m_image = image;
+
+    m_zoom = 1;
+    m_pan = glm::vec2(0,0);
 }
 
 void ImagePainter::setPanDelta(glm::vec2 delta) {
