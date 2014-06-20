@@ -167,6 +167,7 @@ void ImagePainter::setZoomDelta(float delta) {
 
 void ImagePainter::setZoomFactor(float factor) {
     m_zoom *= factor;
+    m_zoom = m_zoom < 0 ? 0 : m_zoom;
     m_dirty = true;
 }
 

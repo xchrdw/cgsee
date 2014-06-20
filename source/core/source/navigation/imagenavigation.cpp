@@ -59,6 +59,9 @@ void ImageNavigation::mouseReleaseEvent(QMouseEvent * event)
 
 void ImageNavigation::wheelEvent(QWheelEvent *event){
     float factor = 1.0 + event->delta()*0.001;
+    float x = event->pos().x() * (1.0 - 1.0 / factor) / m_width / m_painter->getZoom();
+    float y = (m_height - event->pos().y()) * (1.0 - 1.0 / factor) / m_height / m_painter->getZoom();
+    m_painter->setPanDelta(glm::vec2(x, y));
     m_painter->setZoomFactor(factor);
 }
 
