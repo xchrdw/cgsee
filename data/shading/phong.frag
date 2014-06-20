@@ -53,7 +53,7 @@ vec4 BlinnPhong(vec3 n, vec3 v, vec3 l, vec4 light_color, vec4 diff_color, vec4 
 
     // Diffuse component
     vec4 diff = diff_color * n_dot_l;
-    vec4 spec = spec_color * pow(n_dot_h, spec_power) * 0;
+    vec4 spec = spec_color * pow(n_dot_h, spec_power) * n_dot_l;
 
     vec4 color_out = (diff + spec) * light_color * vec4(attenuation);
     return color_out;
@@ -68,12 +68,16 @@ vec4 BlinnPhongDirectional(vec3 n, vec3 v, vec3 l, vec4 light_color, vec4 diff_c
 
     // Diffuse component
     vec4 diff = diff_color * n_dot_l;
-    vec4 spec = spec_color * pow(n_dot_h, spec_power) * 0.0;
+    vec4 spec = spec_color * pow(n_dot_h, spec_power) * n_dot_l;
 
     vec4 color_out = (diff + spec) * light_color;
     return color_out;
 }
 
+/*
+    Beware:
+    All lighting calculations are done in view-space for now.
+*/
 void main()
 {
     uint numPointL = LightInfoData.numPointLights;
@@ -88,6 +92,7 @@ void main()
 
     for (uint t = 0; t < numPointL; t++)
     {
+	// l: direction to the light from the surface
 	l = (view * vec4(PointLightBuffer.lights[t].pos.xyz,1.0)).xyz - view_position;
 	light_color = PointLightBuffer.lights[t].intensity;
 	float dist = length(l);
