@@ -1,5 +1,6 @@
 #pragma once
 
+#include <core/core_api.h>
 #include <core/gpuquery.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -25,7 +26,7 @@ class RenderStage;
 class PipelineBuilder;
 class TextureObject;
 
-class PipelinePainter : public AbstractScenePainter // , public PropertyGroup
+class CORE_API PipelinePainter : public AbstractScenePainter // , public PropertyGroup
 {
 public:
     PipelinePainter(Camera * camera);

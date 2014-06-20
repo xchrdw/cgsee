@@ -30,7 +30,7 @@ protected:
     bool isViewInvalid();
 
 protected:
-    GLuint bindFBO();
+    void bindFBO();
     void releaseFBO();
 
     GLuint createRenderbuffer(GLuint width, GLuint height, GLenum internalFormat);
