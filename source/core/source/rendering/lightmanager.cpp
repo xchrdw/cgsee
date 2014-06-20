@@ -111,7 +111,7 @@ void LightManager::updateBuffers(GLuint activeProgram)
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo_point);
 	bindingLocation = glGetUniformBlockIndex(activeProgram, "PointLights");
 	// TODO: This only needs to be done once.
-	https://www.opengl.org/sdk/docs/man3/xhtml/glUniformBlockBinding.xml
+	//https://www.opengl.org/sdk/docs/man3/xhtml/glUniformBlockBinding.xml
 	glUniformBlockBinding(activeProgram, bindingLocation, bindingLocation);
 	glGetActiveUniformBlockiv(activeProgram, bindingLocation, GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSize);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, uniformBlockSize, m_pointLightBuffer.lights);
