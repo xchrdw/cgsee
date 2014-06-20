@@ -58,6 +58,8 @@ const bool ImagePainter::initialize()
     // We need to send a dummy array to the GPU
     // see http://stackoverflow.com/questions/8039929/opengl-drawarrays-without-binding-vbo
 
+    static const GLfloat vertices[] = { 0.f, 0.f };
+
     glGenVertexArrays(1, &m_gridVao);
     glError();
     glBindVertexArray(m_gridVao);
@@ -65,7 +67,7 @@ const bool ImagePainter::initialize()
 
     // setup array buffer
     m_gridVertexBO = new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-    m_gridVertexBO->data<GLfloat>(0, 0, GL_FLOAT, 2);
+    m_gridVertexBO->data<GLfloat>(vertices, 2, GL_FLOAT, 2);
 
     // bind all buffers to their attributes
     m_gridVertexBO->bind(m_gridProgram->attributeLocation("a_vertex"));
