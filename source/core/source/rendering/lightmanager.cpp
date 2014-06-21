@@ -39,7 +39,7 @@ void LightManager::initBuffers()
 	}
 }
 
-void LightManager::addPointLight(glm::vec4 pos, glm::vec3 intensity, float radius)
+void LightManager::addPointLight(const glm::vec4& pos, const glm::vec3& intensity, float radius)
 {
 	PointLight light;
 	light.m_position = pos;
@@ -50,7 +50,7 @@ void LightManager::addPointLight(glm::vec4 pos, glm::vec3 intensity, float radiu
 	m_lightInfo.numPointLights = m_pointLights.size();
 }
 
-void LightManager::addSpotLight(glm::vec4 pos, glm::vec3 direction, glm::vec3 intensity, float range, float conePower)
+void LightManager::addSpotLight(const glm::vec4& pos, const glm::vec3& direction, const glm::vec3& intensity, float range, float conePower)
 {
 	SpotLight light;
 	light.m_position = pos;
@@ -62,7 +62,7 @@ void LightManager::addSpotLight(glm::vec4 pos, glm::vec3 direction, glm::vec3 in
 	m_lightInfo.numSpotLights = m_spotLights.size();
 }
 
-void LightManager::addDirectionalLight(glm::vec3 direction, glm::vec3 intensity)
+void LightManager::addDirectionalLight(const glm::vec3& direction, const glm::vec3& intensity)
 {
 	DirectionalLight light;
 	light.m_direction = glm::vec4(direction, 0.0f);

@@ -27,7 +27,7 @@ layout(std140) uniform PointLightBuffer
 	{
 		vec4 pos;
 		vec4 intensity;
-		vec3 falloff;
+		vec3 falloff; // x: constant, y: linear, z: quadratic
 		float radius;
 	} lights[NUM_POINT_LIGHTS];
 } PointLights;
@@ -39,7 +39,7 @@ layout(std140) uniform SpotLightBuffer
 		vec4 pos;
 		vec4 direction;
 		vec4 intensity;
-		vec3 falloff;
+		vec3 falloff; // x: constant, y: linear, z: quadratic
 		float range;
 		float conePower;
 	} lights[NUM_SPOT_LIGHTS];

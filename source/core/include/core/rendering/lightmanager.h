@@ -38,9 +38,9 @@ public:
 	std::vector<SpotLight> m_spotLights;
 	std::vector<DirectionalLight> m_directionalLights;
 
-	void addDirectionalLight(glm::vec3 direction, glm::vec3 intensity);
-	void addPointLight(glm::vec4 pos, glm::vec3 intensity, float radius);
-	void addSpotLight(glm::vec4 pos, glm::vec3 direction, glm::vec3 intensity, float range, float conePower);
+	void addDirectionalLight(const glm::vec3& direction, const glm::vec3& intensity);
+	void addPointLight(const glm::vec4& pos, const glm::vec3& intensity, float radius);
+	void addSpotLight(const glm::vec4& pos, const glm::vec3& direction, const glm::vec3& intensity, float range, float conePower);
 
 	void initBuffers();
 	// Use the enum in LightUBO to update specific buffers
