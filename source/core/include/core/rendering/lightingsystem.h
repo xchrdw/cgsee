@@ -23,11 +23,11 @@ struct LightUniformBuffers
 };
 
 // Rename to LightingSystem in a seperate commit
-class CORE_API LightManager
+class CORE_API LightingSystem
 {
 public:
-	LightManager();
-	virtual ~LightManager();
+	LightingSystem();
+	virtual ~LightingSystem();
 
 	/*
 		The whole system is designed that these vectors hold structs which are 16-byte aligned.

@@ -18,7 +18,7 @@ class FrameBufferObject;
 class AbstractProperty;
 class RenderingPass;
 class LightSourcePass;
-class LightManager;
+class LightingSystem;
 
 class Painter : public AbstractScenePainter
 {
@@ -87,7 +87,7 @@ protected:
     RenderingPass * m_ssaoBlur;
     RenderingPass * m_colorId;
     RenderingPass * m_boundingBox;
-	LightManager  * m_lightManager;
+	LightingSystem  * m_lightingSystem;
     QList<RenderingPass*> m_passes;
 
     Camera * m_camera;

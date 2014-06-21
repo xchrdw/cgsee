@@ -26,7 +26,7 @@
 #include <core/rendering/coloridpass.h>
 #include <core/rendering/boundingboxpass.h>
 #include <core/rendering/lightsource.h>
-#include <core/rendering/lightmanager.h>
+#include <core/rendering/lightingsystem.h>
 
 #include <core/property/advancedlistproperty.h>
 #include <core/property/valueproperty.h>
@@ -72,7 +72,7 @@ Painter::Painter(Camera * camera)
 ,   m_camera(camera)
 ,   m_useColor(true)
 ,   m_passes()
-,   m_lightManager(nullptr)
+,   m_lightingSystem(nullptr)
 {
 
 }
@@ -96,7 +96,7 @@ Painter::~Painter()
     delete m_primitiveWireframe;
     delete m_solidWireframe;
     delete m_fboColor;
-	delete m_lightManager;
+	delete m_lightingSystem;
 
     delete m_flush;
 }
@@ -256,8 +256,8 @@ const bool Painter::initialize()
     //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
 
 	// Lighting system code starts here
-	m_lightManager = new LightManager();
-	m_lightManager->initBuffers();
+	m_lightingSystem = new LightingSystem();
+	m_lightingSystem->initBuffers();
 
 	glm::vec3 colors[3] = 
 	{
@@ -268,7 +268,7 @@ const bool Painter::initialize()
 
 	for (uint t = 0; t < 3; t++)
 	{
-		m_lightManager->addPointLight(glm::vec4(t/4.f,1.f,t/4.f, 1.f), colors[t], 4.f);
+		m_lightingSystem->addPointLight(glm::vec4(t/4.f,1.f,t/4.f, 1.f), colors[t], 4.f);
 	}
 	
 	glm::vec4 spotlight_positions[4] =
@@ -282,10 +282,10 @@ const bool Painter::initialize()
 	{
 		// Shine on origin!
 		glm::vec3 direction = glm::normalize(-glm::vec3(spotlight_positions[t]));
-		m_lightManager->addSpotLight(spotlight_positions[t], direction, glm::vec3(0.f, 0.f, 1.f), 10.f, 16.f);
+		m_lightingSystem->addSpotLight(spotlight_positions[t], direction, glm::vec3(0.f, 0.f, 1.f), 10.f, 16.f);
 	}
 
-	m_lightManager->addDirectionalLight(glm::normalize(glm::vec3(1, 1, 1)), glm::vec3(0.2, 0.1, 0));
+	m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(1, 1, 1)), glm::vec3(0.2, 0.1, 0));
     return true;
 }
 
@@ -337,7 +337,7 @@ void Painter::setUniforms()
 
 	else if (m_useProgram == m_phong)
 	{
-		m_lightManager->updateAllBuffers(m_useProgram->program());
+		m_lightingSystem->updateAllBuffers(m_useProgram->program());
 	}
 }
 
@@ -387,7 +387,7 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
     fbo->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, camera->transform());
-	m_lightManager->updateAllBuffers(m_useProgram->program());
+	m_lightingSystem->updateAllBuffers(m_useProgram->program());
     traverser.traverse(*camera, drawVisitor);
     fbo->release();
 }

@@ -1,4 +1,4 @@
-#include <core/rendering/lightmanager.h>
+#include <core/rendering/LightingSystem.h>
 
 #include <list>
 
@@ -18,17 +18,17 @@ static const uint32_t s_lightUniformBufferSizes[LightUniformBuffers::Count] =
 	sizeof(LightInfo)
 };
 
-LightManager::LightManager()
+LightingSystem::LightingSystem()
 {
 	memset(&m_lightInfo, 0, sizeof(LightInfo));
 }
 
-LightManager::~LightManager()
+LightingSystem::~LightingSystem()
 {
 	glDeleteBuffers(LightUniformBuffers::Count, m_uniformBuffers.ubos);
 }
 
-void LightManager::initBuffers()
+void LightingSystem::initBuffers()
 {
 	glGenBuffers(LightUniformBuffers::Count, m_uniformBuffers.ubos);
 	memcpy(m_uniformBuffers.sizes, s_lightUniformBufferSizes, sizeof(uint32_t)* LightUniformBuffers::Count);
@@ -39,7 +39,7 @@ void LightManager::initBuffers()
 	}
 }
 
-void LightManager::addPointLight(const glm::vec4& pos, const glm::vec3& intensity, float radius)
+void LightingSystem::addPointLight(const glm::vec4& pos, const glm::vec3& intensity, float radius)
 {
 	PointLight light;
 	light.m_position = pos;
@@ -50,7 +50,7 @@ void LightManager::addPointLight(const glm::vec4& pos, const glm::vec3& intensit
 	m_lightInfo.numPointLights = m_pointLights.size();
 }
 
-void LightManager::addSpotLight(const glm::vec4& pos, const glm::vec3& direction, const glm::vec3& intensity, float range, float conePower)
+void LightingSystem::addSpotLight(const glm::vec4& pos, const glm::vec3& direction, const glm::vec3& intensity, float range, float conePower)
 {
 	SpotLight light;
 	light.m_position = pos;
@@ -62,7 +62,7 @@ void LightManager::addSpotLight(const glm::vec4& pos, const glm::vec3& direction
 	m_lightInfo.numSpotLights = m_spotLights.size();
 }
 
-void LightManager::addDirectionalLight(const glm::vec3& direction, const glm::vec3& intensity)
+void LightingSystem::addDirectionalLight(const glm::vec3& direction, const glm::vec3& intensity)
 {
 	DirectionalLight light;
 	light.m_direction = glm::vec4(direction, 0.0f);
@@ -71,13 +71,13 @@ void LightManager::addDirectionalLight(const glm::vec3& direction, const glm::ve
 	m_lightInfo.numDirectionalLights = m_directionalLights.size();
 }
 
-void LightManager::updateBuffer(int buffer_enum, GLuint activeProgram, void* data)
+void LightingSystem::updateBuffer(int buffer_enum, GLuint activeProgram, void* data)
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBuffers.ubos[buffer_enum]);
 	glBindBufferBase(GL_UNIFORM_BUFFER, m_uniformBuffers.bindingLocations[buffer_enum], m_uniformBuffers.ubos[buffer_enum]);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_uniformBuffers.sizes[buffer_enum], data);
 }
-void LightManager::onShaderRelink(GLuint relinkedProgram)
+void LightingSystem::onShaderRelink(GLuint relinkedProgram)
 {
 	for (uint16_t t = 0; t < LightUniformBuffers::Count; t++)
 	{
@@ -88,7 +88,7 @@ void LightManager::onShaderRelink(GLuint relinkedProgram)
 	}
 }
 
-void LightManager::updateAllBuffers(GLuint activeProgram)
+void LightingSystem::updateAllBuffers(GLuint activeProgram)
 {
 	// Discuss: Where to put this func...
 	onShaderRelink(activeProgram);

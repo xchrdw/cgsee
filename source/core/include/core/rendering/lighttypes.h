@@ -12,7 +12,7 @@
 	changes in the struct although such changes are just costly in time because changes 
 	have to be introduced in seperate places and have no useful return in the end.
 
-	LightManager::add* methods do the packing of the data in the exposed interface.
+	LightingSystem::add* methods do the packing of the data in the exposed interface.
 */
 
 struct DirectionalLight{
