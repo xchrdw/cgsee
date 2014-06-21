@@ -72,7 +72,7 @@ Painter::Painter(Camera * camera)
 ,   m_camera(camera)
 ,   m_useColor(true)
 ,   m_passes()
-,	m_lightManager(nullptr)
+,   m_lightManager(nullptr)
 {
 
 }
@@ -258,13 +258,12 @@ const bool Painter::initialize()
 	// Lighting system code starts here
 	m_lightManager = new LightManager();
 	m_lightManager->initBuffers();
-	//m_lightManager->setDirectionalLight(glm::normalize(glm::vec3(1, 1, 1)), glm::vec3(0.2, 0.5, 0));
 
-	glm::vec4 colors[3] = 
+	glm::vec3 colors[3] = 
 	{
-		glm::vec4(1.0, 0.0, 0.0, 1.f),
-		glm::vec4(1.0, 0.6, 0.0, 1.f),
-		glm::vec4(0.0, 1.0, 1.0, 1.f),
+		glm::vec3(1.f, 0.f, 0.f),
+		glm::vec3(1.f, 0.6f, 0.f),
+		glm::vec3(0.f, 1.f, 1.f),
 	};
 
 	for (uint t = 0; t < 3; t++)
@@ -272,19 +271,21 @@ const bool Painter::initialize()
 		m_lightManager->addPointLight(glm::vec4(t/4.f,1.f,t/4.f, 1.f), colors[t], 4.f);
 	}
 	
-	glm::vec3 spotlight_positions[4] =
+	glm::vec4 spotlight_positions[4] =
 	{
-		glm::vec3(3, 2, -3),
-		glm::vec3(-3, 2, -6),
-		glm::vec3(6, 2, -6),
-		glm::vec3(3, 2, 3)
+		glm::vec4(3.f, 2.f, -3.f, 1.f),
+		glm::vec4(-3.f, 2.f, -6.f, 1.f),
+		glm::vec4(6.f, 2.f, -6.f, 1.f),
+		glm::vec4(3.f, 2.f, 3.f, 1.f)
 	};
 	for (int t = 0; t < 4; t++)
 	{
 		// Shine on origin!
-		glm::vec3 direction = glm::normalize(-spotlight_positions[t]);
-		m_lightManager->addSpotLight(spotlight_positions[t], direction, glm::vec3(0.0, 0, 1.f), 10.f, 16.f);
+		glm::vec3 direction = glm::normalize(-glm::vec3(spotlight_positions[t]));
+		m_lightManager->addSpotLight(spotlight_positions[t], direction, glm::vec3(0.f, 0.f, 1.f), 10.f, 16.f);
 	}
+
+	m_lightManager->addDirectionalLight(glm::normalize(glm::vec3(1, 1, 1)), glm::vec3(0.2, 0.1, 0));
     return true;
 }
 
@@ -336,7 +337,7 @@ void Painter::setUniforms()
 
 	else if (m_useProgram == m_phong)
 	{
-		m_lightManager->updateBuffers(m_useProgram->program());
+		m_lightManager->updateAllBuffers(m_useProgram->program());
 	}
 }
 
@@ -386,7 +387,7 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
     fbo->bind();
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, camera->transform());
-	m_lightManager->updateBuffers(m_useProgram->program());
+	m_lightManager->updateAllBuffers(m_useProgram->program());
     traverser.traverse(*camera, drawVisitor);
     fbo->release();
 }

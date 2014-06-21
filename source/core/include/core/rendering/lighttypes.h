@@ -5,55 +5,54 @@
 
 #define MAX_POINT_LIGHTS 12
 #define MAX_SPOT_LIGHTS 12
+#define MAX_DIRECTIONAL_LIGHTS 4
+
+/*
+	Replicating GLSL padding rules in C++ structs seems to have little use, introduces
+	changes in the struct although such changes are just costly in time because changes 
+	have to be introduced in seperate places and have no useful return in the end.
+
+	LightManager::add* methods do the packing of the data in the exposed interface.
+*/
 
 struct DirectionalLight{
-	glm::vec3 m_direction;
-	float pad0;
-	glm::vec3 m_intensity;		// Color intensity (HDR)
-	float pad1;
+	glm::vec4 m_direction;		// xyzw: Direction
+	glm::vec4 m_intensity;		// xyz: Color intensity (HDR)
 };
 
 struct PointLight{
-	glm::vec4 m_position;
-	glm::vec4 m_intensity;		// Color intensity (HDR)
-	glm::vec4 m_falloff;		// x = constant falloff, y = linaer falloff, z = quadratic falloff
+	glm::vec4 m_position;		// xyzw: Position
+	glm::vec4 m_intensity;		// xyz: Color intensity (HDR)
+	glm::vec4 m_falloff;		// x: constant falloff, y: linaer falloff, z: quadratic falloff w: radius
 };
 
 struct SpotLight{
-	glm::vec3 m_position;
-	float pad0;
-	glm::vec3 m_direction;
-	float pad1;
-	glm::vec3 m_intensity;		// Color intensity (HDR)
-	float pad2;
-	glm::vec3 m_falloff;		// x = constant falloff, y = linaer falloff, z = quadratic falloff
-	float m_spotFalloffPower;	// Cone power for pow(dot(l,r)
-	float m_dist;
-	float pad3[3];
+	glm::vec4 m_position;
+	glm::vec4 m_direction;
+	glm::vec4 m_intensity;		// Color intensity (HDR)
+	glm::vec4 m_falloff;		// x: constant falloff, y: linaer falloff, z: quadratic falloff, w: range
+	glm::vec4 m_spotlightData;  	// x: Cone power for pow(dot(l,r)
 };
 
-struct GoboLight{
-	glm::vec3 m_position;
-	glm::vec3 m_direction;
-	//	texture* m_gobo_texture;
-	float m_angle;
-	glm::vec3 m_falloff;		// x = constant falloff, y = linaer falloff, z = quadratic falloff
-};
-
-__declspec(align(16)) struct LightInfo
+struct LightInfo
 {
 	uint32_t numPointLights;
 	uint32_t numSpotLights;
-	float pad[2];
-	DirectionalLight directionalLight; 
+	uint32_t numDirectionalLights;
+	float pad;
 };
 
-__declspec(align(16)) struct PointLightBuffer
+struct PointLightBuffer
 {
 	PointLight lights[MAX_POINT_LIGHTS];
 };
 
-__declspec(align(16)) struct SpotLightBuffer
+struct SpotLightBuffer
 {
 	SpotLight lights[MAX_SPOT_LIGHTS];
+};
+
+struct DirectionalLightBuffer
+{
+	DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS];
 };

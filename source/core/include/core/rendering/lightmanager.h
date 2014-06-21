@@ -6,31 +6,50 @@
 
 #include <GL/glew.h>
 
+struct LightUniformBuffers
+{
+	enum
+	{
+		Point,
+		Spot,
+		Directional,
+		Info,
+		// Shadowed point/spec lights might require new buffer
+		Count
+	};
+	GLuint ubos[LightUniformBuffers::Count];
+	GLuint bindingLocations[LightUniformBuffers::Count];
+	uint32_t sizes[LightUniformBuffers::Count];
+};
+
+// Rename to LightingSystem in a seperate commit
 class CORE_API LightManager
 {
 public:
 	LightManager();
 	virtual ~LightManager();
 
-	LightInfo m_lightInfo;
-	PointLightBuffer m_pointLightBuffer;
-	SpotLightBuffer m_spotLightBuffer;
+	/*
+		The whole system is designed that these vectors hold structs which are 16-byte aligned.
+		This reflects the way GPU uniform buffers work as well, in 16-byte(that is, one vec4) granularity.
+		So, pack only glm::vec4's inside your buffers.
+	*/
 	std::vector<PointLight> m_pointLights;
 	std::vector<SpotLight> m_spotLights;
-	//std::vector<GoboLight> m_goboLightList;
+	std::vector<DirectionalLight> m_directionalLights;
 
-	void setDirectionalLight(glm::vec3 direction, glm::vec3 intensity);
-	void disableDirectionalLight();
-	void addPointLight(glm::vec4 pos, glm::vec4 color, float radius);
-	void addSpotLight(glm::vec3 pos, glm::vec3 direction, glm::vec3 color, float range, float conePower);
+	void addDirectionalLight(glm::vec3 direction, glm::vec3 intensity);
+	void addPointLight(glm::vec4 pos, glm::vec3 intensity, float radius);
+	void addSpotLight(glm::vec4 pos, glm::vec3 direction, glm::vec3 intensity, float range, float conePower);
 
 	void initBuffers();
+	// Use the enum in LightUBO to update specific buffers
+	void updateBuffer(int buffer_enum, GLuint activeProgram, void* data);
+	void updateAllBuffers(GLuint activeProgram);
 
-	void updateBuffers(GLuint activeProgram);
+	void onShaderRelink(GLuint relinkedProgram);
 
 protected:
-
-	GLuint ubo_point; // Holds all point light structs, accessed through a function
-	GLuint ubo_spot;
-	GLuint ubo_info; // Holds info about how many point/spot/gobo lights there are. , also holds directional light direction + color
+	LightInfo m_lightInfo;
+	LightUniformBuffers m_uniformBuffers;
 };
