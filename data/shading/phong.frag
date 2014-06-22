@@ -1,8 +1,8 @@
 #version 150 core
 
-#define NUM_POINT_LIGHTS 12
-#define NUM_SPOT_LIGHTS 12
-#define NUM_DIRECTIONAL_LIGHTS 4
+#define MAX_POINT_LIGHTS 12
+#define MAX_SPOT_LIGHTS 12
+#define MAX_DIRECTIONAL_LIGHTS 4
 
 in vec4 gl_FragCoord;
 out vec4 fragColor;
@@ -29,7 +29,7 @@ layout(std140) uniform PointLightBuffer
 		vec4 intensity;
 		vec3 falloff; // x: constant, y: linear, z: quadratic
 		float radius;
-	} lights[NUM_POINT_LIGHTS];
+	} lights[MAX_POINT_LIGHTS];
 } PointLights;
 
 layout(std140) uniform SpotLightBuffer
@@ -42,7 +42,7 @@ layout(std140) uniform SpotLightBuffer
 		vec3 falloff; // x: constant, y: linear, z: quadratic
 		float range;
 		float conePower;
-	} lights[NUM_SPOT_LIGHTS];
+	} lights[MAX_SPOT_LIGHTS];
 } SpotLights;
 
 layout(std140) uniform DirectionalLightBuffer
@@ -51,7 +51,7 @@ layout(std140) uniform DirectionalLightBuffer
     {
 	vec4 direction;
 	vec4 intensity;
-    } lights[NUM_DIRECTIONAL_LIGHTS];
+    } lights[MAX_DIRECTIONAL_LIGHTS];
 } DirectionalLights;
 
 // Blinn-Phong for any light with attenuation
@@ -74,6 +74,10 @@ void main()
     uint numPointL = LightInfo.numPointLights;
     uint numSpotL = LightInfo.numSpotLights;
     uint numDirL= LightInfo.numDirectionalLights;
+    // Uncomment to turn off a certain light type
+    //numPointL = uint(0);
+    //numSpotL = uint(0);
+    //numDirL= uint(0);
 
     vec3 n = normalize(view_normal);
     vec3 v = normalize(-view_position);
@@ -103,7 +107,7 @@ void main()
     for (uint t = 0; t < numSpotL; t++)
     {
 	// l: direction to the light from the surface
-	// s: direction of the spotlight
+	// s: direction of the spotlight in world space
 	light_intensity.xyz = SpotLights.lights[t].intensity.xyz;
 	l = (view * SpotLights.lights[t].pos).xyz - view_position;
 	float dist = length(l);

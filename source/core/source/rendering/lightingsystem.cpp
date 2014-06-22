@@ -14,7 +14,7 @@ static const uint32_t s_lightUniformBufferSizes[LightUniformBuffers::Count] =
 {
 	sizeof(PointLight)* MAX_POINT_LIGHTS,
 	sizeof(SpotLight)* MAX_SPOT_LIGHTS,
-	sizeof(DirectionalLight) * MAX_SPOT_LIGHTS,
+	sizeof(DirectionalLight) * MAX_DIRECTIONAL_LIGHTS,
 	sizeof(LightInfo)
 };
 
@@ -44,7 +44,6 @@ void LightingSystem::addPointLight(const glm::vec4& pos, const glm::vec3& intens
 	PointLight light;
 	light.m_position = pos;
 	light.m_intensity = glm::vec4(intensity, 1.0f);
-	light.m_intensity.w = 1.f;
 	light.m_falloff = glm::vec4(1.f, 2.f / radius, 1.f / (radius * radius), radius); // Const, lin, exp
 	m_pointLights.push_back(light);
 	m_lightInfo.numPointLights = m_pointLights.size();
@@ -73,7 +72,6 @@ void LightingSystem::addDirectionalLight(const glm::vec3& direction, const glm::
 
 void LightingSystem::updateBuffer(int buffer_enum, GLuint activeProgram, void* data)
 {
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBuffers.ubos[buffer_enum]);
 	glBindBufferBase(GL_UNIFORM_BUFFER, m_uniformBuffers.bindingLocations[buffer_enum], m_uniformBuffers.ubos[buffer_enum]);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_uniformBuffers.sizes[buffer_enum], data);
 }
@@ -81,7 +79,6 @@ void LightingSystem::onShaderRelink(GLuint relinkedProgram)
 {
 	for (uint16_t t = 0; t < LightUniformBuffers::Count; t++)
 	{
-		glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBuffers.ubos[t]);
 		GLuint bindingLocation = glGetUniformBlockIndex(relinkedProgram, s_lightUniformBufferNames[t]);
 		m_uniformBuffers.bindingLocations[t] = bindingLocation;
 		glUniformBlockBinding(relinkedProgram, bindingLocation, bindingLocation);
