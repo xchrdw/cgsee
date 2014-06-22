@@ -44,8 +44,10 @@ public:
 
 	void initBuffers();
 	// Use the enum in LightUBO to update specific buffers
-	void updateBuffer(int buffer_enum, GLuint activeProgram, void* data);
+	void updateBuffer(uint8_t buffer_enum, GLuint activeProgram, void* data);
 	void updateAllBuffers(GLuint activeProgram);
+	void bindBuffer(uint8_t buffer_enum);
+	void bindAllBuffers();
 
 	void onShaderRelink(GLuint relinkedProgram);
 

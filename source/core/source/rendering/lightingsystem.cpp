@@ -70,7 +70,7 @@ void LightingSystem::addDirectionalLight(const glm::vec3& direction, const glm::
 	m_lightInfo.numDirectionalLights = m_directionalLights.size();
 }
 
-void LightingSystem::updateBuffer(int buffer_enum, GLuint activeProgram, void* data)
+void LightingSystem::updateBuffer(uint8_t buffer_enum, GLuint activeProgram, void* data)
 {
 	glBindBufferBase(GL_UNIFORM_BUFFER, m_uniformBuffers.bindingLocations[buffer_enum], m_uniformBuffers.ubos[buffer_enum]);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_uniformBuffers.sizes[buffer_enum], data);
@@ -87,10 +87,21 @@ void LightingSystem::onShaderRelink(GLuint relinkedProgram)
 
 void LightingSystem::updateAllBuffers(GLuint activeProgram)
 {
-	// Discuss: Where to put this func...
-	onShaderRelink(activeProgram);
 	updateBuffer(LightUniformBuffers::Point, activeProgram, m_pointLights.data());
 	updateBuffer(LightUniformBuffers::Spot, activeProgram, m_spotLights.data());
 	updateBuffer(LightUniformBuffers::Directional, activeProgram, m_directionalLights.data());
 	updateBuffer(LightUniformBuffers::Info, activeProgram, &m_lightInfo);
+}
+
+void LightingSystem::bindBuffer(uint8_t buffer_enum)
+{
+	glBindBufferBase(GL_UNIFORM_BUFFER, m_uniformBuffers.bindingLocations[buffer_enum], m_uniformBuffers.ubos[buffer_enum]);
+}
+
+void LightingSystem::bindAllBuffers()
+{
+	for (uint8_t t = 0; t < LightUniformBuffers::Count; t++)
+	{
+		glBindBufferBase(GL_UNIFORM_BUFFER, m_uniformBuffers.bindingLocations[t], m_uniformBuffers.ubos[t]);
+	}
 }

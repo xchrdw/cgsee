@@ -331,6 +331,8 @@ void Painter::setUniforms()
 
 	else if (m_useProgram == m_phong)
 	{
+		// Since setUniforms is called from postShaderRelink
+		m_lightingSystem->onShaderRelink(m_useProgram->program());
 		m_lightingSystem->updateAllBuffers(m_useProgram->program());
 	}
 }
@@ -380,8 +382,8 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
 {
     fbo->bind();
     SceneTraverser traverser;
+	//m_lightingSystem->bindAllBuffers();
     DrawVisitor drawVisitor(program, camera->transform());
-	m_lightingSystem->updateAllBuffers(m_useProgram->program());
     traverser.traverse(*camera, drawVisitor);
     fbo->release();
 }
