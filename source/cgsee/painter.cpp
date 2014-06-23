@@ -96,7 +96,7 @@ Painter::~Painter()
     delete m_primitiveWireframe;
     delete m_solidWireframe;
     delete m_fboColor;
-	delete m_lightingSystem;
+    delete m_lightingSystem;
 
     delete m_flush;
 }
@@ -255,31 +255,31 @@ const bool Painter::initialize()
     builder2.retainWidget()->hide();
     //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
 
-	// Lighting system code starts here
-	m_lightingSystem = new LightingSystem();
-	m_lightingSystem->initBuffers();
-	glm::vec3 colors[6] = {
-		glm::vec3(1.f, 0.f, 0.f),
-		glm::vec3(1.f, 0.6f, 0.f),
-		glm::vec3(0.f, 1.f, 1.f),
-		glm::vec3(1.f, 0.f, 0.f),
-		glm::vec3(1.f, 0.6f, 0.f),
-		glm::vec3(0.f, 1.f, 1.f),
-	};
-	for (uint t = 0; t < 6; t++) {
-		m_lightingSystem->addPointLight(glm::vec4((float)t - 3.f,1.5f,(float)t - 3.f, 1.f), colors[t], 3.f);
-	}
-	glm::vec4 spotlight_positions[4] = {
-		glm::vec4(-2.f, 5.f, 2.f, 1.f),
-		glm::vec4(-2.f, 5.f, -2.f, 1.f),
-		glm::vec4(2.f, 5.f, -2.f, 1.f),
-		glm::vec4(2.f, 5.f, 2.f, 1.f)
-	};
-	for (int t = 0; t < 4; t++) {
-		m_lightingSystem->addSpotLight(spotlight_positions[t], glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, 1.f), 5.f, 4.f);
-	}
-	m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(1.f, 1.f, 1.f)), glm::vec3(0.2, 0.1, 0));
-	m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(-1.f, 0, 0)), glm::vec3(0.2, 0.1, 0));
+    // Lighting system code starts here
+    m_lightingSystem = new LightingSystem();
+    m_lightingSystem->initBuffers();
+    glm::vec3 colors[6] = {
+            glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3(1.f, 0.6f, 0.f),
+            glm::vec3(0.f, 1.f, 1.f),
+            glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3(1.f, 0.6f, 0.f),
+            glm::vec3(0.f, 1.f, 1.f),
+    };
+    for (uint t = 0; t < 6; t++) {
+            m_lightingSystem->addPointLight(glm::vec4((float)t - 3.f,1.5f,(float)t - 3.f, 1.f), colors[t], 3.f);
+    }
+    glm::vec4 spotlight_positions[4] = {
+            glm::vec4(-2.f, 5.f, 2.f, 1.f),
+            glm::vec4(-2.f, 5.f, -2.f, 1.f),
+            glm::vec4(2.f, 5.f, -2.f, 1.f),
+            glm::vec4(2.f, 5.f, 2.f, 1.f)
+    };
+    for (int t = 0; t < 4; t++) {
+            m_lightingSystem->addSpotLight(spotlight_positions[t], glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, 1.f), 5.f, 4.f);
+    }
+    m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(1.f, 1.f, 1.f)), glm::vec3(0.2, 0.1, 0));
+    m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(-1.f, 0, 0)), glm::vec3(0.2, 0.1, 0));
     return true;
 }
 
@@ -329,12 +329,12 @@ void Painter::setUniforms()
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
     }
 
-	else if (m_useProgram == m_phong)
-	{
-		// Since setUniforms is called from postShaderRelink
-		m_lightingSystem->onShaderRelink(m_useProgram->program());
-		m_lightingSystem->updateAllBuffers(m_useProgram->program());
-	}
+    else if (m_useProgram == m_phong)
+    {
+            // Since setUniforms is called from postShaderRelink
+            m_lightingSystem->onShaderRelink(m_useProgram->program());
+            m_lightingSystem->updateAllBuffers(m_useProgram->program());
+    }
 }
 
 void Painter::paint()
@@ -382,7 +382,7 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
 {
     fbo->bind();
     SceneTraverser traverser;
-	//m_lightingSystem->bindAllBuffers();
+    //m_lightingSystem->bindAllBuffers();
     DrawVisitor drawVisitor(program, camera->transform());
     traverser.traverse(*camera, drawVisitor);
     fbo->release();

@@ -1,6 +1,7 @@
-#include <core/rendering/LightingSystem.h>
+#include <core/rendering/lightingsystem.h>
 
 #include <list>
+#include <cstring>
 
 static const char* s_lightUniformBufferNames[LightUniformBuffers::Count] = 
 {
