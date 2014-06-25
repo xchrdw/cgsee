@@ -51,7 +51,6 @@ extern GLXContext glXGetCurrentContext( void );
 #include <propertyguizeug/PropertyBrowser.h>
 
 #include "gui/ui_viewer.h"
-#include <gui/exampleproperties.h>
 #include <gui/canvas.h>
 #include <gui/canvasexporter.h>
 #include <gui/fileNavigator.h>

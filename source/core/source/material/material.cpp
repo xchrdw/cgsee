@@ -8,13 +8,16 @@
 
 Material::Material()
 : reflectionzeug::PropertyGroup("Material")
+/*
 , m_name("default")
 , m_ambient(glm::vec4(0.1, 0.1, 0.1, 1.0))
 , m_diffuse(glm::vec4(1.0, 1.0, 1.0, 1.0))
 , m_specular(glm::vec4(1.0, 1.0, 1.0, 1.0))
 , m_emission(glm::vec4(0.0, 0.0, 0.0, 0.0))
 , m_color(0, 255, 0, 255)
+*/
 {
+	/*
 	addProperty<std::string>("Name", this, &Material::name, &Material::setName);
 
 	addProperty<glm::vec4>("Ambient", this, &Material::ambient, &Material::setAmbient);
@@ -26,12 +29,13 @@ Material::Material()
 	addProperty<glm::vec4>("Emission", this, &Material::emission, &Material::setEmission);
 
 	addProperty<reflectionzeug::Color>("Color", this, &Material::color, &Material::setColor);
+	*/
 }
 
 Material::~Material()
 {
 }
-
+/*
 std::string Material::name() const
 {
     return m_name;
@@ -91,3 +95,4 @@ void Material::setColor(const reflectionzeug::Color &color)
 {
     m_color = color;
 }
+*/

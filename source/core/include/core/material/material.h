@@ -11,7 +11,7 @@ class CORE_API Material : public reflectionzeug::PropertyGroup
 public:
 	Material();
 	virtual ~Material();
-
+	/*
     std::string name() const;
     void setName(const std::string &name);
 
@@ -29,7 +29,7 @@ public:
 
     reflectionzeug::Color color() const;
     void setColor(const reflectionzeug::Color &color);
-
+	
 protected:
     std::string           m_name;
 	glm::vec4             m_ambient;
@@ -37,4 +37,5 @@ protected:
 	glm::vec4             m_specular;
 	glm::vec4             m_emission;
     reflectionzeug::Color m_color;
+	*/
 };
