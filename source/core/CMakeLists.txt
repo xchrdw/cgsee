@@ -41,6 +41,8 @@ set(libs
     ${ASSIMP_LIBRARIES}
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
+	${LIBZEUG_REFLECTION_LIBRARY}
+    ${LIBZEUG_PROPERTYGUI_LIBRARY}
     ${LIBZEUG_SIGNAL_LIBRARY}
 )
 
@@ -88,6 +90,8 @@ set(sources
 	${source_path}/gpuquery.cpp
 	${source_path}/idpainter.cpp
 	${source_path}/idpainter.h
+	${source_path}/material/material.cpp
+	${source_path}/material/materialdictionary.cpp
 	${source_path}/messagehandler.cpp
 	${source_path}/monocamera.cpp
 	${source_path}/navigation/flightnavigation.cpp
@@ -146,6 +150,7 @@ set(sources
 set(api_includes
 	${include_path}/aabb.h
 	${include_path}/abstractapplication.h
+	${include_path}/abstracteventhandler.h
 	${include_path}/abstractmodelloader.h
 	${include_path}/abstractstereocamera.h
 	${include_path}/abstracttimer.h
@@ -172,6 +177,8 @@ set(api_includes
 	${include_path}/framebufferobject.h
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
+	${include_path}/material/material.h
+	${include_path}/material/materialdictionary.h
 	${include_path}/mathmacros.h
 	${include_path}/messagehandler.h
 	${include_path}/monocamera.h
@@ -184,7 +191,6 @@ set(api_includes
 	${include_path}/objloader.h
 	${include_path}/offaxiscamera.h
 	${include_path}/painter/abstractscenepainter.h
-	${include_path}/painter/abstractglparent.h
 	${include_path}/painter/abstractpainter.h
 	${include_path}/parallelcamera.h
 	${include_path}/plane.h

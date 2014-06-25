@@ -5,17 +5,19 @@
 
 #include <cassert>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <QApplication>
 #include <QBasicTimer>
 #include <QSize>
 #include <QDebug>
 
-#include <core/navigation/abstractnavigation.h>
-#include <core/navigation/flightnavigation.h>
-#include <core/navigation/arcballnavigation.h>
 #include <core/navigation/navigationhistory.h>
-
+#include <core/navigation/abstractnavigation.h>
+#include <core/camera.h>
+#include <core/painter/abstractpainter.h>
 #include <core/painter/abstractscenepainter.h>
+#include <core/abstracteventhandler.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
 #include <core/timer.h>
@@ -28,16 +30,13 @@ Canvas::Canvas(
 :   QGLWidget(format.asQGLFormat(), parent)
 ,   m_refreshTimeMSec(0)
 ,   m_painter(nullptr)
-,   m_navigation(nullptr)
 ,   m_navigationHistory(nullptr)
-,   m_timer(nullptr)
+,   m_camera(nullptr)
+,   m_eventHandler(nullptr)
+,   m_timer(new QBasicTimer)
 ,   m_format(format)
 {
-    m_timer = new QBasicTimer();
-    //m_timer->start(format.vsync() ? 1000/60 : 0, this);
-
     setMinimumSize(1, 1);
-
     // Important for overdraw, not occluding the scene.
     setAutoFillBackground(false);
 
@@ -96,47 +95,20 @@ void Canvas::resizeGL(
     int width
 ,   int height)
 {
+    if (m_camera)
+        m_camera->setViewport(width, height);
+
     if(m_painter)
         m_painter->resize(width, height);
-    if(m_navigation)
-        m_navigation->setViewPort(width, height);
-    // if(m_coordinateProvider)
-    //     m_coordinateProvider->resize(width, height);
 
+    if(m_eventHandler)
+        m_eventHandler->resize(size());
 }
-
-
-// http://doc.qt.digia.com/qt/opengl-overpainting-glwidget-cpp.html
-// http://harmattan-dev.nokia.com/docs/library/html/qt4/opengl-overpainting.html
-// -> does not work for core profile or modern rendering
-
-//void Canvas::paintEvent(QPaintEvent *)
-//{
-//    glError();
-//    paint();
-//    glError();
-//
-//    // The fixed function OGL is used to support old school OpenGL calls for overlay painting.
-//    // NOTE: it is not tested, what happens on contexts in newer core profiles.
-//
-//    // NOTE: QPainter is off use here: http://qt-project.org/forums/viewthread/26510
-//    // It does not support 3.2 core profile rendering "any time soon"...
-//
-//    //QPainter painter(this);
-//    //paintOverlay(painter);
-//    //painter.end();
-//    //glError();
-//}
-
-//void Canvas::paintOverlay(QPainter & painter)
-//{
-//    painter.setRenderHint(QPainter::Antialiasing);
-//    painter.setRenderHint(QPainter::TextAntialiasing);
-//}
 
 void Canvas::paintGL()
 {
     glError();
+
     if(m_painter)
         m_painter->paint();
     else
@@ -145,7 +117,7 @@ void Canvas::paintGL()
     glError();
 }
 
-void Canvas::timerEvent(QTimerEvent *event)
+void Canvas::timerEvent(QTimerEvent * event)
 {
     assert(m_timer);
     if(event->timerId() != m_timer->timerId())
@@ -158,13 +130,9 @@ void Canvas::setRefreshTimeMSec(int msec)
 {
     m_refreshTimeMSec = msec;
     if (msec < 0)
-    {
         m_timer->stop();
-    }
     else
-    {
         m_timer->start(m_refreshTimeMSec, this);
-    }
 }
 
 int Canvas::refreshTimeMSec() const
@@ -172,8 +140,22 @@ int Canvas::refreshTimeMSec() const
     return m_refreshTimeMSec;
 }
 
-void Canvas::setPainter(AbstractScenePainter * painter)
+void Canvas::setPainter(AbstractPainter * painter)
 {
+    // ToDo: refine AbstractScenePainter .. or wait for painter refactoring ;)
+    // TODO BEGIN
+    AbstractScenePainter * scenePainter(dynamic_cast<AbstractScenePainter*>(painter));
+
+    if (painter && !scenePainter)
+    {
+        qDebug() << "Canvas requires a painter that is aware of cameras (uses a camera as entrypoint into the scenegraph).";
+        return;
+    }
+
+    if (m_camera)
+        scenePainter->assignScene(m_camera);
+    // TODO END
+
     if(m_painter == painter)
         return;
 
@@ -181,9 +163,30 @@ void Canvas::setPainter(AbstractScenePainter * painter)
     update();
 }
 
-AbstractScenePainter * Canvas::painter()
+AbstractPainter * Canvas::painter()
 {
     return m_painter;
+}
+
+void Canvas::setCamera(Camera * camera)
+{
+    if(m_camera == camera)
+        return;
+
+    if (m_painter)
+    {
+        // ToDo: see setPainter
+        AbstractScenePainter * scenePainter(dynamic_cast<AbstractScenePainter*>(m_painter));
+        scenePainter->assignScene(m_camera);
+    }
+
+    m_camera = camera;
+    update();
+}
+
+Camera * Canvas::camera()
+{
+    return m_camera;
 }
 
 const QImage Canvas::capture(
@@ -198,10 +201,70 @@ const QImage Canvas::capture(
 ,   const bool aspect
 ,   const bool alpha)
 {
-    if(!m_painter)
+    if (!m_painter)
+    {
+        qWarning("No painter for frame capture available.");
         return QImage();
+    }
+    if (!m_camera)
+    {
+        qWarning("No camera for frame capture available.");
+        return QImage();
+    }
 
-    return m_painter->capture(*this, size, aspect, alpha);
+    static const GLuint tileW(512);
+    static const GLuint tileH(512);
+
+    const GLuint w(m_camera->viewport().x);
+    const GLuint h(m_camera->viewport().y);
+
+    const GLuint frameW = size.width();
+    const GLuint frameH = size.height();
+
+    const glm::mat4 proj(aspect ? glm::perspective(m_camera->fovy()
+        , static_cast<float>(frameW) / static_cast<float>(frameH)
+        , m_camera->zNear(), m_camera->zFar()) : m_camera->projection());
+
+    const glm::mat4 view(m_camera->view());
+
+    const glm::vec4 viewport(0, 0, frameW, frameH);
+
+    QImage frame(frameW, frameH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
+    QImage tile(tileW, tileH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
+
+    QPainter p(&frame);
+
+    // ToDo: Review after painter refactoring
+    makeCurrent();
+
+    m_painter->resize(tileW, tileH);
+    m_camera->setViewport(tileW, tileH);
+    m_camera->update(); // ToDo: required?
+
+
+    for (GLuint y = 0; y < frameH; y += tileH)
+        for (GLuint x = 0; x < frameW; x += tileW)
+        {
+        const glm::mat4 pick = glm::pickMatrix(glm::vec2(x + tileW / 2, y + tileH / 2),
+            glm::vec2(tileW, tileH), viewport);
+
+        const glm::mat4 projTile(pick * proj);
+
+        m_camera->setTransform(projTile * view);
+
+        m_painter->paint();
+
+        glReadPixels(0, 0, tileW, tileH, alpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, tile.bits());
+        p.drawImage(x, y, tile);
+        }
+    p.end();
+
+    resize(w, h);
+    m_camera->setTransform(proj * view);
+
+    doneCurrent();
+
+    return frame.mirrored(false, true); // flip vertically
 }
 
 void Canvas::resize(int width, int height)
@@ -209,29 +272,22 @@ void Canvas::resize(int width, int height)
     QGLWidget::resize(width, height);
 }
 
-AbstractNavigation * Canvas::navigation()
+AbstractEventHandler * Canvas::eventHandler()
 {
-    return m_navigation;
+    return m_eventHandler;
 }
 
-void Canvas::setNavigation( AbstractNavigation * navigation )
+void Canvas::setEventHandler(AbstractEventHandler * eventHandler)
 {
-    float bbRadius = 0;
-    if (m_navigation)
-    {
-        bbRadius = m_navigation->getBBRadius();
-        delete m_navigation;
-    }
-    m_navigation = navigation;
-    m_navigation->setCanvas(this);
-    if (bbRadius != 0)
-    {
-        m_navigation->setBBRadius(bbRadius);
-    }
+	if (eventHandler == m_eventHandler)
+	return;
+
+	m_eventHandler = eventHandler;
+	m_eventHandler->resize(size());
 
     /// Links navigation and navigation history and the view changed signal.
-    m_navigationHistory->setNavigation(m_navigation);
-    m_navigation->viewChanged.connect(this, &Canvas::saveHistory);
+    m_navigationHistory->setNavigation(dynamic_cast<AbstractNavigation*>(m_eventHandler));
+    dynamic_cast<AbstractNavigation*>(m_eventHandler)->viewChanged.connect(this, &Canvas::saveHistory);
 
 }
 
@@ -258,27 +314,32 @@ void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
     m_navigationHistory->save(viewmatrix, fovy, capture(QSize(512, 512), true, false));
 }
 
-void Canvas::mousePressEvent( QMouseEvent * event )
+void Canvas::mousePressEvent(QMouseEvent * event)
 {
-    m_navigation->mousePressEvent(event);
+    if (m_eventHandler)
+        m_eventHandler->mousePressEvent(event);
 }
 
-void Canvas::mouseReleaseEvent( QMouseEvent * event )
+void Canvas::mouseReleaseEvent(QMouseEvent * event)
 {
-    m_navigation->mouseReleaseEvent(event);
+    if (m_eventHandler)
+        m_eventHandler->mouseReleaseEvent(event);
 
-    emit mouseReleaseEventSignal(event);
+	emit mouseReleaseEventSignal(event);
 }
 
-void Canvas::mouseMoveEvent( QMouseEvent * event )
+void Canvas::mouseMoveEvent(QMouseEvent * event)
 {
-    setFocus();
-    m_navigation->mouseMoveEvent(event);
+    this->setFocus();
+    
+    if (m_eventHandler)
+        m_eventHandler->mouseMoveEvent(event);
 
-    emit mouseMoveEventTriggered(1);
+	emit mouseMoveEventTriggered(1);
 }
 
 void Canvas::wheelEvent(QWheelEvent * event)
 {
-    m_navigation->wheelEvent(event);
+    if (m_eventHandler)
+        m_eventHandler->wheelEvent(event);
 }
