@@ -728,7 +728,7 @@ void Viewer::setNavigation(AbstractNavigation * navigation)
 {
     m_navigation = navigation;
     m_qtCanvas->setEventHandler(m_navigation);
-
+	m_navigation->setCanvas(m_qtCanvas);
     this->setFocus();
 }
 
