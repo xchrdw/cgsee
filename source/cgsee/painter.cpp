@@ -280,6 +280,7 @@ const bool Painter::initialize()
     }
     m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(1.f, 1.f, 1.f)), glm::vec3(0.2, 0.1, 0));
     m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(-1.f, 0, 0)), glm::vec3(0.2, 0.1, 0));
+
     return true;
 }
 
@@ -332,6 +333,8 @@ void Painter::setUniforms()
     else if (m_useProgram == m_phong)
     {
             // Since setUniforms is called from postShaderRelink
+			// Bugfix: the program must be bound to query binding locations for the uniform blocks in the program. (this will work on only some drivers otherwise)
+			m_useProgram->use();
             m_lightingSystem->onShaderRelink(m_useProgram->program());
             m_lightingSystem->updateAllBuffers(m_useProgram->program());
     }

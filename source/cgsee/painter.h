@@ -87,8 +87,9 @@ protected:
     RenderingPass * m_ssaoBlur;
     RenderingPass * m_colorId;
     RenderingPass * m_boundingBox;
-	LightingSystem  * m_lightingSystem;
     QList<RenderingPass*> m_passes;
+
+	LightingSystem  * m_lightingSystem;
 
     Camera * m_camera;
     bool m_useColor;
