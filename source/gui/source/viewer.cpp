@@ -880,6 +880,7 @@ AbstractNavigation * Viewer::navigation()
 void Viewer::setCamera(Camera * camera)
 {
     m_camera = camera;
+	m_qtCanvas->setCamera(camera);
     if ((m_camera != nullptr) && (m_qtCanvas != nullptr))
         m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
 }

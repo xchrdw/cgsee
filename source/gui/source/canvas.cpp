@@ -151,9 +151,9 @@ void Canvas::setPainter(AbstractPainter * painter)
         qDebug() << "Canvas requires a painter that is aware of cameras (uses a camera as entrypoint into the scenegraph).";
         return;
     }
-
-    if (m_camera)
-        scenePainter->assignScene(m_camera);
+	
+    //if (m_camera)
+    //    scenePainter->assignScene(m_camera);
     // TODO END
 
     if(m_painter == painter)
@@ -173,15 +173,17 @@ void Canvas::setCamera(Camera * camera)
     if(m_camera == camera)
         return;
 
+	/*
     if (m_painter)
     {
         // ToDo: see setPainter
         AbstractScenePainter * scenePainter(dynamic_cast<AbstractScenePainter*>(m_painter));
         scenePainter->assignScene(m_camera);
     }
+	*/
 
     m_camera = camera;
-    update();
+    //update();
 }
 
 Camera * Canvas::camera()
