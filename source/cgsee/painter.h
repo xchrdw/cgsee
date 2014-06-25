@@ -43,6 +43,9 @@ public:
     void setConvergentCameraFocus(AbstractProperty & property);
     virtual void postShaderRelinked() override;
 
+    virtual void setViewFrustumCulling(bool viewFrustumCullingEnabled) override;
+    virtual bool isViewFrustumCullingEnabled() override;
+
     virtual void setBoundingBox(const glm::vec3 & llf, const glm::vec3 & urb, const glm::mat4 & transform);
 
     virtual RenderingPass * getSharedPass();
@@ -89,7 +92,7 @@ protected:
     RenderingPass * m_boundingBox;
     QList<RenderingPass*> m_passes;
 
-	LightingSystem  * m_lightingSystem;
+    LightingSystem  * m_lightingSystem;
 
     Camera * m_camera;
     bool m_useColor;

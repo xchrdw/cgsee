@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 
 #include <memory>
+#include <vector>
 
 #include <unordered_map>
 

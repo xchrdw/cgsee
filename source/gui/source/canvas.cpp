@@ -7,10 +7,13 @@
 
 #include <QApplication>
 #include <QBasicTimer>
+#include <QSize>
+#include <QDebug>
 
 #include <core/navigation/abstractnavigation.h>
 #include <core/navigation/flightnavigation.h>
 #include <core/navigation/arcballnavigation.h>
+#include <core/navigation/navigationhistory.h>
 
 #include <core/painter/abstractscenepainter.h>
 #include <core/gpuquery.h>
@@ -26,6 +29,7 @@ Canvas::Canvas(
 ,   m_refreshTimeMSec(0)
 ,   m_painter(nullptr)
 ,   m_navigation(nullptr)
+,   m_navigationHistory(nullptr)
 ,   m_timer(nullptr)
 ,   m_format(format)
 {
@@ -35,7 +39,9 @@ Canvas::Canvas(
     setMinimumSize(1, 1);
 
     // Important for overdraw, not occluding the scene.
-    setAutoFillBackground(false); 
+    setAutoFillBackground(false);
+
+    m_navigationHistory = new NavigationHistory();
 }
 
 Canvas::~Canvas()
@@ -65,7 +71,7 @@ void Canvas::initializeGL()
 
     // http://stackoverflow.com/questions/10857335/opengl-glgeterror-returns-invalid-enum-after-call-to-glewinit
     // use glGetError instead of userdefined glError, to avoid console/log output
-    glGetError();   
+    glGetError();
     glError();
 
     if(GLEW_OK != error)
@@ -130,13 +136,13 @@ void Canvas::resizeGL(
 
 void Canvas::paintGL()
 {
-    glError();  
+    glError();
     if(m_painter)
         m_painter->paint();
-    else 
+    else
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-     
-    glError();  
+
+    glError();
 }
 
 void Canvas::timerEvent(QTimerEvent *event)
@@ -151,9 +157,12 @@ void Canvas::timerEvent(QTimerEvent *event)
 void Canvas::setRefreshTimeMSec(int msec)
 {
     m_refreshTimeMSec = msec;
-    if (msec < 0) {
+    if (msec < 0)
+    {
         m_timer->stop();
-    } else {
+    }
+    else
+    {
         m_timer->start(m_refreshTimeMSec, this);
     }
 }
@@ -184,8 +193,6 @@ const QImage Canvas::capture(
     return capture(size(), false, alpha);
 }
 
-#include <QSize>
-
 const QImage Canvas::capture(
     const QSize & size
 ,   const bool aspect
@@ -210,14 +217,45 @@ AbstractNavigation * Canvas::navigation()
 void Canvas::setNavigation( AbstractNavigation * navigation )
 {
     float bbRadius = 0;
-    if (m_navigation){
+    if (m_navigation)
+    {
         bbRadius = m_navigation->getBBRadius();
         delete m_navigation;
     }
     m_navigation = navigation;
     m_navigation->setCanvas(this);
     if (bbRadius != 0)
+    {
         m_navigation->setBBRadius(bbRadius);
+    }
+
+    /// Links navigation and navigation history and the view changed signal.
+    m_navigationHistory->setNavigation(m_navigation);
+    m_navigation->viewChanged.connect(this, &Canvas::saveHistory);
+
+}
+
+/**
+ * @brief Getter for navigation history.
+ * @details Allows access to the whole navigation history.
+ * @return The navigation history.
+ */
+NavigationHistory * Canvas::navigationHistory()
+{
+    return m_navigationHistory;
+}
+
+/**
+ * @brief Saves the current view to history.
+ * @details Saves the current view to navigation history including an image of
+ *          the current canvas.
+ *
+ * @param viewmatrix The current view matrix.
+ * @param fovy The current field of view.
+ */
+void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
+{
+    m_navigationHistory->save(viewmatrix, fovy, capture(QSize(512, 512), true, false));
 }
 
 void Canvas::mousePressEvent( QMouseEvent * event )
@@ -234,6 +272,7 @@ void Canvas::mouseReleaseEvent( QMouseEvent * event )
 
 void Canvas::mouseMoveEvent( QMouseEvent * event )
 {
+    setFocus();
     m_navigation->mouseMoveEvent(event);
 
     emit mouseMoveEventTriggered(1);
