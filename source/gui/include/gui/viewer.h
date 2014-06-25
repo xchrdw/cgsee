@@ -240,7 +240,7 @@ protected:
     AbstractModelLoader * m_loader;
     QListView * m_historyList;
     NavigationHistory * m_navigationHistory;
-    Group * m_scene; //TODO: Warum?
+    Group * m_scene;
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;
