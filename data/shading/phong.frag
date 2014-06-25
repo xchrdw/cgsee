@@ -13,45 +13,50 @@ in vec3 view_position;
 uniform mat4 view;
 uniform vec3 cameraposition;
 
+struct PointLight
+{
+    vec4 pos;
+    vec4 intensity;
+    vec3 falloff; // x: constant, y: linear, z: quadratic
+    float radius;
+};
+
+struct SpotLight
+{
+    vec4 pos;
+    vec4 direction;
+    vec4 intensity;
+    vec3 falloff; // x: constant, y: linear, z: quadratic
+    float range;
+    float conePower;
+};
+
+struct DirectionalLight
+{
+    vec4 direction;
+    vec4 intensity;
+};
+
 layout(std140) uniform LightInfoBuffer
 {
-	uint numPointLights;
-	uint numSpotLights;
-	uint numDirectionalLights;
+	int numPointLights;
+	int numSpotLights;
+	int numDirectionalLights;
 } LightInfo;
-
 
 layout(std140) uniform PointLightBuffer
 {
-	struct
-	{
-		vec4 pos;
-		vec4 intensity;
-		vec3 falloff; // x: constant, y: linear, z: quadratic
-		float radius;
-	} lights[MAX_POINT_LIGHTS];
+    PointLight lights[MAX_POINT_LIGHTS];
 } PointLights;
 
 layout(std140) uniform SpotLightBuffer
 {
-	struct
-	{
-		vec4 pos;
-		vec4 direction;
-		vec4 intensity;
-		vec3 falloff; // x: constant, y: linear, z: quadratic
-		float range;
-		float conePower;
-	} lights[MAX_SPOT_LIGHTS];
+    SpotLight lights[MAX_SPOT_LIGHTS];
 } SpotLights;
 
 layout(std140) uniform DirectionalLightBuffer
 {
-    struct
-    {
-	vec4 direction;
-	vec4 intensity;
-    } lights[MAX_DIRECTIONAL_LIGHTS];
+    DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS];
 } DirectionalLights;
 
 // Blinn-Phong for any light with attenuation
@@ -71,9 +76,9 @@ vec4 BlinnPhong(vec3 n, vec3 v, vec3 l, vec4 light_intensity, vec4 diff_color, v
 
 void main()
 {
-    uint numPointL = LightInfo.numPointLights;
-    uint numSpotL = LightInfo.numSpotLights;
-    uint numDirL= LightInfo.numDirectionalLights;
+    int numPointL = LightInfo.numPointLights;
+    int numSpotL = LightInfo.numSpotLights;
+    int numDirL= LightInfo.numDirectionalLights;
     // Uncomment to turn off a certain light type
     //numPointL = uint(0);
     //numSpotL = uint(0);
@@ -86,14 +91,14 @@ void main()
     vec4 intensity_out = vec4(0.0);
     vec4 diff_color = vec4(1.0);
 
-    for (uint t = 0; t < numDirL; t++)
+    for (int t = 0; t < numDirL; t++)
     {
 	l = normalize(view * DirectionalLights.lights[t].direction).xyz;
 	light_intensity = DirectionalLights.lights[t].intensity;
 	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, diff_color, 16.0, 1.0); 
     }
 
-    for (uint t = 0; t < numPointL; t++)
+    for (int t = 0; t < numPointL; t++)
     {
 	// l: direction to the light from the surface
 	l = (view * PointLights.lights[t].pos).xyz - view_position;
@@ -104,7 +109,7 @@ void main()
 	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, diff_color, 64.0, att);
     }
 
-    for (uint t = 0; t < numSpotL; t++)
+    for (int t = 0; t < numSpotL; t++)
     {
 	// l: direction to the light from the surface
 	// s: direction of the spotlight in world space
