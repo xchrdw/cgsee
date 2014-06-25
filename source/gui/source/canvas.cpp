@@ -297,10 +297,10 @@ void Canvas::mouseReleaseEvent(QMouseEvent * event)
 
 void Canvas::mouseMoveEvent(QMouseEvent * event)
 {
+    this->setFocus();
+    
     if (m_eventHandler)
         m_eventHandler->mouseMoveEvent(event);
-    
-    this->setFocus();
 
 	emit mouseMoveEventTriggered(1);
 }
