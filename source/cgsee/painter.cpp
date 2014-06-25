@@ -27,6 +27,7 @@
 #include <core/rendering/coloridpass.h>
 #include <core/rendering/boundingboxpass.h>
 #include <core/rendering/lightsource.h>
+#include <core/rendering/lightingsystem.h>
 
 #include <core/property/advancedlistproperty.h>
 #include <core/property/valueproperty.h>
@@ -72,6 +73,7 @@ Painter::Painter(Camera * camera)
 ,   m_camera(camera)
 ,   m_useColor(true)
 ,   m_passes()
+,   m_lightingSystem(nullptr)
 {
 
 }
@@ -95,6 +97,7 @@ Painter::~Painter()
     delete m_primitiveWireframe;
     delete m_solidWireframe;
     delete m_fboColor;
+    delete m_lightingSystem;
 
     delete m_flush;
 }
@@ -199,7 +202,7 @@ const bool Painter::initialize()
     //PHONG
     m_phong = new Program();
     m_phong->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shading/phong.frag"));
-    m_phong->attach(phongLighting);
+    //m_phong->attach(phongLighting);
     m_phong->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shading/phong.vert"));
 
     //GOOCH
@@ -209,7 +212,7 @@ const bool Painter::initialize()
 
     //set UNIFORMS for selected shader
     m_useProgram = m_phong;
-    setUniforms();
+    //setUniforms();
 
     // Post Processing Shader
     m_flush = new Program();
@@ -253,13 +256,38 @@ const bool Painter::initialize()
     builder2.retainWidget()->hide();
     //builder2.retainWidget()->setFocusPolicy(Qt::NoFocus);
 
+    // Lighting system code starts here
+    m_lightingSystem = new LightingSystem();
+    m_lightingSystem->initBuffers();
+    glm::vec3 colors[6] = {
+            glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3(1.f, 0.6f, 0.f),
+            glm::vec3(0.f, 1.f, 1.f),
+            glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3(1.f, 0.6f, 0.f),
+            glm::vec3(0.f, 1.f, 1.f),
+    };
+    for (uint t = 0; t < 6; t++) {
+            m_lightingSystem->addPointLight(glm::vec4((float)t - 3.f,1.5f,(float)t - 3.f, 1.f), colors[t], 3.f);
+    }
+    glm::vec4 spotlight_positions[4] = {
+            glm::vec4(-2.f, 5.f, 2.f, 1.f),
+            glm::vec4(-2.f, 5.f, -2.f, 1.f),
+            glm::vec4(2.f, 5.f, -2.f, 1.f),
+            glm::vec4(2.f, 5.f, 2.f, 1.f)
+    };
+    for (int t = 0; t < 4; t++) {
+            m_lightingSystem->addSpotLight(spotlight_positions[t], glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, 1.f), 5.f, 4.f);
+    }
+    m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(1.f, 1.f, 1.f)), glm::vec3(0.2, 0.1, 0));
+    m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(-1.f, 0, 0)), glm::vec3(0.2, 0.1, 0));
 
     return true;
 }
 
 void Painter::setUniforms()
 {
-    if(m_useProgram == m_flat || m_useProgram == m_gouraud || m_useProgram == m_phong)
+    if(m_useProgram == m_flat || m_useProgram == m_gouraud)
     {
         m_useProgram->setUniform(LIGHTDIR_UNIFORM, glm::vec3(0.0,6.5,7.5));
         m_useProgram->setUniform(LIGHTDIR_UNIFORM2, glm::vec3(0.0,-8.0,7.5));
@@ -301,6 +329,15 @@ void Painter::setUniforms()
         warmColdColor[2] = glm::vec4(0.0, 0.0, 0.6, 0.0);    //cold color
         warmColdColor[3] = glm::vec4(0.45,0.45,0,0);         //Diffuse Warm, DiffuseCool
         m_useProgram->setUniform(WARMCOLDCOLOR_UNIFORM, warmColdColor);
+    }
+
+    else if (m_useProgram == m_phong)
+    {
+            // Since setUniforms is called from postShaderRelink
+			// Bugfix: the program must be bound to query binding locations for the uniform blocks in the program. (this will work on only some drivers otherwise)
+			m_useProgram->use();
+            m_lightingSystem->onShaderRelink(m_useProgram->program());
+            m_lightingSystem->updateAllBuffers(m_useProgram->program());
     }
 }
 
@@ -349,6 +386,9 @@ void Painter::drawScene(Camera * camera, Program * program,  FrameBufferObject *
 {
     fbo->bind();
     SceneTraverser traverser;
+    m_lightingSystem->bindAllBuffers();
+    DrawVisitor drawVisitor(program, camera->transform());
+    traverser.traverse(*camera, drawVisitor);
     if (m_viewFrustumCulling) {
         CullingVisitor cullingVisitor(camera, program, camera->transform());
         traverser.traverse(*camera, cullingVisitor);

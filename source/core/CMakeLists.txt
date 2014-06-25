@@ -112,6 +112,7 @@ set(sources
 	${source_path}/rendering/blureffect.cpp
 	${source_path}/rendering/boundingboxpass.cpp
 	${source_path}/rendering/renderingpass.cpp
+	${source_path}/rendering/lightingsystem.cpp
 	${source_path}/rendering/lightsource.cpp
 	${source_path}/rendering/rasterizer.cpp
 	${source_path}/rendering/normalzpass.cpp
@@ -203,6 +204,8 @@ set(api_includes
 	${include_path}/rendering/normalzpass.h
 	${include_path}/rendering/coloridpass.h
 	${include_path}/rendering/blureffect.h
+	${include_path}/rendering/lightingsystem.h
+	${include_path}/rendering/lighttypes.h
 	${include_path}/rendering/lightsource.h
 	${include_path}/rendering/rasterizer.h
 	${include_path}/rendering/defaultpass.h

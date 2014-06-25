@@ -540,6 +540,8 @@ void Viewer::on_enableCullingAction_triggered() {
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+    // Bugfix for https://github.com/hpicgs/cgsee/issues/162
+    painter()->resize(m_qtCanvas->width(), m_qtCanvas->height());
     painter()->postShaderRelinked();
     m_qtCanvas->repaint();
 }
