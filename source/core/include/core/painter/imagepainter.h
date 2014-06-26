@@ -47,6 +47,7 @@ protected:
     Program * m_gridProgram;
 
     float m_pixelWidth;
+    glm::vec2 m_lines;
 
     bool m_dirty;
 
