@@ -244,7 +244,7 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
     addDockWidget(area, dockWidget);
 
 #ifdef __APPLE__
-    /** 
+    /**
      THIS IS A BUG WORKAROUND
      The bug lies somewhere in Canvas::Canvas().
      When called in Viewer::createQtContext(), the widgets get messed up.
@@ -252,7 +252,7 @@ void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Q
     static int count = 0;
     dockWidget->setFloating(true);
     dockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
-    
+
     dockWidget->move(QPoint(20, 40 + count++ * (dockWidget->height() + 35)));
 #endif
 }
@@ -308,7 +308,7 @@ void Viewer::assignScene(Group * rootNode)
 
     SceneTraverser traverser;
     unsigned int count = 0;
-    traverser.traverse(*rootNode, [&count] (Node & node) 
+    traverser.traverse(*rootNode, [&count] (Node & node)
     {
         node.setId(count++);
         return true;
@@ -365,7 +365,7 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     const GLXContext qtContextHandle = currentContextHandle();
 #endif
 
-    // NOTE: might work even if no context was returned. 
+    // NOTE: might work even if no context was returned.
     // This just double checks...
 
     if(nullptr == qtContextHandle)
@@ -554,21 +554,23 @@ void Viewer::on_enableCullingAction_triggered() {
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+    // Bugfix for https://github.com/hpicgs/cgsee/issues/162
+    painter()->resize(m_qtCanvas->width(), m_qtCanvas->height());
     painter()->postShaderRelinked();
     m_qtCanvas->repaint();
 }
 
 void Viewer::on_openFileDialogAction_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), 
-        QDir::homePath(), m_loader->namedLoadableTypes().join(";;"), 
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+        QDir::homePath(), m_loader->namedLoadableTypes().join(";;"),
         0, QFileDialog::HideNameFilterDetails);
     if (fileName.isEmpty())
         return;
-    
+
     on_loadFile(fileName);
 }
-    
+
 void Viewer::on_quitAction_triggered()
 {
     QApplication::quit();
@@ -582,7 +584,7 @@ void Viewer::on_loadFile(const QString & path)
     {
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
     }
-    else 
+    else
     {
         assignScene(m_scene);
         dynamic_cast<AbstractNavigation*>(m_qtCanvas->eventHandler())->rescaleScene(m_scene);
@@ -778,7 +780,7 @@ void Viewer::on_standardCameraAction_triggered()
 {
     glm::ivec2 tempViewport = m_camera->viewport();
     m_camera->selectImplementation("MonoCamera");
-    
+
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
     qDebug("Standard Mono Camera");
@@ -794,17 +796,17 @@ void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
     else
         qDebug() << "Expected ParallelCamera as active implementation but was"
                 << m_camera->selectedImplementation();
-    
+
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
     qDebug("(Parallel) Red Cyan Stereo Camera");
-}  
+}
 
 void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
 {
     glm::ivec2 tempViewport = m_camera->viewport();
     m_camera->selectImplementation("ConvergentCamera");
-    
+
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
     qDebug("(Convergent) Red Cyan Stereo Camera");
@@ -821,7 +823,7 @@ void Viewer::on_oculusRiftStereoCameraAction_triggered()
     else
         qDebug() << "Expected ParallelCamera as active implementation but was"
                 << m_camera->selectedImplementation();
-    
+
     m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
     qDebug() << "Stereo Camera for Oculus Rift";
@@ -870,14 +872,14 @@ void Viewer::setNavigation(AbstractNavigation * navigation)
     setFocus();
 }
 
-AbstractNavigation * Viewer::navigation() 
+AbstractNavigation * Viewer::navigation()
 {
     if(!m_qtCanvas)
         return nullptr;
     return m_navigation;
 }
 
-void Viewer::setCamera(Camera * camera)
+void Viewer::setCamera(Camera * camera )
 {
     m_camera = camera;
 	m_qtCanvas->setCamera(camera);
@@ -890,7 +892,7 @@ Camera * Viewer::camera()
     return m_camera;
 }
 
-void Viewer::setCoordinateProvider(CoordinateProvider * coordinateProvider)
+void Viewer::setCoordinateProvider(CoordinateProvider * coordinateProvider )
 {
     if (coordinateProvider)
     {
@@ -929,7 +931,7 @@ void Viewer::on_flightManipulatorAction_triggered()
         m_navigation->sceneChanged(m_scene);
     qDebug("Flight navigation, use WASD and arrow keys");
 }
-    
+
 void Viewer::on_trackballManipulatorAction_triggered()
 {
     setNavigation(new ArcballNavigation(m_camera));
@@ -939,7 +941,7 @@ void Viewer::on_trackballManipulatorAction_triggered()
         m_navigation->sceneChanged(m_scene);
     qDebug("Arcball navigation, use left and right mouse buttons");
 }
-    
+
 void Viewer::on_fpsManipulatorAction_triggered()
 {
     setNavigation(new FpsNavigation(m_camera));
@@ -1118,7 +1120,7 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
         m_mouseMoving = false;
         return;
     }
-    
+
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
@@ -1216,7 +1218,7 @@ void Viewer::deselectNode(Node * node)
     node->setSelected(false);
     if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
         drawable->setDrawMethod(defaultDrawmethod);
-    
+
     selectionBBoxChanged();
     m_qtCanvas->update();
 
@@ -1301,7 +1303,7 @@ void Viewer::on_m_sceneHierarchy_itemChanged(QStandardItem * item)
 void Viewer::updateInfoBox()
 {
     int vertices = 0;
-    
+
     for ( auto node : m_selectedNodes )
     {
         if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
