@@ -70,6 +70,9 @@ set(sources
 	${source_path}/autotimer.cpp
 	${source_path}/bufferobject.cpp
 	${source_path}/camera.cpp
+	${source_path}/camera/abstractcamera.cpp
+	${source_path}/camera/monocamera.cpp
+	${source_path}/camera/stereocamera.cpp
 	${source_path}/cameraimplementation.cpp
 	${source_path}/chronotimer.cpp
 	${source_path}/chronotimer.h
@@ -158,6 +161,9 @@ set(api_includes
 	${include_path}/autotimer.h
 	${include_path}/bufferobject.h
 	${include_path}/camera.h
+	${include_path}/camera/abstractcamera.h
+	${include_path}/camera/monocamera.h
+	${include_path}/camera/stereocamera.h
 	${include_path}/cameraimplementation.h
 	${include_path}/convergentcamera.h
 	${include_path}/coordinateprovider.h

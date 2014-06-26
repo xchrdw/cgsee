@@ -51,6 +51,10 @@ void PipelinePainter::pipelineConfigChanged()
 {
     //TODO think!
 }
+void PipelinePainter::sceneChanged()
+{
+    //TODO think!
+}
 
 void PipelinePainter::paint()
 {
@@ -79,6 +83,7 @@ void PipelinePainter::resize(const int width, const int height)
     {
         renderStage->resize(width, height);
     }
+    camera()->setViewport(width, height);
 }
 
 void PipelinePainter::reloadShaders()

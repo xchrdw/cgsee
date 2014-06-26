@@ -9,12 +9,14 @@
 #include <core/plane.h>
 
 class Camera;
+class AbstractCamera;
 class AxisAlignedBoundingBox;
 
 class CORE_API ViewFrustum
 {
 public:
     ViewFrustum(Camera *camera);
+    ViewFrustum(AbstractCamera *camera);
     virtual ~ViewFrustum();
 
     enum e_insideFrustum

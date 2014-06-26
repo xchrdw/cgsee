@@ -66,7 +66,7 @@ public:
 
     // updates camera matrices
     void update();
-    void setUniforms(const Program & program) const;
+    void setUniforms(const Program & program);
 
     //
     glm::vec3 getEye() const;

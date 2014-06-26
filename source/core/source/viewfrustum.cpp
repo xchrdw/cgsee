@@ -13,6 +13,12 @@ ViewFrustum::ViewFrustum(Camera *camera) :
     m_dirty(true)
 {
 }
+ViewFrustum::ViewFrustum(AbstractCamera *camera) :
+    m_camera(nullptr),
+    m_planes(),
+    m_dirty(true)
+{
+}
 
 ViewFrustum::e_insideFrustum ViewFrustum::contains(const AxisAlignedBoundingBox &aabb, glm::mat4 transform) const {
     //TODO: what happens if the bounding sphere completely contains the view frustum?

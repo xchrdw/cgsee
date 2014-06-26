@@ -235,8 +235,10 @@ void Camera::update()
     m_viewFrustum->update();
 }
 
-void Camera::setUniforms(const Program & program) const
+void Camera::setUniforms(const Program & program)
 {
+    if(m_invalidated)
+        update();
     if (m_activeRenderTechnique == m_pathTracer)
     {
         const Program * p(m_pathTracer->program());
@@ -261,6 +263,10 @@ void Camera::setUniforms(const Program & program) const
         program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
         program.setUniform(ZNEAR_UNIFORM, m_zNear);
         program.setUniform(ZFAR_UNIFORM, m_zFar);
+    }
+    for(int row = 0; row <4; row++)
+    {
+        qDebug() << "TRANSFORM[" << row << "] " << m_transform[row].x << " " << m_transform[row].y << " " << m_transform[row].z << " " << m_transform[row].w;
     }
 }
 

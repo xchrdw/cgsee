@@ -26,7 +26,7 @@ Node *AbsoluteTransformator::toAbsoluteIgnoreRootTransform(Node *relativeRoot) {
 }
 
 Node *AbsoluteTransformator::toAbsolute(Node *relativeRoot, glm::mat4 transform) {
-    if (relativeRoot == nullptr) new Group();
+    if (relativeRoot == nullptr) relativeRoot = new Group();
     glm::mat4 newTransform = relativeRoot->transform() * transform;
     Node *absoluteRoot;
     if (relativeRoot->children().size() > 0) {
