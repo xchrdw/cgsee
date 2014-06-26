@@ -46,6 +46,8 @@ protected:
     BufferObject * m_gridVertexBO;
     Program * m_gridProgram;
 
+    float m_pixelWidth;
+
     bool m_dirty;
 
     float m_zoom;

@@ -28,6 +28,7 @@ ImagePainter::ImagePainter()
     , m_pan(0, 0)
     , m_aspect(1, 1)
     , m_viewport(0, 0)
+    , m_pixelWidth(0)
 {
 }
 
@@ -87,6 +88,19 @@ void ImagePainter::setUniforms()
         m_imageProgram->setUniform("pan", m_pan);
         m_imageProgram->setUniform("aspect", m_aspect);
 
+        if (m_aspect.x == 1) {
+            m_pixelWidth = m_viewport.x / m_image->width() * m_zoom;
+        }
+        else {
+            m_pixelWidth = m_viewport.y / m_image->height() * m_zoom;
+        }
+
+        m_gridProgram->setUniform("width", (float)(m_image->width()));
+        m_gridProgram->setUniform("height", (float)(m_image->height()));
+        m_gridProgram->setUniform("aspect", m_aspect);
+        m_gridProgram->setUniform("pan", m_pan);
+        m_gridProgram->setUniform("pixelWidth", m_pixelWidth);
+
         m_dirty = false;
     }
 }
@@ -105,15 +119,7 @@ void ImagePainter::paint()
 
 void ImagePainter::paintGrid()
 {
-    float pixelWidth = 0;
-    if (m_aspect.x == 1) {
-        pixelWidth = m_viewport.x / m_image->width() * m_zoom;
-    }
-    else {
-        pixelWidth = m_viewport.y / m_image->height() * m_zoom;
-    }
-
-    if (pixelWidth < 30)
+    if (m_pixelWidth < 30)
         return;
 
     m_gridProgram->use();
@@ -130,18 +136,12 @@ void ImagePainter::paintGrid()
     glError();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_gridProgram->setUniform("pixelWidth", pixelWidth);
-    m_gridProgram->setUniform("width", (float)(m_image->width()));
-    m_gridProgram->setUniform("height", (float)(m_image->height()));
-    m_gridProgram->setUniform("aspect", m_aspect);
-    m_gridProgram->setUniform("pan", m_pan);
-
-    float lines = m_viewport.x / pixelWidth;
+    float lines = m_viewport.x / m_pixelWidth;
     m_gridProgram->setUniform("lines", lines);
     glDrawArraysInstanced(GL_POINTS, 0, 1, lines+1);
     glError();
 
-    lines = m_viewport.y / pixelWidth;
+    lines = m_viewport.y / m_pixelWidth;
     m_gridProgram->setUniform("lines", -lines);
     glDrawArraysInstanced(GL_POINTS, 0, 1, lines+1);
     glError();
