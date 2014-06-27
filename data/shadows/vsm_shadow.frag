@@ -1,7 +1,7 @@
 #version 150 core
 uniform sampler2D shadowmap;
 uniform sampler2D shadowmap2;
-uniform sampler3D shadowmap3D;
+uniform sampler2DArray shadowmap3D;
 uniform float znear;
 uniform float zfar;
 

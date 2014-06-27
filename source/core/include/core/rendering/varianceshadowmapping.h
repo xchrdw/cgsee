@@ -21,7 +21,10 @@ private:
 
 	Program *m_lightProgram;
 
-	FrameBufferObject* m_shadowmapFBO3D;
-	FrameBufferObject* m_shadowmapFBO;
-	FrameBufferObject* m_shadowmap2FBO;
+	FrameBufferObject *m_shadowmapFBO3D;
+	FrameBufferObject *m_blurHFBO;
+	FrameBufferObject *m_blurVFBO;
+
+	Program *m_blurv;
+	Program *m_blurh;
 };

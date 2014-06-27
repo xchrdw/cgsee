@@ -144,7 +144,7 @@ void FrameBufferObject::bindTexture3D(
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glError();
 
-	glBindTexture(GL_TEXTURE_3D, m_texture);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_texture);
 	glError();
 
 	program.setUniform(uniform, GLint(slot));
@@ -164,7 +164,7 @@ void FrameBufferObject::releaseTexture3D() const
 	if (!isTexture())
 		return;
 
-	glBindTexture(GL_TEXTURE_3D, 0);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 	glError();
 }
 
@@ -292,19 +292,19 @@ void FrameBufferObject::resize() const
     {
 		if (m_layerCount > 0)
 		{
-			glBindTexture(GL_TEXTURE_3D, m_texture);
+			glBindTexture(GL_TEXTURE_2D_ARRAY, m_texture);
 			glError();
 
-			glTexImage3D(GL_TEXTURE_3D, 0, m_internal, m_size.x, m_size.y, m_layerCount, 0, m_format, m_type, 0);
+			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, m_internal, m_size.x, m_size.y, m_layerCount, 0, m_format, m_type, 0);
 			glError();
 
-			glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-			glBindTexture(GL_TEXTURE_3D, 0);
+			glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 			glError();
 		}
 		else
