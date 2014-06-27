@@ -122,6 +122,10 @@ set(sources
 	${source_path}/rendering/defaultpass.cpp
 	${source_path}/rendering/rendertechnique.cpp
 	${source_path}/rendering/pathtracer.cpp
+	${source_path}/rendering/lightrepresentation/abstractlight.cpp
+	${source_path}/rendering/lightrepresentation/directionallight.cpp
+	${source_path}/rendering/lightrepresentation/spotlight.cpp
+	${source_path}/rendering/lightrepresentation/pointlight.cpp
 	${source_path}/scenegraph/scenetraverser.cpp
 	${source_path}/scenegraph/node.cpp
 	${source_path}/scenegraph/drawvisitor.cpp
@@ -212,6 +216,10 @@ set(api_includes
 	${include_path}/rendering/boundingboxpass.h
 	${include_path}/rendering/renderingpass.h
 	${include_path}/rendering/pathtracer.h
+	${include_path}/rendering/lightrepresentation/abstractlight.h
+	${include_path}/rendering/lightrepresentation/directionallight.h
+	${include_path}/rendering/lightrepresentation/spotlight.h
+	${include_path}/rendering/lightrepresentation/pointlight.h
 	${include_path}/scenegraph/group.h
 	${include_path}/scenegraph/highlightingdrawmethod.h
 	${include_path}/scenegraph/triangleobject.h
