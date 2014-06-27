@@ -57,6 +57,12 @@ const bool ImagePainter::initialize()
     m_gridProgram->attach(new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/image_grid.geom"));
     m_gridProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/image_grid.frag"));
 
+    m_textProgram = new Program();
+    m_textProgram->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/image_grid.vert"));
+    m_textProgram->attach(new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/distancefield.geom"));
+    m_textProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/distancefield.frag"));
+
+
     // We need to send a dummy array to the GPU
     // see http://stackoverflow.com/questions/8039929/opengl-drawarrays-without-binding-vbo
 
@@ -105,6 +111,13 @@ void ImagePainter::setUniforms()
         m_gridProgram->setUniform("pixelWidth", m_pixelWidth);
         m_gridProgram->setUniform("lines", m_lines);
 
+        m_textProgram->setUniform("width", (float)(m_image->width()));
+        m_textProgram->setUniform("height", (float)(m_image->height()));
+        m_textProgram->setUniform("aspect", m_aspect);
+        m_textProgram->setUniform("pan", m_pan);
+        m_textProgram->setUniform("pixelWidth", m_pixelWidth);
+        m_textProgram->setUniform("lines", m_lines);
+
         m_dirty = false;
     }
 }
@@ -143,6 +156,11 @@ void ImagePainter::paintGrid()
     glDrawArraysInstanced(GL_POINTS, 0, 1, ceil(m_lines.x + 1 + m_lines.y + 1));
     glError();
 
+    m_textProgram->use();
+    glBindVertexArray(m_gridVao);
+    glError();
+
+    glDrawArraysInstanced(GL_POINTS, 0, 1, (ceil(m_lines.x)+1) * (ceil(m_lines.y)+1));
     glError();
 
     glDisable(GL_CULL_FACE);

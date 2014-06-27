@@ -45,6 +45,7 @@ protected:
     GLuint m_gridVao;
     BufferObject * m_gridVertexBO;
     Program * m_gridProgram;
+    Program * m_textProgram;
 
     float m_pixelWidth;
     glm::vec2 m_lines;
