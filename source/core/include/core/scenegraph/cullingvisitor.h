@@ -19,12 +19,10 @@ class Program;
 
 class CORE_API CullingVisitor final : public SceneVisitorInterface
 {
-public:
-    typedef std::vector<std::shared_ptr<Node> >::iterator t_nodeIter;
-    
+public:    
     CullingVisitor(Camera *camera, Program *program, glm::mat4 transform);
     ~CullingVisitor();
-    bool operator() (Node &node);
+    bool operator() (Node &node) override;
 
 private:
     Camera *m_camera;
