@@ -20,9 +20,15 @@ void main(void) {
 	float w = 2/lines.x;
 	float h = 2/lines.y;
 	
+	int columns = int(ceil(lines.x) + 1);
+	int row = int(v_instance[0] / columns);
+	int col = int(mod(v_instance[0], columns));
+	if(col >= columns)
+		col = col - columns;
+	
 	vec4 pos = vec4(
-		(mod(v_instance[0], (ceil(lines.x)+1)) + xpos)/lines.x *2-1 - w/2,
-		(floor(v_instance[0] / (ceil(lines.x)+1)) + ypos)/lines.y *2-1 - h/2,
+		(col+xpos)/lines.x *2-1 + w/2,
+		(row+ypos)/lines.y *2-1 + h/2,
 		0,1);
 
 	gl_Position = pos + vec4(w/2,-h/2,0,0);
