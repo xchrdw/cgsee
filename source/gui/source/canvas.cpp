@@ -261,7 +261,7 @@ const QImage Canvas::capture(
         }
     p.end();
 
-    resize(w, h);
+	resizeGL(w, h);
     m_camera->setTransform(proj * view);
 
     doneCurrent();
