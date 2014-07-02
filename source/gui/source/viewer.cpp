@@ -55,6 +55,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <gui/canvasexporter.h>
 #include <gui/fileNavigator.h>
 #include <gui/fileExplorer.h>
+#include <gui/materialwidgetbuilder.h>
 
 #include "../../cgsee/painter.h" // TODO
 
@@ -101,6 +102,7 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
 ,   m_materialCanvas(nullptr)
+,   m_materialWidgetBuilder(nullptr)
 ,   m_camera(nullptr)
 ,   m_savedViews(4)
 ,   m_isFullscreen(false)
@@ -206,19 +208,7 @@ void Viewer::initializeMaterial()
 {
     m_dockMaterial->setObjectName("materialWidget");
 
-	Material * obj = new Material();
-
-    m_propertyMaterialBrowser = new propertyguizeug::PropertyBrowser(obj);
-    m_materialCanvas = new Canvas(m_qtCanvas->format());
-    // ToDo: add Vertical splitter layout and handle this 
-    m_materialCanvas->setMinimumHeight(128);
-
-    QVBoxLayout * layout = new QVBoxLayout();
-    layout->addWidget(m_materialCanvas);
-    layout->addWidget(m_propertyMaterialBrowser);
-
-    QWidget * materialWidget = new QWidget(this);
-    materialWidget->setLayout(layout);
+	QWidget * materialWidget = m_materialWidgetBuilder->initializeMaterialWidget(m_qtCanvas->format(), this);
 
     initializeDockWidgets(m_dockMaterial, materialWidget, Qt::RightDockWidgetArea);
 }

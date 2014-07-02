@@ -232,6 +232,7 @@ protected:
 
     Canvas * m_materialCanvas;
 	propertyguizeug::PropertyBrowser * m_propertyMaterialBrowser;
+	MaterialWidgetBuilder * m_materialWidgetBuilder;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
