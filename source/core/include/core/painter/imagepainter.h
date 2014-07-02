@@ -47,6 +47,7 @@ protected:
     BufferObject * m_gridVertexBO;
     Program * m_gridProgram;
     Program * m_textProgram;
+    Image * m_fontImage;
 
     float m_pixelWidth;
     glm::vec2 m_pixels;

@@ -3,6 +3,7 @@
 
 #include <core/painter/imagepainter.h>
 #include <core/material/image.h>
+#include <core/material/imageqt.h>
 
 #include <core/autotimer.h>
 #include <core/mathmacros.h>
@@ -20,9 +21,11 @@ ImagePainter::ImagePainter()
     , m_quad(nullptr)
     , m_imageProgram(nullptr)
     , m_gridProgram(nullptr)
+    , m_textProgram(nullptr)
     , m_gridVao(-1)
     , m_gridVertexBO(nullptr)
     , m_image(nullptr)
+    , m_fontImage(nullptr)
     , m_dirty(true)
     , m_zoom(1)
     , m_pan(0, 0)
@@ -47,6 +50,8 @@ ImagePainter::~ImagePainter()
     }
     delete m_imageProgram;
     delete m_gridProgram;
+    delete m_fontImage;
+    delete m_textProgram;
     m_paintMutex.unlock();
 }
 
@@ -59,17 +64,21 @@ const bool ImagePainter::initialize()
     m_imageProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/image.frag"));
 
     m_quad = new ScreenQuad();
-
+    FileAssociatedShader * imageGridVert = new FileAssociatedShader(GL_VERTEX_SHADER, "data/image_grid.vert");
 
     m_gridProgram = new Program();
-    m_gridProgram->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/image_grid.vert"));
+    m_gridProgram->attach(imageGridVert);
     m_gridProgram->attach(new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/image_grid.geom"));
     m_gridProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/image_grid.frag"));
 
     m_textProgram = new Program();
-    m_textProgram->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/image_grid.vert"));
+    m_textProgram->attach(imageGridVert);
     m_textProgram->attach(new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/distancefield.geom"));
     m_textProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/distancefield.frag"));
+
+    m_fontImage = new ImageQt("data/charmap.png");
+    m_fontImage->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_fontImage->setMagFilter(GL_LINEAR);
 
 
     // We need to send a dummy array to the GPU
@@ -120,11 +129,15 @@ void ImagePainter::setUniforms()
         m_gridProgram->setUniform("pixelWidth", m_pixelWidth);
         m_gridProgram->setUniform("pixels", m_pixels);
 
-        m_textProgram->setUniform("imageSize", m_imageSize);
-        m_textProgram->setUniform("aspect", m_aspect);
-        m_textProgram->setUniform("pan", m_pan);
-        m_textProgram->setUniform("pixelWidth", m_pixelWidth);
-        m_textProgram->setUniform("pixels", m_pixels);
+        if (m_fontImage) {
+            m_image->bind(*m_textProgram, "image", 0);
+            m_fontImage->bind(*m_textProgram, "distancefield", 1);
+            m_textProgram->setUniform("imageSize", m_imageSize);
+            m_textProgram->setUniform("aspect", m_aspect);
+            m_textProgram->setUniform("pan", m_pan);
+            m_textProgram->setUniform("pixelWidth", m_pixelWidth);
+            m_textProgram->setUniform("pixels", m_pixels);
+        }
 
         m_dirty = false;
     }
