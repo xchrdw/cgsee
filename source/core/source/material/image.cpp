@@ -52,6 +52,22 @@ GLuint Image::getTexture() {
     
     glGenerateMipmap(GL_TEXTURE_2D);
     glError();
-
+    m_textureGenerated = true;
     return m_texture;
+}
+
+void Image::setTexParameteri(GLenum pname, GLint param) {
+    GLuint texture = getTexture();
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glError();
+    glTexParameteri(GL_TEXTURE_2D, pname, param);
+    glError();
+}
+
+void Image::setMagFilter(GLint param) {
+    setTexParameteri(GL_TEXTURE_MAG_FILTER, param);
+}
+
+void Image::setMinFilter(GLint param) {
+    setTexParameteri(GL_TEXTURE_MIN_FILTER, param);
 }
