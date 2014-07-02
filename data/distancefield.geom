@@ -1,7 +1,9 @@
 #version 150
 
 layout(points) in;
-layout(triangle_strip, max_vertices = 4) out;
+layout(triangle_strip, max_vertices = 28) out;
+
+uniform sampler2D image;
 
 uniform vec2 imageSize;
 uniform vec2 aspect;
@@ -19,7 +21,6 @@ void createTextQuad(in vec2 position, in vec2 dimension, in int character) {
 	
 	vec4 halfX = vec4(dimension.x/2, 0, 0, 0);
 	vec4 halfY = vec4(0, dimension.y/2, 0, 0);
-	
 	v_char = character;
 	
 	gl_Position = pos + halfX - halfY;
@@ -51,9 +52,24 @@ void main(void) {
 	if(col >= columns)
 		col = col - columns;
 	
-	vec2 pos = vec2(
-		(col+xpos)/pixels.x *2-1 + w/2,
-		(row+ypos)/pixels.y *2-1 + h/2);
+	float centerX = (col+xpos)/pixels.x *2-1 + w/2;
+	float centerY = (row+ypos)/pixels.y *2-1 + h/2;
 
-	createTextQuad(pos, vec2(w, h), 0);
+	float currentX = centerX - w/4;
+	
+	vec4 pixelColor = texture(image, vec2(col, row)/imageSize + pan/aspect) * 255;
+	
+	createTextQuad(vec2(currentX, centerY), vec2(w, h)/12, 16); // 16 = hashtag
+	currentX += w/12;
+	createTextQuad(vec2(currentX, centerY), vec2(w, h)/12, int(pixelColor.r/16));
+	currentX += w/12;
+	createTextQuad(vec2(currentX, centerY), vec2(w, h)/12, int(mod(pixelColor.r, 16)));
+	currentX += w/12;
+	createTextQuad(vec2(currentX, centerY), vec2(w, h)/12, int(pixelColor.g/16));
+	currentX += w/12;
+	createTextQuad(vec2(currentX, centerY), vec2(w, h)/12, int(mod(pixelColor.g, 16)));
+	currentX += w/12;
+	createTextQuad(vec2(currentX, centerY), vec2(w, h)/12, int(pixelColor.b/16));
+	currentX += w/12;
+	createTextQuad(vec2(currentX, centerY), vec2(w, h)/12, int(mod(pixelColor.b, 16)));
 }

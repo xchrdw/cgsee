@@ -12,5 +12,5 @@ uniform float pixelWidth;
 void main()
 {
 	fragColor = vec4(v_uv,0,smoothstep(40,60,pixelWidth));
-	//fragColor = vec4(v_char/10, 0, 0, 1);
+	fragColor = vec4(float(v_char)/16, 0, 0, 1);
 }

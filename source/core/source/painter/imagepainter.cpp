@@ -117,6 +117,8 @@ void ImagePainter::setUniforms()
         m_textProgram->setUniform("pixelWidth", m_pixelWidth);
         m_textProgram->setUniform("pixels", m_pixels);
 
+        m_image->bind(*m_textProgram, "image", 0);
+
         m_dirty = false;
     }
 }
