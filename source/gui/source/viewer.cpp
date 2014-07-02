@@ -44,6 +44,9 @@ extern GLXContext glXGetCurrentContext( void );
 #include <QTreeView>
 #include <QTextEdit>
 #include <QVBoxLayout>
+#include <QListView>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include <propertyguizeug/PropertyBrowser.h>
 
@@ -97,12 +100,13 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
 ,   m_camera(nullptr)
-,   m_saved_views(4)
+,   m_savedViews(4)
 ,   m_isFullscreen(false)
 ,   m_dockNavigator(new QDockWidget(tr("Navigator")))
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
 ,   m_dockPropertyDemo(new QDockWidget(tr("PropertyDemo")))
+,   m_dockNavigationHistory(new QDockWidget(tr("NavigationHistory")))
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
@@ -110,6 +114,8 @@ Viewer::Viewer(
 ,   m_coordinateProvider(nullptr)
 ,   m_selectionBBox(new AxisAlignedBoundingBox)
 ,   m_loader(new AssimpLoader( registry ))
+,   m_historyList(new QListView(this))
+,   m_navigationHistory(nullptr)
 ,   m_scene(nullptr)
 ,   m_mouseMoving(false)
 {
@@ -126,14 +132,15 @@ Viewer::Viewer(
     initializeExplorer();
     initializeSceneTree();
     initializePropertyDemo();
+    initializeNavigationHistory();
 };
 
 void Viewer::initializeExplorer()
 {
     m_dockNavigator->setObjectName("fileNavigator");
     m_dockExplorer->setObjectName("fileExplorer");
-    this->initializeDockWidgets(m_dockNavigator, m_navigator, Qt::LeftDockWidgetArea);
-    this->initializeDockWidgets(m_dockExplorer, m_explorer, Qt::BottomDockWidgetArea);
+    initializeDockWidgets(m_dockNavigator, m_navigator, Qt::LeftDockWidgetArea);
+    initializeDockWidgets(m_dockExplorer, m_explorer, Qt::BottomDockWidgetArea);
 
     m_explorer->setAllLoadableTypes(m_loader->allLoadableTypes());
 
@@ -178,7 +185,7 @@ void Viewer::initializeSceneTree()
     QWidget * sceneWidget = new QWidget(this);
     sceneWidget->setLayout(layout);
 
-    this->initializeDockWidgets(m_dockScene, sceneWidget, Qt::RightDockWidgetArea);
+    initializeDockWidgets(m_dockScene, sceneWidget, Qt::RightDockWidgetArea);
 
     sceneInfoText->setReadOnly(true);
 
@@ -211,13 +218,28 @@ void Viewer::initializePropertyDemo()
     QWidget * demoWidget = new QWidget(this);
     demoWidget->setLayout(layout);
 
-    this->initializeDockWidgets(m_dockPropertyDemo, demoWidget, Qt::RightDockWidgetArea);
+    initializeDockWidgets(m_dockPropertyDemo, demoWidget, Qt::RightDockWidgetArea);
+}
+
+/**
+ * @brief Initializes navigation history dock.
+ * @details Initializes navigation history dock, connects to history changed
+ *          signal and links the navigation history list.
+ */
+void Viewer::initializeNavigationHistory()
+{
+    m_dockNavigationHistory->setObjectName("navigationHistory");
+    m_historyList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    QListView::connect(m_historyList, SIGNAL(clicked(const QModelIndex &)), this, SLOT(on_m_historyList_clicked(const QModelIndex &)));
+
+    initializeDockWidgets(m_dockNavigationHistory, m_historyList, Qt::LeftDockWidgetArea);
 }
 
 void Viewer::initializeDockWidgets(QDockWidget * dockWidget, QWidget * widget, Qt::DockWidgetArea area)
 {
     dockWidget->setWidget(widget);
-    this->addDockWidget(area, dockWidget);
+    addDockWidget(area, dockWidget);
 
 #ifdef __APPLE__
     /**
@@ -254,8 +276,14 @@ void Viewer::fillSceneHierarchy(Node * node, QStandardItem * parent)
     for (const auto & child : node->children())
     {
         QStandardItem * item = new QStandardItem(child->name());
-        if (child->name() == "") { item->setData(QVariant(node->name() + QString("_") + QString::number(count)), Qt::DisplayRole); }
-        else { item->setData(QVariant(child->name()), Qt::DisplayRole); }
+        if (child->name() == "")
+        {
+            item->setData(QVariant(node->name() + QString("_") + QString::number(count)), Qt::DisplayRole);
+        }
+        else
+        {
+            item->setData(QVariant(child->name()), Qt::DisplayRole);
+        }
 
         item->setData(QVariant(child->id()), Qt::UserRole + 1);
         item->setEditable(false);
@@ -286,7 +314,7 @@ void Viewer::assignScene(Group * rootNode)
 
     createSceneHierarchy(m_sceneHierarchy, rootNode);
     m_sceneHierarchyTree->expandAll();
-    this->updateInfoBox();
+    updateInfoBox();
 }
 
 #ifdef WIN32
@@ -348,12 +376,105 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     return qtContextHandle;
 }
 
+/**
+ * @brief Updates the navigation history dock widget.
+ * @details Updates the navigation history dock widget, check for all available
+ *          items in navigation history and sets icons and descriptions.
+ */
+void Viewer::updateHistoryList()
+{
+
+    /// Avoids issues with empty history lists
+    if (!m_navigationHistory->isEmpty())
+    {
+        QStandardItemModel * historyItems = new QStandardItemModel(this);
+        NavigationHistoryElement * historyElements = m_navigationHistory->navigationHistoryElement()->last();
+        qint64 selectedTimestamp = m_navigationHistory->navigationHistoryElement()->timestamp();
+        QModelIndex selectedIndex = historyItems->index(0, 0);
+        QStandardItem * selectedObject = new QStandardItem();
+
+        /// Adds fallback to avoid endless loops
+        int step = 0;
+        int size = m_navigationHistory->navigationHistoryElement()->size();
+        bool curr = false;
+
+        while (step < size)
+        {
+            QStandardItem * historyObject = new QStandardItem(QIcon(QPixmap::fromImage(historyElements->thumbnail())), QString("Undo"));
+            historyObject->setData(QVariant(historyElements->timestamp()), 1337);
+
+            /// Highlights the selected item
+            if (historyElements->timestamp() == selectedTimestamp)
+            {
+                historyObject->setText("Current View");
+                selectedObject = historyObject;
+                curr = true;
+            }
+            else if (!curr)
+            {
+                historyObject->setText(QString("Redo"));
+            }
+
+            historyItems->appendRow(historyObject);
+            historyElements = historyElements->previous();
+            ++step;
+        }
+
+        m_historyList->setModel(historyItems);
+
+        selectedIndex = selectedObject->index();
+        m_historyList->setSelectionBehavior(QAbstractItemView::SelectRows);
+        m_historyList->setCurrentIndex(selectedIndex);
+    }
+}
+
+/**
+ * @brief Handles the navigation history clicked signal.
+ * @details Handles the navigation history clicked signal and undoes/redoes the
+ *          steps to reach the clicked view.
+ *
+ * @param index The clicked index.
+ */
+void Viewer::on_m_historyList_clicked(const QModelIndex & index)
+{
+    NavigationHistoryElement * currentHistory = m_qtCanvas->navigationHistory()->navigationHistoryElement();
+    qint64 selectedElement = index.data(1337).toLongLong();
+
+    /// Avoids getting stuck in undo/redo loops.
+    if (currentHistory->timestamp() > selectedElement)
+    {
+
+        /// Goes back in navigation history (undo).
+        while (currentHistory->timestamp() > selectedElement)
+        {
+            currentHistory = currentHistory->previous();
+            m_qtCanvas->navigationHistory()->undo();
+        }
+    }
+    else
+    {
+
+        /// Goes forward in navigation history (redo).
+        while (currentHistory->timestamp() < selectedElement)
+        {
+            currentHistory = currentHistory->next();
+            m_qtCanvas->navigationHistory()->redo();
+        }
+    }
+
+    /// Restores focus after clicking the history items.
+    setFocus();
+}
+
 void Viewer::initialize(const GLFormat & format)
 {
     if(!QGLFormat::hasOpenGL())
         qFatal("OpenGL not supported.");
 
     createQtContext(format);
+
+    m_navigationHistory = m_qtCanvas->navigationHistory();
+    m_navigationHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
 
     QObject::connect(
         m_qtCanvas, SIGNAL(mouseReleaseEventSignal(QMouseEvent *)),
@@ -374,6 +495,8 @@ Viewer::~Viewer()
     delete m_dockNavigator;
     delete m_dockExplorer;
     delete m_dockScene;
+    delete m_dockNavigationHistory;
+    delete m_dockPropertyDemo;
     delete m_sceneHierarchy;
     delete m_loader;
     delete m_coordinateProvider;
@@ -417,6 +540,8 @@ void Viewer::on_enableCullingAction_triggered() {
 void Viewer::on_reloadAllShadersAction_triggered()
 {
     FileAssociatedShader::reloadAll();
+    // Bugfix for https://github.com/hpicgs/cgsee/issues/162
+    painter()->resize(m_qtCanvas->width(), m_qtCanvas->height());
     painter()->postShaderRelinked();
     m_qtCanvas->repaint();
 }
@@ -447,14 +572,15 @@ void Viewer::on_loadFile(const QString & path)
     }
     else
     {
-        this->assignScene(m_scene);
-        this->m_qtCanvas->navigation()->rescaleScene(m_scene);
+        assignScene(m_scene);
+        m_qtCanvas->navigation()->rescaleScene(m_scene);
         if (m_coordinateProvider)
-            this->m_coordinateProvider->assignPass(this->painter()->getSharedPass());
-        this->painter()->assignScene(m_scene);
-        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
-        this->m_qtCanvas->update();
-        this->selectionBBoxChanged();
+            m_coordinateProvider->assignPass(this->painter()->getSharedPass());
+        painter()->assignScene(m_scene);
+        m_qtCanvas->navigation()->sceneChanged(m_scene);
+        m_qtCanvas->update();
+        selectionBBoxChanged();
+        m_navigationHistory->reset();
     }
 }
 
@@ -468,6 +594,21 @@ void Viewer::on_toggleExplorer_triggered()
 {
     bool visible = m_dockExplorer->isVisible();
     m_dockExplorer->setVisible(!visible);
+}
+
+/**
+ * @brief Toggles navigation history dock.
+ */
+void Viewer::on_toggleNavigationHistory_triggered()
+{
+    bool visible = m_dockNavigationHistory->isVisible();
+    m_dockNavigationHistory->setVisible(!visible);
+}
+
+void Viewer::on_togglePropertyDemo_triggered()
+{
+    bool visible = m_dockPropertyDemo->isVisible();
+    m_dockPropertyDemo->setVisible(!visible);
 }
 
 void Viewer::updateCameraSelection(QString cameraName) const
@@ -568,7 +709,8 @@ void Viewer::on_ssaoBlurAction_triggered()
     m_qtCanvas->repaint();
 }
 
-void Viewer::uncheckFboActions() {
+void Viewer::uncheckFboActions()
+{
     m_ui->fboColorAction->setChecked(false);
     m_ui->fboNormalzAction->setChecked(false);
     m_ui->fboShadowMapAction->setChecked(false);
@@ -716,10 +858,11 @@ void Viewer::on_toggleFullscreen_triggered()
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
     m_qtCanvas->setNavigation(navigation);
-    this->setFocus();
+    setFocus();
 }
 
-AbstractNavigation * Viewer::navigation() {
+AbstractNavigation * Viewer::navigation()
+{
     if(!m_qtCanvas)
         return nullptr;
     return m_qtCanvas->navigation();
@@ -753,46 +896,52 @@ CoordinateProvider * Viewer::coordinateProvider()
 
 void Viewer::keyPressEvent(QKeyEvent * event)
 {
-    if(!event->isAutoRepeat()) {
+    if(!event->isAutoRepeat())
+    {
         navigation()->keyPressEvent(event);
     }
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )
 {
-    if(!event->isAutoRepeat()) {
+    if(!event->isAutoRepeat())
+    {
         navigation()->keyReleaseEvent(event);
     }
 }
 
-void Viewer::on_flightManipulatorAction_triggered() {
+void Viewer::on_flightManipulatorAction_triggered()
+{
     setNavigation(new FlightNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->flightManipulatorAction->setChecked(true);
     if (m_scene)
-        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
+        m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("Flight navigation, use WASD and arrow keys");
 }
 
-void Viewer::on_trackballManipulatorAction_triggered() {
+void Viewer::on_trackballManipulatorAction_triggered()
+{
     setNavigation(new ArcballNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->trackballManipulatorAction->setChecked(true);
     if (m_scene)
-        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
+        m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("Arcball navigation, use left and right mouse buttons");
 }
 
-void Viewer::on_fpsManipulatorAction_triggered() {
+void Viewer::on_fpsManipulatorAction_triggered()
+{
     setNavigation(new FpsNavigation(m_camera));
     uncheckManipulatorActions();
     m_ui->fpsManipulatorAction->setChecked(true);
     if (m_scene)
-        this->m_qtCanvas->navigation()->sceneChanged(m_scene);
+        m_qtCanvas->navigation()->sceneChanged(m_scene);
     qDebug("FPS Navigation, use mouse and WASD");
 }
 
-void Viewer::uncheckManipulatorActions() {
+void Viewer::uncheckManipulatorActions()
+{
     m_ui->flightManipulatorAction->setChecked(false);
     m_ui->fpsManipulatorAction->setChecked(false);
     m_ui->trackballManipulatorAction->setChecked(false);
@@ -800,11 +949,14 @@ void Viewer::uncheckManipulatorActions() {
 
 
 // helper to restore mat4
-glm::mat4 string2mat(QString s) {
+glm::mat4 string2mat(QString s)
+{
     glm::mat4 mat;
     QStringList list = s.split(';');
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
             mat[j][i] = list.at(j + 4*i).toFloat();
         }
     }
@@ -812,10 +964,13 @@ glm::mat4 string2mat(QString s) {
 }
 
 // helper to save mat4
-QString mat2string(glm::mat4 mat) {
+QString mat2string(glm::mat4 mat)
+{
     QString s("");
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
             s += QString::number(mat[j][i]);
             s += ';';
         }
@@ -823,64 +978,89 @@ QString mat2string(glm::mat4 mat) {
     return s;
 }
 
-void Viewer::restoreViews( QSettings &s ) {
+void Viewer::restoreViews( QSettings &s )
+{
     s.beginGroup(SETTINGS_SAVED_VIEWS);
-    for (int i = 0; i < m_saved_views.size(); i++)
+    for (int i = 0; i < m_savedViews.size(); i++)
     {
         QString name = "view_" + QString::number(i+1);
         QString str = s.value(name, "").value<QString>();
-        if (str.size() > 0) {
-            m_saved_views[i] = string2mat(str);
-        } else {
-            m_saved_views[i] = glm::mat4(0);
+        if (str.size() > 0)
+        {
+            m_savedViews[i] = string2mat(str);
+        } else
+        {
+            m_savedViews[i] = glm::mat4(0);
         }
 
     }
     s.endGroup();
 }
 
-void Viewer::saveView(int i) {
-    m_saved_views[i] = navigation()->viewMatrix();
+void Viewer::saveView(int i)
+{
+    m_savedViews[i] = navigation()->viewMatrix();
     QSettings s;
     s.beginGroup(SETTINGS_SAVED_VIEWS);
     s.setValue("view_" + QString::number(i+1), mat2string(navigation()->viewMatrix()));
     s.endGroup();
 }
 
-void Viewer::loadView(int i) {
-    if (m_saved_views[i] == glm::mat4(0)) {
+void Viewer::loadView(int i)
+{
+    if (m_savedViews[i] == glm::mat4(0))
+    {
         navigation()->loadView(navigation()->defaultView());
-    } else {
-        navigation()->loadView(m_saved_views[i]);
     }
+    else
+    {
+        navigation()->loadView(m_savedViews[i]);
+    }
+    navigation()->onNavigated();
 }
 
-
-void Viewer::on_actionFrontView_triggered() {
+void Viewer::on_actionFrontView_triggered()
+{
     navigation()->loadView(navigation()->frontview());
 }
-void Viewer::on_actionLeftView_triggered() {
+
+void Viewer::on_actionLeftView_triggered()
+{
     navigation()->loadView(navigation()->leftview());
 }
-void Viewer::on_actionBackView_triggered() {
+
+void Viewer::on_actionBackView_triggered()
+{
     navigation()->loadView(navigation()->backview());
 }
-void Viewer::on_actionRightView_triggered() {
+
+void Viewer::on_actionRightView_triggered()
+{
     navigation()->loadView(navigation()->rightview());
 }
-void Viewer::on_actionTopView_triggered() {
+
+void Viewer::on_actionTopView_triggered()
+{
     navigation()->loadView(navigation()->topview());
 }
-void Viewer::on_actionBottomView_triggered() {
+
+void Viewer::on_actionBottomView_triggered()
+{
     navigation()->loadView(navigation()->bottomview());
 }
-void Viewer::on_actionTopRightView_triggered() {
+
+void Viewer::on_actionTopRightView_triggered()
+{
     navigation()->loadView(navigation()->topRightView());
 }
-void Viewer::on_actionBottomLeftView_triggered() {
+
+void Viewer::on_actionBottomLeftView_triggered()
+{
     navigation()->loadView(navigation()->bottomLeftView());
 }
-void Viewer::on_actionRandomView_triggered() {
+
+void Viewer::on_actionRandomView_triggered()
+{
     navigation()->loadView(navigation()->randomView());
 }
 
@@ -894,6 +1074,24 @@ void Viewer::on_actionSave_1_triggered() { saveView(0); }
 void Viewer::on_actionSave_2_triggered() { saveView(1); }
 void Viewer::on_actionSave_3_triggered() { saveView(2); }
 void Viewer::on_actionSave_4_triggered() { saveView(3); }
+
+/**
+ * @brief Goes back in history 1 step.
+ * @details Goes back in navigation history 1 step (undo).
+ */
+void Viewer::on_actionHistoryUndo_triggered()
+{
+    m_qtCanvas->navigationHistory()->undo();
+}
+
+/**
+ * @brief Goes forward in history 1 step.
+ * @details Goes forward in navigation history 1 step (redo).
+ */
+void Viewer::on_actionHistoryRedo_triggered()
+{
+    m_qtCanvas->navigationHistory()->redo();
+}
 
 
 void Viewer::on_mouseMoveEventTriggered(int triggered)
@@ -916,17 +1114,17 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
         unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
 
         if (event->modifiers() != Qt::CTRL)
-            this->clearSelection();
+            clearSelection();
 
         if (id < BACKGROUND_ID)
         {
-            this->selectById(id);
-            this->treeToggleSelection(id);
+            selectById(id);
+            treeToggleSelection(id);
         }
     }
 
     if (event->button() == Qt::RightButton)
-        this->clearSelection();
+        clearSelection();
 }
 
 void Viewer::selectById(const unsigned int & id)
@@ -935,7 +1133,8 @@ void Viewer::selectById(const unsigned int & id)
     Node * result = nullptr;
     traverser.traverse(*m_camera, [&result, &id](Node & node)
     {
-        if( node.id() == id){
+        if(node.id() == id)
+        {
             result = &node;
             return false;
         }
@@ -948,24 +1147,24 @@ void Viewer::selectById(const unsigned int & id)
         int siblings = parent->children().size() - 1;
         if (m_selectedNodes.contains(id))
         {
-            this->deselectNode(result);
+            deselectNode(result);
             if (!siblings)
             {
-                this->deselectNode(parent);
-                this->treeToggleSelection(parent->id());
+                deselectNode(parent);
+                treeToggleSelection(parent->id());
             }
         }
         else
         {
-            this->selectNode(result);
+            selectNode(result);
             if (!siblings)
             {
-                this->selectNode(parent);
-                this->treeToggleSelection(parent->id());
+                selectNode(parent);
+                treeToggleSelection(parent->id());
             }
         }
     }
-    this->updateInfoBox();
+    updateInfoBox();
 }
 
 void Viewer::selectNode(Node * node)
@@ -977,15 +1176,15 @@ void Viewer::selectNode(Node * node)
     if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
         drawable->setDrawMethod(highlightingDrawmethod);
 
-    this->selectionBBoxChanged();
-    this->m_qtCanvas->update();
+    selectionBBoxChanged();
+    m_qtCanvas->update();
 
     for ( auto child : node->children() )
     {
         if (!m_selectedNodes.contains(child->id()))
         {
-            this->selectNode(child);
-            this->treeToggleSelection(child->id());
+            selectNode(child);
+            treeToggleSelection(child->id());
         }
     }
 }
@@ -999,15 +1198,15 @@ void Viewer::deselectNode(Node * node)
     if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
         drawable->setDrawMethod(defaultDrawmethod);
 
-    this->selectionBBoxChanged();
-    this->m_qtCanvas->update();
+    selectionBBoxChanged();
+    m_qtCanvas->update();
 
     for ( auto child : node->children() )
     {
         if (m_selectedNodes.contains(child->id()))
         {
-            this->deselectNode(child);
-            this->treeToggleSelection(child->id());
+            deselectNode(child);
+            treeToggleSelection(child->id());
         }
     }
 }
@@ -1039,8 +1238,8 @@ void Viewer::clearSelection()
         }
 
         m_selectedNodes.clear();
-        this->selectionBBoxChanged();
-        this->m_qtCanvas->update();
+        selectionBBoxChanged();
+        m_qtCanvas->update();
 
         m_sceneHierarchyTree->clearSelection();
 }
@@ -1051,7 +1250,8 @@ void Viewer::hideById(const unsigned int & id, const bool & hideStatus)
     Node * result = nullptr;
     traverser.traverse(*m_camera, [&result, &id](Node & node)
     {
-        if( node.id() == id){
+        if( node.id() == id)
+        {
             result = &node;
             return false;
         }
@@ -1068,15 +1268,15 @@ void Viewer::on_m_sceneHierarchyTree_clicked(const QModelIndex & index)
 {
     if (QApplication::keyboardModifiers() != Qt::CTRL)
     {
-        this->clearSelection();
-        this->treeToggleSelection(index.data(Qt::UserRole + 1).toUInt());
+        clearSelection();
+        treeToggleSelection(index.data(Qt::UserRole + 1).toUInt());
     }
-    this->selectById(index.data(Qt::UserRole + 1).toUInt());
+    selectById(index.data(Qt::UserRole + 1).toUInt());
 }
 
 void Viewer::on_m_sceneHierarchy_itemChanged(QStandardItem * item)
 {
-    this->hideById(item->data(Qt::UserRole + 1).toUInt(), item->checkState() == Qt::Unchecked);
+    hideById(item->data(Qt::UserRole + 1).toUInt(), item->checkState() == Qt::Unchecked);
 }
 
 void Viewer::updateInfoBox()
@@ -1103,5 +1303,5 @@ void Viewer::selectionBBoxChanged()
     }
 
     Painter * painter = static_cast<Painter*>(this->painter());
-    painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), this->m_qtCanvas->navigation()->sceneTransform());
+    painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), m_qtCanvas->navigation()->sceneTransform());
 }

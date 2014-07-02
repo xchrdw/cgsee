@@ -128,5 +128,6 @@ void FpsNavigation::pitch(float angle)
         glm::vec3 diffCenter = glm::rotate(m_center-m_eye, -angle, m_xView) - (m_center - m_eye);
         m_center += diffCenter;
         updateView();
+        onNavigated();
     }
 }

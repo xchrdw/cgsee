@@ -15,6 +15,8 @@ find_package(GLOW       REQUIRED)
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5OpenGL  REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(libzeug    REQUIRED)
+
 
 #
 # Includes
@@ -25,6 +27,7 @@ include_directories(
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
     ${GLOW_INCLUDES}
+    ${LIBZEUG_INCLUDES}
 )
 
 include_directories(
@@ -41,6 +44,7 @@ set(libs
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
     ${GLOW_LIBRARIES}
+    ${LIBZEUG_SIGNAL_LIBRARY}
 )
 
 #
@@ -93,6 +97,8 @@ set(sources
 	${source_path}/navigation/fpsnavigation.cpp
 	${source_path}/navigation/abstractnavigation.cpp
 	${source_path}/navigation/arcballnavigation.cpp
+	${source_path}/navigation/navigationhistory.cpp
+	${source_path}/navigation/navigationhistoryelement.cpp
 	${source_path}/objloader.cpp
 	${source_path}/offAxisCamera.cpp
 	${source_path}/painter/abstractscenepainter.cpp
@@ -109,6 +115,7 @@ set(sources
 	${source_path}/rendering/blureffect.cpp
 	${source_path}/rendering/boundingboxpass.cpp
 	${source_path}/rendering/renderingpass.cpp
+	${source_path}/rendering/lightingsystem.cpp
 	${source_path}/rendering/lightsource.cpp
 	${source_path}/rendering/rasterizer.cpp
 	${source_path}/rendering/normalzpass.cpp
@@ -176,6 +183,8 @@ set(api_includes
 	${include_path}/navigation/abstractnavigation.h
 	${include_path}/navigation/flightnavigation.h
 	${include_path}/navigation/arcballnavigation.h
+	${include_path}/navigation/navigationhistory.h
+	${include_path}/navigation/navigationhistoryelement.h
 	${include_path}/objloader.h
 	${include_path}/offaxiscamera.h
 	${include_path}/painter/abstractscenepainter.h
@@ -198,6 +207,8 @@ set(api_includes
 	${include_path}/rendering/normalzpass.h
 	${include_path}/rendering/coloridpass.h
 	${include_path}/rendering/blureffect.h
+	${include_path}/rendering/lightingsystem.h
+	${include_path}/rendering/lighttypes.h
 	${include_path}/rendering/lightsource.h
 	${include_path}/rendering/rasterizer.h
 	${include_path}/rendering/defaultpass.h
@@ -228,9 +239,9 @@ set(api_includes
 # Group source files
 set(header_group "Header Files (API)")
 set(source_group "Source Files")
-source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$|\\\\.tli" 
+source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$|\\\\.tli"
     ${header_group} ${api_includes})
-source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.tli" 
+source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.tli"
     ${source_group} ${sources})
 
 #

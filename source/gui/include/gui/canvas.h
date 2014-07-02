@@ -8,6 +8,8 @@
 #include <core/painter/abstractglparent.h>
 #include <core/glformat.h>
 
+#include <core/navigation/navigationhistory.h>
+
 class QBasicTimer;
 class QTimerEvent;
 class Timer;
@@ -28,11 +30,14 @@ public:
     AbstractScenePainter * painter();
     void setNavigation( AbstractNavigation * navigation );
     AbstractNavigation * navigation();
+    NavigationHistory * navigationHistory();
+    void setNavigationHistory(AbstractNavigation * navigation);
+    void saveHistory(glm::mat4 viewmatrix, float fovy);
 
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
     virtual void mouseReleaseEvent ( QMouseEvent * event );
-    
+
     virtual void wheelEvent(QWheelEvent *event);
 
     const QImage capture(
@@ -64,7 +69,7 @@ protected:
     //  widget, we implement a normal QWidget::paintEvent(). This
     //  allows us to mix OpenGL calls and QPainter operations in a
     //  controlled way."
-    
+
     //virtual void paintEvent(QPaintEvent * event); // Does not work for 3.2 anyway. :(
     //void paintOverlay(QPainter & painter);
 
@@ -78,6 +83,7 @@ protected:
 protected:
     AbstractScenePainter * m_painter;
     AbstractNavigation * m_navigation;
+    NavigationHistory * m_navigationHistory;
 
     QBasicTimer * m_timer;
     float m_lastEvent;
