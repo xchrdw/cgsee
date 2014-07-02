@@ -13,7 +13,7 @@ uniform vec2 pixels;
 in int v_instance[1];
 
 out vec2 v_uv;
-out int v_char;
+out flat int v_char;
 
 // Creates quad with center at 'position'
 void createTextQuad(in vec2 position, in vec2 dimension, in int character) {

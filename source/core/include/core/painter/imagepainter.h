@@ -2,6 +2,7 @@
 
 #include <core/painter/abstractpainter.h>
 #include <GL/glew.h>
+#include <QMutex>
 
 #include <glm/vec2.hpp>
 
@@ -46,6 +47,7 @@ protected:
     BufferObject * m_gridVertexBO;
     Program * m_gridProgram;
     Program * m_textProgram;
+    Image * m_fontImage;
 
     float m_pixelWidth;
     glm::vec2 m_pixels;
@@ -58,4 +60,6 @@ protected:
 
     glm::vec2 m_aspect;
     glm::vec2 m_viewport;
+
+    QMutex m_paintMutex;
 };

@@ -20,6 +20,10 @@ public:
     virtual int width() = 0;
     virtual int height() = 0;
 
+    virtual void setTexParameteri(GLenum pname, GLint param);
+    virtual void setMagFilter(GLint param);
+    virtual void setMinFilter(GLint param);
+
 protected:
     virtual GLuint getTexture();
     virtual bool texImage() = 0;

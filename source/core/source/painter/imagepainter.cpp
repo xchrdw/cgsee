@@ -3,6 +3,7 @@
 
 #include <core/painter/imagepainter.h>
 #include <core/material/image.h>
+#include <core/material/imageqt.h>
 
 #include <core/autotimer.h>
 #include <core/mathmacros.h>
@@ -20,9 +21,11 @@ ImagePainter::ImagePainter()
     , m_quad(nullptr)
     , m_imageProgram(nullptr)
     , m_gridProgram(nullptr)
-    , m_gridVao(0)
+    , m_textProgram(nullptr)
+    , m_gridVao(-1)
     , m_gridVertexBO(nullptr)
     , m_image(nullptr)
+    , m_fontImage(nullptr)
     , m_dirty(true)
     , m_zoom(1)
     , m_pan(0, 0)
@@ -30,15 +33,26 @@ ImagePainter::ImagePainter()
     , m_viewport(0, 0)
     , m_pixelWidth(0)
     , m_pixels(0, 0)
+    , m_paintMutex()
 {
 }
 
 ImagePainter::~ImagePainter()
 {
+    m_paintMutex.lock();
+    delete m_image;
+    m_image = 0;
     delete m_quad;
+    if (-1 != m_gridVao) {
+        delete m_gridVertexBO;
+        glDeleteVertexArrays(1, &m_gridVao);
+        glError();
+    }
     delete m_imageProgram;
     delete m_gridProgram;
-    delete m_image;
+    delete m_fontImage;
+    delete m_textProgram;
+    m_paintMutex.unlock();
 }
 
 const bool ImagePainter::initialize()
@@ -50,17 +64,21 @@ const bool ImagePainter::initialize()
     m_imageProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/image.frag"));
 
     m_quad = new ScreenQuad();
-
+    FileAssociatedShader * imageGridVert = new FileAssociatedShader(GL_VERTEX_SHADER, "data/image_grid.vert");
 
     m_gridProgram = new Program();
-    m_gridProgram->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/image_grid.vert"));
+    m_gridProgram->attach(imageGridVert);
     m_gridProgram->attach(new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/image_grid.geom"));
     m_gridProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/image_grid.frag"));
 
     m_textProgram = new Program();
-    m_textProgram->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/image_grid.vert"));
+    m_textProgram->attach(imageGridVert);
     m_textProgram->attach(new FileAssociatedShader(GL_GEOMETRY_SHADER, "data/distancefield.geom"));
     m_textProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/distancefield.frag"));
+
+    m_fontImage = new ImageQt("data/charmap.png");
+    m_fontImage->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_fontImage->setMagFilter(GL_LINEAR);
 
 
     // We need to send a dummy array to the GPU
@@ -111,11 +129,15 @@ void ImagePainter::setUniforms()
         m_gridProgram->setUniform("pixelWidth", m_pixelWidth);
         m_gridProgram->setUniform("pixels", m_pixels);
 
-        m_textProgram->setUniform("imageSize", m_imageSize);
-        m_textProgram->setUniform("aspect", m_aspect);
-        m_textProgram->setUniform("pan", m_pan);
-        m_textProgram->setUniform("pixelWidth", m_pixelWidth);
-        m_textProgram->setUniform("pixels", m_pixels);
+        if (m_fontImage) {
+            m_image->bind(*m_textProgram, "image", 0);
+            m_fontImage->bind(*m_textProgram, "distancefield", 1);
+            m_textProgram->setUniform("imageSize", m_imageSize);
+            m_textProgram->setUniform("aspect", m_aspect);
+            m_textProgram->setUniform("pan", m_pan);
+            m_textProgram->setUniform("pixelWidth", m_pixelWidth);
+            m_textProgram->setUniform("pixels", m_pixels);
+        }
 
         m_image->bind(*m_textProgram, "image", 0);
 
@@ -125,14 +147,19 @@ void ImagePainter::setUniforms()
 
 void ImagePainter::paint()
 {
-    AbstractPainter::paint();
+    if (m_paintMutex.tryLock()) {
+        if (m_image) {
+            AbstractPainter::paint();
 
-    if (m_dirty)
-        setUniforms();
-    
-    m_quad->draw(*m_imageProgram);
+            if (m_dirty)
+                setUniforms();
 
-    paintGrid();
+            m_quad->draw(*m_imageProgram);
+
+            paintGrid();
+        }
+        m_paintMutex.unlock();
+    }
 }
 
 void ImagePainter::paintGrid()

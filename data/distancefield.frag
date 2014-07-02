@@ -1,7 +1,7 @@
 #version 150 core
 
 in vec2 v_uv;
-in int v_char;
+in flat int v_char;
 
 in vec4 gl_FragCoord;
 out vec4 fragColor;
@@ -9,8 +9,13 @@ out vec4 fragColor;
 uniform sampler2D distancefield;
 uniform float pixelWidth;
 
+const float smoothing = 0.1;
+const vec3 textColor = vec3(0);
+const int charCount = 22;
+
 void main()
 {
-	fragColor = vec4(v_uv,0,smoothstep(40,60,pixelWidth));
-	fragColor = vec4(float(v_char)/16, 0, 0, 1);
+	float d = 1-texture(distancefield, vec2((v_uv.x + v_char) / charCount, v_uv.y)).x;
+	float a = smoothstep(0.5 - smoothing, 0.5 + smoothing, d);
+	fragColor = vec4(textColor,a*smoothstep(40,60,pixelWidth));
 }
