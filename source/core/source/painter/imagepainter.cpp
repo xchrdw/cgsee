@@ -20,7 +20,7 @@ ImagePainter::ImagePainter()
     , m_quad(nullptr)
     , m_imageProgram(nullptr)
     , m_gridProgram(nullptr)
-    , m_gridVao(0)
+    , m_gridVao(-1)
     , m_gridVertexBO(nullptr)
     , m_image(nullptr)
     , m_dirty(true)
@@ -30,15 +30,24 @@ ImagePainter::ImagePainter()
     , m_viewport(0, 0)
     , m_pixelWidth(0)
     , m_lines(0, 0)
+    , m_paintMutex()
 {
 }
 
 ImagePainter::~ImagePainter()
 {
+    m_paintMutex.lock();
+    delete m_image;
+    m_image = 0;
     delete m_quad;
+    if (-1 != m_gridVao) {
+        delete m_gridVertexBO;
+        glDeleteVertexArrays(1, &m_gridVao);
+        glError();
+    }
     delete m_imageProgram;
     delete m_gridProgram;
-    delete m_image;
+    m_paintMutex.unlock();
 }
 
 const bool ImagePainter::initialize()
@@ -124,14 +133,19 @@ void ImagePainter::setUniforms()
 
 void ImagePainter::paint()
 {
-    AbstractPainter::paint();
+    if (m_paintMutex.tryLock()) {
+        if (m_image) {
+            AbstractPainter::paint();
 
-    if (m_dirty)
-        setUniforms();
-    
-    m_quad->draw(*m_imageProgram);
+            if (m_dirty)
+                setUniforms();
 
-    paintGrid();
+            m_quad->draw(*m_imageProgram);
+
+            paintGrid();
+        }
+        m_paintMutex.unlock();
+    }
 }
 
 void ImagePainter::paintGrid()

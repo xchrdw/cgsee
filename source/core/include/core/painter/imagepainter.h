@@ -2,6 +2,7 @@
 
 #include <core/painter/abstractpainter.h>
 #include <GL/glew.h>
+#include <QMutex>
 
 #include <glm/vec2.hpp>
 
@@ -57,4 +58,6 @@ protected:
 
     glm::vec2 m_aspect;
     glm::vec2 m_viewport;
+
+    QMutex m_paintMutex;
 };
