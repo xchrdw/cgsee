@@ -34,3 +34,5 @@ The following dev-libraries and programs need to be provided for correct CMake c
 * OpenGL Mathematics >= 0.9.5 (GLM): http://glm.g-truc.net/
 * Assimp 3.0: http://assimp.sourceforge.net
 * libzeug: https://github.com/hpicgs/libzeug
+* glbinding 0.2: https://github.com/hpicgs/glbinding
+* glow 0.3.2: https://github.com/hpicgs/glow
