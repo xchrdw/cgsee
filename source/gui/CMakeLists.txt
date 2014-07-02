@@ -78,7 +78,6 @@ set(sources
 	${source_path}/propertywidgetbuilder.cpp
 	${source_path}/viewer.cpp
 	${source_path}/viewer.ui
-    ${source_path}/exampleproperties.cpp
 )
 
 set(api_includes
@@ -89,7 +88,6 @@ set(api_includes
 	${include_path}/gui_api.h
 	${include_path}/propertywidgetbuilder.h
 	${include_path}/viewer.h
-    ${include_path}/exampleproperties.h
 )
 
 # Group source files

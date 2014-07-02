@@ -5,7 +5,6 @@
 #include <GL/glew.h>
 #include <QGLWidget>
 
-#include <core/painter/abstractglparent.h>
 #include <core/glformat.h>
 
 #include <core/navigation/navigationhistory.h>
@@ -14,9 +13,11 @@ class QBasicTimer;
 class QTimerEvent;
 class Timer;
 
-class AbstractScenePainter;
-class AbstractNavigation;
-class GUI_API Canvas : public QGLWidget, public AbstractGLParent
+class AbstractPainter;
+class AbstractEventHandler;
+class Camera;
+
+class GUI_API Canvas : public QGLWidget
 {
     Q_OBJECT
 
@@ -26,18 +27,20 @@ public:
         QWidget * parent = nullptr);
     virtual ~Canvas();
 
-    void setPainter(AbstractScenePainter * painter);
-    AbstractScenePainter * painter();
-    void setNavigation( AbstractNavigation * navigation );
-    AbstractNavigation * navigation();
     NavigationHistory * navigationHistory();
-    void setNavigationHistory(AbstractNavigation * navigation);
+    void setNavigationHistory(AbstractEventHandler * navigation);
     void saveHistory(glm::mat4 viewmatrix, float fovy);
+    void setCamera(Camera * camera);
+    Camera * camera();
+    void setPainter(AbstractPainter * painter);
+    AbstractPainter * painter();
 
-    virtual void mouseMoveEvent ( QMouseEvent * event );
-    virtual void mousePressEvent ( QMouseEvent * event );
-    virtual void mouseReleaseEvent ( QMouseEvent * event );
+    void setEventHandler(AbstractEventHandler * eventHandler);
+    AbstractEventHandler * eventHandler();
 
+    virtual void mouseMoveEvent(QMouseEvent * event);
+    virtual void mousePressEvent(QMouseEvent * event);
+    virtual void mouseReleaseEvent(QMouseEvent * event);
     virtual void wheelEvent(QWheelEvent *event);
 
     const QImage capture(
@@ -53,8 +56,8 @@ public:
     int refreshTimeMSec() const;
 
 signals:
-    void mouseReleaseEventSignal ( QMouseEvent * event );
-    void mouseMoveEventTriggered ( int triggered );
+	void mouseReleaseEventSignal(QMouseEvent * event);
+	void mouseMoveEventTriggered(int triggered);
 
 protected:
 
@@ -78,14 +81,16 @@ protected:
     // For Rendering Loop
     void timerEvent(QTimerEvent *event);
 
-    int m_refreshTimeMSec;
-
 protected:
-    AbstractScenePainter * m_painter;
-    AbstractNavigation * m_navigation;
     NavigationHistory * m_navigationHistory;
+    AbstractPainter * m_painter;
+    Camera * m_camera;
+    AbstractEventHandler * m_eventHandler;
+
+    int m_refreshTimeMSec;
 
     QBasicTimer * m_timer;
     float m_lastEvent;
+
     const GLFormat m_format;
 };

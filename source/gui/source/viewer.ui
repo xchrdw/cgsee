@@ -185,7 +185,6 @@
     <addaction name="toggleNavigator"/>
     <addaction name="toggleExplorer"/>
     <addaction name="toggleNavigationHistory"/>
-    <addaction name="togglePropertyDemo"/>
     <addaction name="separator"/>
     <addaction name="toggleFullscreen"/>
    </widget>
@@ -524,11 +523,6 @@
   <action name="toggleNavigationHistory">
    <property name="text">
     <string>Show/Hide &amp;History</string>
-   </property>
-  </action>
-  <action name="togglePropertyDemo">
-   <property name="text">
-    <string>Show/Hide &amp;Properties</string>
    </property>
   </action>
   <action name="toggleFullscreen">

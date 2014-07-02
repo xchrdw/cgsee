@@ -45,6 +45,10 @@ class DataBlockRegistry;
 class CoordinateProvider;
 class AxisAlignedBoundingBox;
 
+namespace propertyguizeug
+{
+	class PropertyBrowser;
+}
 
 class GUI_API Viewer : public QMainWindow
 {
@@ -62,9 +66,9 @@ public:
 
     void initialize(const GLFormat & format);
 
-    void setNavigation(AbstractNavigation * navigation);
+	void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
-
+    
     void setPainter(AbstractScenePainter * painter);
     AbstractScenePainter * painter();
 
@@ -73,7 +77,7 @@ public:
 
     void setCoordinateProvider(CoordinateProvider * coordinateProvider);
     CoordinateProvider * coordinateProvider();
-
+    
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent (QKeyEvent *event);
 
@@ -90,6 +94,7 @@ public:
     void clearSelection();
     void hideById(const unsigned int & id, const bool & hideStatus);
     void updateInfoBox();
+    void showMaterial();
     void selectionBBoxChanged();
 
 
@@ -111,7 +116,7 @@ public slots:
     void on_actionBottomLeftView_triggered();
     void on_actionRandomView_triggered();
 
-    void on_actionSave_1_triggered();
+    void on_actionSave_1_triggered();   
     void on_actionSave_2_triggered();
     void on_actionSave_3_triggered();
     void on_actionSave_4_triggered();
@@ -152,7 +157,7 @@ protected slots:
     void on_shadowBlurAction_triggered();
     void on_ssaoAction_triggered();
     void on_ssaoBlurAction_triggered();
-
+   
     void on_fboColorAction_triggered();
     void on_fboNormalzAction_triggered();
     void on_fboShadowsAction_triggered();
@@ -162,11 +167,11 @@ protected slots:
 
     void on_openFileDialogAction_triggered();
     void on_quitAction_triggered();
-
+    
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
     void on_toggleNavigationHistory_triggered();
-    void on_togglePropertyDemo_triggered();
+    //void on_togglePropertyDemo_triggered(); //TODO: Check if neccessary.
     void on_toggleFullscreen_triggered();
 
     void on_mouseMoveEventTriggered(int triggered);
@@ -181,7 +186,7 @@ protected:
 
     void initializeExplorer();
     void initializeSceneTree();
-    void initializePropertyDemo();
+    void initializeMaterial();    
     void initializeNavigationHistory();
     void initializeDockWidgets(QDockWidget * dockWidget,
     QWidget * widget, Qt::DockWidgetArea area);
@@ -209,19 +214,24 @@ protected:
     bool m_visibleDockNavigator;
     bool m_visibleDockExplorer;
     bool m_isFullscreen;
-
+    
     void updateCameraSelection(QString cameraName) const;
     void updateRenderingSelection(QString rendering) const;
 
     Canvas * m_qtCanvas;
+    AbstractNavigation * m_navigation;
+
     Camera * m_camera;
     QVector<glm::mat4> m_savedViews;
 
     QDockWidget * m_dockNavigator;
     QDockWidget * m_dockExplorer;
     QDockWidget * m_dockScene;
-    QDockWidget * m_dockPropertyDemo;
+    QDockWidget * m_dockMaterial;
     QDockWidget * m_dockNavigationHistory;
+
+    Canvas * m_materialCanvas;
+	propertyguizeug::PropertyBrowser * m_propertyMaterialBrowser;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
