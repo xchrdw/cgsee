@@ -3,7 +3,7 @@
 uniform float znear;
 uniform float zfar;
 
-in int g_layer;
+flat in int g_layer;
 
 out vec4 fragColor;
 

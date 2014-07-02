@@ -12,7 +12,7 @@
 #include <core/screenquad.h>
 
 
-const int ShadowMapSize = 512;
+const int ShadowMapSize = 2048;
 
 const glm::mat4 VarianceShadowMappingPass::biasMatrix(
 	0.5, 0.0, 0.0, 0.0,
@@ -92,9 +92,6 @@ void VarianceShadowMappingPass::render()
     m_lightProgram->setUniform("inverseViewProjection", m_camera->transformInverse());
     drawScene(m_camera, m_lightProgram, m_shadowmapFBO3D);
 
-	m_program->setUniform("inverseViewProjection", m_camera->transformInverse());
-	m_program->setUniform("biasLightViewProjection", 2, biasLightViewProjection[0]);
-
 	ScreenQuad screenQuad;
 	m_shadowmapFBO3D->bindTexture3D(*m_blurv, "source", 0);
 	m_blurv->setUniform("viewport", glm::ivec2(ShadowMapSize, ShadowMapSize));
@@ -103,8 +100,10 @@ void VarianceShadowMappingPass::render()
 	m_blurVFBO->bindTexture3D(*m_blurh, "source", 0);
 	m_blurh->setUniform("viewport", glm::ivec2(ShadowMapSize, ShadowMapSize));
 	screenQuad.draw(*m_blurh, m_shadowmapFBO3D);
-	
+
 	m_shadowmapFBO3D->bindTexture3D(*m_program, "shadowmap3D", 0);
+	m_program->setUniform("inverseViewProjection", m_camera->transformInverse());
+	m_program->setUniform("biasLightViewProjection", 2, biasLightViewProjection[0]);
 	drawScene(m_camera, m_program, m_fbo);
 
     delete[] biasLightViewProjection;

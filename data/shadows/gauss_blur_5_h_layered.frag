@@ -1,10 +1,11 @@
 #version 150 core
 
-in vec3 g_uv;
-out vec4 fragColor;
-
 uniform ivec2 viewport;
 uniform sampler2DArray source;
+
+in vec3 g_uv;
+
+out vec4 fragColor;
 
 float offset[3] = float[](0.0, 1.3846153846, 3.2307692308);
 float weight[3] = float[](0.2270270270, 0.3162162162, 0.0702702703);
