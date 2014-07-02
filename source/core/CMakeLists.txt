@@ -10,6 +10,7 @@ find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
 find_package(OpenGL     REQUIRED)
 find_package(ASSIMP     REQUIRED)
+find_package(GLOW       REQUIRED)
 
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5OpenGL  REQUIRED)
@@ -25,6 +26,7 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+    ${GLOW_INCLUDES}
     ${LIBZEUG_INCLUDES}
 )
 
@@ -41,6 +43,7 @@ set(libs
     ${ASSIMP_LIBRARIES}
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
+    ${GLOW_LIBRARIES}
     ${LIBZEUG_SIGNAL_LIBRARY}
 )
 
