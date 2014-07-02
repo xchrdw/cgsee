@@ -49,7 +49,8 @@ protected:
     Program * m_textProgram;
 
     float m_pixelWidth;
-    glm::vec2 m_lines;
+    glm::vec2 m_pixels;
+    glm::vec2 m_imageSize;
 
     bool m_dirty;
 
