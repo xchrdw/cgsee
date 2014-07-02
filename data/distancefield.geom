@@ -3,32 +3,31 @@
 layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
 
-uniform float width;
-uniform float height;
+uniform vec2 imageSize;
 uniform vec2 aspect;
 uniform vec2 pan;
-uniform vec2 lines;
+uniform vec2 pixels;
 
 in int v_instance[1];
 
 out vec2 v_uv;
 
 void main(void) {
-	float xpos = -fract(width * pan.x / aspect.x);
-	float ypos = -fract(height * pan.y / aspect.y);
+	float xpos = -fract(imageSize.x * pan.x / aspect.x);
+	float ypos = -fract(imageSize.y * pan.y / aspect.y);
 	
-	float w = 2/lines.x;
-	float h = 2/lines.y;
+	float w = 2/pixels.x;
+	float h = 2/pixels.y;
 	
-	int columns = int(ceil(lines.x) + 1);
+	int columns = int(ceil(pixels.x) + 1);
 	int row = int(v_instance[0] / columns);
 	int col = int(mod(v_instance[0], columns));
 	if(col >= columns)
 		col = col - columns;
 	
 	vec4 pos = vec4(
-		(col+xpos)/lines.x *2-1 + w/2,
-		(row+ypos)/lines.y *2-1 + h/2,
+		(col+xpos)/pixels.x *2-1 + w/2,
+		(row+ypos)/pixels.y *2-1 + h/2,
 		0,1);
 
 	gl_Position = pos + vec4(w/2,-h/2,0,0);

@@ -29,7 +29,7 @@ ImagePainter::ImagePainter()
     , m_aspect(1, 1)
     , m_viewport(0, 0)
     , m_pixelWidth(0)
-    , m_lines(0, 0)
+    , m_pixels(0, 0)
 {
 }
 
@@ -102,21 +102,20 @@ void ImagePainter::setUniforms()
             m_pixelWidth = m_viewport.y / m_image->height() * m_zoom;
         }
 
-        m_lines = glm::vec2(m_viewport.x / m_pixelWidth, m_viewport.y / m_pixelWidth);
+        m_pixels = glm::vec2(m_viewport.x / m_pixelWidth, m_viewport.y / m_pixelWidth);
+        m_imageSize = glm::vec2(m_image->width(), m_image->height());
 
-        m_gridProgram->setUniform("width", (float)(m_image->width()));
-        m_gridProgram->setUniform("height", (float)(m_image->height()));
+        m_gridProgram->setUniform("imageSize", m_imageSize);
         m_gridProgram->setUniform("aspect", m_aspect);
         m_gridProgram->setUniform("pan", m_pan);
         m_gridProgram->setUniform("pixelWidth", m_pixelWidth);
-        m_gridProgram->setUniform("lines", m_lines);
+        m_gridProgram->setUniform("pixels", m_pixels);
 
-        m_textProgram->setUniform("width", (float)(m_image->width()));
-        m_textProgram->setUniform("height", (float)(m_image->height()));
+        m_textProgram->setUniform("imageSize", m_imageSize);
         m_textProgram->setUniform("aspect", m_aspect);
         m_textProgram->setUniform("pan", m_pan);
         m_textProgram->setUniform("pixelWidth", m_pixelWidth);
-        m_textProgram->setUniform("lines", m_lines);
+        m_textProgram->setUniform("pixels", m_pixels);
 
         m_dirty = false;
     }
@@ -153,14 +152,14 @@ void ImagePainter::paintGrid()
     glError();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glDrawArraysInstanced(GL_POINTS, 0, 1, ceil(m_lines.x + 1 + m_lines.y + 1));
+    glDrawArraysInstanced(GL_POINTS, 0, 1, ceil(m_pixels.x + 1 + m_pixels.y + 1));
     glError();
 
     m_textProgram->use();
     glBindVertexArray(m_gridVao);
     glError();
 
-    glDrawArraysInstanced(GL_POINTS, 0, 1, (ceil(m_lines.x)+1) * (ceil(m_lines.y)+1));
+    glDrawArraysInstanced(GL_POINTS, 0, 1, (ceil(m_pixels.x)+1) * (ceil(m_pixels.y)+1));
     glError();
 
     glDisable(GL_CULL_FACE);
