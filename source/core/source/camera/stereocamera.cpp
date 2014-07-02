@@ -10,111 +10,44 @@
 #include <core/gpuquery.h>
 #include <core/viewfrustum.h>
 
-StereoCamera::StereoCamera(const QString & name)
+#include <core/camera/monocamera.h>
+
+StereoCamera::StereoCamera(const QString & name, Projection * projection)
 : AbstractCamera(name)
-, m_leftCamera(MonoCamera(QString(name).append("_left")))
-, m_rightCamera(MonoCamera(QString(name).append("_right")))
+, m_projection(projection)
 {
-    
+    m_leftCamera = new MonoCameraNew(QString(name).append("_left"), projection);
+    m_rightCamera = new MonoCameraNew(QString(name).append("_right"), projection);
 }
 
 StereoCamera::~StereoCamera()
 {
-
+    delete m_leftCamera;
+    delete m_rightCamera;
 }
 
-const float StereoCamera::aspect() const
+bool StereoCamera::isStereo()
 {
-    // TODO
-}
-
-void StereoCamera::update()
-{
-    //TODO
-}
-
-void StereoCamera::setUniforms(const Program & program)
-{
-    //TODO
-}
-
-const glm::ivec2 & StereoCamera::viewport() const
-{
-    //TODO
-}
-
-void StereoCamera::setViewport(const glm::ivec2 & size)
-{
-    setViewport(size.x, size.y);
-}
-
-void StereoCamera::setViewport(const int width, const int height)
-{
-    //TODO
-}
-
-const glm::mat4 & StereoCamera::projection()
-{
-    //TODO
-}
-
-const glm::mat4 & StereoCamera::view() const
-{
-    //TODO
+    return true;
 }
 
 void StereoCamera::setView(const glm::mat4 & view)
 {
-    //TODO
+    //TODO implement stereo transformation!
+    m_leftCamera->setView(view);
+    m_rightCamera->setView(view);
 }
 
-const float StereoCamera::fovy() const
+const MonoCameraNew * StereoCamera::leftCamera() const
 {
-    //TODO
+    return m_leftCamera;
+}
+const MonoCameraNew * StereoCamera::rightCamera() const
+{
+    return m_rightCamera;
 }
 
-void StereoCamera::setFovy(const float fovy)
+void StereoCamera::update()
 {
-    //TODO
-}
-
-const float StereoCamera::zNear() const
-{
-    //TODO
-}
-
-void StereoCamera::setZNear(const float z)
-{
-    //TODO
-}
-
-const float StereoCamera::zFar() const
-{
-    //TODO
-}
-
-void StereoCamera::setZFar(const float z)
-{
-    //TODO
-}
-
-ViewFrustum * StereoCamera::viewFrustum()
-{
-    //TODO
-}
-
-glm::vec3 StereoCamera::getEye() const
-{
-    //TODO
-}
-
-glm::vec3 StereoCamera::getCenter() const
-{
-    //TODO
-
-}
-
-glm::vec3 StereoCamera::getUp() const
-{
-    //TODO
+    //TODO m_*Camera->setView(/*fancy transformed matrix*/);
 }

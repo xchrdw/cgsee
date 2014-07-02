@@ -1,27 +1,27 @@
 
-#include <core/monocamera.h>
+//#include <core/monocamera.h>
 
-const QString MonoCamera::m_implementationName("MonoCamera");
+//const QString MonoCamera::m_implementationName("MonoCamera");
 
-const QString MonoCamera::implementationName() const
-{
-    return m_implementationName;
-}
+//const QString MonoCamera::implementationName() const
+//{
+//    return m_implementationName;
+//}
 
-bool MonoCamera::isRegistered = CameraImplementation::registerImplementation(
-    m_implementationName,
-    createInstace<MonoCamera>);
+//bool MonoCamera::isRegistered = CameraImplementation::registerImplementation(
+//    m_implementationName,
+//    createInstace<MonoCamera>);
 
-MonoCamera::MonoCamera(Camera & abstraction) 
-    : AbstractStereoCamera(abstraction)
-{
-}
+//MonoCamera::MonoCamera(Camera & abstraction)
+//    : AbstractStereoCamera(abstraction)
+//{
+//}
 
-MonoCamera::~MonoCamera(void)
-{
-}
+//MonoCamera::~MonoCamera(void)
+//{
+//}
 
-void MonoCamera::drawScene( const Program & program )
-{
-    abstractionRenderScene(program);
-}
+//void MonoCamera::drawScene( const Program & program )
+//{
+//    abstractionRenderScene(program);
+//}
