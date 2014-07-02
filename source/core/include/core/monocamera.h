@@ -1,21 +1,21 @@
-#pragma once
+//#pragma once
 
-#include <core/core_api.h>
+//#include <core/core_api.h>
 
-#include <core/abstractstereocamera.h>
+//#include <core/abstractstereocamera.h>
 
-class QString;
-class MonoCamera : public AbstractStereoCamera
-{
-public:
-	MonoCamera(Camera & abstraction);  
-	~MonoCamera(void);
+//class QString;
+//class MonoCamera : public AbstractStereoCamera
+//{
+//public:
+//	MonoCamera(Camera & abstraction);
+//	~MonoCamera(void);
 
-    virtual void drawScene( const Program & program ) override;
+//    virtual void drawScene( const Program & program ) override;
 
-    virtual const QString implementationName() const override;
+//    virtual const QString implementationName() const override;
 
-private:
-    static const QString m_implementationName;
-    static bool isRegistered;
-};
+//private:
+//    static const QString m_implementationName;
+//    static bool isRegistered;
+//};

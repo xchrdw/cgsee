@@ -10,140 +10,41 @@
 #include <core/gpuquery.h>
 #include <core/viewfrustum.h>
 
-MonoCamera::MonoCamera(const QString & name)
-    : AbstractCamera(name)
-    , m_viewFrustum(new ViewFrustum(this))
-    , m_fovy(0.f)
-    , m_zNear(0.f)
-    , m_zFar(0.f)
+MonoCameraNew::MonoCameraNew(const QString & name, Projection * projection)
+:   AbstractCamera(name)
+,   m_viewFrustum(new ViewFrustum(this))
+,   m_projection(projection)
+,   m_view(glm::mat4())
 {
-    
-}
 
-MonoCamera::~MonoCamera()
+}
+MonoCameraNew::~MonoCameraNew()
 {
     delete m_viewFrustum;
 }
 
-const float MonoCamera::aspect() const
+bool MonoCameraNew::isStereo()
 {
-    return static_cast<float>(m_viewport.x) / static_cast<float>(m_viewport.y);
+    return false;
 }
 
-void MonoCamera::update()
+void MonoCameraNew::setView(const glm::mat4 & view)
 {
-    m_projection = glm::perspective(m_fovy, aspect(), m_zNear, m_zFar);
-
-    setTransform(m_projection * m_view);
-
-    m_invalidated = false;
-
-    m_viewFrustum->update();
-}
-
-void MonoCamera::setUniforms(const Program & program)
-{
-    if (m_invalidated)
-        update();
-    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
-    program.setUniform(VIEW_UNIFORM, m_view);
-    program.setUniform(PROJECTION_UNIFORM, m_projection);
-    program.setUniform(TRANSFORM_UNIFORM, m_transform);
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
-    program.setUniform(CAMERAPOSITION_UNIFORM, getEye());
-    program.setUniform(ZNEAR_UNIFORM, m_zNear);
-    program.setUniform(ZFAR_UNIFORM, m_zFar);
-    //    for(int row = 0; row <4; row++)
-    //    {
-    //        qDebug() << "TRANSFORM[" << row << "] " << m_transform[row].x << " " << m_transform[row].y << " " << m_transform[row].z << " " << m_transform[row].w;
-    //    }
-}
-
-const glm::ivec2 & MonoCamera::viewport() const
-{
-    return m_viewport;
-}
-
-void MonoCamera::setViewport(const glm::ivec2 & size)
-{
-    setViewport(size.x, size.y);
-}
-
-void MonoCamera::setViewport(const int width, const int height)
-{
-    m_viewport = glm::ivec2(width, height);
+    m_view = glm::mat4(view);
     invalidate();
 }
 
-const glm::mat4 & MonoCamera::projection()
-{
-    if (m_invalidated)
-        update();
-
-    return m_projection;
-}
-
-const glm::mat4 & MonoCamera::view() const
+const glm::mat4 & MonoCameraNew::view() const
 {
     return m_view;
 }
 
-void MonoCamera::setView(const glm::mat4 & view)
+ViewFrustum * MonoCameraNew::viewFrustum()
 {
-    m_view = view;
-    invalidate();
-}
-
-const float MonoCamera::fovy() const
-{
-    return m_fovy;
-}
-
-void MonoCamera::setFovy(const float fovy)
-{
-    if (fovy == m_fovy)
-        return;
-
-    m_fovy = fovy;
-    invalidate();
-}
-
-const float MonoCamera::zNear() const
-{
-    return m_zNear;
-}
-
-void MonoCamera::setZNear(const float z)
-{
-    if (z == m_zNear)
-        return;
-
-    m_zNear = z;
-    invalidate();
-}
-
-const float MonoCamera::zFar() const
-{
-    return m_zFar;
-}
-
-void MonoCamera::setZFar(const float z)
-{
-    if (z == m_zNear)
-        return;
-
-    m_zFar = z;
-    invalidate();
-}
-
-ViewFrustum * MonoCamera::viewFrustum()
-{
-    if (m_invalidated)
-        update();
+    update();
     return m_viewFrustum;
 }
-
-glm::vec3 MonoCamera::getEye() const
+glm::vec3 MonoCameraNew::eye() const
 {
     //Get MonoCamera position (from: http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix )
 
@@ -169,17 +70,39 @@ glm::vec3 MonoCamera::getEye() const
 
     return eye;
 }
-
-glm::vec3 MonoCamera::getCenter() const
+glm::vec3 MonoCameraNew::center() const
 {
-    glm::vec3 lookat = glm::row(m_view, 2).xyz();
-    glm::vec3 eye = getEye();
+    glm::vec3 v_lookat = glm::row(m_view, 2).xyz();
+    glm::vec3 v_eye = eye();
 
-    return eye - lookat;
+    return v_eye - v_lookat;
 
 }
-
-glm::vec3 MonoCamera::getUp() const
+glm::vec3 MonoCameraNew::up() const
 {
     return glm::row(m_view, 1).xyz();
+}
+
+void MonoCameraNew::setUniformsIn(const Program & program)
+{
+    program.setUniform(PROJECTION_UNIFORM, projection());
+    program.setUniform(VIEWPORT_UNIFORM, m_projection->viewport());
+    program.setUniform(ZNEAR_UNIFORM, m_projection->zNear());
+    program.setUniform(ZFAR_UNIFORM, m_projection->zFar());
+
+    program.setUniform(VIEW_UNIFORM, view());
+    program.setUniform(TRANSFORM_UNIFORM, transform());
+    program.setUniform(TRANSFORMINVERSE_UNIFORM, transformInverse());
+    program.setUniform(CAMERAPOSITION_UNIFORM, eye());
+}
+
+void MonoCameraNew::update()
+{
+    if(!m_invalid)
+        return;
+    AbstractCamera::update();
+
+    setTransform(projection() * m_view);
+
+    m_viewFrustum->update();
 }

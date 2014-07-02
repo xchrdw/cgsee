@@ -8,55 +8,39 @@
 
 #include <core/camera/abstractcamera.h>
 
+#include <core/camera/projection.h>
+
 class Program;
 class ViewFrustum;
+class Projection;
 
-class CORE_API MonoCamera : public AbstractCamera
+class CORE_API MonoCameraNew : public AbstractCamera
 {
 public:
 
-    MonoCamera(const QString & name = "unnamed");
-    virtual ~MonoCamera();
+    MonoCameraNew(const QString & name, Projection * projection);
+    virtual ~MonoCameraNew();
 
-    virtual const glm::ivec2 & viewport() const override;
-    virtual void setViewport(const glm::ivec2 & size) override;
-    virtual void setViewport(const int width, const int height) override;
+    virtual bool isStereo() override;
 
-    virtual const glm::mat4 & projection() override;
-
-    virtual const glm::mat4 & view() const override;
     virtual void setView(const glm::mat4 & view) override;
 
-    virtual const float fovy() const override;
-    virtual void setFovy(const float fovy) override;
+    virtual const glm::mat4 & view() const;
 
-    virtual const float zNear() const override;
-    virtual void setZNear(const float z) override;
+    virtual ViewFrustum * viewFrustum();
+    virtual glm::vec3 eye() const;
+    virtual glm::vec3 up() const;
+    virtual glm::vec3 center() const;
 
-    virtual const float zFar() const override;
-    virtual void setZFar(const float z) override;
-
-    virtual const float aspect() const override;
-
-    virtual ViewFrustum * viewFrustum() override;
-
-    // updates camera matrices
-    virtual void update() override;
-    virtual void setUniforms(const Program & program) override;
-
-    virtual glm::vec3 getEye() const override;
-    virtual glm::vec3 getUp() const override;
-    virtual glm::vec3 getCenter() const override;
+    virtual void setUniformsIn(const Program & program);
 
 protected:
-    glm::ivec2 m_viewport;
+    virtual void update() override;
+
+protected:
+    Projection * m_projection;
 
     glm::mat4 m_view;
-    glm::mat4 m_projection;
 
     ViewFrustum *m_viewFrustum;
-
-    float m_fovy;
-    float m_zNear;
-    float m_zFar;
 };

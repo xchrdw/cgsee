@@ -72,6 +72,7 @@ set(sources
 	${source_path}/camera.cpp
 	${source_path}/camera/abstractcamera.cpp
 	${source_path}/camera/monocamera.cpp
+	${source_path}/camera/projection.cpp
 	${source_path}/camera/stereocamera.cpp
 	${source_path}/cameraimplementation.cpp
 	${source_path}/chronotimer.cpp
@@ -163,6 +164,7 @@ set(api_includes
 	${include_path}/camera.h
 	${include_path}/camera/abstractcamera.h
 	${include_path}/camera/monocamera.h
+	${include_path}/camera/projection.h
 	${include_path}/camera/stereocamera.h
 	${include_path}/cameraimplementation.h
 	${include_path}/convergentcamera.h
