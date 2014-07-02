@@ -9,7 +9,7 @@ message(STATUS "Lib ${target}")
 find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
 find_package(OpenGL     REQUIRED)
-find_package(Assimp     REQUIRED)
+find_package(ASSIMP     REQUIRED)
 
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5OpenGL  REQUIRED)
