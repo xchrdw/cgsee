@@ -11,8 +11,8 @@ public:
     virtual ~RasterizationPipelineBuilder();
 
 protected:
-    virtual bool addRenderingStages(MonoCamera * camera) override;
-    virtual bool addPostProcessingStages(MonoCamera * camera) override;
+    virtual bool addRenderingStages(const MonoCameraNew * camera) override;
+    virtual bool addPostProcessingStages(const MonoCameraNew * camera) override;
 
 
 protected:

@@ -18,23 +18,27 @@ bool PipelineBuilder::build()
 {
     if (m_camera->isStereo())
     {
-        if (!buildPipeline(m_camera->leftCamera()))
+        StereoCamera * stereoCamera = dynamic_cast<StereoCamera*>(m_camera);
+        assert(stereoCamera);
+        if (!buildPipeline(stereoCamera->leftCamera()))
             return false;
-        if (!buildPipeline(m_camera->rightCamera()))
+        if (!buildPipeline(stereoCamera->rightCamera()))
             return false;
         if (!addJoinStage())
             return false;
     }
     else
     {
-        if (!buildPipeline(m_camera))
+        MonoCameraNew * monoCamera = dynamic_cast<MonoCameraNew*>(m_camera);
+        assert(monoCamera);
+        if (!buildPipeline(monoCamera))
             return false;
     }
 
     return true;
 }
 
-bool PipelineBuilder::buildPipeline(MonoCameraNew * camera)
+bool PipelineBuilder::buildPipeline(const MonoCameraNew * camera)
 {
     if (!addColorIdStage(camera))
         return false;
@@ -47,12 +51,12 @@ bool PipelineBuilder::buildPipeline(MonoCameraNew * camera)
 
 bool PipelineBuilder::addJoinStage()
 {
-
+    //TODO
     return true;
 }
 
-bool PipelineBuilder::addColorIdStage(MonoCameraNew * camera)
+bool PipelineBuilder::addColorIdStage(const MonoCameraNew * camera)
 {
-
+    //TODO
     return true;
 }

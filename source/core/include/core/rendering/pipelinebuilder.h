@@ -14,12 +14,12 @@ public:
     virtual bool build();
 
 protected:
-    virtual bool buildPipeline(MonoCameraNew * camera);
+    virtual bool buildPipeline(const MonoCameraNew * camera);
     virtual bool addJoinStage();
 
-    virtual bool addColorIdStage(MonoCameraNew * camera);
-    virtual bool addRenderingStages(MonoCameraNew * camera) = 0;
-    virtual bool addPostProcessingStages(MonoCameraNew * camera) = 0;
+    virtual bool addColorIdStage(const MonoCameraNew * camera);
+    virtual bool addRenderingStages(const MonoCameraNew * camera) = 0;
+    virtual bool addPostProcessingStages(const MonoCameraNew * camera) = 0;
 
 protected:
     PipelinePainter & m_painter;
