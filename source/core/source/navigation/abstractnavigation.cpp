@@ -11,7 +11,7 @@
 
 #include <core/camera.h>
 
-const float AbstractNavigation::TIMER_MS = 1000.f / 60.f;
+const float AbstractNavigation::TIMER_MS = 1000.f / 30.f;
 const float AbstractNavigation::DURATION = 1000.f / 3.f;
 
 AbstractNavigation::AbstractNavigation(Camera * camera)
