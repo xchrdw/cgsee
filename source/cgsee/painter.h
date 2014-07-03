@@ -18,6 +18,7 @@ class FrameBufferObject;
 class AbstractProperty;
 class RenderingPass;
 class LightSourcePass;
+class LightingSystem;
 
 class Painter : public AbstractScenePainter
 {
@@ -41,6 +42,9 @@ public:
     void setStereoCameraSeparation(AbstractProperty & property);
     void setConvergentCameraFocus(AbstractProperty & property);
     virtual void postShaderRelinked() override;
+
+    virtual void setViewFrustumCulling(bool viewFrustumCullingEnabled) override;
+    virtual bool isViewFrustumCullingEnabled() override;
 
     virtual void setBoundingBox(const glm::vec3 & llf, const glm::vec3 & urb, const glm::mat4 & transform);
 
@@ -85,7 +89,7 @@ protected:
     FrameBufferObject * m_fboActiveBuffer;
 
     RenderingPass * m_normalz;
-    LightSourcePass * m_lightsource;
+    LightSourcePass *m_lightsource;
     RenderingPass * m_shadows;
     RenderingPass * m_shadowBlur;
     RenderingPass * m_ssao;
@@ -93,6 +97,8 @@ protected:
     RenderingPass * m_colorId;
     RenderingPass * m_boundingBox;
     QList<RenderingPass*> m_passes;
+
+    LightingSystem  * m_lightingSystem;
 
     Camera * m_camera;
     bool m_useColor;

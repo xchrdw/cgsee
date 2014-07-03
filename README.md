@@ -15,7 +15,7 @@ If you are contributing to this project, please keep the following notes in mind
 * Use lazy initialization as often as possible for time consuming tasks.
 * Member Variables always start with m_ (e.g.,``` m_variable```).
 * Interface or abstract class names always start with Abstract (e.g., ```AbstractPainter```).
-* Enforce strict include sequence: gl, glew, std, glm, qt, header, cgsee (there might be few exceptions, e.g., gpuquery).
+* Enforce strict include sequence: own-header, gl, glew, std, glm, qt, other-3rdp, inhouse-party, cgsee (there might be few exceptions, e.g., gpuquery).
 
 ## Build Notes
 
@@ -29,7 +29,10 @@ The following dev-libraries and programs need to be provided for correct CMake c
 
 * C++11 compatible compiler
 * Qt5: http://qt-project.org/
-* CMake 2.8.9 (waiting for 2.8.11): http://www.cmake.org/
+* CMake 2.8.11: http://www.cmake.org/
 * OpenGL Extension Wrangler (GLEW): http://glew.sourceforge.net/
 * OpenGL Mathematics >= 0.9.5 (GLM): http://glm.g-truc.net/
 * Assimp 3.0: http://assimp.sourceforge.net
+* libzeug: https://github.com/hpicgs/libzeug
+* glbinding 0.2: https://github.com/hpicgs/glbinding
+* glow 0.3.2: https://github.com/hpicgs/glow

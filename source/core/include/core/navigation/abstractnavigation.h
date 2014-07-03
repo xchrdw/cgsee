@@ -1,7 +1,5 @@
 #pragma once
 
-#include <core/core_api.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
@@ -10,16 +8,21 @@
 #include <QWheelEvent>
 #include <QMouseEvent>
 #include <QBasicTimer>
+#include <QTimer>
+
+#include <signalzeug/Signal.h>
+
+#include <core/core_api.h>
+
+#include <core/abstracteventhandler.h>
 
 class Camera;
 class QWidget;
 class Group;
 
-class CORE_API AbstractNavigation : QObject 
-{
-    
+class CORE_API AbstractNavigation : public QObject, public AbstractEventHandler
+{    
 public:
-
     AbstractNavigation(Camera *camera);
     virtual ~ AbstractNavigation();
 
@@ -38,8 +41,12 @@ public:
     virtual void mouseDoubleClickEvent(QMouseEvent * event);
     virtual void wheelEvent(QWheelEvent *event);
 
+    virtual void resizeEvent(QResizeEvent * event);
+    virtual void resize(const QSize & size);
+
     virtual const glm::mat4 & viewMatrix();
-    void loadView(const glm::mat4 & viewmatrix);
+    void loadView(const glm::mat4 & viewmatrix, const float fovy = 0, bool save_history = true);
+    void onViewChanged();
 
     void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
@@ -56,11 +63,16 @@ public:
     glm::mat4 topview();
     glm::mat4 bottomview();
     glm::mat4 topRightView();
-    
+    glm::mat4 bottomLeftView();
+    glm::mat4 randomView();
+
     glm::mat4 sceneTransform();
 
     float getBBRadius();
     void setBBRadius(float radius);
+
+    void onNavigated();
+    signalzeug::Signal<glm::mat4, float> viewChanged;
 
 protected:
     void startTimer();
@@ -72,12 +84,11 @@ protected:
 
     void updateCamera();
     virtual void onCameraChanged(); // override to get notified for camera changes
-    
 
 protected:
     int m_width;
     int m_height;
-    
+
     float m_BBRadius;
 
     float m_fovy;
@@ -85,6 +96,7 @@ protected:
 
     Camera * m_camera;
     static const float TIMER_MS;
+    static const float DURATION;
 
 private:
     void timerEvent(QTimerEvent * event);
@@ -95,12 +107,16 @@ private:
     QBasicTimer m_timer;
     int m_timer_requests;
 
+    QBasicTimer m_eventTimer;
+
     float m_animation_progress;
     bool m_animation_active;
     glm::vec3 m_old_pos;
     glm::vec3 m_new_pos;
     glm::quat m_old_rotation;
     glm::quat m_new_rotation;
+    float m_old_fovy;
+    float m_new_fovy;
     glm::mat4 m_frontView;
     glm::mat4 m_sceneTransform;
 };

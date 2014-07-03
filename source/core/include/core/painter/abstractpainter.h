@@ -8,7 +8,7 @@
 
 class QKeyEvent;
 class Camera;
-class AbstractGLParent;
+class AbstractResizable;
 class PropertyList;
 
 class CORE_API AbstractPainter
@@ -20,16 +20,9 @@ public:
     // calls initialize if not initialized - so call this when subclassed
     virtual void paint();
 
-    const QImage capture(
-        AbstractGLParent & parent
-    ,   const QSize & size
-    ,   const bool aspect
-    ,   const bool alpha);
-
     virtual void resize(
         const int width
     ,   const int height);
-
 
 protected:
     virtual bool initialize() = 0;

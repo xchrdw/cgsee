@@ -3,6 +3,8 @@ CMakeLists.txt.user
 build/
 codeblocks/
 3rdparty/
+temp/
+.localconfig/
 
 *.sublime-project
 *.sublime-workspace
@@ -17,3 +19,9 @@ codeblocks/
 
 *.bat
 *.sh
+
+cgsee.config
+cgsee.creator
+cgsee.files
+cgsee.includes
+cgsee.creator.user

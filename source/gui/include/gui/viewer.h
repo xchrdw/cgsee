@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gui/gui_api.h>
+#include <core/navigation/navigationhistory.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -13,6 +14,7 @@ typedef struct __GLXcontextRec *GLXContext;
 
 #include <QMainWindow>
 #include <QMap>
+#include <QListView>
 
 #include <glm/glm.hpp>
 
@@ -43,6 +45,10 @@ class DataBlockRegistry;
 class CoordinateProvider;
 class AxisAlignedBoundingBox;
 
+namespace propertyguizeug
+{
+	class PropertyBrowser;
+}
 
 class GUI_API Viewer : public QMainWindow
 {
@@ -60,7 +66,7 @@ public:
 
     void initialize(const GLFormat & format);
 
-   void setNavigation(AbstractNavigation * navigation);
+	void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
     
     void setPainter(AbstractScenePainter * painter);
@@ -88,6 +94,7 @@ public:
     void clearSelection();
     void hideById(const unsigned int & id, const bool & hideStatus);
     void updateInfoBox();
+    void showMaterial();
     void selectionBBoxChanged();
 
 
@@ -106,6 +113,8 @@ public slots:
     void on_actionTopView_triggered();
     void on_actionBottomView_triggered();
     void on_actionTopRightView_triggered();
+    void on_actionBottomLeftView_triggered();
+    void on_actionRandomView_triggered();
 
     void on_actionSave_1_triggered();   
     void on_actionSave_2_triggered();
@@ -116,11 +125,15 @@ public slots:
     void on_actionLoad_3_triggered();
     void on_actionLoad_4_triggered();
 
+    void on_actionHistoryUndo_triggered();
+    void on_actionHistoryRedo_triggered();
+
     void on_loadFile(const QString & path);
 
 protected slots:
     void on_captureAsImageAction_triggered();
     void on_captureAsImageAdvancedAction_triggered();
+    void on_enableCullingAction_triggered();
 
     void on_standardCameraAction_triggered();
     void on_parallelRedCyanStereoCameraAction_triggered();
@@ -157,6 +170,8 @@ protected slots:
     
     void on_toggleNavigator_triggered();
     void on_toggleExplorer_triggered();
+    void on_toggleNavigationHistory_triggered();
+    //void on_togglePropertyDemo_triggered(); //TODO: Check if neccessary.
     void on_toggleFullscreen_triggered();
 
     void on_mouseMoveEventTriggered(int triggered);
@@ -164,15 +179,21 @@ protected slots:
 
     void on_m_sceneHierarchyTree_clicked(const QModelIndex & index);
     void on_m_sceneHierarchy_itemChanged(QStandardItem * item);
+
+    void on_m_historyList_clicked(const QModelIndex & index);
+
 protected:
 
     void initializeExplorer();
     void initializeSceneTree();
+    void initializeMaterial();    
+    void initializeNavigationHistory();
     void initializeDockWidgets(QDockWidget * dockWidget,
     QWidget * widget, Qt::DockWidgetArea area);
     void createSceneHierarchy(QStandardItemModel * model, Node * parentNode);
     void fillSceneHierarchy(Node * node, QStandardItem * parent);
     void assignScene(Group * rootNode);
+    void updateHistoryList();
 
 #ifdef WIN32
     const HGLRC createQtContext(const GLFormat & format);
@@ -198,18 +219,28 @@ protected:
     void updateRenderingSelection(QString rendering) const;
 
     Canvas * m_qtCanvas;
+    AbstractNavigation * m_navigation;
+
     Camera * m_camera;
-    QVector<glm::mat4> m_saved_views;
+    QVector<glm::mat4> m_savedViews;
 
     QDockWidget * m_dockNavigator;
     QDockWidget * m_dockExplorer;
     QDockWidget * m_dockScene;
+    QDockWidget * m_dockMaterial;
+    QDockWidget * m_dockNavigationHistory;
+
+    Canvas * m_materialCanvas;
+	propertyguizeug::PropertyBrowser * m_propertyMaterialBrowser;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
+    QListView * m_historyList;
+    NavigationHistory * m_navigationHistory;
+    Group * m_scene;
 
     CoordinateProvider * m_coordinateProvider;
     QMap<unsigned int, Node *> m_selectedNodes;

@@ -9,11 +9,14 @@ message(STATUS "Lib ${target}")
 find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
 find_package(OpenGL     REQUIRED)
-find_package(Assimp     REQUIRED)
+find_package(ASSIMP     REQUIRED)
+find_package(GLOW       REQUIRED)
 
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5OpenGL  REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(libzeug    REQUIRED)
+
 
 #
 # Includes
@@ -23,6 +26,7 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
+    ${GLOW_INCLUDES}
     ${LIBZEUG_INCLUDES}
 )
 
@@ -40,6 +44,9 @@ set(libs
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
     ${LIBZEUG_REFLECTION_LIBRARY}
+    ${LIBZEUG_PROPERTYGUI_LIBRARY}
+    ${GLOW_LIBRARIES}
+    ${LIBZEUG_SIGNAL_LIBRARY}
 )
 
 #
@@ -90,12 +97,16 @@ set(sources
 	${source_path}/gpuquery.cpp
 	${source_path}/idpainter.cpp
 	${source_path}/idpainter.h
+	${source_path}/material/material.cpp
+	${source_path}/material/materialdictionary.cpp
 	${source_path}/messagehandler.cpp
 	${source_path}/monocamera.cpp
 	${source_path}/navigation/flightnavigation.cpp
 	${source_path}/navigation/fpsnavigation.cpp
 	${source_path}/navigation/abstractnavigation.cpp
 	${source_path}/navigation/arcballnavigation.cpp
+	${source_path}/navigation/navigationhistory.cpp
+	${source_path}/navigation/navigationhistoryelement.cpp
 	${source_path}/objloader.cpp
 	${source_path}/offAxisCamera.cpp
 	${source_path}/painter/abstractscenepainter.cpp
@@ -119,6 +130,7 @@ set(sources
     ${source_path}/rendering/ssaostage.cpp
 	${source_path}/rendering/scenerenderstage.cpp
     ${source_path}/rendering/basicrenderstage.cpp
+	${source_path}/rendering/lightingsystem.cpp
 	${source_path}/rendering/lightsource.cpp
 	${source_path}/rendering/rasterizer.cpp
 	${source_path}/rendering/normalzpass.cpp
@@ -155,6 +167,7 @@ set(sources
 set(api_includes
 	${include_path}/aabb.h
 	${include_path}/abstractapplication.h
+	${include_path}/abstracteventhandler.h
 	${include_path}/abstractmodelloader.h
 	${include_path}/abstractstereocamera.h
 	${include_path}/abstracttimer.h
@@ -185,6 +198,8 @@ set(api_includes
 	${include_path}/framebufferobject.h
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
+	${include_path}/material/material.h
+	${include_path}/material/materialdictionary.h
 	${include_path}/mathmacros.h
 	${include_path}/messagehandler.h
 	${include_path}/monocamera.h
@@ -192,10 +207,11 @@ set(api_includes
 	${include_path}/navigation/abstractnavigation.h
 	${include_path}/navigation/flightnavigation.h
 	${include_path}/navigation/arcballnavigation.h
+	${include_path}/navigation/navigationhistory.h
+	${include_path}/navigation/navigationhistoryelement.h
 	${include_path}/objloader.h
 	${include_path}/offaxiscamera.h
 	${include_path}/painter/abstractscenepainter.h
-	${include_path}/painter/abstractglparent.h
 	${include_path}/painter/abstractpainter.h
     ${include_path}/painter/pipelinepainter.h
 	${include_path}/parallelcamera.h
@@ -221,6 +237,8 @@ set(api_includes
 	${include_path}/rendering/normalzpass.h
 	${include_path}/rendering/coloridpass.h
 	${include_path}/rendering/blureffect.h
+	${include_path}/rendering/lightingsystem.h
+	${include_path}/rendering/lighttypes.h
 	${include_path}/rendering/lightsource.h
 	${include_path}/rendering/rasterizer.h
 	${include_path}/rendering/defaultpass.h
@@ -253,9 +271,9 @@ set(api_includes
 # Group source files
 set(header_group "Header Files (API)")
 set(source_group "Source Files")
-source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$|\\\\.tli" 
+source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$|\\\\.tli"
     ${header_group} ${api_includes})
-source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.tli" 
+source_group_by_path(${source_path} "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$|\\\\.tli"
     ${source_group} ${sources})
 
 #
