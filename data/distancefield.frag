@@ -19,7 +19,12 @@ in flat int v_chars[16];
 void main()
 {
 	int charIndex = int(v_uv.x * v_length);
-	vec2 charMapUV = vec2((fract(v_uv.x * v_length) + v_chars[charIndex]) / charCount, v_uv.y);
+	int char = 0;
+	for(int i = 0; i < v_chars.length(); ++i) {
+		if(i == charIndex)
+			char = v_chars[i];
+	}
+	vec2 charMapUV = vec2((fract(v_uv.x * v_length) + char) / charCount, v_uv.y);
 	float d = 1-texture(distancefield, charMapUV).x;
 	float a = smoothstep(0.5 - smoothing, 0.5 + smoothing, d);
 	fragColor = vec4(textColor,a*smoothstep(40,60,pixelWidth));
