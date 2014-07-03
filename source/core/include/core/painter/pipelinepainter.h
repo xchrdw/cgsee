@@ -51,6 +51,8 @@ public:
     virtual void setEffect( int effect, bool active );
     void setStereoCameraSeparation(AbstractProperty & property);
     void setConvergentCameraFocus(AbstractProperty & property);
+    virtual void setViewFrustumCulling(bool viewFrustumCullingEnabled) override;
+    virtual bool isViewFrustumCullingEnabled() override;
     virtual void postShaderRelinked() override;
     virtual RenderingPass *  getSharedPass() override;
     //TODO remove as soon as possible </end>

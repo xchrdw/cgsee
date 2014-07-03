@@ -139,6 +139,16 @@ RenderingPass * PipelinePainter::getSharedPass()
 {
     return nullptr;
 }
+void PipelinePainter::setViewFrustumCulling(bool viewFrustumCullingEnabled)
+{
+
+}
+
+bool PipelinePainter::isViewFrustumCullingEnabled()
+{
+
+}
+
 // TODO end
 
 Group * PipelinePainter::scene()
