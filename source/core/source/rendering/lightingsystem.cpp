@@ -13,9 +13,9 @@ static const char* s_lightUniformBufferNames[LightUniformBuffers::Count] =
 
 static const uint32_t s_lightUniformBufferSizes[LightUniformBuffers::Count] =
 {
-	sizeof(PointLight)* MAX_POINT_LIGHTS,
-	sizeof(SpotLight)* MAX_SPOT_LIGHTS,
-	sizeof(DirectionalLight) * MAX_DIRECTIONAL_LIGHTS,
+	sizeof(SlimPointLight)* MAX_POINT_LIGHTS,
+	sizeof(SlimSpotLight)* MAX_SPOT_LIGHTS,
+	sizeof(SlimDirectionalLight)* MAX_DIRECTIONAL_LIGHTS,
 	sizeof(LightInfo)
 };
 
@@ -42,7 +42,7 @@ void LightingSystem::initBuffers()
 
 void LightingSystem::addPointLight(const glm::vec4& pos, const glm::vec3& intensity, float radius)
 {
-	PointLight light;
+	SlimPointLight light;
 	light.m_position = pos;
 	light.m_intensity = glm::vec4(intensity, 1.0f);
 	light.m_falloff = glm::vec4(1.f, 2.f / radius, 1.f / (radius * radius), radius); // Const, lin, exp
@@ -52,7 +52,7 @@ void LightingSystem::addPointLight(const glm::vec4& pos, const glm::vec3& intens
 
 void LightingSystem::addSpotLight(const glm::vec4& pos, const glm::vec3& direction, const glm::vec3& intensity, float range, float conePower)
 {
-	SpotLight light;
+	SlimSpotLight light;
 	light.m_position = pos;
 	light.m_direction = glm::vec4(direction, 0.0f);
 	light.m_intensity = glm::vec4(intensity, 1.0f);
@@ -64,7 +64,7 @@ void LightingSystem::addSpotLight(const glm::vec4& pos, const glm::vec3& directi
 
 void LightingSystem::addDirectionalLight(const glm::vec3& direction, const glm::vec3& intensity)
 {
-	DirectionalLight light;
+	SlimDirectionalLight light;
 	light.m_direction = glm::vec4(direction, 0.0f);
 	light.m_intensity = glm::vec4(intensity, 1.f);
 	m_directionalLights.push_back(light);

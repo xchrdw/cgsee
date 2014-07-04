@@ -1,6 +1,6 @@
 #include <core/rendering/lightrepresentation/spotlight.h>
 
-SpotLight::SpotLight(QString name, glm::vec3 intensity, glm::vec3 direction, float angle)
+SpotLight::SpotLight(const QString & name, const glm::vec3 & intensity, const glm::vec3 & direction, float angle)
 : AbstractLight(name, intensity)
 {
 	setDirection(direction);
@@ -11,19 +11,19 @@ SpotLight::~SpotLight()
 {
 }
 
-void SpotLight::setDirection(glm::vec3 directionVector)
+void SpotLight::setDirection(const glm::vec3 & directionVector)
 {
 	m_direction = directionVector;
 }
 
-void SpotLight::setPosition(glm::vec3 positionVector)
+void SpotLight::setPosition(const glm::vec3 & positionVector)
 {
 	m_position = positionVector;
 }
 
-void SpotLight::setFalloff(glm::vec4 falloff)
+void SpotLight::setRange(float range)
 {
-	m_falloff = falloff;
+	m_range = range;
 }
 
 void SpotLight::setConeAngle(float angle)
@@ -31,23 +31,51 @@ void SpotLight::setConeAngle(float angle)
 	m_coneAngle = angle;
 }
 
-glm::vec3 SpotLight::direction()
+glm::vec3 SpotLight::direction() const
 {
 	return m_direction;
 }
 
-glm::vec3 SpotLight::position()
+glm::vec3 SpotLight::position() const
 {
 	return m_position;
 }
 
-glm::vec4 SpotLight::falloff()
+float SpotLight::range() const
 {
-	return m_falloff;
+	return m_range;
 }
 
-float SpotLight::coneAngle()
+float SpotLight::coneAngle() const
 {
 	return m_coneAngle;
 }
 
+void SpotLight::saveLightData(LightingSystem & manager, const glm::mat4 & transform)
+{
+	glm::vec4 worldPosition(transform * glm::vec4(position(), 1.0f));
+	manager.addSpotLight(worldPosition, direction(), intensity(), range(), coneAngle());
+}
+
+const AxisAlignedBoundingBox SpotLight::boundingBox() const
+{
+	if (m_aabb.valid())
+		return m_aabb;
+
+	m_aabb = AxisAlignedBoundingBox(position(), position());
+	
+	return m_aabb;
+}
+
+
+const AxisAlignedBoundingBox SpotLight::boundingBox(glm::mat4 transform) const
+{
+	if (m_aabb.valid())
+		return m_aabb;
+
+	glm::vec4 newPosition = transform * glm::vec4(position(), 1.0f);
+	newPosition /= newPosition.w;
+	m_aabb = AxisAlignedBoundingBox(newPosition.xyz, newPosition.xyz);
+
+	return m_aabb;
+}

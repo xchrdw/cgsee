@@ -34,9 +34,9 @@ public:
 		This reflects the way GPU uniform buffers work as well, in 16-byte(that is, one vec4) granularity.
 		So, pack only glm::vec4's inside your buffers.
 	*/
-	std::vector<PointLight> m_pointLights;
-	std::vector<SpotLight> m_spotLights;
-	std::vector<DirectionalLight> m_directionalLights;
+	std::vector<SlimPointLight> m_pointLights;
+	std::vector<SlimSpotLight> m_spotLights;
+	std::vector<SlimDirectionalLight> m_directionalLights;
 
 	void addDirectionalLight(const glm::vec3& direction, const glm::vec3& intensity);
 	void addPointLight(const glm::vec4& pos, const glm::vec3& intensity, float radius);

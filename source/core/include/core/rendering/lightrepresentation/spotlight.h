@@ -1,27 +1,33 @@
 #pragma once
 
+#include <core/core_api.h>
 #include <core/rendering/lightrepresentation/abstractlight.h>
+#include <core/rendering/lightingsystem.h>
 
 class CORE_API SpotLight : public AbstractLight
 {
 
 public:
-	SpotLight(QString name, glm::vec3 intensity, glm::vec3 direction, float angle);
+	SpotLight(const QString & name, const glm::vec3 & intensity, const glm::vec3 & direction, float angle);
 	virtual ~SpotLight();
 
-	void setDirection(glm::vec3 directionVector);
-	void setPosition(glm::vec3 positionVector);
-	void setFalloff(glm::vec4 falloff);
+	void setDirection(const glm::vec3 & directionVector);
+	void setPosition(const glm::vec3 & positionVector);
+	void setRange(float range);
 	void setConeAngle(float angle);
 
-	glm::vec3 direction();
-	glm::vec3 position();
-	glm::vec4 falloff();
-	float coneAngle();
+	glm::vec3 direction() const;
+	glm::vec3 position() const;
+	float range() const;
+	float coneAngle() const;
+
+	void saveLightData(LightingSystem & manager, const glm::mat4 & transform) override;
+	const AxisAlignedBoundingBox boundingBox() const override;
+	const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;
 
 private:
 	glm::vec3 m_direction;
 	glm::vec3 m_position;
-	glm::vec4 m_falloff;
+	float m_range;
 	float m_coneAngle;
 };
