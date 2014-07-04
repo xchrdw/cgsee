@@ -126,7 +126,6 @@ set(sources
 	${source_path}/rendering/lightrepresentation/directionallight.cpp
 	${source_path}/rendering/lightrepresentation/spotlight.cpp
 	${source_path}/rendering/lightrepresentation/pointlight.cpp
-	${source_path}/scenegraph/scenetraverser.cpp
 	${source_path}/scenegraph/node.cpp
 	${source_path}/scenegraph/drawvisitor.cpp
 	${source_path}/scenegraph/polygonalgeometry.cpp
@@ -138,6 +137,7 @@ set(sources
 	${source_path}/scenegraph/highlightingdrawmethod.cpp
 	${source_path}/scenegraph/pathtracingbvh.cpp
 	${source_path}/scenegraph/absolutetransformator.cpp
+	${source_path}/scenegraph/prerendervisitor.cpp
 	${source_path}/screenquad.cpp
 	${source_path}/shader.cpp
 	${source_path}/timer.cpp
@@ -234,6 +234,7 @@ set(api_includes
 	${include_path}/scenegraph/pathtracingbvh.h
 	${include_path}/scenegraph/absolutetransformator.h
 	${include_path}/scenegraph/cullingvisitor.h
+	${include_path}/scenegraph/prerendervisitor.h
 	${include_path}/screenquad.h
 	${include_path}/shader.h
 	${include_path}/timer.h

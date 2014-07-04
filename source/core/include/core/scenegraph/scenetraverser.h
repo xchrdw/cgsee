@@ -6,15 +6,26 @@
 
 class Node;
 
-struct CORE_API SceneTraverser final
+template < class NodeType >
+struct SceneTraverserTemplate
 {
 public:
-    void traverse(Node & node, std::function<bool (Node &)> visitor);
+	void traverse(NodeType & node, std::function<bool(NodeType &)> visitor);
 };
 
+using SceneTraverser = SceneTraverserTemplate<Node>;
+using ConstSceneTraverser = SceneTraverserTemplate<const Node>;
 
-struct CORE_API ConstSceneTraverser final
+template < class NodeType >
+void SceneTraverserTemplate<NodeType>::traverse(NodeType & node, std::function<bool(NodeType &)> visitor)
 {
-public:
-    void traverse(const Node & node, std::function<bool (const Node &)> visitor);
-};
+	if (!visitor(node))
+		return;
+
+	auto it = node.children().begin();
+	auto itEnd = node.children().end();
+	for (; it != itEnd; ++it){
+		traverse(**it, visitor);
+	}
+}
+
