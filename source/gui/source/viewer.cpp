@@ -101,7 +101,6 @@ Viewer::Viewer(
 :   QMainWindow(parent, flags)
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
-,   m_materialCanvas(nullptr)
 ,   m_materialWidgetBuilder(nullptr)
 ,   m_camera(nullptr)
 ,   m_savedViews(4)
@@ -111,8 +110,6 @@ Viewer::Viewer(
 ,   m_dockExplorer(new QDockWidget(tr("Explorer")))
 ,   m_dockScene(new QDockWidget(tr("SceneHierarchy")))
 ,   m_dockNavigationHistory(new QDockWidget(tr("NavigationHistory")))
-,   m_dockMaterial(new QDockWidget(tr("Material")))
-,   m_propertyMaterialBrowser(nullptr)
 ,   m_navigator(new FileNavigator(m_dockNavigator))
 ,   m_explorer(new FileExplorer(m_dockExplorer))
 ,   m_sceneHierarchy(new QStandardItemModel())
@@ -206,11 +203,8 @@ void Viewer::initializeSceneTree()
 
 void Viewer::initializeMaterial()
 {
-    m_dockMaterial->setObjectName("materialWidget");
-
-	QWidget * materialWidget = m_materialWidgetBuilder->initializeMaterialWidget(m_qtCanvas->format(), this);
-
-    initializeDockWidgets(m_dockMaterial, materialWidget, Qt::RightDockWidgetArea);
+	m_materialWidgetBuilder->initializeMaterialWidget(m_qtCanvas->format());
+	initializeDockWidgets(m_materialWidgetBuilder->getDockMaterial(), m_materialWidgetBuilder->getMaterialWidget(), Qt::RightDockWidgetArea);
 }
 
 /**
@@ -476,6 +470,8 @@ void Viewer::initialize(const GLFormat & format)
         m_qtCanvas, SIGNAL(mouseMoveEventTriggered(int)),
         this, SLOT(on_mouseMoveEventTriggered(int)));
 
+	m_materialWidgetBuilder = new MaterialWidgetBuilder(this);
+
     // ToDo: revisit initialization sequence
     initializeExplorer();
     initializeSceneTree();
@@ -483,9 +479,9 @@ void Viewer::initialize(const GLFormat & format)
 	initializeNavigationHistory();
 	
 
-    tabifyDockWidget(m_dockScene, m_dockMaterial);
+    tabifyDockWidget(m_dockScene, m_materialWidgetBuilder->getDockMaterial());
     m_dockScene->raise();
-    m_dockMaterial->hide();
+	m_materialWidgetBuilder->getDockMaterial()->hide();
 }
 
 Viewer::~Viewer()
@@ -504,7 +500,6 @@ Viewer::~Viewer()
     delete m_loader;
     delete m_coordinateProvider;
     delete m_selectionBBox;
-    delete m_dockMaterial;
 }
 
 void Viewer::setPainter(AbstractScenePainter * painter)
@@ -1174,8 +1169,8 @@ void Viewer::showMaterial()
 {
 	Material * obj = new Material();
 	obj->setName(m_selectedNodes.first()->name().toStdString());
-	m_propertyMaterialBrowser->setRoot(obj);
-    m_dockMaterial->show();
+	m_materialWidgetBuilder->getPropertyBrowser()->setRoot(obj);
+	m_materialWidgetBuilder->getDockMaterial()->show();
 }
 
 void Viewer::selectNode(Node * node)

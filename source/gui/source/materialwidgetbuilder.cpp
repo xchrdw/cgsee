@@ -2,23 +2,35 @@
 
 #include <qwidget.h>
 #include <qboxlayout.h>
+#include <qdockwidget.h>
+#include <qmainwindow.h>
 #include <propertyguizeug/PropertyBrowser.h>
 
 #include <core/material/material.h>
+#include <core/glformat.h>
 #include <gui/canvas.h>
 
-MaterialWidgetBuilder::MaterialWidgetBuilder()
+MaterialWidgetBuilder::MaterialWidgetBuilder(QWidget * parent)
+:   m_materialWidget(nullptr)
+,   m_dockMaterial(new QDockWidget(QMainWindow::tr("Material")))
+,   m_materialCanvas(nullptr)
+,   m_propertyMaterialBrowser(nullptr)
 {
-
+	m_materialWidget = new QWidget(parent);
 }
 
 MaterialWidgetBuilder::~MaterialWidgetBuilder()
 {
-
+	delete m_materialWidget;
+	delete m_dockMaterial;
+	delete m_materialCanvas;
+	delete m_propertyMaterialBrowser;
 }
 
-QWidget* MaterialWidgetBuilder::initializeMaterialWidget(const GLFormat & format, QWidget * parent)
+void MaterialWidgetBuilder::initializeMaterialWidget(const GLFormat & format)
 {
+	m_dockMaterial->setObjectName("materialWidget");
+	
 	Material * obj = new Material();
 
 	m_propertyMaterialBrowser = new propertyguizeug::PropertyBrowser(obj);
@@ -31,8 +43,20 @@ QWidget* MaterialWidgetBuilder::initializeMaterialWidget(const GLFormat & format
 	layout->addWidget(m_materialCanvas);
 	layout->addWidget(m_propertyMaterialBrowser);
 
-	QWidget * materialWidget = new QWidget(parent);
-	materialWidget->setLayout(layout);
+	m_materialWidget->setLayout(layout);
+}
 
-	return materialWidget;
+QDockWidget * MaterialWidgetBuilder::getDockMaterial()
+{
+	return m_dockMaterial;
+}
+
+QWidget * MaterialWidgetBuilder::getMaterialWidget()
+{
+	return m_materialWidget;
+}
+
+propertyguizeug::PropertyBrowser * MaterialWidgetBuilder::getPropertyBrowser()
+{
+	return m_propertyMaterialBrowser;
 }

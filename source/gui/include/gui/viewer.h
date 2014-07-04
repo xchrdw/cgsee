@@ -44,6 +44,7 @@ class DataBlockRegistry;
 
 class CoordinateProvider;
 class AxisAlignedBoundingBox;
+class MaterialWidgetBuilder;
 
 namespace propertyguizeug
 {
@@ -227,11 +228,8 @@ protected:
     QDockWidget * m_dockNavigator;
     QDockWidget * m_dockExplorer;
     QDockWidget * m_dockScene;
-    QDockWidget * m_dockMaterial;
     QDockWidget * m_dockNavigationHistory;
 
-    Canvas * m_materialCanvas;
-	propertyguizeug::PropertyBrowser * m_propertyMaterialBrowser;
 	MaterialWidgetBuilder * m_materialWidgetBuilder;
 
     FileNavigator * m_navigator;
