@@ -1,12 +1,12 @@
 #pragma once
 
 #include <core/core_api.h>
-#include <core/scenegraph/node.h>
+#include <core/scenegraph/group.h>
 
 class LightcollectVisitor;
 class LightingSystem;
 
-class CORE_API AbstractLight : public Node
+class CORE_API AbstractLight : public Group
 {
 
 public:

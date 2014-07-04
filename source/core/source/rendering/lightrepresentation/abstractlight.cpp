@@ -2,7 +2,7 @@
 
 
 AbstractLight::AbstractLight(const QString & name, const glm::vec3 & intensity)
-: Node(name)
+: Group(name)
 {
 	setIntensity(intensity);
 	m_enable = true;
