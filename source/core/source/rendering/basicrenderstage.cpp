@@ -38,7 +38,7 @@ void BasicRenderStage::render()
 }
 void BasicRenderStage::reloadShaders()
 {
-    //TODO
+    //TODO deprecated (glow)
 }
 
 void BasicRenderStage::resize(const int width, const int height)
