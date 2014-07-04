@@ -1,7 +1,10 @@
 #include <core/rendering/pipelinebuilder.h>
+#include <core/camera/monocamera.h>
+#include <core/camera/stereocamera.h>
 
 PipelineBuilder::PipelineBuilder(PipelinePainter & painter)
     : m_painter(painter)
+    , m_camera(painter.camera())
 {
 
 }
@@ -9,4 +12,51 @@ PipelineBuilder::PipelineBuilder(PipelinePainter & painter)
 PipelineBuilder::~PipelineBuilder()
 {
 
+}
+
+bool PipelineBuilder::build()
+{
+    if (m_camera->isStereo())
+    {
+        StereoCamera * stereoCamera = dynamic_cast<StereoCamera*>(m_camera);
+        assert(stereoCamera);
+        if (!buildPipeline(stereoCamera->leftCamera()))
+            return false;
+        if (!buildPipeline(stereoCamera->rightCamera()))
+            return false;
+        if (!addJoinStage())
+            return false;
+    }
+    else
+    {
+        MonoCameraNew * monoCamera = dynamic_cast<MonoCameraNew*>(m_camera);
+        assert(monoCamera);
+        if (!buildPipeline(monoCamera))
+            return false;
+    }
+
+    return true;
+}
+
+bool PipelineBuilder::buildPipeline(const MonoCameraNew * camera)
+{
+    if (!addColorIdStage(camera))
+        return false;
+    if (!addRenderingStages(camera))
+        return false;
+    if (!addPostProcessingStages(camera))
+        return false;
+    return true;
+}
+
+bool PipelineBuilder::addJoinStage()
+{
+    //TODO
+    return true;
+}
+
+bool PipelineBuilder::addColorIdStage(const MonoCameraNew * camera)
+{
+    //TODO
+    return true;
 }

@@ -25,7 +25,7 @@ void AbstractPainter::paint()
     if(m_initialized)
         return;
 
-    if((m_initialized = initialize()))
+    if(!(m_initialized = initialize()))
         qFatal("Painter initialization failed.");
 }
 

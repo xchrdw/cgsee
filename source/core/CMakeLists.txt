@@ -141,6 +141,8 @@ set(sources
 	${source_path}/rendering/rendertechnique.cpp
 	${source_path}/rendering/pathtracer.cpp
     ${source_path}/rendering/pipelinebuilder.cpp
+	${source_path}/rendering/rasterizationpipelinebuilder.cpp
+	${source_path}/rendering/pathtracingpipelinebuilder.cpp
 	${source_path}/scenegraph/scenetraverser.cpp
 	${source_path}/scenegraph/node.cpp
 	${source_path}/scenegraph/drawvisitor.cpp
@@ -246,6 +248,8 @@ set(api_includes
 	${include_path}/rendering/renderingpass.h
 	${include_path}/rendering/pathtracer.h
     ${include_path}/rendering/pipelinebuilder.h
+	${include_path}/rendering/rasterizationpipelinebuilder.h
+	${include_path}/rendering/pathtracingpipelinebuilder.h
 	${include_path}/scenegraph/group.h
 	${include_path}/scenegraph/highlightingdrawmethod.h
 	${include_path}/scenegraph/triangleobject.h
