@@ -38,9 +38,11 @@ bool PreRenderVisitor::operator() (AbstractLight & light)
 {
 	if (light.hidden())
 		return false;
-	light.saveLightData(m_manager, m_transform);
 
 	if (Node::RF_Relative == light.referenceFrame())
 		m_transform *= light.transform();
+
+	light.saveLightData(m_manager, m_transform);
+
 	return true;
 }

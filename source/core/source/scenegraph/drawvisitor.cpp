@@ -13,8 +13,11 @@ bool DrawVisitor::operator() (Node & node)
 {
     if( node.hidden() )
         return false;
+
+	if (Node::RF_Relative == node.referenceFrame())
+		m_transform *= node.transform();
+
     node.draw(*m_program, m_transform);
-    if( Node::RF_Relative == node.referenceFrame() )
-        m_transform *= node.transform();
+
     return true;
 }

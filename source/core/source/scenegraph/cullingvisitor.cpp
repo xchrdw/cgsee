@@ -28,6 +28,10 @@ CullingVisitor::~CullingVisitor()
 
 bool CullingVisitor::operator() (Node &node) {
     bool returnValue, drawNode;
+
+	if (Node::RF_Relative == node.referenceFrame())
+		m_transform *= node.transform();
+
     if (m_cull) {
         switch (m_viewFrustum->contains(node.boundingBox(), m_transform)) {
         case ViewFrustum::e_insideFrustum::INSIDE_FRUSTUM:
@@ -45,7 +49,5 @@ bool CullingVisitor::operator() (Node &node) {
         node.draw(*m_program, m_transform);
     }
 
-    if( Node::RF_Relative == node.referenceFrame() )
-        m_transform *= node.transform();
     return returnValue;
 }
