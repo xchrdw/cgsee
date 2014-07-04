@@ -15,18 +15,18 @@
 	LightingSystem::add* methods do the packing of the data in the exposed interface.
 */
 
-struct DirectionalLight{
+struct SlimDirectionalLight{
 	glm::vec4 m_direction;		// xyzw: Direction
 	glm::vec4 m_intensity;		// xyz: Color intensity (HDR)
 };
 
-struct PointLight{
+struct SlimPointLight{
 	glm::vec4 m_position;		// xyzw: Position
 	glm::vec4 m_intensity;		// xyz: Color intensity (HDR)
 	glm::vec4 m_falloff;		// x: constant falloff, y: linaer falloff, z: quadratic falloff w: radius
 };
 
-struct SpotLight{
+struct SlimSpotLight{
 	glm::vec4 m_position;
 	glm::vec4 m_direction;
 	glm::vec4 m_intensity;		// Color intensity (HDR)
@@ -44,15 +44,15 @@ struct LightInfo
 
 struct PointLightBuffer
 {
-	PointLight lights[MAX_POINT_LIGHTS];
+	SlimPointLight lights[MAX_POINT_LIGHTS];
 };
 
 struct SpotLightBuffer
 {
-	SpotLight lights[MAX_SPOT_LIGHTS];
+	SlimSpotLight lights[MAX_SPOT_LIGHTS];
 };
 
 struct DirectionalLightBuffer
 {
-	DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS];
+	SlimDirectionalLight lights[MAX_DIRECTIONAL_LIGHTS];
 };
