@@ -8,7 +8,6 @@ out vec4 fragColor;
 uniform sampler2D distancefield;
 uniform float pixelWidth;
 
-const float smoothing = 0.1;
 const vec3 textColor = vec3(0);
 const int charCount = 22;
 
@@ -18,7 +17,7 @@ in flat int v_chars[16];
 
 float aastep(float threshold, float value)
 {
-	float afwidth = 1.0 * length(vec2(dFdx( value ) , dFdy( value ))) ;
+	float afwidth = length(vec2(dFdx( value ) , dFdy( value ))) ;
 	//GLSL's fwidth(value) is abs(dFdx(value)) + abs(dFdy(value))
 	return smoothstep( threshold - afwidth , threshold + afwidth , value ) ;
 }
