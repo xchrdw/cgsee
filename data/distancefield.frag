@@ -16,6 +16,13 @@ const int charCount = 22;
 in flat int v_length;
 in flat int v_chars[16];
 
+float aastep(float threshold, float value)
+{
+	float afwidth = 1.0 * length(vec2(dFdx( value ) , dFdy( value ))) ;
+	//GLSL's fwidth(value) is abs(dFdx(value)) + abs(dFdy(value))
+	return smoothstep( threshold - afwidth , threshold + afwidth , value ) ;
+}
+
 void main()
 {
 	int charIndex = int(v_uv.x * v_length);
@@ -26,6 +33,6 @@ void main()
 	}
 	vec2 charMapUV = vec2((fract(v_uv.x * v_length) + char) / charCount, v_uv.y);
 	float d = 1-texture(distancefield, charMapUV).x;
-	float a = smoothstep(0.5 - smoothing, 0.5 + smoothing, d);
+	float a = aastep(0.5,d);
 	fragColor = vec4(textColor,a*smoothstep(40,60,pixelWidth));
 }
