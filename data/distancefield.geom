@@ -14,6 +14,8 @@ in int v_instance[1];
 
 out vec2 v_uv;
 
+out float v_gray;
+
 out flat int v_length;
 out flat int v_chars[16];
 
@@ -62,6 +64,9 @@ void main(void) {
 	float currentX = centerX - w/4;
 	
 	vec4 pixelColor = texture(image, vec2(col, row)/imageSize + pan/aspect) * 255;
+	
+	v_gray = (pixelColor.r * 0.2126 + pixelColor.g * 0.7152 + pixelColor.b * 0.0722)/255;
+	
 	int chars[16] = int[16](16, // 16 = hashtag
 		int(pixelColor.r/16),
 		int(mod(pixelColor.r, 16)),

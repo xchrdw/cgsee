@@ -8,9 +8,9 @@ out vec4 fragColor;
 uniform sampler2D distancefield;
 uniform float pixelWidth;
 
-const vec3 textColor = vec3(0);
 const int charCount = 22;
 
+in float v_gray;
 
 in flat int v_length;
 in flat int v_chars[16];
@@ -33,5 +33,6 @@ void main()
 	vec2 charMapUV = vec2((fract(v_uv.x * v_length) + char) / charCount, v_uv.y);
 	float d = 1-texture(distancefield, charMapUV).x;
 	float a = aastep(0.5,d);
+	vec3 textColor = vec3(fract(v_gray + 0.5));
 	fragColor = vec4(textColor,a*smoothstep(40,60,pixelWidth));
 }
