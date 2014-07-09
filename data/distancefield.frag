@@ -34,5 +34,5 @@ void main()
 	float d = 1-texture(distancefield, charMapUV).x;
 	float a = aastep(0.5,d);
 	vec3 textColor = vec3(fract(v_gray + 0.5));
-	fragColor = vec4(textColor,a*smoothstep(40,60,pixelWidth));
+	fragColor = vec4(textColor,a*smoothstep(70,80,pixelWidth));
 }

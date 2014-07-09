@@ -184,6 +184,9 @@ void ImagePainter::paintGrid()
     glDrawArraysInstanced(GL_POINTS, 0, 1, ceil(m_pixels.x + 1 + m_pixels.y + 1));
     glError();
 
+    if (m_pixelWidth < 60)
+        return;
+
     m_textProgram->use();
     glBindVertexArray(m_gridVao);
     glError();
