@@ -124,6 +124,7 @@ void ImagePainter::setUniforms()
         m_imageSize = glm::vec2(m_image->width(), m_image->height());
 
         m_gridProgram->setUniform("imageSize", m_imageSize);
+        m_gridProgram->setUniform("viewport", m_viewport);
         m_gridProgram->setUniform("aspect", m_aspect);
         m_gridProgram->setUniform("pan", m_pan);
         m_gridProgram->setUniform("pixelWidth", m_pixelWidth);
