@@ -149,6 +149,12 @@ void ImagePainter::paint()
 {
     if (m_paintMutex.tryLock()) {
         if (m_image) {
+            
+            glEnable(GL_BLEND);
+            glError();
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glError();
+
             AbstractPainter::paint();
 
             if (m_dirty)
@@ -157,6 +163,9 @@ void ImagePainter::paint()
             m_quad->draw(*m_imageProgram);
 
             paintGrid();
+
+            glDisable(GL_BLEND);
+            glError();
         }
         m_paintMutex.unlock();
     }
@@ -177,28 +186,25 @@ void ImagePainter::paintGrid()
     glError();
     glDepthMask(GL_FALSE);
     glError();
-    glEnable(GL_BLEND);
-    glError();
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glDrawArraysInstanced(GL_POINTS, 0, 1, ceil(m_pixels.x + 1 + m_pixels.y + 1));
     glError();
 
-    if (m_pixelWidth < 60)
-        return;
+    if (m_pixelWidth >= 60)
+    {
+        m_textProgram->use();
+        glBindVertexArray(m_gridVao);
+        glError();
 
-    m_textProgram->use();
-    glBindVertexArray(m_gridVao);
+        glDrawArraysInstanced(GL_POINTS, 0, 1, (ceil(m_pixels.x) + 1) * (ceil(m_pixels.y) + 1));
+        glError();
+    }
+
+    glEnable(GL_DEPTH_TEST);
     glError();
-
-    glDrawArraysInstanced(GL_POINTS, 0, 1, (ceil(m_pixels.x)+1) * (ceil(m_pixels.y)+1));
-    glError();
-
     glDisable(GL_CULL_FACE);
     glError();
     glDepthMask(GL_TRUE);
-    glError();
-    glDisable(GL_BLEND);
     glError();
 
     glBindVertexArray(0);
