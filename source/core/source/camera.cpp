@@ -41,6 +41,7 @@ Camera::Camera(const QString & name)
 ,   m_rasterizer(new Rasterizer(*this))
 ,   m_pathTracer(new PathTracer(*this))
 ,   m_activeRenderTechnique(nullptr)
+,   m_isPerspective(true)
 {
     m_rf = RF_Absolute;
 //     m_rf = RF_Relative;
@@ -226,7 +227,10 @@ const float Camera::aspect() const
 
 void Camera::update()
 {
-    m_projection = glm::perspective(m_fovy, aspect(), m_zNear, m_zFar);
+    if (m_isPerspective)
+        m_projection = glm::perspective(m_fovy, aspect(), m_zNear, m_zFar);
+    else
+        m_projection = glm::ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
 
     setTransform(m_projection * m_view);
 
@@ -345,6 +349,26 @@ void Camera::setZFar(const float z)
 
     m_zFar = z;
     invalidate();
+}
+
+const bool Camera::isPerspectiveProjection() const
+{
+    return m_isPerspective;
+}
+
+const bool Camera::isOrthoProjectoin() const
+{
+    return !m_isPerspective;
+}
+
+void Camera::usePerspectiveProjection()
+{
+    m_isPerspective = true;
+}
+
+void Camera::useOrthoProjection()
+{
+    m_isPerspective = false;
 }
 
 ViewFrustum *Camera::viewFrustum() const {

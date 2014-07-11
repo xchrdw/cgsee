@@ -62,6 +62,12 @@ public:
 
     const float aspect() const;
 
+    const bool isPerspectiveProjection() const;
+    const bool isOrthoProjectoin() const;
+
+    void usePerspectiveProjection();
+    void useOrthoProjection();
+
     ViewFrustum *viewFrustum() const;
 
     // updates camera matrices
@@ -121,6 +127,7 @@ protected:
     float m_zFar;
 
     bool m_invalidated;
+    bool m_isPerspective;
 
 friend CameraImplementation;
 };

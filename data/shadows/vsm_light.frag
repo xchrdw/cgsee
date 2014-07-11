@@ -3,8 +3,6 @@
 uniform float znear;
 uniform float zfar;
 
-flat in int g_layer;
-
 out vec4 fragColor;
 
 
@@ -15,7 +13,7 @@ float linearize(float depth)
 
 void main()
 {
-	float depth = linearize(gl_FragCoord.z);
+	float depth = gl_FragCoord.z;
 	float dx = dFdx(depth);
 	float dy = dFdy(depth);
 	
