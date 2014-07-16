@@ -26,8 +26,9 @@ void main()
 {
 	int charIndex = int(v_uv.x * v_length);
 	int char = 0;
-	for(int i = 0; i < v_chars.length(); ++i) {
-		if(i == charIndex)
+	// We need to use a iteration variable to access the array, due to a
+	// bug/feature of some drivers (eg Intel HD 4000)
+	for(int i = charIndex; i == charIndex; ++i) {
 			char = v_chars[i];
 	}
 	vec2 charMapUV = vec2((fract(v_uv.x * v_length) + char) / charCount, v_uv.y);
