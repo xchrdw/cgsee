@@ -19,6 +19,9 @@ out float v_gray;
 out flat int v_length;
 out flat int v_chars[16];
 
+// width/height ratio of the chars in the char map
+const float charRatio = 32.0 / 50.0;
+
 // Creates quad with center at 'position'
 void createTextQuad(in vec2 position, in vec2 dimension, in int length, in int chars[16]) {
 	vec4 pos = vec4(position, 0, 1);
@@ -73,7 +76,13 @@ void main(void) {
 		int(pixelColor.g/16),
 		int(mod(pixelColor.g, 16)),
 		int(pixelColor.b/16),
-		int(mod(pixelColor.b, 16)), 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		
-	createTextQuad(vec2(centerX, centerY), vec2(w/2, h/10), 7, chars);
+		int(mod(pixelColor.b, 16)),
+		int(pixelColor.a/16),
+		int(mod(pixelColor.a, 16)), 0, 0, 0, 0, 0, 0, 0);
+	
+	int charCount = 9;
+	
+	float textHeight = h/10;
+	float textWidth = w / h * textHeight * float(charCount) * charRatio;
+	createTextQuad(vec2(centerX, centerY), vec2(textWidth, textHeight), charCount, chars);
 }
