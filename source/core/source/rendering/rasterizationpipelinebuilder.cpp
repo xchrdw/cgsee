@@ -13,13 +13,13 @@ RasterizationPipelineBuilder::~RasterizationPipelineBuilder()
 
 }
 
-bool addRenderingStages(const MonoCameraNew * camera)
+bool RasterizationPipelineBuilder::addRenderingStages(const MonoCameraNew * camera)
 {
-    //TODO
+    
     return true;
 }
 
-bool addPostProcessingStages(const MonoCameraNew * camera)
+bool RasterizationPipelineBuilder::addPostProcessingStages(const MonoCameraNew * camera)
 {
     //TODO
     return true;
