@@ -109,6 +109,7 @@ void ImagePainter::setUniforms()
     if (m_image)
     {
         m_image->bind(*m_imageProgram, "image", 0);
+        m_imageProgram->setUniform("viewport", m_viewport);
         m_imageProgram->setUniform("zoom", m_zoom);
         m_imageProgram->setUniform("pan", m_pan);
         m_imageProgram->setUniform("aspect", m_aspect);
