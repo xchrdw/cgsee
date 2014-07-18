@@ -59,6 +59,8 @@ const bool ImagePainter::initialize()
 {
     AutoTimer t("Initialization of ImagePainter");
 
+    m_image->setMagFilter(GL_NEAREST);
+
     m_imageProgram = new Program();
     m_imageProgram->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
     m_imageProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/image.frag"));
@@ -77,8 +79,6 @@ const bool ImagePainter::initialize()
     m_textProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/distancefield.frag"));
 
     m_fontImage = new ImageQt("data/charmap.png");
-    m_fontImage->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    m_fontImage->setMagFilter(GL_LINEAR);
 
 
     // We need to send a dummy array to the GPU
