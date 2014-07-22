@@ -1,10 +1,10 @@
 #include <core/painter/pipelinepainter.h>
 
-#include <core/rendering/renderstage.h>
+#include <core/rendering/abstractrenderstage.h>
 #include <core/rendering/pipelinebuilder.h>
-#include <core/rendering/basicrenderstage.h>
+#include <core/rendering/renderstage.h>
 
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 #include <core/scenegraph/group.h>
 #include <core/screenquad.h>
 #include <core/program.h>
@@ -12,17 +12,18 @@
 #include <core/fileassociatedshader.h>
 
 
-PipelinePainter::PipelinePainter(Camera * camera)
+PipelinePainter::PipelinePainter(AbstractCamera * camera)
 	: PipelinePainter(camera, camera)
 {
 
 }
 
-PipelinePainter::PipelinePainter(Camera * camera, Group * scene)
+PipelinePainter::PipelinePainter(AbstractCamera * camera, Group * scene)
     : m_camera(camera)
     , m_scene(scene)
     , m_quad(new ScreenQuad())
     , m_flush(nullptr)
+    //, m_coordFBO(new glow::FrameBufferObject())
 {
 
 }
@@ -41,7 +42,7 @@ bool PipelinePainter::initialize()
     m_flush->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/dump.frag"));
     m_flush->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
-    addRenderStage(new BasicRenderStage(*this));
+    addRenderStage(new RenderStage(*this));
 
     return true;
 }
@@ -61,7 +62,7 @@ void PipelinePainter::paint()
     AbstractPainter::paint();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    foreach (RenderStage * renderStage, m_stages)
+    foreach (AbstractRenderStage * renderStage, m_stages)
     {
         renderStage->render();
     }
@@ -79,7 +80,7 @@ void PipelinePainter::paint()
 void PipelinePainter::resize(const int width, const int height)
 {
     AbstractPainter::resize(width, height);
-    foreach (RenderStage * renderStage, m_stages)
+    foreach (AbstractRenderStage * renderStage, m_stages)
     {
         renderStage->resize(width, height);
     }
@@ -88,7 +89,7 @@ void PipelinePainter::resize(const int width, const int height)
 
 void PipelinePainter::reloadShaders()
 {
-    foreach (RenderStage * renderStage, m_stages)
+    foreach (AbstractRenderStage * renderStage, m_stages)
     {
         renderStage->reloadShaders();
     }
@@ -151,6 +152,122 @@ bool PipelinePainter::isViewFrustumCullingEnabled()
 
 // TODO end
 
+//from coordinateProvider
+unsigned int PipelinePainter::getObjectID(unsigned int x, unsigned int y)
+{
+//  TODO glow integration necessary to use FBO
+//    TextureObject texture = getTexture("colorID");//TODO ---> constant?
+
+//    if (!texture || x >= texture->width() || y >= texture->height())
+//        return 0;
+
+//    m_coordFBO->bind();
+//    m_coordFBO->attachTexture2D(GL_COLOR_ATTACHMENT0, texture);
+//    glReadBuffer(GL_COLOR_ATTACHMENT0);
+//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+//    float data[4];
+//    glReadPixels(x, fbo->height()-y, 1, 1, GL_RGBA, GL_FLOAT, data);
+//    fbo->release();
+
+//    m_pass->setActive(status);
+
+//    return 255*data[0] + 255*data[1]*255 + 255*data[2]*255*255 + 255*data[3]*255*255*255;
+    return 0;
+}
+
+glm::dvec3 PipelinePainter::get3DPoint(unsigned int x, unsigned int y)
+{
+//  TODO glow integration necessary to use FBO
+//    if (!m_pass) return glm::dvec3(0.0f,0.0f,0.0f);
+
+//    bool status = m_pass->isActive();
+
+//    m_pass->setActive(true);
+//    m_pass->applyIfActive();
+
+//    FrameBufferObject * fbo = m_pass->output();
+
+//    if (x >= fbo->width() || y >= fbo->height())
+//        return glm::dvec3(0.0f,0.0f,0.0f);
+
+//    fbo->bind();
+//    glFlush();
+//    glFinish();
+//    // glReadBuffer(GL_COLOR_ATTACHMENT0);
+//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+//    float z;
+//    y = fbo->height()-y;
+//    glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
+//    fbo->release();
+
+//    m_pass->setActive(status);
+
+//    return unproject((float) x, (float) y, z);
+    return glm::dvec3();
+}
+
+glm::ivec2 PipelinePainter::get2DPoint(unsigned int x, unsigned int y)
+{
+//  TODO glow integration necessary to use FBO
+//    if (!m_pass) return glm::dvec3(0.0f,0.0f,0.0f);
+
+//    bool status = m_pass->isActive();
+
+//    m_pass->setActive(true);
+//    m_pass->applyIfActive();
+
+//    FrameBufferObject * fbo = m_pass->output();
+
+//    if (x >= fbo->width() || y >= fbo->height())
+//        return glm::dvec3(0.0f,0.0f,0.0f);
+
+//    fbo->bind();
+//    glFlush();
+//    glFinish();
+//    // glReadBuffer(GL_COLOR_ATTACHMENT0);
+//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+//    float z;
+//    y = fbo->height()-y;
+//    glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
+//    fbo->release();
+
+//    m_pass->setActive(status);
+
+//    return unproject((float) x, (float) y, z);
+    return glm::ivec2(x, y);
+}
+
+glm::dvec3 PipelinePainter::unproject(float x, float y, float z)
+{
+    GLdouble modelview[16];
+    GLdouble projection[16];
+    GLint viewport[4];
+
+    glm::mat4 viewMat = camera()->view();
+    glm::mat4 projectionMat = camera()->projection();
+
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
+            modelview[i*4+j] = viewMat[i][j];
+            projection[i*4+j] = projectionMat[i][j];
+        }
+    }
+
+    viewport[0] = viewport[1] = 0;
+    viewport[2] = camera()->viewport().x;
+    viewport[3] = camera()->viewport().y;
+
+    glm::dvec3 position;
+    gluUnProject( x, y, z, modelview, projection, viewport, &position.x, &position.y, &position.z );
+
+    return position;
+}
+
 Group * PipelinePainter::scene()
 {
     return m_scene;
@@ -161,12 +278,12 @@ const ScreenQuad * PipelinePainter::screenQuad()
     return m_quad;
 }
 
-Camera * PipelinePainter::camera()
+AbstractCamera * PipelinePainter::camera()
 {
     return m_camera;
 }
 
-void PipelinePainter::addRenderStage(RenderStage * renderStage)
+void PipelinePainter::addRenderStage(AbstractRenderStage * renderStage)
 {
     m_stages.push_back(renderStage);
 }
@@ -177,7 +294,7 @@ void PipelinePainter::setScene(Group * scene)
     sceneChanged();
 }
 
-void PipelinePainter::setCamera(Camera * camera)
+void PipelinePainter::setCamera(AbstractCamera * camera)
 {
     m_camera = camera;
     pipelineConfigChanged();
@@ -229,7 +346,7 @@ void PipelinePainter::setupPipeline(PipelineBuilder & builder)
 
 void PipelinePainter::clearRenderStages()
 {
-    for(QList<RenderStage*>::iterator i = m_stages.begin(); i != m_stages.end(); i++)
+    for(QList<AbstractRenderStage*>::iterator i = m_stages.begin(); i != m_stages.end(); i++)
     {
         delete (*i);
     }

@@ -7,7 +7,6 @@
 class Viewer;
 class AbstractScenePainter;
 class DataBlockRegistry;
-class Camera;
 class AbstractNavigation;
 
 class CGSee : public AbstractApplication

@@ -9,7 +9,7 @@
 #include <core/camera/abstractcamera.h>
 
 
-class MonoCameraNew;
+class MonoCamera;
 class Program;
 class ViewFrustum;
 
@@ -22,16 +22,13 @@ public:
 
     virtual bool isStereo() override;
 
-    virtual void setView(const glm::mat4 & view) override;
-
-    virtual const MonoCameraNew * leftCamera() const;
-    virtual const MonoCameraNew * rightCamera() const;
+    virtual const MonoCamera * leftCamera();
+    virtual const MonoCamera * rightCamera();
 
 protected:
-    virtual void update() override;
+    virtual void recalculate() override;
 
 protected:
-    Projection * m_projection;
-    MonoCameraNew * m_leftCamera;
-    MonoCameraNew * m_rightCamera;
+    MonoCamera * m_leftCamera;
+    MonoCamera * m_rightCamera;
 };

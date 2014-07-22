@@ -14,7 +14,7 @@
 
 #include <core/navigation/navigationhistory.h>
 #include <core/navigation/abstractnavigation.h>
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 #include <core/painter/abstractpainter.h>
 #include <core/painter/abstractscenepainter.h>
 #include <core/abstracteventhandler.h>
@@ -168,7 +168,7 @@ AbstractPainter * Canvas::painter()
     return m_painter;
 }
 
-void Canvas::setCamera(Camera * camera)
+void Canvas::setCamera(AbstractCamera * camera)
 {
     if(m_camera == camera)
         return;
@@ -186,7 +186,7 @@ void Canvas::setCamera(Camera * camera)
     //update();
 }
 
-Camera * Canvas::camera()
+AbstractCamera * Canvas::camera()
 {
     return m_camera;
 }
@@ -241,7 +241,6 @@ const QImage Canvas::capture(
 
     m_painter->resize(tileW, tileH);
     m_camera->setViewport(tileW, tileH);
-    m_camera->update(); // ToDo: required?
 
 
     for (GLuint y = 0; y < frameH; y += tileH)

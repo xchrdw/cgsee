@@ -1,41 +1,41 @@
-#pragma once
+//#pragma once
 
-#include <core/core_api.h>
+//#include <core/core_api.h>
 
-class Camera;
-class Group;
-class Program;
-class FrameBufferObject;
-class FileAssociatedShader;
+//class Camera;
+//class Group;
+//class Program;
+//class FrameBufferObject;
+//class FileAssociatedShader;
 
-class CORE_API RenderingPass
-{
-public:
-    RenderingPass(Camera * camera);
-    virtual ~RenderingPass(void);
+//class CORE_API RenderingPass
+//{
+//public:
+//    RenderingPass(Camera * camera);
+//    virtual ~RenderingPass(void);
 
-    bool isActive();
-    void setActive(bool value);
+//    bool isActive();
+//    void setActive(bool value);
 
-    void applyIfActive();
+//    void applyIfActive();
 
-    Camera * camera();
+//    Camera * camera();
 
-    virtual void setUniforms() = 0;
-    virtual void resize(const int width, const int height) = 0;
+//    virtual void setUniforms() = 0;
+//    virtual void resize(const int width, const int height) = 0;
 
-    virtual FrameBufferObject * output() = 0;
-    virtual void clearFbos() = 0;
-    virtual void sceneChanged(Group * scene);
+//    virtual FrameBufferObject * output() = 0;
+//    virtual void clearFbos() = 0;
+//    virtual void sceneChanged(Group * scene);
 
-protected:
-    virtual void render() = 0;
-    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
+//protected:
+//    virtual void render() = 0;
+//    void drawScene(Camera * camera, Program * program, FrameBufferObject * fbo);
 
-protected:
-    Camera * m_camera;
+//protected:
+//    Camera * m_camera;
 
-private:
-    bool m_active;
-};
+//private:
+//    bool m_active;
+//};
 

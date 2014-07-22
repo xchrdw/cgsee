@@ -9,12 +9,12 @@
 
 #include <signalzeug/Signal.h>
 
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 
 const float AbstractNavigation::TIMER_MS = 1000.f / 30.f;
 const float AbstractNavigation::DURATION = 1000.f / 3.f;
 
-AbstractNavigation::AbstractNavigation(Camera * camera)
+AbstractNavigation::AbstractNavigation(AbstractCamera * camera)
     : m_width(camera->viewport().x)
     , m_height(camera->viewport().y)
     , m_BBRadius(0)
@@ -94,7 +94,7 @@ void AbstractNavigation::setCanvas(QWidget * canvas)
     m_canvas = canvas;
 }
 
-void AbstractNavigation::setCamera(Camera * camera)
+void AbstractNavigation::setCamera(AbstractCamera * camera)
 {
     m_camera = camera;
     updateCamera();

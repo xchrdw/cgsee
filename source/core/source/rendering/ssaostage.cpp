@@ -8,7 +8,7 @@
 #include <core/scenegraph/drawvisitor.h>
 
 SsaoStage::SsaoStage(PipelinePainter & painter)
-    : PostProcessingStage(painter)
+    : AbstractPostProcessingStage(painter)
 {
     //m_program->attach(myFancyShader);
 }

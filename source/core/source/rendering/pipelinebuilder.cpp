@@ -29,7 +29,7 @@ bool PipelineBuilder::build()
     }
     else
     {
-        MonoCameraNew * monoCamera = dynamic_cast<MonoCameraNew*>(m_camera);
+        MonoCamera * monoCamera = dynamic_cast<MonoCamera*>(m_camera);
         assert(monoCamera);
         if (!buildPipeline(monoCamera))
             return false;
@@ -38,7 +38,7 @@ bool PipelineBuilder::build()
     return true;
 }
 
-bool PipelineBuilder::buildPipeline(const MonoCameraNew * camera)
+bool PipelineBuilder::buildPipeline(const MonoCamera * camera)
 {
     if (!addColorIdStage(camera))
         return false;
@@ -55,7 +55,7 @@ bool PipelineBuilder::addJoinStage()
     return true;
 }
 
-bool PipelineBuilder::addColorIdStage(const MonoCameraNew * camera)
+bool PipelineBuilder::addColorIdStage(const MonoCamera * camera)
 {
     //TODO
     return true;

@@ -8,12 +8,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <core/framebufferobject.h>
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 #include <core/scenegraph/node.h>
 #include <core/viewfrustum.h>
 
 
-CullingVisitor::CullingVisitor(Camera *camera, Program *program, glm::mat4 transform) :
+CullingVisitor::CullingVisitor(AbstractCamera *camera, Program *program, glm::mat4 transform) :
     m_camera(camera),
     m_program(program),
     m_transform(transform),

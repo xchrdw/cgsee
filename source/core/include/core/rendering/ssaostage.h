@@ -1,11 +1,11 @@
 #pragma once
 
 #include <core/core_api.h>
-#include <core/rendering/postprocessingstage.h>
+#include <core/rendering/abstractpostprocessingstage.h>
 
 
 // under construction
-class CORE_API SsaoStage : public PostProcessingStage
+class CORE_API SsaoStage : public AbstractPostProcessingStage
 {
 public:
     SsaoStage(PipelinePainter & painter);

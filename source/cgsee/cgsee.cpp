@@ -2,7 +2,8 @@
 
 #include <core/datacore/datablock.h>
 #include <gui/viewer.h>
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
+#include <core/camera/monocamera.h>
 #include <core/navigation/arcballnavigation.h>
 #include <core/coordinateprovider.h>
 #include <core/painter/pipelinepainter.h>
@@ -21,7 +22,7 @@ CGSee::CGSee(int & argc, char ** argv)
     m_viewer->setWindowTitle(title());
     m_viewer->initialize(format());
 
-    Camera * camera = new Camera("main");
+    AbstractCamera * camera = new MonoCamera("main");
     camera->selectImplementation("MonoCamera");
     
     camera->setFovy (45.0f);

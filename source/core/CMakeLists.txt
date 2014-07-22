@@ -72,19 +72,15 @@ set(sources
 	${source_path}/aabb.cpp
 	${source_path}/abstractapplication.cpp
 	${source_path}/abstractmodelloader.cpp
-	${source_path}/abstractstereocamera.cpp
 	${source_path}/assimploader.cpp
 	${source_path}/autotimer.cpp
 	${source_path}/bufferobject.cpp
-	${source_path}/camera.cpp
 	${source_path}/camera/abstractcamera.cpp
 	${source_path}/camera/monocamera.cpp
 	${source_path}/camera/projection.cpp
 	${source_path}/camera/stereocamera.cpp
-	${source_path}/cameraimplementation.cpp
 	${source_path}/chronotimer.cpp
 	${source_path}/chronotimer.h
-	${source_path}/convergentCamera.cpp
 	${source_path}/coordinateprovider.cpp
 	${source_path}/datacore/typefunctions.cpp
 	${source_path}/datacore/datablock.cpp
@@ -100,7 +96,6 @@ set(sources
 	${source_path}/material/material.cpp
 	${source_path}/material/materialdictionary.cpp
 	${source_path}/messagehandler.cpp
-	${source_path}/monocamera.cpp
 	${source_path}/navigation/flightnavigation.cpp
 	${source_path}/navigation/fpsnavigation.cpp
 	${source_path}/navigation/abstractnavigation.cpp
@@ -108,11 +103,9 @@ set(sources
 	${source_path}/navigation/navigationhistory.cpp
 	${source_path}/navigation/navigationhistoryelement.cpp
 	${source_path}/objloader.cpp
-	${source_path}/offAxisCamera.cpp
 	${source_path}/painter/abstractscenepainter.cpp
 	${source_path}/painter/abstractpainter.cpp
     ${source_path}/painter/pipelinepainter.cpp
-	${source_path}/parallelCamera.cpp
 	${source_path}/plane.cpp
 	${source_path}/program.cpp
 	${source_path}/property/abstractproperty.cpp
@@ -126,10 +119,10 @@ set(sources
 	${source_path}/rendering/boundingboxpass.cpp
 	${source_path}/rendering/renderingpass.cpp
     ${source_path}/rendering/renderstage.cpp
-	${source_path}/rendering/postprocessingstage.cpp
+	${source_path}/rendering/abstractpostprocessingstage.cpp
     ${source_path}/rendering/ssaostage.cpp
-	${source_path}/rendering/scenerenderstage.cpp
-    ${source_path}/rendering/basicrenderstage.cpp
+	${source_path}/rendering/abstractscenerenderstage.cpp
+    ${source_path}/rendering/abstractrenderstage.cpp
 	${source_path}/rendering/lightingsystem.cpp
 	${source_path}/rendering/lightsource.cpp
 	${source_path}/rendering/rasterizer.cpp
@@ -171,18 +164,14 @@ set(api_includes
 	${include_path}/abstractapplication.h
 	${include_path}/abstracteventhandler.h
 	${include_path}/abstractmodelloader.h
-	${include_path}/abstractstereocamera.h
 	${include_path}/abstracttimer.h
 	${include_path}/assimploader.h
 	${include_path}/autotimer.h
 	${include_path}/bufferobject.h
-	${include_path}/camera.h
 	${include_path}/camera/abstractcamera.h
 	${include_path}/camera/monocamera.h
 	${include_path}/camera/projection.h
 	${include_path}/camera/stereocamera.h
-	${include_path}/cameraimplementation.h
-	${include_path}/convergentcamera.h
 	${include_path}/coordinateprovider.h
 	${include_path}/core_api.h
 	${include_path}/datacore/datablock.h
@@ -204,7 +193,6 @@ set(api_includes
 	${include_path}/material/materialdictionary.h
 	${include_path}/mathmacros.h
 	${include_path}/messagehandler.h
-	${include_path}/monocamera.h
 	${include_path}/navigation/fpsnavigation.h
 	${include_path}/navigation/abstractnavigation.h
 	${include_path}/navigation/flightnavigation.h
@@ -212,11 +200,9 @@ set(api_includes
 	${include_path}/navigation/navigationhistory.h
 	${include_path}/navigation/navigationhistoryelement.h
 	${include_path}/objloader.h
-	${include_path}/offaxiscamera.h
 	${include_path}/painter/abstractscenepainter.h
 	${include_path}/painter/abstractpainter.h
     ${include_path}/painter/pipelinepainter.h
-	${include_path}/parallelcamera.h
 	${include_path}/plane.h
 	${include_path}/program.h
 	${include_path}/property/limitedproperty.h
@@ -230,10 +216,10 @@ set(api_includes
     ${include_path}/renderbufferobject.h
 	${include_path}/rendering/rendertechnique.h
     ${include_path}/rendering/renderstage.h
-	${include_path}/rendering/postprocessingstage.h
+	${include_path}/rendering/abstractpostprocessingstage.h
     ${include_path}/rendering/ssaostage.h
-	${include_path}/rendering/scenerenderstage.h
-    ${include_path}/rendering/basicrenderstage.h
+	${include_path}/rendering/abstractscenerenderstage.h
+    ${include_path}/rendering/abstractrenderstage.h
 	${include_path}/rendering/shadowmapping.h
 	${include_path}/rendering/ssaoeffect.h
 	${include_path}/rendering/normalzpass.h

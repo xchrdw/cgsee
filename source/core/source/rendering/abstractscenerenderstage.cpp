@@ -1,5 +1,5 @@
 
-#include <core/rendering/scenerenderstage.h>
+#include <core/rendering/abstractscenerenderstage.h>
 
 #include <glm/mat4x4.hpp>
 
@@ -7,20 +7,20 @@
 #include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 
-SceneRenderStage::SceneRenderStage(PipelinePainter & painter)
-    : RenderStage(painter)
+AbstractSceneRenderStage::AbstractSceneRenderStage(PipelinePainter & painter)
+    : AbstractRenderStage(painter)
 {
 	m_program = new Program();
 }
 
-SceneRenderStage::~SceneRenderStage(void)
+AbstractSceneRenderStage::~AbstractSceneRenderStage(void)
 {
     delete m_program;
 }
 
-void SceneRenderStage::render()
+void AbstractSceneRenderStage::render()
 {
     bindFBO();
     drawScene(m_painter.camera()->transform(), m_program);

@@ -7,7 +7,7 @@
 class CORE_API ArcballNavigation : public AbstractNavigation
 {
 public:
-    ArcballNavigation(Camera * camera);
+    ArcballNavigation(AbstractCamera * camera);
     ~ArcballNavigation();
 
     virtual void mouseMoveEvent(QMouseEvent * event) override;

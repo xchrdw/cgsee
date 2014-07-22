@@ -31,7 +31,7 @@ class QTextEdit;
 class Ui_Viewer;
 class Canvas;
 class AbstractNavigation;
-class Camera;
+class AbstractCamera;
 class AbstractScenePainter;
 
 class FileNavigator;
@@ -72,8 +72,8 @@ public:
     void setPainter(AbstractScenePainter * painter);
     AbstractScenePainter * painter();
 
-    void setCamera(Camera * camera);
-    Camera * camera();
+    void setCamera(AbstractCamera * camera);
+    AbstractCamera * camera();
 
     void setCoordinateProvider(CoordinateProvider * coordinateProvider);
     CoordinateProvider * coordinateProvider();
@@ -221,7 +221,7 @@ protected:
     Canvas * m_qtCanvas;
     AbstractNavigation * m_navigation;
 
-    Camera * m_camera;
+    AbstractCamera * m_camera;
     QVector<glm::mat4> m_savedViews;
 
     QDockWidget * m_dockNavigator;

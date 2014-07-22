@@ -56,8 +56,6 @@ extern GLXContext glXGetCurrentContext( void );
 #include <gui/fileNavigator.h>
 #include <gui/fileExplorer.h>
 
-#include "../../cgsee/painter.h" // TODO
-
 #include <core/navigation/abstractnavigation.h>
 #include <core/navigation/flightnavigation.h>
 #include <core/navigation/fpsnavigation.h>
@@ -68,8 +66,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/glformat.h>
 #include <core/assimploader.h>
 
-#include <core/camera.h>
-#include <core/parallelcamera.h>
+#include <core/camera/abstractcamera.h>
 #include <core/coordinateprovider.h>
 
 #include <core/aabb.h>
@@ -345,7 +342,7 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
     if (m_camera != nullptr)
-        m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
+        m_qtCanvas->setRefreshTimeMSec(); //TODO , current default value 1
 
     QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
 
@@ -588,8 +585,6 @@ void Viewer::on_loadFile(const QString & path)
     {
         assignScene(m_scene);
         dynamic_cast<AbstractNavigation*>(m_qtCanvas->eventHandler())->rescaleScene(m_scene);
-        if (m_coordinateProvider)
-            m_coordinateProvider->assignPass(painter()->getSharedPass());
         painter()->assignScene(m_scene);
 		dynamic_cast<AbstractNavigation*>(m_qtCanvas->eventHandler())->sceneChanged(m_scene);
         m_qtCanvas->update();
@@ -626,7 +621,7 @@ void Viewer::updateCameraSelection(QString cameraName) const
 void Viewer::updateRenderingSelection(QString rendering) const
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->selectRendering(rendering);
-    m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
+    m_qtCanvas->setRefreshTimeMSec(); //TODO , current default value 1
 }
 
 void Viewer::on_renderingRasterizerAction_triggered()
@@ -882,9 +877,7 @@ AbstractNavigation * Viewer::navigation()
 void Viewer::setCamera(Camera * camera )
 {
     m_camera = camera;
-	m_qtCanvas->setCamera(camera);
-    if ((m_camera != nullptr) && (m_qtCanvas != nullptr))
-        m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());
+    m_qtCanvas->setCamera(camera);
 }
 
 Camera * Viewer::camera()

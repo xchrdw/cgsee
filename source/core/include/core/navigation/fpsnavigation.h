@@ -4,10 +4,12 @@
 
 #include <core/navigation/flightnavigation.h>
 
+class AbstractCamera;
+
 class CORE_API FpsNavigation : public FlightNavigation
 {
 public:
-    FpsNavigation(Camera * camera);
+    FpsNavigation(AbstractCamera * camera);
     ~FpsNavigation();
 
     virtual void keyPressEvent(QKeyEvent *event) override;

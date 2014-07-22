@@ -16,14 +16,14 @@
 
 #include <core/abstracteventhandler.h>
 
-class Camera;
+class AbstractCamera;
 class QWidget;
 class Group;
 
 class CORE_API AbstractNavigation : public QObject, public AbstractEventHandler
 {    
 public:
-    AbstractNavigation(Camera *camera);
+    AbstractNavigation(AbstractCamera *camera);
     virtual ~ AbstractNavigation();
 
     virtual void reset();
@@ -53,7 +53,7 @@ public:
 
     void rescaleScene(Group * scene);
     void sceneChanged(Group * scene);
-    void setCamera(Camera * camera);
+    void setCamera(AbstractCamera * camera);
 
     glm::mat4 defaultView();
     glm::mat4 frontview();
@@ -94,7 +94,7 @@ protected:
     float m_fovy;
     glm::mat4 m_viewmatrix;
 
-    Camera * m_camera;
+    AbstractCamera * m_camera;
     static const float TIMER_MS;
     static const float DURATION;
 

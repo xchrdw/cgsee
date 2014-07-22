@@ -4,10 +4,10 @@
 //glm to rotate around axis
 #include <glm/gtx/rotate_vector.hpp>
 
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 
 
-FpsNavigation::FpsNavigation(Camera * camera)
+FpsNavigation::FpsNavigation(AbstractCamera * camera)
 : FlightNavigation(camera)
 , m_inGameMode(false)
 , m_lastMousePosition(glm::vec2(-1,-1))

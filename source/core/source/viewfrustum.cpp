@@ -4,19 +4,13 @@
 #include <core/aabb.h>
 #include <core/scenegraph/node.h>
 #include <core/scenegraph/group.h>
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 #include <core/plane.h>
 
-ViewFrustum::ViewFrustum(Camera *camera) :
+ViewFrustum::ViewFrustum(AbstractCamera *camera) :
     m_camera(camera),
     m_planes(),
     m_vertices(),
-    m_dirty(true)
-{
-}
-ViewFrustum::ViewFrustum(AbstractCamera *camera) :
-    m_camera(nullptr),
-    m_planes(),
     m_dirty(true)
 {
 }

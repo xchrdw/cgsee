@@ -7,7 +7,7 @@
 class CORE_API FlightNavigation : public AbstractNavigation
 {
 public:
-    FlightNavigation(Camera * camera);
+    FlightNavigation(AbstractCamera * camera);
     ~FlightNavigation();
 
     virtual void keyPressEvent(QKeyEvent *event) override;

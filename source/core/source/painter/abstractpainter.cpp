@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QImage>
 
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 #include <core/gpuquery.h>
 #include <core/property/propertylist.h>
 

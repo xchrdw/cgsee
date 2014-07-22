@@ -9,9 +9,9 @@
 
 #include <core/scenegraph/group.h>
 
-#include <core/viewfrustum.h>
-
 class Projection;
+class Program;
+class ViewFrustum;
 
 class CORE_API AbstractCamera : public Group
 {
@@ -26,7 +26,7 @@ public:
     static const QString ZFAR_UNIFORM;
     static const QString CAMERAPOSITION_UNIFORM;
 
-    AbstractCamera(const QString & name = "unnamed");
+    AbstractCamera(const QString & name, Projection * projection);
     virtual ~AbstractCamera();
 
     virtual bool isStereo() = 0;
@@ -47,15 +47,28 @@ public:
     virtual void setZFar(const float z);
     virtual const glm::mat4 & projection() const;
 
-    virtual void setView(const glm::mat4 & view) = 0;
+    virtual void setView(const glm::mat4 & view);
+    virtual const glm::mat4 & view() const;
+
+    virtual const ViewFrustum * viewFrustum();
+    virtual glm::vec3 eye() const;
+    virtual glm::vec3 up() const;
+    virtual glm::vec3 center() const;
 
     virtual void invalidate();
 
+    //TODO move to appropiate RenderStage
+    virtual void setUniformsIn(const Program & program);
+
 protected:
     virtual void update();
+    virtual void recalculate();
     virtual void invalidateChildren() override;
 
 protected:
     mutable bool m_invalid;
     Projection * m_projection;
+
+    glm::mat4 m_view;
+    ViewFrustum * m_viewFrustum;
 };

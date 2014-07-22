@@ -2,7 +2,7 @@
 #include <core/painter/abstractscenepainter.h>
 
 #include <core/scenegraph/group.h>
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 
 
 AbstractScenePainter::AbstractScenePainter()
@@ -24,12 +24,12 @@ void AbstractScenePainter::assignScene(Group * scene)
 
     m_scene = scene;
     if (m_initialized)
-        this->camera()->append(m_scene);
+        camera()->append(m_scene);
 }
 
 Group * AbstractScenePainter::retainScene()
 {
-    this->camera()->remove(m_scene, false);
+    camera()->remove(m_scene, false);
     Group * scene = m_scene;
     m_scene = nullptr;
     return scene;

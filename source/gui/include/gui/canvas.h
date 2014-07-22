@@ -15,7 +15,7 @@ class Timer;
 
 class AbstractPainter;
 class AbstractEventHandler;
-class Camera;
+class AbstractCamera;
 
 class GUI_API Canvas : public QGLWidget
 {
@@ -30,8 +30,8 @@ public:
     NavigationHistory * navigationHistory();
     void setNavigationHistory(AbstractEventHandler * navigation);
     void saveHistory(glm::mat4 viewmatrix, float fovy);
-    void setCamera(Camera * camera);
-    Camera * camera();
+    void setCamera(AbstractCamera * camera);
+    AbstractCamera * camera();
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
@@ -52,7 +52,7 @@ public:
 
     virtual void resize(int width, int height);
 
-    virtual void setRefreshTimeMSec(int msec);
+    virtual void setRefreshTimeMSec(int msec = 1);
     int refreshTimeMSec() const;
 
 signals:
@@ -84,7 +84,7 @@ protected:
 protected:
     NavigationHistory * m_navigationHistory;
     AbstractPainter * m_painter;
-    Camera * m_camera;
+    AbstractCamera * m_camera;
     AbstractEventHandler * m_eventHandler;
 
     int m_refreshTimeMSec;

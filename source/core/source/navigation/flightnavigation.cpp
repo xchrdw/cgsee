@@ -6,12 +6,12 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 
 
 float angle = 0.05f;
 
-FlightNavigation::FlightNavigation(Camera * camera)
+FlightNavigation::FlightNavigation(AbstractCamera * camera)
     : AbstractNavigation(camera)
     , m_direction(0)
     , m_yprAngle(0)
@@ -122,9 +122,9 @@ void FlightNavigation::keyReleaseEvent(QKeyEvent *event)
 
 void FlightNavigation::setFromMatrix(const glm::mat4 & view)
 {
-    m_up = m_camera->getUp();
-    m_eye = m_camera->getEye();
-    m_center = m_camera->getCenter();
+    m_up = m_camera->up();
+    m_eye = m_camera->eye();
+    m_center = m_camera->center();
     updateView();
 }
 

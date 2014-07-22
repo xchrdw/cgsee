@@ -6,8 +6,7 @@
 
 #include <QVector>
 
-class RenderingPass;
-class Camera;
+class AbstractCamera;
 class Node;
 class Group;
 
@@ -18,16 +17,7 @@ public:
     CoordinateProvider();
     virtual ~CoordinateProvider();
 
-    unsigned int objID(unsigned int x, unsigned int y);
-    glm::dvec3 pointAt(unsigned int x, unsigned int y);
-
-    void assignCamera(Camera * camera);
-    void assignPass(RenderingPass * pass);
-
-    void resize(const int width, const int height);
-
-protected:
-    glm::dvec3 unproject(float x, float y, float z);
-
-    RenderingPass * m_pass;
+    virtual unsigned int getObjectID(unsigned int x, unsigned int y) = 0;
+    virtual glm::dvec3 get3DPoint(unsigned int x, unsigned int y) = 0;
+    virtual glm::ivec2 get2DPoint(unsigned int x, unsigned int y) = 0;
 };

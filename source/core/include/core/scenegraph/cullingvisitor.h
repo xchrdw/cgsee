@@ -11,7 +11,7 @@
 #include <core/scenegraph/scenevisitorinterface.h>
 
 
-class Camera;
+class AbstractCamera;
 class FrameBufferObject;
 class Node;
 class ViewFrustum;
@@ -22,14 +22,14 @@ class CORE_API CullingVisitor final : public SceneVisitorInterface
 public:
     typedef std::vector<std::shared_ptr<Node> >::iterator t_nodeIter;
     
-    CullingVisitor(Camera *camera, Program *program, glm::mat4 transform);
+    CullingVisitor(AbstractCamera *camera, Program *program, glm::mat4 transform);
     ~CullingVisitor();
     bool operator() (Node &node);
 
 private:
-    Camera *m_camera;
+    AbstractCamera *m_camera;
     Program *m_program;
     glm::mat4 m_transform;
-    ViewFrustum *m_viewFrustum;
+    const ViewFrustum *m_viewFrustum;
     bool m_cull;
 };

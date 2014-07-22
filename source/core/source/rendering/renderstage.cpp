@@ -1,54 +1,52 @@
+
 #include <core/rendering/renderstage.h>
 
 #include <glm/mat4x4.hpp>
-#include <core/gpuquery.h>
 
 #include <core/framebufferobject.h>
 #include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
-#include <core/scenegraph/group.h>
-
+#include <core/camera/abstractcamera.h>
+#include <core/fileassociatedshader.h>
 
 RenderStage::RenderStage(PipelinePainter & painter)
-    : m_painter(painter)
-    , m_fbo(0)
+    : AbstractSceneRenderStage(painter)
+    , m_normalz(new TextureObject(GL_RGBA16F, GL_RGBA, GL_FLOAT))
+    , m_colorId(nullptr)
+    , m_depth(new RenderBufferObject(GL_DEPTH24_STENCIL8))
 {
-    glGenFramebuffers(1, &m_fbo);
-    glError();
+
+    m_painter.addTexture("normalz", m_normalz);
+
+    m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
+    m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/depth_util.frag"));
+    m_program->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/normalz.vert"));
 }
 
 RenderStage::~RenderStage(void)
 {
-    glDeleteFramebuffers(1, &m_fbo);
-    glError();
+
 }
 
-void RenderStage::drawScene(const glm::mat4 & transform, Program * program)
+void RenderStage::render()
 {
-    SceneTraverser traverser;
-    DrawVisitor drawVisitor(program, transform);
-    traverser.traverse(*(m_painter.scene()), drawVisitor);
+    m_painter.camera()->setUniformsIn(*m_program);
+    bindFBO();
+    drawScene(m_painter.camera()->transform(), m_program);
+    releaseFBO();
+}
+void RenderStage::reloadShaders()
+{
+    //TODO deprecated (glow)
 }
 
-void RenderStage::bindFBO()
+void RenderStage::resize(const int width, const int height)
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glError();
-}
-
-void RenderStage::releaseFBO()
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glError();
-}
-
-bool RenderStage::isSceneInvalid()
-{
-    return m_painter.isSceneInvalid();
-}
-
-bool RenderStage::isViewInvalid()
-{
-    return m_painter.isViewInvalid();
+    m_normalz->resize(width, height);
+    m_depth->resize(width, height);
+    bindFBO();
+    m_normalz->attachTo(GL_COLOR_ATTACHMENT0);
+    m_depth->attachTo(GL_DEPTH_STENCIL_ATTACHMENT);
+    releaseFBO();
 }

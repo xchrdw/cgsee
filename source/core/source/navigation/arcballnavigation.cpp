@@ -3,9 +3,9 @@
 
 #include <glm/gtx/transform.hpp>
 
-#include <core/camera.h>
+#include <core/camera/abstractcamera.h>
 
-ArcballNavigation::ArcballNavigation(Camera * camera)
+ArcballNavigation::ArcballNavigation(AbstractCamera * camera)
     : AbstractNavigation(camera)
     , m_mouse_last(0)
     , m_mouse_cur(0)

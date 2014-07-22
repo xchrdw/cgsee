@@ -13,11 +13,10 @@
 #include <core/camera/monocamera.h>
 
 StereoCamera::StereoCamera(const QString & name, Projection * projection)
-: AbstractCamera(name)
-, m_projection(projection)
+: AbstractCamera(name, projection)
 {
-    m_leftCamera = new MonoCameraNew(QString(name).append("_left"), projection);
-    m_rightCamera = new MonoCameraNew(QString(name).append("_right"), projection);
+    m_leftCamera = new MonoCamera(QString(name).append("_left"), projection);
+    m_rightCamera = new MonoCamera(QString(name).append("_right"), projection);
 }
 
 StereoCamera::~StereoCamera()
@@ -31,23 +30,23 @@ bool StereoCamera::isStereo()
     return true;
 }
 
-void StereoCamera::setView(const glm::mat4 & view)
+const MonoCamera * StereoCamera::leftCamera()
 {
-    //TODO implement stereo transformation!
-    m_leftCamera->setView(view);
-    m_rightCamera->setView(view);
-}
-
-const MonoCameraNew * StereoCamera::leftCamera() const
-{
+    update();
     return m_leftCamera;
 }
-const MonoCameraNew * StereoCamera::rightCamera() const
+const MonoCamera * StereoCamera::rightCamera()
 {
+    update();
     return m_rightCamera;
 }
 
-void StereoCamera::update()
+void StereoCamera::recalculate()
 {
-    //TODO m_*Camera->setView(/*fancy transformed matrix*/);
+    AbstractCamera::recalculate();
+
+    //TODO implement stereo transformation!
+
+    m_leftCamera->setView(m_view);
+    m_rightCamera->setView(m_view);
 }

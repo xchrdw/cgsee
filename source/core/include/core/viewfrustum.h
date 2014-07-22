@@ -8,14 +8,12 @@
 
 #include <core/plane.h>
 
-class Camera;
 class AbstractCamera;
 class AxisAlignedBoundingBox;
 
 class CORE_API ViewFrustum
 {
 public:
-    ViewFrustum(Camera *camera);
     ViewFrustum(AbstractCamera *camera);
     virtual ~ViewFrustum();
 
@@ -35,7 +33,7 @@ public:
 
 protected:
 
-    Camera *m_camera;
+    AbstractCamera *m_camera;
     std::array<Plane, 6> m_planes;
     std::array<glm::vec3, 8> m_vertices;
     bool m_dirty;

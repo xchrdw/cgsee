@@ -1,9 +1,10 @@
 #pragma once
 
 #include <core/core_api.h>
-#include <core/gpuquery.h>
 
 #include <glm/gtc/matrix_transform.hpp>
+
+//TODO glow integration #include <glow/FrameBufferObject.h>
 
 #include <memory>
 
@@ -12,9 +13,9 @@
 #include <QList>
 
 #include <core/painter/abstractscenepainter.h>
+#include <core/coordinateprovider.h>
 
 class DataBlockRegistry;
-class Camera;
 class Group;
 class ScreenQuad;
 class Program;
@@ -22,15 +23,16 @@ class FrameBufferObject;
 class AbstractProperty;
 class RenderingPass;
 class LightSourcePass;
-class RenderStage;
+class AbstractRenderStage;
 class PipelineBuilder;
 class TextureObject;
+class AbstractCamera;
 
-class CORE_API PipelinePainter : public AbstractScenePainter // , public PropertyGroup
+class CORE_API PipelinePainter : public AbstractScenePainter, public CoordinateProvider // , public PropertyGroup
 {
 public:
-    PipelinePainter(Camera * camera);
-    PipelinePainter(Camera * camera, Group * scene);
+    PipelinePainter(AbstractCamera * camera);
+    PipelinePainter(AbstractCamera * camera, Group * scene);
     virtual ~PipelinePainter();
 
     virtual bool initialize() override;
@@ -57,14 +59,19 @@ public:
     virtual RenderingPass *  getSharedPass() override;
     //TODO remove as soon as possible </end>
 
+    //from CoordinateProvider
+    virtual unsigned int getObjectID(unsigned int x, unsigned int y) override;
+    virtual glm::dvec3 get3DPoint(unsigned int x, unsigned int y) override;
+    virtual glm::ivec2 get2DPoint(unsigned int x, unsigned int y) override;
+
     Group * scene();
     const ScreenQuad * screenQuad();
-    virtual Camera * camera() override;
+    virtual AbstractCamera * camera() override;
 
-    void addRenderStage(RenderStage * renderStage);
+    void addRenderStage(AbstractRenderStage * renderStage);
 
     void setScene(Group * scene);
-    void setCamera(Camera * camera);
+    void setCamera(AbstractCamera * camera);
 
     bool isSceneInvalid();
     bool isViewInvalid();
@@ -76,21 +83,24 @@ public:
     void removeTexture(QString name);
 
 protected:
-
+    glm::dvec3 unproject(float x, float y, float z);
     void setupPipeline(PipelineBuilder & builder);
     void clearRenderStages();
 
 
 protected:
 
-    QList<RenderStage *> m_stages;
+    QList<AbstractRenderStage *> m_stages;
 
     QString m_samplerToDisplay;
     QMap<QString, TextureObject*> m_textures;
 
-    Camera * m_camera;
+    AbstractCamera * m_camera;
     Group * m_scene;
 
     ScreenQuad * m_quad;
     Program * m_flush;
+
+    //for CoordinateProvider
+    //glow::FrameBufferObject m_coordFBO;
 };

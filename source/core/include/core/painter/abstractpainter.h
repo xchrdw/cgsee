@@ -7,7 +7,7 @@
 #include <core/glformat.h>
 
 class QKeyEvent;
-class Camera;
+class AbstractCamera;
 class AbstractResizable;
 class PropertyList;
 
@@ -26,7 +26,7 @@ public:
 
 protected:
     virtual bool initialize() = 0;
-    virtual Camera * camera() = 0;
+    virtual AbstractCamera * camera() = 0;
 
 protected:
     bool m_initialized;
