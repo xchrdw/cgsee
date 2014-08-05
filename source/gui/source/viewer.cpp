@@ -609,7 +609,9 @@ void Viewer::on_loadFile(const QString & path)
         else
             m_painter->assignScene(m_scene);
 
-        setNavigation(new ArcballNavigation(m_camera));
+        // need to reset navigation according to filetype
+        // need 2D navigation
+        // setNavigation(new ArcballNavigation(m_camera));
 
         m_navigation->sceneChanged(m_scene);
         m_qtCanvas->update();//TODO should be done by timer

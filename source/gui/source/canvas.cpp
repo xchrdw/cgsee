@@ -14,9 +14,13 @@
 
 #include <core/navigation/navigationhistory.h>
 #include <core/navigation/abstractnavigation.h>
+
 #include <core/camera/abstractcamera.h>
+#include <core/camera/projection.h>
+
 #include <core/painter/abstractpainter.h>
 #include <core/painter/abstractscenepainter.h>
+
 #include <core/abstracteventhandler.h>
 #include <core/gpuquery.h>
 #include <core/glformat.h>
@@ -192,6 +196,8 @@ const QImage Canvas::capture(
     const GLuint frameW = size.width();
     const GLuint frameH = size.height();
 
+    Projection * projection = new Projection(*camera->getProjection());
+
     const glm::mat4 proj(aspect ? glm::perspective(camera->fovy()
         , static_cast<float>(frameW) / static_cast<float>(frameH)
         , camera->zNear(), camera->zFar()) : camera->projection());
@@ -229,8 +235,11 @@ const QImage Canvas::capture(
         }
     p.end();
 
-	resizeGL(w, h);
-    camera->setTransform(proj * view);
+    resizeGL(w, h);
+    Projection * tempProjection = camera->getProjection();
+    camera->setProjection(projection);
+    delete tempProjection;
+    camera->setView(view);
 
     doneCurrent();
 

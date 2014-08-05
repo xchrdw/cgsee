@@ -33,7 +33,8 @@ void RenderStage::render()
 {
     m_painter.camera()->setUniformsIn(*m_program);
     bindFBO();
-    drawScene(m_painter.camera()->transform(), m_program);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    drawScene(m_painter.camera()->viewProjection(), m_program);
     releaseFBO();
 }
 void RenderStage::reloadShaders()

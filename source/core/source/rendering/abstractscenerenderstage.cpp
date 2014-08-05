@@ -23,6 +23,6 @@ AbstractSceneRenderStage::~AbstractSceneRenderStage(void)
 void AbstractSceneRenderStage::render()
 {
     bindFBO();
-    drawScene(m_painter.camera()->transform(), m_program);
+    drawScene(m_painter.camera()->viewProjection(), m_program);
     releaseFBO();
 }

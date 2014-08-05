@@ -45,6 +45,12 @@ AbstractCamera::~AbstractCamera()
     delete m_viewFrustum;
 }
 
+glm::mat4 AbstractCamera::viewProjection()
+{
+    update();
+    return m_viewProjection;
+}
+
 //takes ownership of projection
 void AbstractCamera::setProjection(Projection * projection)
 {
@@ -53,8 +59,9 @@ void AbstractCamera::setProjection(Projection * projection)
 
     delete m_projection;
     m_projection = projection;
+    invalidate();
 }
-const Projection * AbstractCamera::getProjection() const
+Projection * AbstractCamera::getProjection() const
 {
     return m_projection;
 }
@@ -122,7 +129,7 @@ void AbstractCamera::update()
 
 void AbstractCamera::recalculate()
 {
-    setTransform(projection() * m_view);//TODO different 'transform' interpretations (-> scene graph)
+    m_viewProjection = projection() * m_view;//TODO different 'transform' interpretations (-> scene graph)
 
     m_viewFrustum->update();
 }

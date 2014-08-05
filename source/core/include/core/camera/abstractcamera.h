@@ -34,8 +34,10 @@ public:
 
     virtual bool isStereo() const = 0;
 
+    virtual glm::mat4 viewProjection();
+
     virtual void setProjection(Projection * projection);
-    virtual const Projection * getProjection() const;
+    virtual Projection * getProjection() const;
 
     virtual void setViewport(const glm::ivec2 & size);
     virtual void setViewport(const int width, const int height);
@@ -73,4 +75,6 @@ protected:
 
     glm::mat4 m_view;
     ViewFrustum * m_viewFrustum;
+
+    glm::mat4 m_viewProjection;
 };

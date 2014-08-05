@@ -89,7 +89,9 @@ void AbstractNavigation::setViewPort( const int width, const int height )
 void AbstractNavigation::setCamera(AbstractCamera * camera)
 {
     m_camera = camera;
-    updateCamera();
+    m_fovy = camera->fovy();
+    m_viewmatrix = camera->view();
+    onCameraChanged();
 }
 
 
@@ -164,7 +166,6 @@ void AbstractNavigation::finishTransition()
     stopTimer();
     m_viewmatrix = glm::translate(m_new_pos) * glm::mat4_cast(m_new_rotation);
     m_fovy = m_new_fovy;
-    setFromMatrix(m_viewmatrix);
     updateCamera();
 }
 
