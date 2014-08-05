@@ -11,6 +11,7 @@
 #include <core/viewfrustum.h>
 
 #include <core/camera/monocamera.h>
+#include <core/camera/projection.h>
 
 StereoCamera::StereoCamera(const QString & name, Projection * projection)
 : AbstractCamera(name, projection)
@@ -19,13 +20,28 @@ StereoCamera::StereoCamera(const QString & name, Projection * projection)
     m_rightCamera = new MonoCamera(QString(name).append("_right"), projection);
 }
 
+StereoCamera::StereoCamera(const AbstractCamera & camera)
+:   AbstractCamera(camera)
+{
+    if(camera.isStereo())
+    {
+        m_leftCamera = new MonoCamera(*(static_cast<const StereoCamera&>(camera).m_leftCamera));
+        m_rightCamera = new MonoCamera(*(static_cast<const StereoCamera&>(camera).m_rightCamera));
+    }
+    else
+    {
+        m_leftCamera = new MonoCamera(QString(camera.name()).append("_left"), new Projection(*camera.getProjection()));
+        m_rightCamera = new MonoCamera(QString(camera.name()).append("_right"), new Projection(*camera.getProjection()));
+    }
+}
+
 StereoCamera::~StereoCamera()
 {
     delete m_leftCamera;
     delete m_rightCamera;
 }
 
-bool StereoCamera::isStereo()
+bool StereoCamera::isStereo() const
 {
     return true;
 }

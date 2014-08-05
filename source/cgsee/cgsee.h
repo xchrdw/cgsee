@@ -19,5 +19,4 @@ public:
 protected:
     std::shared_ptr<DataBlockRegistry> m_registry;
     Viewer * m_viewer;
-    AbstractScenePainter * m_painter;
 };

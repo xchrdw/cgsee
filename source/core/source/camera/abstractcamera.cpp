@@ -17,6 +17,7 @@ const QString AbstractCamera::ZNEAR_UNIFORM("znear");
 const QString AbstractCamera::ZFAR_UNIFORM("zfar");
 const QString AbstractCamera::CAMERAPOSITION_UNIFORM("cameraposition");
 
+//takes ownership of projection
 AbstractCamera::AbstractCamera(const QString & name, Projection * projection)
 :   Group(name)
 ,   m_invalid(true)
@@ -28,13 +29,29 @@ AbstractCamera::AbstractCamera(const QString & name, Projection * projection)
 //     m_rf = RF_Relative;
 }
 
+AbstractCamera::AbstractCamera(const AbstractCamera & camera)
+:   Group(camera.m_name)
+,   m_invalid(true)
+,   m_viewFrustum(new ViewFrustum(this))
+,   m_projection(new Projection(*(camera.m_projection))) //TODO find out what happens here
+,   m_view(camera.m_view)
+{
+    m_rf = camera.m_rf;
+}
+
 AbstractCamera::~AbstractCamera()
 {
+    delete m_projection;
     delete m_viewFrustum;
 }
 
+//takes ownership of projection
 void AbstractCamera::setProjection(Projection * projection)
 {
+    if(projection == m_projection)
+        return;
+
+    delete m_projection;
     m_projection = projection;
 }
 const Projection * AbstractCamera::getProjection() const

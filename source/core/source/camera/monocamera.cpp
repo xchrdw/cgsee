@@ -10,11 +10,18 @@ MonoCamera::MonoCamera(const QString & name, Projection * projection)
 {
 
 }
+
+MonoCamera::MonoCamera(const AbstractCamera & camera)
+:   AbstractCamera(camera)
+{
+
+}
+
 MonoCamera::~MonoCamera()
 {
 }
 
-bool MonoCamera::isStereo()
+bool MonoCamera::isStereo() const
 {
     return false;
 }

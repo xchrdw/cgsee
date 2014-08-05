@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 
+
 #include <QVector>
 #include <QString>
 
@@ -27,9 +28,11 @@ public:
     static const QString CAMERAPOSITION_UNIFORM;
 
     AbstractCamera(const QString & name, Projection * projection);
+    AbstractCamera(const AbstractCamera & camera);
+
     virtual ~AbstractCamera();
 
-    virtual bool isStereo() = 0;
+    virtual bool isStereo() const = 0;
 
     virtual void setProjection(Projection * projection);
     virtual const Projection * getProjection() const;
@@ -59,7 +62,6 @@ public:
 
     //TODO move to appropiate RenderStage
     virtual void setUniformsIn(const Program & program);
-
 protected:
     virtual void update();
     virtual void recalculate();

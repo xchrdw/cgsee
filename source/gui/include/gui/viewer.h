@@ -32,6 +32,7 @@ class Ui_Viewer;
 class Canvas;
 class AbstractNavigation;
 class AbstractCamera;
+class AbstractPainter;
 class AbstractScenePainter;
 
 class FileNavigator;
@@ -69,8 +70,8 @@ public:
 	void setNavigation(AbstractNavigation * navigation);
     AbstractNavigation * navigation();
     
-    void setPainter(AbstractScenePainter * painter);
-    AbstractScenePainter * painter();
+    void setPainter(AbstractPainter * painter);
+    AbstractPainter * painter();
 
     void setCamera(AbstractCamera * camera);
     AbstractCamera * camera();
@@ -218,10 +219,12 @@ protected:
     void updateCameraSelection(QString cameraName) const;
     void updateRenderingSelection(QString rendering) const;
 
+    // TODO should be an AbstractPainter -> refactor to allow 2DPainters
+    AbstractScenePainter * m_painter;
     Canvas * m_qtCanvas;
     AbstractNavigation * m_navigation;
-
     AbstractCamera * m_camera;
+
     QVector<glm::mat4> m_savedViews;
 
     QDockWidget * m_dockNavigator;

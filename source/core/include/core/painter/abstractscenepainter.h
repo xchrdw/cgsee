@@ -31,11 +31,16 @@ public:
 
     virtual RenderingPass *  getSharedPass() = 0;
 
-    void assignScene(Group * scene);
-    Group * retainScene();
-    Group & getScene() const;
+    virtual void assignCamera(AbstractCamera * scene);
+    virtual AbstractCamera * camera();
+
+    virtual void assignScene(Group * scene);
+    virtual Group * scene();
 protected:
-    virtual void sceneChanged(Group * scene);
+    virtual void sceneChanged();
+    virtual void cameraChanged();
+
     Group * m_scene;
+    AbstractCamera * m_camera;
     bool m_viewFrustumCulling;
 };

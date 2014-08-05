@@ -24,9 +24,10 @@ public:
         const int width
     ,   const int height);
 
+    virtual void postShaderRelinked() = 0;
+
 protected:
     virtual bool initialize() = 0;
-    virtual AbstractCamera * camera() = 0;
 
 protected:
     bool m_initialized;

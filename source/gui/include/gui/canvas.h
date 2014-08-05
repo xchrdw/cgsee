@@ -30,8 +30,6 @@ public:
     NavigationHistory * navigationHistory();
     void setNavigationHistory(AbstractEventHandler * navigation);
     void saveHistory(glm::mat4 viewmatrix, float fovy);
-    void setCamera(AbstractCamera * camera);
-    AbstractCamera * camera();
     void setPainter(AbstractPainter * painter);
     AbstractPainter * painter();
 
@@ -84,7 +82,6 @@ protected:
 protected:
     NavigationHistory * m_navigationHistory;
     AbstractPainter * m_painter;
-    AbstractCamera * m_camera;
     AbstractEventHandler * m_eventHandler;
 
     int m_refreshTimeMSec;

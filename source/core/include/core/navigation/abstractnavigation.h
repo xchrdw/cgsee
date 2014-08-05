@@ -48,7 +48,6 @@ public:
     void loadView(const glm::mat4 & viewmatrix, const float fovy = 0, bool save_history = true);
     void onViewChanged();
 
-    void setCanvas(QWidget * canvas);
     void setViewPort(const int width, const int height);
 
     void rescaleScene(Group * scene);
@@ -103,7 +102,6 @@ private:
 
     void finishTransition();
     void updateTransition();
-    QWidget * m_canvas;
     QBasicTimer m_timer;
     int m_timer_requests;
 

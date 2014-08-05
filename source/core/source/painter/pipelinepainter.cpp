@@ -19,13 +19,12 @@ PipelinePainter::PipelinePainter(AbstractCamera * camera)
 }
 
 PipelinePainter::PipelinePainter(AbstractCamera * camera, Group * scene)
-    : m_camera(camera)
-    , m_scene(scene)
-    , m_quad(new ScreenQuad())
+    : m_quad(new ScreenQuad())
     , m_flush(nullptr)
     //, m_coordFBO(new glow::FrameBufferObject())
 {
-
+    assignScene(scene);
+    assignCamera(camera);
 }
 
 PipelinePainter::~PipelinePainter()
@@ -55,6 +54,10 @@ void PipelinePainter::pipelineConfigChanged()
 void PipelinePainter::sceneChanged()
 {
     //TODO think!
+}
+void PipelinePainter::cameraChanged()
+{
+    pipelineConfigChanged();
 }
 
 void PipelinePainter::paint()
@@ -240,6 +243,18 @@ glm::ivec2 PipelinePainter::get2DPoint(unsigned int x, unsigned int y)
     return glm::ivec2(x, y);
 }
 
+void PipelinePainter::selectionChanged(QMap<unsigned int, Node *> selectedNodes)
+{
+    //TODO implement selection visualisation
+//    m_selectionBBox->invalidate();
+//    for ( auto node : m_selectedNodes )
+//    {
+//        m_selectionBBox->extend(node->boundingBox());
+//    }
+//    m_selectionBBox->llf();
+//    m_selectionBBox->urb();
+}
+
 glm::dvec3 PipelinePainter::unproject(float x, float y, float z)
 {
     GLdouble modelview[16];
@@ -268,36 +283,14 @@ glm::dvec3 PipelinePainter::unproject(float x, float y, float z)
     return position;
 }
 
-Group * PipelinePainter::scene()
-{
-    return m_scene;
-}
-
 const ScreenQuad * PipelinePainter::screenQuad()
 {
     return m_quad;
 }
 
-AbstractCamera * PipelinePainter::camera()
-{
-    return m_camera;
-}
-
 void PipelinePainter::addRenderStage(AbstractRenderStage * renderStage)
 {
     m_stages.push_back(renderStage);
-}
-
-void PipelinePainter::setScene(Group * scene)
-{
-    m_scene = scene;
-    sceneChanged();
-}
-
-void PipelinePainter::setCamera(AbstractCamera * camera)
-{
-    m_camera = camera;
-    pipelineConfigChanged();
 }
 
 bool PipelinePainter::isSceneInvalid()

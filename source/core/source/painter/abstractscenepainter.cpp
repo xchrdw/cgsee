@@ -8,38 +8,50 @@
 AbstractScenePainter::AbstractScenePainter()
 : AbstractPainter()
 , m_scene(nullptr)
+, m_camera(nullptr)
 {
 }
 
 AbstractScenePainter::~AbstractScenePainter()
 {
-    delete m_scene;
+}
+
+void AbstractScenePainter::assignCamera(AbstractCamera *camera)
+{
+    if(m_camera == camera)
+        return;
+
+    delete m_camera;
+    m_camera = camera;
+
+    cameraChanged();
+}
+
+AbstractCamera * AbstractScenePainter::camera()
+{
+    return m_camera;
 }
 
 void AbstractScenePainter::assignScene(Group * scene)
 {
-    this->sceneChanged(scene);
-    if (m_scene)
-        delete retainScene();
+    if(m_scene == scene)
+        return;
 
+    delete m_scene;
     m_scene = scene;
-    if (m_initialized)
-        camera()->append(m_scene);
+
+    sceneChanged();
 }
 
-Group * AbstractScenePainter::retainScene()
+Group * AbstractScenePainter::scene()
 {
-    camera()->remove(m_scene, false);
-    Group * scene = m_scene;
-    m_scene = nullptr;
-    return scene;
+    return m_scene;
 }
 
-Group & AbstractScenePainter::getScene() const
+void AbstractScenePainter::sceneChanged()
 {
-    return *m_scene;
 }
 
-void AbstractScenePainter::sceneChanged(Group * scene)
+void AbstractScenePainter::cameraChanged()
 {
 }

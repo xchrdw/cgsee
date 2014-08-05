@@ -12,7 +12,7 @@
 
 RenderStage::RenderStage(PipelinePainter & painter)
     : AbstractSceneRenderStage(painter)
-    , m_normalz(new TextureObject(GL_RGBA16F, GL_RGBA, GL_FLOAT))
+    , m_normalz(new TextureObject(GL_RGBA32F, GL_RGBA, GL_FLOAT))
     , m_colorId(nullptr)
     , m_depth(new RenderBufferObject(GL_DEPTH24_STENCIL8))
 {

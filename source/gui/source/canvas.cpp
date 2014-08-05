@@ -31,7 +31,6 @@ Canvas::Canvas(
 ,   m_refreshTimeMSec(0)
 ,   m_painter(nullptr)
 ,   m_navigationHistory(nullptr)
-,   m_camera(nullptr)
 ,   m_eventHandler(nullptr)
 ,   m_timer(new QBasicTimer)
 ,   m_format(format)
@@ -95,9 +94,6 @@ void Canvas::resizeGL(
     int width
 ,   int height)
 {
-    if (m_camera)
-        m_camera->setViewport(width, height);
-
     if(m_painter)
         m_painter->resize(width, height);
 
@@ -142,20 +138,6 @@ int Canvas::refreshTimeMSec() const
 
 void Canvas::setPainter(AbstractPainter * painter)
 {
-    // ToDo: refine AbstractScenePainter .. or wait for painter refactoring ;)
-    // TODO BEGIN
-    AbstractScenePainter * scenePainter(dynamic_cast<AbstractScenePainter*>(painter));
-
-    if (painter && !scenePainter)
-    {
-        qDebug() << "Canvas requires a painter that is aware of cameras (uses a camera as entrypoint into the scenegraph).";
-        return;
-    }
-	
-    //if (m_camera)
-    //    scenePainter->assignScene(m_camera);
-    // TODO END
-
     if(m_painter == painter)
         return;
 
@@ -168,28 +150,6 @@ AbstractPainter * Canvas::painter()
     return m_painter;
 }
 
-void Canvas::setCamera(AbstractCamera * camera)
-{
-    if(m_camera == camera)
-        return;
-
-	/*
-    if (m_painter)
-    {
-        // ToDo: see setPainter
-        AbstractScenePainter * scenePainter(dynamic_cast<AbstractScenePainter*>(m_painter));
-        scenePainter->assignScene(m_camera);
-    }
-	*/
-
-    m_camera = camera;
-    //update();
-}
-
-AbstractCamera * Canvas::camera()
-{
-    return m_camera;
-}
 
 const QImage Canvas::capture(
     const bool alpha)
@@ -208,26 +168,35 @@ const QImage Canvas::capture(
         qWarning("No painter for frame capture available.");
         return QImage();
     }
-    if (!m_camera)
+
+    AbstractScenePainter * scenePainter = dynamic_cast<AbstractScenePainter *>(m_painter);
+    if(!scenePainter)
+    {
+        qWarning("Painter does not provide a camera for frame capture.");
+        return QImage();
+    }
+    AbstractCamera * camera(scenePainter->camera());
+    if (!camera)
     {
         qWarning("No camera for frame capture available.");
         return QImage();
     }
-
+    //TODO move camera responsibility to painter->paintTile(width,height)
+    //TODO keep own fbo to avoid drawing on screen
     static const GLuint tileW(512);
     static const GLuint tileH(512);
 
-    const GLuint w(m_camera->viewport().x);
-    const GLuint h(m_camera->viewport().y);
+    const GLuint w(camera->viewport().x);
+    const GLuint h(camera->viewport().y);
 
     const GLuint frameW = size.width();
     const GLuint frameH = size.height();
 
-    const glm::mat4 proj(aspect ? glm::perspective(m_camera->fovy()
+    const glm::mat4 proj(aspect ? glm::perspective(camera->fovy()
         , static_cast<float>(frameW) / static_cast<float>(frameH)
-        , m_camera->zNear(), m_camera->zFar()) : m_camera->projection());
+        , camera->zNear(), camera->zFar()) : camera->projection());
 
-    const glm::mat4 view(m_camera->view());
+    const glm::mat4 view(camera->view());
 
     const glm::vec4 viewport(0, 0, frameW, frameH);
 
@@ -240,7 +209,7 @@ const QImage Canvas::capture(
     makeCurrent();
 
     m_painter->resize(tileW, tileH);
-    m_camera->setViewport(tileW, tileH);
+    camera->setViewport(tileW, tileH);
 
 
     for (GLuint y = 0; y < frameH; y += tileH)
@@ -251,7 +220,7 @@ const QImage Canvas::capture(
 
         const glm::mat4 projTile(pick * proj);
 
-        m_camera->setTransform(projTile * view);
+        camera->setTransform(projTile * view);
 
         m_painter->paint();
 
@@ -261,7 +230,7 @@ const QImage Canvas::capture(
     p.end();
 
 	resizeGL(w, h);
-    m_camera->setTransform(proj * view);
+    camera->setTransform(proj * view);
 
     doneCurrent();
 
@@ -312,7 +281,7 @@ NavigationHistory * Canvas::navigationHistory()
  */
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
 {
-    m_navigationHistory->save(viewmatrix, fovy, capture(QSize(512, 512), true, false));
+    //m_navigationHistory->save(viewmatrix, fovy, capture(QSize(512, 512), true, false));
 }
 
 void Canvas::mousePressEvent(QMouseEvent * event)

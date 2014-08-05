@@ -11,6 +11,7 @@ public:
     enum e_Type {ORTHOGONAL, PERSPECTIVE};
 
     Projection(e_Type type);
+    Projection(const Projection & projection);
     virtual ~Projection();
 
     virtual const glm::ivec2 & viewport() const;

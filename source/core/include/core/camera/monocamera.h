@@ -15,7 +15,8 @@ class CORE_API MonoCamera : public AbstractCamera
 public:
 
     MonoCamera(const QString & name, Projection * projection);
+    MonoCamera(const AbstractCamera & camera);
     virtual ~MonoCamera();
 
-    virtual bool isStereo() override;
+    virtual bool isStereo() const override;
 };

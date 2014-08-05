@@ -62,11 +62,14 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/navigation/arcballnavigation.h>
 
 #include <core/painter/abstractscenepainter.h>
+#include <core/painter/abstractpainter.h>
+#include <core/painter/pipelinepainter.h>
 #include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
 
 #include <core/camera/abstractcamera.h>
+#include <core/camera/monocamera.h>
 #include <core/coordinateprovider.h>
 
 #include <core/aabb.h>
@@ -98,7 +101,9 @@ Viewer::Viewer(
 ,   m_ui(new Ui_Viewer)
 ,   m_qtCanvas(nullptr)
 ,   m_materialCanvas(nullptr)
+,   m_painter(nullptr)
 ,   m_camera(nullptr)
+,   m_navigation(nullptr)
 ,   m_savedViews(4)
 ,   m_isFullscreen(false)
 
@@ -341,8 +346,7 @@ const GLXContext Viewer::createQtContext(const GLFormat & format)
 {
     m_qtCanvas = new Canvas(format, this);
     setCentralWidget(m_qtCanvas);
-    if (m_camera != nullptr)
-        m_qtCanvas->setRefreshTimeMSec(); //TODO , current default value 1
+    m_qtCanvas->setRefreshTimeMSec(); //TODO , current default value 1
 
     QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
 
@@ -503,32 +507,44 @@ Viewer::~Viewer()
 
     delete m_qtCanvas;
 
+    delete m_painter;
+    delete m_scene;
+
     delete m_dockNavigator;
     delete m_dockExplorer;
     delete m_dockScene;
     delete m_dockNavigationHistory;
     delete m_sceneHierarchy;
     delete m_loader;
-    delete m_coordinateProvider;
     delete m_selectionBBox;
     delete m_dockMaterial;
 }
 
-void Viewer::setPainter(AbstractScenePainter * painter)
+void Viewer::setPainter(AbstractPainter * painter)
 {
+    if(painter == m_painter)
+        return;
+
+    delete m_painter;
+
+    // TODO m_painter should be AbstractPainter
+    AbstractScenePainter * scenePainter = dynamic_cast<AbstractScenePainter *>(painter);
+    if(!scenePainter)
+        return;
+    m_painter = scenePainter;
+
+    //will become nullptr if painter is no CoordinateProvider
+    setCoordinateProvider(dynamic_cast<CoordinateProvider *>(scenePainter));
+
     if(!m_qtCanvas)
         return;
 
     m_qtCanvas->setPainter(painter);
 }
 
-AbstractScenePainter * Viewer::painter()
+AbstractPainter * Viewer::painter()
 {
-    if(!m_qtCanvas)
-        return nullptr;
-
-    // ToDo: painter refactoring
-    return dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter());
+    return m_painter;
 }
 
 void Viewer::on_captureAsImageAction_triggered()
@@ -575,21 +591,31 @@ void Viewer::on_quitAction_triggered()
 
 void Viewer::on_loadFile(const QString & path)
 {
-    m_scene = nullptr;
+    //TODO select Painter class according to file type
+    Group * tempScene = m_scene;
     m_scene = m_loader->importFromFile(path);
     if (!m_scene)
     {
         QMessageBox::critical(this, "Loading failed", "The loader was not able to load from \n" + path);
+        m_scene = tempScene;
     }
     else
     {
         assignScene(m_scene);
-        dynamic_cast<AbstractNavigation*>(m_qtCanvas->eventHandler())->rescaleScene(m_scene);
-        painter()->assignScene(m_scene);
-		dynamic_cast<AbstractNavigation*>(m_qtCanvas->eventHandler())->sceneChanged(m_scene);
-        m_qtCanvas->update();
+        m_navigation->rescaleScene(m_scene);
+
+        if(!m_painter)
+            setPainter(new PipelinePainter(m_camera, m_scene));
+        else
+            m_painter->assignScene(m_scene);
+
+        setNavigation(new ArcballNavigation(m_camera));
+
+        m_navigation->sceneChanged(m_scene);
+        m_qtCanvas->update();//TODO should be done by timer
         selectionBBoxChanged();
         m_navigationHistory->reset();
+        delete tempScene;
     }
 }
 
@@ -773,64 +799,73 @@ void Viewer::on_fboColorIdAction_triggered()
 
 void Viewer::on_standardCameraAction_triggered()
 {
-    glm::ivec2 tempViewport = m_camera->viewport();
-    m_camera->selectImplementation("MonoCamera");
+    if(!m_camera->isStereo())
+        return;
 
-    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+    AbstractCamera * tempCamera = m_camera;
+    m_camera = new MonoCamera(*m_camera);
+    delete tempCamera;
+
+    AbstractScenePainter * painter = dynamic_cast<AbstractScenePainter *>(m_painter);
+    if(painter)
+        painter->assignCamera(m_camera);
 
     qDebug("Standard Mono Camera");
 }
 
 void Viewer::on_parallelRedCyanStereoCameraAction_triggered()
 {
-    glm::ivec2 tempViewport = m_camera->viewport();
-    m_camera->selectImplementation("ParallelCamera");
-    ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
-    if (parallelCam != nullptr)
-        parallelCam->deactivateOculusRift();
-    else
-        qDebug() << "Expected ParallelCamera as active implementation but was"
-                << m_camera->selectedImplementation();
+    //TODO allow submenu to select stereo camera type (Rift, Red-Cyan, ...)
+//    glm::ivec2 tempViewport = m_camera->viewport();
+//    m_camera->selectImplementation("ParallelCamera");
+//    ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
+//    if (parallelCam != nullptr)
+//        parallelCam->deactivateOculusRift();
+//    else
+//        qDebug() << "Expected ParallelCamera as active implementation but was"
+//                << m_camera->selectedImplementation();
 
-    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+//    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
-    qDebug("(Parallel) Red Cyan Stereo Camera");
+//    qDebug("(Parallel) Red Cyan Stereo Camera");
 }
 
 void Viewer::on_convergentRedCyanStereoCameraAction_triggered()
 {
-    glm::ivec2 tempViewport = m_camera->viewport();
-    m_camera->selectImplementation("ConvergentCamera");
+    //TODO allow submenu to select stereo camera type (Rift, Red-Cyan, ...)
+//    glm::ivec2 tempViewport = m_camera->viewport();
+//    m_camera->selectImplementation("ConvergentCamera");
 
-    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+//    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
-    qDebug("(Convergent) Red Cyan Stereo Camera");
+//    qDebug("(Convergent) Red Cyan Stereo Camera");
 }
 
 void Viewer::on_oculusRiftStereoCameraAction_triggered()
 {
-    glm::ivec2 tempViewport = m_camera->viewport();
-    m_camera->selectImplementation("ParallelCamera");
+    //TODO allow submenu to select stereo camera type (Rift, Red-Cyan, ...)
+//    glm::ivec2 tempViewport = m_camera->viewport();
+//    m_camera->selectImplementation("ParallelCamera");
 
-    ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
-    if (parallelCam != nullptr)
-        parallelCam->activateOculusRift();
-    else
-        qDebug() << "Expected ParallelCamera as active implementation but was"
-                << m_camera->selectedImplementation();
+//    ParallelCamera * parallelCam = dynamic_cast<ParallelCamera*>(m_camera->activeImplementation());
+//    if (parallelCam != nullptr)
+//        parallelCam->activateOculusRift();
+//    else
+//        qDebug() << "Expected ParallelCamera as active implementation but was"
+//                << m_camera->selectedImplementation();
 
-    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
+//    m_qtCanvas->resize(tempViewport.x-1,tempViewport.y-1);
 
-    qDebug() << "Stereo Camera for Oculus Rift";
+//    qDebug() << "Stereo Camera for Oculus Rift";
 
-    ((QWidget*)m_qtCanvas->parent())->showFullScreen();
-    m_visibleDockNavigator = m_dockNavigator->isVisible();
-    m_dockNavigator->setVisible(false);
-    m_visibleDockExplorer = m_dockExplorer->isVisible();
-    m_dockExplorer->setVisible(false);
-    menuBar()->setVisible(false);
-    statusBar()->setVisible(false);
-    m_isFullscreen=true;
+//    ((QWidget*)m_qtCanvas->parent())->showFullScreen();
+//    m_visibleDockNavigator = m_dockNavigator->isVisible();
+//    m_dockNavigator->setVisible(false);
+//    m_visibleDockExplorer = m_dockExplorer->isVisible();
+//    m_dockExplorer->setVisible(false);
+//    menuBar()->setVisible(false);
+//    statusBar()->setVisible(false);
+//    m_isFullscreen=true;
 }
 
 void Viewer::on_toggleFullscreen_triggered()
@@ -861,9 +896,14 @@ void Viewer::on_toggleFullscreen_triggered()
 // ToDo: refactor towards event handler and rethink ownership
 void Viewer::setNavigation(AbstractNavigation * navigation)
 {
+    if(m_navigation == navigation)
+        return;
+
+    m_qtCanvas->setEventHandler(navigation);
+
+    delete m_navigation;
     m_navigation = navigation;
-    m_qtCanvas->setEventHandler(m_navigation);
-	m_navigation->setCanvas(m_qtCanvas);
+
     setFocus();
 }
 
@@ -874,24 +914,27 @@ AbstractNavigation * Viewer::navigation()
     return m_navigation;
 }
 
-void Viewer::setCamera(Camera * camera )
+void Viewer::setCamera(AbstractCamera * camera)
 {
     m_camera = camera;
-    m_qtCanvas->setCamera(camera);
+
+    AbstractScenePainter * scenePainter = dynamic_cast<AbstractScenePainter *>(m_painter);
+    if(scenePainter)
+        scenePainter->assignCamera(m_camera);
+
+    //TODO refactor abstractNavigation to use a generalization of camera
+    if(m_navigation)
+        m_navigation->setCamera(m_camera);
 }
 
-Camera * Viewer::camera()
+AbstractCamera * Viewer::camera()
 {
     return m_camera;
 }
 
 void Viewer::setCoordinateProvider(CoordinateProvider * coordinateProvider )
 {
-    if (coordinateProvider)
-    {
-        delete m_coordinateProvider;
-        m_coordinateProvider = coordinateProvider;
-    }
+    m_coordinateProvider = coordinateProvider;
 }
 
 CoordinateProvider * Viewer::coordinateProvider()
@@ -1116,7 +1159,7 @@ void Viewer::on_mouseReleaseEventSignal(QMouseEvent * event)
 
     if (m_coordinateProvider && event->button() == Qt::LeftButton)
     {
-        unsigned int id = m_coordinateProvider->objID(event->x(), event->y());
+        unsigned int id = m_coordinateProvider->getObjectID(event->x(), event->y());
 
         if (event->modifiers() != Qt::CTRL)
             clearSelection();
@@ -1136,7 +1179,7 @@ void Viewer::selectById(const unsigned int & id)
 {
     SceneTraverser traverser;
     Node * result = nullptr;
-    traverser.traverse(*m_camera, [&result, &id](Node & node)
+    traverser.traverse(*m_scene, [&result, &id](Node & node)
     {
         if(node.id() == id)
         {
@@ -1262,7 +1305,7 @@ void Viewer::hideById(const unsigned int & id, const bool & hideStatus)
 {
     SceneTraverser traverser;
     Node * result = nullptr;
-    traverser.traverse(*m_camera, [&result, &id](Node & node)
+    traverser.traverse(*m_scene, [&result, &id](Node & node)
     {
         if( node.id() == id)
         {
@@ -1299,7 +1342,7 @@ void Viewer::updateInfoBox()
 
     for ( auto node : m_selectedNodes )
     {
-        if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable*>(node))
+        if (PolygonalDrawable * drawable = dynamic_cast<PolygonalDrawable *>(node))
             vertices += drawable->numVertices();
     }
 
@@ -1310,12 +1353,8 @@ void Viewer::updateInfoBox()
 
 void Viewer::selectionBBoxChanged()
 {
-    m_selectionBBox->invalidate();
-    for ( auto node : m_selectedNodes )
-    {
-        m_selectionBBox->extend(node->boundingBox());
-    }
+    PipelinePainter * painter = dynamic_cast<PipelinePainter *>(this->painter());
+    if(painter)
+        painter->selectionChanged(m_selectedNodes);
 
-    Painter * painter = static_cast<Painter*>(this->painter());
-	painter->setBoundingBox(m_selectionBBox->llf(), m_selectionBBox->urb(), dynamic_cast<AbstractNavigation*>(m_qtCanvas->eventHandler())->sceneTransform());
 }

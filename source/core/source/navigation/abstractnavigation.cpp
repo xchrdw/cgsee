@@ -21,7 +21,6 @@ AbstractNavigation::AbstractNavigation(AbstractCamera * camera)
     , m_fovy(camera->fovy())
     , m_viewmatrix(camera->view())
     , m_camera(camera)
-    , m_canvas(0)
     , m_timer()
     , m_timer_requests(0)
     , m_animation_active(false)
@@ -45,8 +44,6 @@ void AbstractNavigation::updateCamera()
 {
     m_camera->setFovy(m_fovy);
     m_camera->setView(m_viewmatrix);
-    if(m_canvas)
-        m_canvas->repaint();
     onCameraChanged();
 }
 
@@ -87,11 +84,6 @@ void AbstractNavigation::setViewPort( const int width, const int height )
 {
     m_width = width;
     m_height = height;
-}
-
-void AbstractNavigation::setCanvas(QWidget * canvas)
-{
-    m_canvas = canvas;
 }
 
 void AbstractNavigation::setCamera(AbstractCamera * camera)

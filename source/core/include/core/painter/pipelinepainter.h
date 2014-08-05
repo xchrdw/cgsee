@@ -39,8 +39,8 @@ public:
 
     //external events
     virtual void pipelineConfigChanged();
-    void sceneChanged();
-    void viewChanged();
+    virtual void sceneChanged() override;
+    virtual void cameraChanged() override;
     virtual void paint() override;
     virtual void resize(const int width, const int height) override;
     virtual void reloadShaders() override;
@@ -64,14 +64,11 @@ public:
     virtual glm::dvec3 get3DPoint(unsigned int x, unsigned int y) override;
     virtual glm::ivec2 get2DPoint(unsigned int x, unsigned int y) override;
 
-    Group * scene();
+    void selectionChanged(QMap<unsigned int, Node *> selectedNodes);
+
     const ScreenQuad * screenQuad();
-    virtual AbstractCamera * camera() override;
 
     void addRenderStage(AbstractRenderStage * renderStage);
-
-    void setScene(Group * scene);
-    void setCamera(AbstractCamera * camera);
 
     bool isSceneInvalid();
     bool isViewInvalid();
@@ -94,9 +91,6 @@ protected:
 
     QString m_samplerToDisplay;
     QMap<QString, TextureObject*> m_textures;
-
-    AbstractCamera * m_camera;
-    Group * m_scene;
 
     ScreenQuad * m_quad;
     Program * m_flush;

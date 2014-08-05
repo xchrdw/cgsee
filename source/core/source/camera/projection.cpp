@@ -6,7 +6,21 @@
 Projection::Projection(e_Type type)
 :   m_type(type)
 ,   m_invalid(true)
-,   m_viewport(glm::ivec2(1,1))//?
+,   m_viewport(glm::ivec2(1,1))
+,   m_fovy(45.0f)
+,   m_zNear(1.0f)
+,   m_zFar(20.0f)
+{
+
+}
+
+Projection::Projection(const Projection & projection)
+:   m_type(projection.m_type)
+,   m_invalid(true)
+,   m_viewport(projection.m_viewport)
+,   m_fovy(projection.m_fovy)
+,   m_zNear(projection.m_zNear)
+,   m_zFar(projection.m_zFar)
 {
 
 }
@@ -15,6 +29,7 @@ Projection::~Projection()
 {
 
 }
+
 const glm::mat4 & Projection::projection() const
 {
     if(m_invalid)
