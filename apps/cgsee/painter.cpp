@@ -102,7 +102,7 @@ const bool Painter::initialize()
 	m_view = glm::lookAt(m_eye, m_center, m_up);
 
 	// initialize shaders and program
-    const QString TEXTURE_FILENAME = "../data/skycube.png";
+    const QString TEXTURE_FILENAME = "data/skycube.png";
     m_textureID = loadTexture(TEXTURE_FILENAME);
 
 	glError();
@@ -265,11 +265,13 @@ void Painter::paint()
 	glUseProgram(m_program);
 	glError();
 
+    // bind texture
     glEnable(GL_TEXTURE_2D);
+    glError();
     glBindTexture(GL_TEXTURE_2D, m_textureID);
+    glError();
 
 	// bind vertices
-
     glBindVertexArray(m_vao);
     glError();
 
