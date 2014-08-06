@@ -44,6 +44,7 @@ Painter::Painter()
 ,	m_vao(-1)
 ,	m_indices(-1)
 ,   m_vertices(-1)
+,   m_textureID(0)
 {
 }
 
@@ -264,6 +265,9 @@ void Painter::paint()
 	glUseProgram(m_program);
 	glError();
 
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, m_textureID);
+
 	// bind vertices
 
     glBindVertexArray(m_vao);
@@ -299,6 +303,9 @@ void Painter::paint()
 
 	glUseProgram(0);
 	glError();
+
+    glDisable(GL_TEXTURE_2D);
+
 }
 
 void Painter::resize(
