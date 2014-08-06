@@ -23,6 +23,9 @@ public:
         const int width
     ,   const int height);
 
+    const GLuint loadTexture(const QString & filePath);
+
+
 protected:
     virtual const bool initialize();
 
@@ -43,6 +46,8 @@ protected:
 	glm::mat4 m_projection;
 	glm::mat4 m_model;
 	glm::mat4 m_view;
+
+    GLuint m_textureID;
 
 	GLint m_vert;
 	GLint m_frag;

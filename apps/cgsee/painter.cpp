@@ -4,6 +4,11 @@
 
 #include "painter.h"
 
+#include <GL/glew.h>
+
+#include <QGLWidget>
+#include <QMatrix4x4>
+
 #include <core/mathmacros.h>
 #include <core/glformat.h>
 #include <core/gpuquery.h>
@@ -96,6 +101,8 @@ const bool Painter::initialize()
 	m_view = glm::lookAt(m_eye, m_center, m_up);
 
 	// initialize shaders and program
+    const QString TEXTURE_FILENAME = "../data/skycube.png";
+    m_textureID = loadTexture(TEXTURE_FILENAME);
 
 	glError();
 	m_vert = glCreateShader(GL_VERTEX_SHADER);
@@ -306,4 +313,27 @@ void Painter::resize(
 	m_aspect = static_cast<float>(width) / static_cast<float>(height);
 
 	m_projection = glm::perspective(m_fovy, m_aspect, m_zNear, m_zFar);
+}
+
+const GLuint Painter::loadTexture(const QString & filePath)
+{
+    const QImage img = QImage(filePath);
+    if (img.isNull())
+    {
+        qCritical("Loading image failed!");
+        return -1;
+    }
+
+    QImage image = QGLWidget::convertToGLFormat(img);
+    GLuint texture(-1);
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(),
+        0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return texture;
 }
