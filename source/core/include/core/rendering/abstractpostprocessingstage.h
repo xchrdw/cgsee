@@ -3,6 +3,8 @@
 #include <core/core_api.h>
 #include <core/rendering/abstractrenderstage.h>
 
+class Program;
+class PipelinePainter;
 
 // under construction
 class CORE_API AbstractPostProcessingStage : public AbstractRenderStage

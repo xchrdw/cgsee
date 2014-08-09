@@ -1,14 +1,17 @@
 
 #include <core/bufferobject.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/boolean.h>
 
 #include <core/gpuquery.h>
 
 
 BufferObject::BufferObject(
-    const GLenum target
-,   const GLenum usage)
+    const gl::GLenum target
+,   const gl::GLenum usage)
 
 :   m_buffer(-1)
 ,   m_target(target)
@@ -17,7 +20,7 @@ BufferObject::BufferObject(
 ,   m_count(0)
 ,   m_size(0)
 
-,   m_type(GL_NONE)
+,   m_type(gl::GL_NONE)
 {
 }
 
@@ -25,7 +28,7 @@ BufferObject::~BufferObject()
 {
     if(isBuffer())
     {
-        glDeleteBuffers(1, &m_buffer);
+        gl::glDeleteBuffers(1, &m_buffer);
         glError();
     }
 }
@@ -35,7 +38,7 @@ inline const bool BufferObject::isBuffer() const
     return m_buffer != -1;
 }
 
-const GLuint BufferObject::buffer()
+const gl::GLuint BufferObject::buffer()
 {
     if(!isBuffer())
         generateBuffer();
@@ -43,12 +46,12 @@ const GLuint BufferObject::buffer()
     return m_buffer;
 }
 
-const GLenum BufferObject::target() const
+const gl::GLenum BufferObject::target() const
 {
     return m_target;
 }
 
-const GLenum BufferObject::usage() const
+const gl::GLenum BufferObject::usage() const
 {
     return m_usage;
 }
@@ -62,36 +65,36 @@ void BufferObject::bind()
     glError();
 }
 
-void BufferObject::bind(const GLint attributeLocation)
+void BufferObject::bind(const gl::GLint attributeLocation)
 {
     if(-1 == attributeLocation)
         return;
 
-    assert(m_target == GL_ARRAY_BUFFER);
+    assert(m_target == gl::GL_ARRAY_BUFFER);
 
     bind();
 
-    glEnableVertexAttribArray(attributeLocation);
+    gl::glEnableVertexAttribArray(attributeLocation);
     glError();
-    glVertexAttribPointer(attributeLocation, m_size, m_type, GL_FALSE, 0, 0);
+    gl::glVertexAttribPointer(attributeLocation, m_size, m_type, gl::GL_FALSE, 0, 0);
     glError();
 }
 
-void BufferObject::draw(const GLenum mode)
+void BufferObject::draw(const gl::GLenum mode)
 {
     switch(m_target)
     {
-    case GL_ELEMENT_ARRAY_BUFFER:
+    case gl::GL_ELEMENT_ARRAY_BUFFER:
         glDrawElements(mode, m_count, m_type, 0);
         break;
-    case GL_ARRAY_BUFFER:
-        glDrawArrays(mode, 0, m_count);
+    case gl::GL_ARRAY_BUFFER:
+        gl::glDrawArrays(mode, 0, m_count);
         break;
     };
     glError();
 }
 
-void BufferObject::release(const GLint attributeLocation)
+void BufferObject::release(const gl::GLint attributeLocation)
 {
     if(-1 == attributeLocation)
         return;
@@ -99,10 +102,10 @@ void BufferObject::release(const GLint attributeLocation)
     if(!isBuffer())
         return;
 
-    glDisableVertexAttribArray(attributeLocation);
+    gl::glDisableVertexAttribArray(attributeLocation);
     glError();
 
-    glBindBuffer(m_target, 0);
+    gl::glBindBuffer(m_target, 0);
     glError();
 }
 
@@ -111,7 +114,7 @@ void BufferObject::release()
     if(!isBuffer())
         return;
 
-    glBindBuffer(m_target, 0);
+    gl::glBindBuffer(m_target, 0);
     glError();
 }
 
@@ -120,6 +123,6 @@ void BufferObject::generateBuffer()
     if(isBuffer())
         return;
 
-    glGenBuffers(1, &m_buffer);
+    gl::glGenBuffers(1, &m_buffer);
     glError();
 }

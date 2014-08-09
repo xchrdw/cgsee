@@ -1,6 +1,10 @@
 
 #include <core/scenegraph/polygonalgeometry.h>
 
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/enum.h>
+
 #include <core/datacore/datablock.h>
 #include <core/aabb.h>
 #include <core/bufferobject.h>
@@ -165,9 +169,9 @@ void PolygonalGeometry::initialize(const Program & program)
     
     deleteBuffers();
 
-    glGenVertexArrays(1, &m_vao);
+    gl::glGenVertexArrays(1, &m_vao);
     glError();
-    glBindVertexArray(m_vao);                                                                  
+    gl::glBindVertexArray(m_vao);                                                                  
     glError();
 
     {
@@ -179,15 +183,15 @@ void PolygonalGeometry::initialize(const Program & program)
 
     // setup element array buffers
 
-    BufferObject * indexBO = new BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
-    indexBO->data<GLuint>(indices(), GL_UNSIGNED_INT, 1);
+    BufferObject * indexBO = new BufferObject(gl::GL_ELEMENT_ARRAY_BUFFER, gl::GL_STATIC_DRAW);
+    indexBO->data<gl::GLuint>(indices(), gl::GL_UNSIGNED_INT, 1);
 
     m_elementArrayBOs.push_back(indexBO);
 
     // setup array buffers
 
-    BufferObject * vertexBO = new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-    vertexBO->data<glm::vec3>(copyVertices(), GL_FLOAT, 3);
+    BufferObject * vertexBO = new BufferObject(gl::GL_ARRAY_BUFFER, gl::GL_STATIC_DRAW);
+    vertexBO->data<glm::vec3>(copyVertices(), gl::GL_FLOAT, 3);
     
     m_arrayBOsByAttribute["a_vertex"] = vertexBO;
 
@@ -195,8 +199,8 @@ void PolygonalGeometry::initialize(const Program & program)
 
     if( !normals().isEmpty() )
     {
-        BufferObject * normalBO = new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-        normalBO->data<glm::vec3>(normals(), GL_FLOAT, 3);
+        BufferObject * normalBO = new BufferObject(gl::GL_ARRAY_BUFFER, gl::GL_STATIC_DRAW);
+        normalBO->data<glm::vec3>(normals(), gl::GL_FLOAT, 3);
 
         m_arrayBOsByAttribute["a_normal"] = normalBO;
     }
@@ -209,7 +213,7 @@ void PolygonalGeometry::initialize(const Program & program)
     for( ; i != iEnd; ++i )
         i.value()->bind(program.attributeLocation(i.key()));
 
-    glBindVertexArray(0);
+    gl::glBindVertexArray(0);
     glError();
 }
 
@@ -220,7 +224,7 @@ void PolygonalGeometry::deleteBuffers()
 
     if( -1 != m_vao )
     {
-        glDeleteVertexArrays(1, &m_vao);
+        gl::glDeleteVertexArrays(1, &m_vao);
         glError();
 
         m_vao = -1;

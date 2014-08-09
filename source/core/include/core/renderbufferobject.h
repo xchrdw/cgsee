@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glbinding/gl/types.h>
+
 #include <core/core_api.h>
 
 #include <core/typedefs.h>
@@ -10,16 +12,16 @@ class CORE_API RenderBufferObject
 {
 public:
     RenderBufferObject();
-    RenderBufferObject(GLenum internalFormat);
-    RenderBufferObject(GLuint width, GLuint height, GLenum internalFormat);
+    RenderBufferObject(gl::GLenum internalFormat);
+    RenderBufferObject(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat);
     virtual ~RenderBufferObject();
 
     bool isInitialized();
 
-    void configure(GLuint width, GLuint height, GLenum internalFormat);
-    void resize(GLuint width, GLuint height);
+    void configure(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat);
+    void resize(gl::GLuint width, gl::GLuint height);
 
-    void attachTo(GLenum attachment);
+    void attachTo(gl::GLenum attachment);
 
 
 protected:
@@ -27,10 +29,9 @@ protected:
     void deleteGLRenderBuffer();
 
 protected:
-    GLuint m_buffer;
+    gl::GLuint m_buffer;
 
-    GLuint m_width;
-    GLuint m_height;
-    GLenum m_internalFormat;
-
+    gl::GLuint m_width;
+    gl::GLuint m_height;
+    gl::GLenum m_internalFormat;
 };

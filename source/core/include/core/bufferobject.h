@@ -4,6 +4,8 @@
 
 #include <QVector>
 
+#include <glbinding/gl/types.h>
+
 #include <core/typedefs.h>
 #include <core/gpuquery.h>
 
@@ -12,75 +14,75 @@ class CORE_API BufferObject
 {
 public:
     BufferObject(
-        const GLenum target
-    ,   const GLenum usage);
+        const gl::GLenum target
+    ,   const gl::GLenum usage);
 
     virtual ~BufferObject();
 
-    const GLuint buffer();
+    const gl::GLuint buffer();
 
-    const GLenum target() const;
-    const GLenum usage() const;
+    const gl::GLenum target() const;
+    const gl::GLenum usage() const;
 
     template <typename T>
     void data(
         const QVector<T> & v
-    ,   const GLenum type
-    ,   const GLint  size);
+    ,   const gl::GLenum type
+    ,   const gl::GLint  size);
 
     template <typename T>
     void data(
         const T * v
-    ,   const GLsizei count
-    ,   const GLenum type
-    ,   const GLint size);
+    ,   const gl::GLsizei count
+    ,   const gl::GLenum type
+    ,   const gl::GLint size);
 
     void bind();
-    void bind(const GLint attributeLocation);
+    void bind(const gl::GLint attributeLocation);
 
     void release();
-    void release(const GLint attributeLocation);
+    void release(const gl::GLint attributeLocation);
 
-    void draw(const GLenum mode);
+    void draw(const gl::GLenum mode);
 
 protected:
     inline const bool isBuffer() const;
     void generateBuffer();
 
 protected:
-    GLuint m_buffer;
+    gl::GLuint m_buffer;
 
-    const GLenum  m_target;
-    const GLenum  m_usage;
+    const gl::GLenum  m_target;
+    const gl::GLenum  m_usage;
 
-    GLsizei m_count;
-    GLint   m_size;
-    GLenum  m_type;
+    gl::GLsizei m_count;
+    gl::GLint   m_size;
+    gl::GLenum  m_type;
 };
 
 
 template <typename T>
 void BufferObject::data(
     const QVector<T> & v
-,   const GLenum type
-,   const GLint  size)
+,   const gl::GLenum type
+,   const gl::GLint  size)
 {
     bind();
 
-    m_count  = static_cast<GLsizei>(v.size());
-    m_type   = type;
-    m_size   = size;
+    m_count = static_cast<gl::GLsizei>(v.size());
+    m_type  = type;
+    m_size  = size;
 
-    glBufferData(m_target, m_count * sizeof(T), v.data(), m_usage);
+    gl::glBufferData(m_target, m_count * sizeof(T), v.data(), m_usage);
     glError();
 }
 
 template <typename T>
 void BufferObject::data(
     const T * v
-,   const GLsizei count
-,   const GLenum type
-,   const GLint size)
+,   const gl::GLsizei count
+,   const gl::GLenum type
+,   const gl::GLint size)
 {
     bind();
 
@@ -88,6 +90,6 @@ void BufferObject::data(
     m_type  = type;
     m_size  = size;
 
-    glBufferData(m_target, m_count * sizeof(T), v, m_usage);
+    gl::glBufferData(m_target, m_count * sizeof(T), v, m_usage);
     glError();
 }

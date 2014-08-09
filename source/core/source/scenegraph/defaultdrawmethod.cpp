@@ -1,7 +1,9 @@
 
 #include <core/scenegraph/defaultdrawmethod.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/enum.h>
 
 #include <core/aabb.h>
 #include <core/bufferobject.h>
@@ -44,20 +46,20 @@ void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transfor
     materialCoeff[3] = glm::vec4(0,0,0,0);            //emission
     program.setUniform(MATERIAL_UNIFORM, materialCoeff);
     
-    glBindVertexArray(geometry->vao());
+    gl::glBindVertexArray(geometry->vao());
     glError();
     
-    glEnable(GL_DEPTH_TEST);
+    gl::glEnable(gl::GL_DEPTH_TEST);
     //     glEnable(GL_CULL_FACE);
     //     glCullFace(GL_BACK);
     
     for( const auto & bo : geometry->elementArrayBOs() )
         bo->draw( drawable.mode() );
     
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+    gl::glDisable(gl::GL_DEPTH_TEST);
+    gl::glDisable(gl::GL_CULL_FACE);
     
-    glBindVertexArray(0);
+    gl::glBindVertexArray(0);
     glError();
     
     program.release();

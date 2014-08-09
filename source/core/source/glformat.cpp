@@ -3,19 +3,17 @@
 
 #include <cassert>
 
-#include <GL/glew.h>
-
 #include <QGLFormat>
 
 #include <core/gpuquery.h>
 
-#ifdef WIN32
-
-#elif defined(__APPLE__)
-
-#else
-#include <GL/glx.h>
-#endif
+//#ifdef WIN32
+//
+//#elif defined(__APPLE__)
+//
+//#else
+//#include <GL/glx.h>
+//#endif
 
 
 const GLFormat::t_minorsByMajor GLFormat::m_validGLVersions 
@@ -454,34 +452,34 @@ const bool GLFormat::verifySwapInterval(
 
     bool result(false);
 
-#ifdef WIN32
-
-    typedef bool (WINAPI * SWAPINTERVALEXTPROC) (int);
-    static SWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
-
-    if(!wglSwapIntervalEXT)
-        wglSwapIntervalEXT = reinterpret_cast<SWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
-    if(wglSwapIntervalEXT)
-        result = wglSwapIntervalEXT(requestedInterval);
-
-#elif __APPLE__
-
-    qWarning("TODO: Setting swap interval is currently not implemented for __APPLE__");
-
-#else
-
-    typedef int (APIENTRY * SWAPINTERVALEXTPROC) (int);
-    static SWAPINTERVALEXTPROC glXSwapIntervalSGI = nullptr;
-
-    if(!glXSwapIntervalSGI)
-    {
-        const GLubyte * sgi = reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI");
-        glXSwapIntervalSGI = reinterpret_cast<SWAPINTERVALEXTPROC>(glXGetProcAddress(sgi));
-    }
-    if(glXSwapIntervalSGI)
-        result = glXSwapIntervalSGI(requestedInterval);
-
-#endif
+//#ifdef WIN32
+//
+//    typedef bool (WINAPI * SWAPINTERVALEXTPROC) (int);
+//    static SWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
+//
+//    if(!wglSwapIntervalEXT)
+//        wglSwapIntervalEXT = reinterpret_cast<SWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
+//    if(wglSwapIntervalEXT)
+//        result = wglSwapIntervalEXT(requestedInterval);
+//
+//#elif __APPLE__
+//
+//    qWarning("TODO: Setting swap interval is currently not implemented for __APPLE__");
+//
+//#else
+//
+//    typedef int (APIENTRY * SWAPINTERVALEXTPROC) (int);
+//    static SWAPINTERVALEXTPROC glXSwapIntervalSGI = nullptr;
+//
+//    if(!glXSwapIntervalSGI)
+//    {
+//        const GLubyte * sgi = reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI");
+//        glXSwapIntervalSGI = reinterpret_cast<SWAPINTERVALEXTPROC>(glXGetProcAddress(sgi));
+//    }
+//    if(glXSwapIntervalSGI)
+//        result = glXSwapIntervalSGI(requestedInterval);
+//
+//#endif
 
     if(!result)
     {

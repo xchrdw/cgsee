@@ -1,14 +1,20 @@
 #include <core/painter/pipelinepainter.h>
 
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/bitfield.h>
+
+#include <glow/Texture.h>
+
 #include <core/rendering/abstractrenderstage.h>
 #include <core/rendering/pipelinebuilder.h>
 #include <core/rendering/renderstage.h>
-
 #include <core/camera/abstractcamera.h>
 #include <core/scenegraph/group.h>
 #include <core/screenquad.h>
 #include <core/program.h>
-#include <core/textureobject.h>
+//#include <core/textureobject.h>
 #include <core/fileassociatedshader.h>
 
 
@@ -38,8 +44,8 @@ bool PipelinePainter::initialize()
 {
     // Post Processing Shader
     m_flush = new Program();
-    m_flush->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/dump.frag"));
-    m_flush->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
+    m_flush->attach(new FileAssociatedShader(gl::GL_FRAGMENT_SHADER, "data/dump.frag"));
+    m_flush->attach(new FileAssociatedShader(gl::GL_VERTEX_SHADER, "data/screenquad.vert"));
 
     addRenderStage(new RenderStage(*this));
 
@@ -63,21 +69,22 @@ void PipelinePainter::cameraChanged()
 void PipelinePainter::paint()
 {
     AbstractPainter::paint();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
     foreach (AbstractRenderStage * renderStage, m_stages)
     {
         renderStage->render();
     }
 
-    TextureObject * texture = getTexture("normalz");
+    glow::Texture * texture = getTexture("normalz");
     if(!texture)
         return;
 
-    texture->bindTo(GL_TEXTURE0);
-    m_flush->setUniform("selectedBuffer", 0);
-    m_quad->draw(*m_flush);
-    texture->releaseFrom(GL_TEXTURE0);
+    
+    //texture->bindTo(GL_TEXTURE0);
+    //m_flush->setUniform("selectedBuffer", 0);
+    //m_quad->draw(*m_flush);
+    //texture->releaseFrom(GL_TEXTURE0);
 }
 
 void PipelinePainter::resize(const int width, const int height)
@@ -150,7 +157,7 @@ void PipelinePainter::setViewFrustumCulling(bool viewFrustumCullingEnabled)
 
 bool PipelinePainter::isViewFrustumCullingEnabled()
 {
-
+    return false;
 }
 
 // TODO end
@@ -255,32 +262,15 @@ void PipelinePainter::selectionChanged(QMap<unsigned int, Node *> selectedNodes)
 //    m_selectionBBox->urb();
 }
 
-glm::dvec3 PipelinePainter::unproject(float x, float y, float z)
+glm::vec3 PipelinePainter::unproject(float x, float y, float z)
 {
-    GLdouble modelview[16];
-    GLdouble projection[16];
-    GLint viewport[4];
-
-    glm::mat4 viewMat = camera()->view();
-    glm::mat4 projectionMat = camera()->projection();
-
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            modelview[i*4+j] = viewMat[i][j];
-            projection[i*4+j] = projectionMat[i][j];
-        }
-    }
-
-    viewport[0] = viewport[1] = 0;
-    viewport[2] = camera()->viewport().x;
-    viewport[3] = camera()->viewport().y;
+    glm::mat4 modelview = camera()->view();
+    glm::mat4 projection = camera()->projection();
+    glm::vec4 viewport = glm::vec4(0.f, 0.f, static_cast<float>(camera()->viewport().x), static_cast<float>(camera()->viewport().y));
 
     glm::dvec3 position;
-    gluUnProject( x, y, z, modelview, projection, viewport, &position.x, &position.y, &position.z );
 
-    return position;
+    return glm::unProject(glm::vec3(x, y, z), modelview, projection, viewport);
 }
 
 const ScreenQuad * PipelinePainter::screenQuad()
@@ -303,7 +293,7 @@ bool PipelinePainter::isViewInvalid()
     return true;//TODO
 }
 
-TextureObject * PipelinePainter::getTexture(QString name)
+glow::Texture * PipelinePainter::getTexture(QString name)
 {
     return m_textures.value(name, nullptr);
 }
@@ -313,12 +303,12 @@ bool PipelinePainter::textureExists(QString name)
     return m_textures.contains(name);
 }
 
-void PipelinePainter::setTexture(QString name, TextureObject * texture)
+void PipelinePainter::setTexture(QString name, glow::Texture * texture)
 {
     m_textures[name] = texture;
 }
 
-bool PipelinePainter::addTexture(QString name, TextureObject * texture)
+bool PipelinePainter::addTexture(QString name, glow::Texture * texture)
 {
     if(textureExists(name))
         return false;

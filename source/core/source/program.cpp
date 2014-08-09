@@ -6,6 +6,11 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/boolean.h>
+
 #include <core/shader.h>
 #include <core/gpuquery.h>
 
@@ -16,7 +21,7 @@ Program::Program()
 ,   m_linked(false)
 ,   m_dirty(true)
 {
-    m_program = glCreateProgram();
+    m_program = gl::glCreateProgram();
     glError();
 }
 
@@ -27,7 +32,7 @@ Program::~Program()
         while(m_shaders.cend() != m_shaders.cbegin())
             detach(*(m_shaders.begin()));
 
-        glDeleteProgram(m_program);
+        gl::glDeleteProgram(m_program);
         glError();
 
         m_program = 0;
@@ -41,8 +46,8 @@ inline const bool Program::isProgram() const
 
 const bool Program::isUsed() const
 {
-    GLint program(-1);
-    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+    gl::GLint program(-1);
+    gl::glGetIntegerv(gl::GL_CURRENT_PROGRAM, &program);
 
     if(-1 == program)
         return false;
@@ -61,7 +66,7 @@ const bool Program::use() const
     if(isUsed())
         return true;
 
-    glUseProgram(m_program);
+    gl::glUseProgram(m_program);
 
     return !glIsError();
 }
@@ -70,7 +75,7 @@ const bool Program::release() const
 {
     assert(isUsed());
 
-    glUseProgram(0);
+    gl::glUseProgram(0);
     return !glIsError();
 }
 
@@ -85,29 +90,29 @@ const bool Program::link() const
 
     m_dirty = false;
 
-    glLinkProgram(m_program);
+    gl::glLinkProgram(m_program);
     glError();
 
-    GLint status(GL_FALSE);
-    glGetProgramiv(m_program, GL_LINK_STATUS, &status);
+    gl::GLint status(static_cast<gl::GLint>(gl::GL_FALSE));
+    gl::glGetProgramiv(m_program, gl::GL_LINK_STATUS, &status);
     glError();
 
-    m_linked = (GL_TRUE == status);
+    m_linked = (static_cast<gl::GLint>(gl::GL_TRUE) == status);
     m_log = "";
 
     // check for compile errors
 
-    GLint maxLength(0);
-    GLint logLength(0);
+    gl::GLint maxLength(0);
+    gl::GLint logLength(0);
 
-    glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &maxLength);
+    gl::glGetProgramiv(m_program, gl::GL_INFO_LOG_LENGTH, &maxLength);
     glError();
 
     if(!maxLength)
         return isLinked();
 
-    GLchar *log = new GLchar[maxLength];
-    glGetProgramInfoLog(m_program, maxLength, &logLength, log);
+    gl::GLchar *log = new gl::GLchar[maxLength];
+    gl::glGetProgramInfoLog(m_program, maxLength, &logLength, log);
     glError();
 
     m_log = log;
@@ -129,7 +134,7 @@ const bool Program::attach(Shader * shader)
     m_shaders.insert(shader);
     shader->programs().insert(this);
 
-    glAttachShader(m_program, shader->shader());
+    gl::glAttachShader(m_program, shader->shader());
     m_dirty = true;
 
     return !glIsError();
@@ -142,7 +147,7 @@ const bool Program::detach(Shader * shader)
     if(m_shaders.end() == m_shaders.find(shader))
         return true;
 
-    glDetachShader(m_program, shader->shader());
+    gl::glDetachShader(m_program, shader->shader());
     const bool result(glIsError());
 
     m_dirty = true;
@@ -161,7 +166,7 @@ const Program::t_shaders & Program::shaders()
     return m_shaders;
 }
 
-const GLuint Program::program() const
+const gl::GLuint Program::program() const
 {
     return m_program;
 }
@@ -177,21 +182,21 @@ const bool Program::isLinked() const
     return m_linked;
 }
 
-const GLint Program::attributeLocation(const QString & name) const
+const gl::GLint Program::attributeLocation(const QString & name) const
 {
     if(m_dirty || !m_linked)
         link();
 
     const QByteArray bytes(name.toLocal8Bit());
-    const GLchar * chr(bytes.constData());
+    const gl::GLchar * chr(bytes.constData());
 
-    const GLint location = glGetAttribLocation(m_program, chr);
+    const gl::GLint location = gl::glGetAttribLocation(m_program, chr);
     glError();
 
     return location;
 }
 
-const GLint Program::uniformLocation(const QString & name) const
+const gl::GLint Program::uniformLocation(const QString & name) const
 {
     if(m_dirty || !m_linked)
         link();
@@ -199,9 +204,9 @@ const GLint Program::uniformLocation(const QString & name) const
     use();
 
     const QByteArray bytes(name.toLocal8Bit());
-    const GLchar * chr(bytes.constData());
+    const gl::GLchar * chr(bytes.constData());
 
-    const GLint location = glGetUniformLocation(m_program, chr);
+    const gl::GLint location = gl::glGetUniformLocation(m_program, chr);
     glError();
 
     return location;
@@ -211,9 +216,9 @@ void Program::setUniform(
     const QString & name
 ,   const float value) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform1f(location, value);
+    gl::glUniform1f(location, value);
     glError();
 }
 
@@ -221,9 +226,9 @@ void Program::setUniform(
     const QString & name
 ,   const int value) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform1i(location, value);
+    gl::glUniform1i(location, value);
     glError();
 }
 
@@ -231,9 +236,9 @@ void Program::setUniform(
     const QString & name
 ,   const unsigned int value) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform1ui(location, value);
+    gl::glUniform1ui(location, value);
     glError();
 }
 
@@ -241,9 +246,9 @@ void Program::setUniform(
     const QString & name
 ,   const glm::vec2 & vec) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform2fv(location, 1, glm::value_ptr(vec));
+    gl::glUniform2fv(location, 1, glm::value_ptr(vec));
     glError();
 }
 
@@ -252,9 +257,9 @@ void Program::setUniform(
     ,   const glm::vec2 * vec_array
     ,   const unsigned int & count) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform2fv(location, count, glm::value_ptr(*vec_array));
+    gl::glUniform2fv(location, count, glm::value_ptr(*vec_array));
     glError();
 }
 
@@ -262,9 +267,9 @@ void Program::setUniform(
     const QString & name
 ,   const glm::ivec2 & vec) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform2iv(location, 1, glm::value_ptr(vec));
+    gl::glUniform2iv(location, 1, glm::value_ptr(vec));
     glError();
 }
 
@@ -272,9 +277,9 @@ void Program::setUniform(
     const QString & name
 ,   const glm::vec3 & vec) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform3fv(location, 1, glm::value_ptr(vec));
+    gl::glUniform3fv(location, 1, glm::value_ptr(vec));
     glError();
 }
 
@@ -283,9 +288,9 @@ void Program::setUniform(
 ,   const glm::vec3 * vec_array
 ,   const unsigned int & count) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform3fv(location, count, glm::value_ptr(*vec_array));
+    gl::glUniform3fv(location, count, glm::value_ptr(*vec_array));
     glError();
 }
 
@@ -293,9 +298,9 @@ void Program::setUniform(
     const QString & name
 ,   const glm::ivec3 & vec) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform3iv(location, 1, glm::value_ptr(vec));
+    gl::glUniform3iv(location, 1, glm::value_ptr(vec));
     glError();
 }
 
@@ -303,9 +308,9 @@ void Program::setUniform(
     const QString & name
 ,   const glm::vec4 & vec) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform4fv(location, 1, glm::value_ptr(vec));
+    gl::glUniform4fv(location, 1, glm::value_ptr(vec));
     glError();
 }
 
@@ -313,9 +318,9 @@ void Program::setUniform(
     const QString & name
 ,   const glm::ivec4 & vec) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform4iv(location, 1, glm::value_ptr(vec));
+    gl::glUniform4iv(location, 1, glm::value_ptr(vec));
     glError();
 }
 
@@ -323,9 +328,9 @@ void Program::setUniform(
     const QString & name
 ,   const glm::uvec4 & vec) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniform4uiv(location, 1, glm::value_ptr(vec));
+    gl::glUniform4uiv(location, 1, glm::value_ptr(vec));
     glError();
 }
 
@@ -334,9 +339,9 @@ void Program::setUniform(
 ,   const glm::mat3 & mat
 ,   const bool transpose) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniformMatrix3fv(location, 1, transpose,  glm::value_ptr(mat));
+    gl::glUniformMatrix3fv(location, 1, gl::GLboolean(transpose),  glm::value_ptr(mat));
     glError();
 }
 
@@ -345,8 +350,8 @@ void Program::setUniform(
 ,   const glm::mat4 & mat
 ,   const bool transpose) const
 {
-    const GLint location(uniformLocation(name));
+    const gl::GLint location(uniformLocation(name));
 
-    glUniformMatrix4fv(location, 1, transpose,  glm::value_ptr(mat));
+    gl::glUniformMatrix4fv(location, 1, gl::GLboolean(transpose), glm::value_ptr(mat));
     glError();
 }

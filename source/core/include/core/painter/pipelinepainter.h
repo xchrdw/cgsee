@@ -25,8 +25,11 @@ class RenderingPass;
 class LightSourcePass;
 class AbstractRenderStage;
 class PipelineBuilder;
-class TextureObject;
 class AbstractCamera;
+
+namespace glow{
+    class Texture;
+}
 
 class CORE_API PipelinePainter : public AbstractScenePainter, public CoordinateProvider // , public PropertyGroup
 {
@@ -73,14 +76,14 @@ public:
     bool isSceneInvalid();
     bool isViewInvalid();
 
-    TextureObject * getTexture(QString name);
+    glow::Texture * getTexture(QString name);
     bool textureExists(QString name);
-    void setTexture(QString name, TextureObject * texture);
-    bool addTexture(QString name, TextureObject * texture);
+    void setTexture(QString name, glow::Texture * texture);
+    bool addTexture(QString name, glow::Texture * texture);
     void removeTexture(QString name);
 
 protected:
-    glm::dvec3 unproject(float x, float y, float z);
+    glm::vec3 unproject(float x, float y, float z);
     void setupPipeline(PipelineBuilder & builder);
     void clearRenderStages();
 
@@ -90,7 +93,7 @@ protected:
     QList<AbstractRenderStage *> m_stages;
 
     QString m_samplerToDisplay;
-    QMap<QString, TextureObject*> m_textures;
+    QMap<QString, glow::Texture*> m_textures;
 
     ScreenQuad * m_quad;
     Program * m_flush;

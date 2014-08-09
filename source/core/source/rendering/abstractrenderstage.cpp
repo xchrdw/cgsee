@@ -1,26 +1,30 @@
 #include <core/rendering/abstractrenderstage.h>
 
 #include <glm/mat4x4.hpp>
+
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/enum.h>
+
 #include <core/gpuquery.h>
 
-#include <core/framebufferobject.h>
 #include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/scenegraph/group.h>
+#include <core/painter/pipelinepainter.h>
 
 
 AbstractRenderStage::AbstractRenderStage(PipelinePainter & painter)
     : m_painter(painter)
     , m_fbo(0)
 {
-    glGenFramebuffers(1, &m_fbo);
+    gl::glGenFramebuffers(1, &m_fbo);
     glError();
 }
 
 AbstractRenderStage::~AbstractRenderStage(void)
 {
-    glDeleteFramebuffers(1, &m_fbo);
+    gl::glDeleteFramebuffers(1, &m_fbo);
     glError();
 }
 
@@ -33,13 +37,13 @@ void AbstractRenderStage::drawScene(const glm::mat4 & transform, Program * progr
 
 void AbstractRenderStage::bindFBO()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    gl::glBindFramebuffer(gl::GL_FRAMEBUFFER, m_fbo);
     glError();
 }
 
 void AbstractRenderStage::releaseFBO()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    gl::glBindFramebuffer(gl::GL_FRAMEBUFFER, 0);
     glError();
 }
 

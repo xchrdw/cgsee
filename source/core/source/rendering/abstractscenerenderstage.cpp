@@ -8,6 +8,7 @@
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/camera/abstractcamera.h>
+#include <core/painter/pipelinepainter.h>
 
 AbstractSceneRenderStage::AbstractSceneRenderStage(PipelinePainter & painter)
     : AbstractRenderStage(painter)

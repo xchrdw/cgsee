@@ -1,8 +1,6 @@
 
 #include <gui/canvas.h>
 
-#include <GL/glew.h>
-
 #include <cassert>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -11,6 +9,13 @@
 #include <QBasicTimer>
 #include <QSize>
 #include <QDebug>
+
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/functions.h>
+
+#include <glow/glow.h>
+#include <glow/Error.h>
 
 #include <core/navigation/navigationhistory.h>
 #include <core/navigation/abstractnavigation.h>
@@ -62,35 +67,25 @@ void Canvas::initializeGL()
     qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));
     qDebug("Version: %s", qPrintable(GPUQuery::version()));
 
-    qDebug("GLEW Version: %s\n", qPrintable(GPUQuery::glewVersion()));
+    //qDebug("GLEW Version: %s\n", qPrintable(GPUQuery::glewVersion()));
 
     // NOTE : Important for e.g., 3.2 core
     // http://glew.sourceforge.net/basic.html
 
     glError();
-    glewExperimental = GL_TRUE;
-    const GLenum error = glewInit();
 
-    // http://stackoverflow.com/questions/10857335/opengl-glgeterror-returns-invalid-enum-after-call-to-glewinit
-    // use glGetError instead of userdefined glError, to avoid console/log output
-    glGetError();
-    glError();
-
-    if(GLEW_OK != error)
-        qCritical("Glew failed to initialized: %s\n", qPrintable(GPUQuery::glewError(error)));
-
-    if(!m_format.verify(context()->format()))
-        qWarning("There might be problems during scene initialization and rendering.\n");
-
-    glError();
-
-    if(!GPUQuery::isCoreProfile())
+    if (!glow::init())
     {
-        qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
-        qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
+        qCritical("Glow failed to initialized: %s\n", qPrintable(QString::fromStdString(glow::Error::get().name())));
     }
 
-    glClearColor(1.f, 1.f, 1.f, 1.f);
+    //if(!GPUQuery::isCoreProfile())
+    //{
+    //    qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
+    //    qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
+    //}
+
+    gl::glClearColor(1.f, 1.f, 1.f, 1.f);
     glError();
 }
 
@@ -112,7 +107,7 @@ void Canvas::paintGL()
     if(m_painter)
         m_painter->paint();
     else
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
     glError();
 }
@@ -187,14 +182,14 @@ const QImage Canvas::capture(
     }
     //TODO move camera responsibility to painter->paintTile(width,height)
     //TODO keep own fbo to avoid drawing on screen
-    static const GLuint tileW(512);
-    static const GLuint tileH(512);
+    static const gl::GLuint tileW(512);
+    static const gl::GLuint tileH(512);
 
-    const GLuint w(camera->viewport().x);
-    const GLuint h(camera->viewport().y);
+    const gl::GLuint w(camera->viewport().x);
+    const gl::GLuint h(camera->viewport().y);
 
-    const GLuint frameW = size.width();
-    const GLuint frameH = size.height();
+    const gl::GLuint frameW = size.width();
+    const gl::GLuint frameH = size.height();
 
     Projection * projection = new Projection(*camera->getProjection());
 
@@ -218,8 +213,8 @@ const QImage Canvas::capture(
     camera->setViewport(tileW, tileH);
 
 
-    for (GLuint y = 0; y < frameH; y += tileH)
-        for (GLuint x = 0; x < frameW; x += tileW)
+    for (gl::GLuint y = 0; y < frameH; y += tileH)
+    for (gl::GLuint x = 0; x < frameW; x += tileW)
         {
         const glm::mat4 pick = glm::pickMatrix(glm::vec2(x + tileW / 2, y + tileH / 2),
             glm::vec2(tileW, tileH), viewport);
@@ -230,7 +225,7 @@ const QImage Canvas::capture(
 
         m_painter->paint();
 
-        glReadPixels(0, 0, tileW, tileH, alpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, tile.bits());
+        glReadPixels(0, 0, tileW, tileH, alpha ? gl::GL_RGBA : gl::GL_RGB, gl::GL_UNSIGNED_BYTE, tile.bits());
         p.drawImage(x, y, tile);
         }
     p.end();

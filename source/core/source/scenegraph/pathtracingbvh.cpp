@@ -6,6 +6,10 @@
 #include <qlist.h>
 #include <glm/glm.hpp>
 
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/functions.h>
+
 #include <core/scenegraph/group.h>
 #include <core/aabb.h>
 #include <core/bufferobject.h>
@@ -23,14 +27,14 @@ PathTracingBVH::~PathTracingBVH() {
     delete m_geometry;
 }
 
-void PathTracingBVH::geometryToTexture(GLuint textureSlot) {
-    BufferObject geometryBuffer(GL_TEXTURE_BUFFER, GL_STATIC_READ);
-    geometryBuffer.data<glm::vec4>(m_geometry->data(), m_geometry->size(), GL_RGBA32F, sizeof(glm::vec4));
-    glActiveTexture(textureSlot);
-    GLuint textureHandle;
-    glGenTextures(1, &textureHandle);
-    glBindTexture(GL_TEXTURE_BUFFER, textureHandle);
-    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, geometryBuffer.buffer());
+void PathTracingBVH::geometryToTexture(gl::GLenum textureSlot) {
+    BufferObject geometryBuffer(gl::GL_TEXTURE_BUFFER, gl::GL_STATIC_READ);
+    geometryBuffer.data<glm::vec4>(m_geometry->data(), m_geometry->size(), gl::GL_RGBA32F, sizeof(glm::vec4));
+    gl::glActiveTexture(textureSlot);
+    gl::GLuint textureHandle;
+    gl::glGenTextures(1, &textureHandle);
+    gl::glBindTexture(gl::GL_TEXTURE_BUFFER, textureHandle);
+    gl::glTexBuffer(gl::GL_TEXTURE_BUFFER, gl::GL_RGBA32F, geometryBuffer.buffer());
     glError();
 }
 

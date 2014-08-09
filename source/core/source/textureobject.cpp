@@ -1,18 +1,18 @@
-
 #include <core/textureobject.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/functions.h>
 
 TextureObject::TextureObject()
     : m_texture(0)
-    , m_internalFormat(GL_RGBA_INTEGER)
-    , m_format(GL_RGBA)
-    , m_type(GL_FLOAT)
+    , m_internalFormat(gl::GL_RGBA_INTEGER)
+    , m_format(gl::GL_RGBA)
+    , m_type(gl::GL_FLOAT)
 {
 
 }
 
-TextureObject::TextureObject(GLenum internalFormat, GLenum format, GLenum type)
+TextureObject::TextureObject(gl::GLenum internalFormat, gl::GLenum format, gl::GLenum type)
     : m_texture(0)
     , m_internalFormat(internalFormat)
     , m_format(format)
@@ -21,7 +21,7 @@ TextureObject::TextureObject(GLenum internalFormat, GLenum format, GLenum type)
 
 }
 
-TextureObject::TextureObject(GLuint width, GLuint height, GLenum internalFormat, GLenum format, GLenum type)
+TextureObject::TextureObject(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat, gl::GLenum format, gl::GLenum type)
     : m_texture(0)
     , m_width(width)
     , m_height(height)
@@ -42,7 +42,7 @@ bool TextureObject::isInitialized()
     return m_texture != 0;
 }
 
-void TextureObject::configure(GLuint width, GLuint height, GLenum internalFormat, GLenum format, GLenum type)
+void TextureObject::configure(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat, gl::GLenum format, gl::GLenum type)
 {
     m_width = width;
     m_height = height;
@@ -54,7 +54,7 @@ void TextureObject::configure(GLuint width, GLuint height, GLenum internalFormat
     generateGLTexture();
 }
 
-void TextureObject::resize(GLuint width, GLuint height)
+void TextureObject::resize(gl::GLuint width, gl::GLuint height)
 {
     m_width = width;
     m_height = height;
@@ -63,38 +63,38 @@ void TextureObject::resize(GLuint width, GLuint height)
     generateGLTexture();
 }
 
-void TextureObject::attachTo(GLenum attachment)
+void TextureObject::attachTo(gl::GLenum attachment)
 {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, m_texture, 0);
+    gl::glFramebufferTexture2D(gl::GL_FRAMEBUFFER, attachment, gl::GL_TEXTURE_2D, m_texture, 0);
     glError();
 }
 
-void TextureObject::bindTo(GLenum textureUnit)
+void TextureObject::bindTo(gl::GLenum textureUnit)
 {
-    glActiveTexture(textureUnit);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    gl::glActiveTexture(textureUnit);
+    gl::glBindTexture(gl::GL_TEXTURE_2D, m_texture);
 }
 
-void TextureObject::releaseFrom(GLenum textureUnit)
+void TextureObject::releaseFrom(gl::GLenum textureUnit)
 {
-    glActiveTexture(textureUnit);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl::glActiveTexture(textureUnit);
+    gl::glBindTexture(gl::GL_TEXTURE_2D, 0);
 }
 
 void TextureObject::generateGLTexture()
 {
-    glGenTextures(1, &m_texture);
+    gl::glGenTextures(1, &m_texture);
     glError();
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    gl::glBindTexture(gl::GL_TEXTURE_2D, m_texture);
     glError();
-    glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_width, m_height, 0, m_format, m_type, 0);
+    gl::glTexImage2D(gl::GL_TEXTURE_2D, 0, static_cast<gl::GLint>(m_internalFormat), m_width, m_height, 0, m_format, m_type, 0);
     glError();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::glTexParameteri(gl::GL_TEXTURE_2D, gl::GL_TEXTURE_WRAP_S, static_cast<gl::GLint>(gl::GL_CLAMP_TO_EDGE));
+    gl::glTexParameteri(gl::GL_TEXTURE_2D, gl::GL_TEXTURE_WRAP_T, static_cast<gl::GLint>(gl::GL_CLAMP_TO_EDGE));
+    gl::glTexParameteri(gl::GL_TEXTURE_2D, gl::GL_TEXTURE_MAG_FILTER, static_cast<gl::GLint>(gl::GL_LINEAR));
+    gl::glTexParameteri(gl::GL_TEXTURE_2D, gl::GL_TEXTURE_MIN_FILTER, static_cast<gl::GLint>(gl::GL_LINEAR));
     glError();
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl::glBindTexture(gl::GL_TEXTURE_2D, 0);
     glError();
 }
 
@@ -102,7 +102,7 @@ void TextureObject::deleteGLTexture()
 {
     if (m_texture != 0)
     {
-        glDeleteTextures(1, &m_texture);
+        gl::glDeleteTextures(1, &m_texture);
         glError();
     }
 }

@@ -6,13 +6,15 @@
 #include <QFile>
 #include <QFileInfo>
 
+#include <glbinding/gl/types.h>
+
 
 using namespace std;
 
 FileAssociatedShader::t_shadersByFilePath FileAssociatedShader::shadersByFilePath;
 
 FileAssociatedShader::FileAssociatedShader(
-    const GLenum type
+    const gl::GLenum type
 ,   const QString & filePath)
 
 :   Shader(type)

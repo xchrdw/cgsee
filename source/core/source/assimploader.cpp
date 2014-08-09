@@ -1,6 +1,8 @@
 
 #include <core/assimploader.h>
 
+#include <glbinding/gl/enum.h>
+
 #include <core/datacore/datablock.h>
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/polygonalgeometry.h>
@@ -179,6 +181,6 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
     
     PolygonalDrawable * drawable = new PolygonalDrawable(mesh.mName.C_Str());
     drawable->setGeometry(geometry);
-    drawable->setMode(GL_TRIANGLES);
+    drawable->setMode(gl::GL_TRIANGLES);
     return drawable;
 }

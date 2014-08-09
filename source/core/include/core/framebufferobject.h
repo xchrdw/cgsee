@@ -2,9 +2,9 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
-
 #include <glm/glm.hpp>
+
+#include <glbinding/gl/types.h>
 
 #include <core/typedefs.h>
 
@@ -15,10 +15,10 @@ class CORE_API FrameBufferObject
 {
 public:
     FrameBufferObject(
-        const GLenum internalFormat
-    ,   const GLenum format
-    ,   const GLenum type
-    ,   const GLenum attachment
+        const gl::GLenum internalFormat
+    ,   const gl::GLenum format
+    ,   const gl::GLenum type
+    ,   const gl::GLenum attachment
     ,   const bool   depth);
 
     virtual ~FrameBufferObject();
@@ -50,17 +50,17 @@ protected:
     inline const bool isRenderBuffer() const;
     inline const bool isTexture() const;
 public:
-    mutable GLuint m_fbo;
+    mutable gl::GLuint m_fbo;
 protected:
-    mutable GLuint m_render;
-    mutable GLuint m_texture;
+    mutable gl::GLuint m_render;
+    mutable gl::GLuint m_texture;
 
     glm::ivec2 m_size;
 
-    const GLenum m_internal;
-    const GLenum m_format;
-    const GLenum m_type;
-    const GLenum m_attachment;
+    const gl::GLenum m_internal;
+    const gl::GLenum m_format;
+    const gl::GLenum m_type;
+    const gl::GLenum m_attachment;
     const bool   m_depth;
 
     unsigned int m_width;

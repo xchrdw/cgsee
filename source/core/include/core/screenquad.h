@@ -2,7 +2,7 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/types.h>
 
 
 class BufferObject;
@@ -23,6 +23,6 @@ protected:
     void initialize(const Program & program) const;
 
 protected:  
-    mutable GLuint m_vao;
+    mutable gl::GLuint m_vao;
     mutable BufferObject * m_vertexBO;
 };

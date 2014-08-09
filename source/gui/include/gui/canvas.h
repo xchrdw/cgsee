@@ -2,7 +2,6 @@
 
 #include <gui/gui_api.h>
 
-#include <GL/glew.h>
 #include <QGLWidget>
 
 #include <core/glformat.h>

@@ -2,7 +2,7 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/types.h>
 
 #include <QString>
 
@@ -10,23 +10,23 @@
 class CORE_API GPUQuery
 {
 public:
-    static const GLint   queryi(const GLenum penum);
-    static const QString querys(const GLenum penum);
-    static const QString glew  (const GLenum penum);
+    static const gl::GLint queryi(const gl::GLenum penum);
+    static const QString querys(const gl::GLenum penum);
+    static const QString glew  (const gl::GLenum penum);
 
     static const QString vendor();
     static const QString renderer();
     static const QString version();
-    static const QString glewVersion();
+    //static const QString glewVersion();
 
-    static const bool isCoreProfile();
+    //static const bool isCoreProfile();
 
     // Checks for an opengl error and prints to console if one occurred
     static const bool error(
         const char * file
     ,   const int line);
 
-    static const QString glewError(const GLenum penum);
+    //static const QString glewError(const gl::GLenum penum);
 
     // Extension Info
 
@@ -35,14 +35,14 @@ public:
 
     // Memory Info (return -1 if query is not possible or failed)
 
-    static const GLint totalMemory();
-    static const GLint dedicatedMemory();
-    static const GLint availableMemory();
-    static const GLint evictionCount();
-    static const GLint evictedMemory();
+    //static const gl::GLint totalMemory();
+    //static const gl::GLint dedicatedMemory();
+    //static const gl::GLint availableMemory();
+    //static const gl::GLint evictionCount();
+    //static const gl::GLint evictedMemory();
 
 protected:
-    static const GLint memoryInfo(const GLenum penum);
+    static const gl::GLint memoryInfo(const gl::GLenum penum);
 };
 
 #define glError() GPUQuery::error(__FILE__, __LINE__)

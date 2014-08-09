@@ -3,6 +3,9 @@
 #include <core/core_api.h>
 #include <core/rendering/abstractrenderstage.h>
 
+class Program;
+class PipelinePainter;
+
 // under construction
 class CORE_API AbstractSceneRenderStage : public AbstractRenderStage
 {
@@ -14,5 +17,4 @@ public:
 
 protected:
     Program * m_program;
-
 };

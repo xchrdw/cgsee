@@ -3,11 +3,12 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <core/framebufferobject.h>
+//#include <core/framebufferobject.h>
 #include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/screenquad.h>
+#include <core/painter/pipelinepainter.h>
 
 AbstractPostProcessingStage::AbstractPostProcessingStage(PipelinePainter & painter)
     : AbstractRenderStage(painter)

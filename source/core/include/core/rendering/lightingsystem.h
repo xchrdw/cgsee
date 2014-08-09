@@ -1,10 +1,11 @@
 #pragma once
-
-#include <core/core_api.h>
 #include "core/rendering/lighttypes.h"
+
 #include <vector>
 
-#include <GL/glew.h>
+#include <glbinding/gl/types.h>
+
+#include <core/core_api.h>
 
 struct LightUniformBuffers
 {
@@ -17,9 +18,9 @@ struct LightUniformBuffers
 		// Shadowed point/spec lights might require new buffer
 		Count
 	};
-	GLuint ubos[LightUniformBuffers::Count];
-	GLuint bindingLocations[LightUniformBuffers::Count];
-	uint32_t sizes[LightUniformBuffers::Count];
+	gl::GLuint ubos[LightUniformBuffers::Count];
+    gl::GLuint bindingLocations[LightUniformBuffers::Count];
+    uint32_t sizes[LightUniformBuffers::Count];
 };
 
 // Rename to LightingSystem in a seperate commit
@@ -44,12 +45,12 @@ public:
 
 	void initBuffers();
 	// Use the enum in LightUBO to update specific buffers
-	void updateBuffer(uint8_t buffer_enum, GLuint activeProgram, void* data);
-	void updateAllBuffers(GLuint activeProgram);
+    void updateBuffer(uint8_t buffer_enum, gl::GLuint activeProgram, void* data);
+    void updateAllBuffers(gl::GLuint activeProgram);
 	void bindBuffer(uint8_t buffer_enum);
 	void bindAllBuffers();
 
-	void onShaderRelink(GLuint relinkedProgram);
+    void onShaderRelink(gl::GLuint relinkedProgram);
 
 protected:
 	LightInfo m_lightInfo;

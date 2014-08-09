@@ -1,21 +1,18 @@
 #pragma once
 
+#include <glbinding/gl/types.h>
+
+#include <glm/mat4x4.hpp>
+
 #include <core/core_api.h>
-
-#include <GL/glew.h>
-
-#include <core/property/valueproperty.h>
-#include <core/painter/pipelinepainter.h>
 
 class Group;
 class Program;
-class FrameBufferObject;
+class PipelinePainter;
 
 class CORE_API AbstractRenderStage
 {
 public:
-    typedef GLuint FrameBuffer;
-
     AbstractRenderStage(PipelinePainter & painter);
     virtual ~AbstractRenderStage(void);
 
@@ -33,14 +30,13 @@ protected:
     void bindFBO();
     void releaseFBO();
 
-    GLuint createRenderbuffer(GLuint width, GLuint height, GLenum internalFormat);
-    void deleteRenderbuffer(GLuint renderbuffer);
-    void attachRenderbuffer(GLenum attachment, GLuint renderbuffer);
+    gl::GLuint createRenderbuffer(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat);
+    void deleteRenderbuffer(gl::GLuint renderbuffer);
+    void attachRenderbuffer(gl::GLenum attachment, gl::GLuint renderbuffer);
 
 protected:
     PipelinePainter & m_painter;
 
-    GLuint m_fbo;
+    gl::GLuint m_fbo;
     bool m_fboIsBound;
-
 };
