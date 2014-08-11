@@ -26,7 +26,7 @@ Painter::Painter()
 ,	m_view(1.f)
 ,	m_projection(1.f)
 
-,	m_eye   (glm::vec3(0.f, 0.f,-4.f))
+,	m_eye   (glm::vec3(0.f, 0.f,-1.5))
 ,	m_center(glm::vec3(0.f, 0.f, 0.f))
 ,	m_up    (glm::vec3(0.f, 1.f, 0.f))
 
@@ -104,7 +104,7 @@ const bool Painter::initialize()
 	m_view = glm::lookAt(m_eye, m_center, m_up);
 
 	// initialize shaders and program
-    const QString TEXTURE_FILENAME = "data/skycube.png";
+    const QString TEXTURE_FILENAME = "data/gizmo.png";
     m_textureID = loadTexture(TEXTURE_FILENAME);
 
 	glError();
@@ -141,9 +141,6 @@ const bool Painter::initialize()
         "\n"
         "void main()\n"
         "{\n"
-        "    float znear =  0.1;\n"
-        "    float zfar  = 10.0;\n"
-        "\n"
         "    //fragcolor = vec4(0.0, 1.0, 0.0, 1.0);\n"
         "    fragcolor = texture(tex, fragTexCoord);\n"
         "}\n";
@@ -222,15 +219,25 @@ const bool Painter::initialize()
     glError();
 
     GLfloat texCoords[] = {
-        // front
-        0.45, 0.55,
+        // seite 1
+        0.0, 0.0, // 2
+        1.0, 0.0, // 0
+        0.0, 1.0, // 6
+        1.0, 1.0, // 4
+
+        // seite 2
+        0.0, 0.0, // 5
+        0.0, 1.0, // 0
+        1.0, 0.0, // 1
+        0.0, 0.0 // 2
+        /*,
         0.5, 0.6,
         0.3, 0.4,
         0.2, 0.5,
         0.45, 0.55,
         0.5, 0.6,
         0.3, 0.4,
-        0.2, 0.5
+        0.2, 0.5*/
     };
     glGenBuffers(1, &m_texCoords);
     glError();
