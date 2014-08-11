@@ -59,4 +59,6 @@ protected:
 	GLuint m_vao;
 	GLuint m_indices;
     GLuint m_vertices;
+    GLuint m_texCoords;
+
 };

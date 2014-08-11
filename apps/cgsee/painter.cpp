@@ -44,6 +44,7 @@ Painter::Painter()
 ,	m_vao(-1)
 ,	m_indices(-1)
 ,   m_vertices(-1)
+,   m_texCoords(-1)
 ,   m_textureID(0)
 {
 }
@@ -51,6 +52,7 @@ Painter::Painter()
 Painter::~Painter()
 {
     glDeleteBuffers(1, &m_vertices);
+    glDeleteBuffers(1, &m_texCoords);
     glDeleteBuffers(1, &m_indices);
 
 	glDetachShader(m_program, m_vert);
@@ -116,8 +118,8 @@ const bool Painter::initialize()
         "#version 150 core\n"
         "\n"
         "in vec3 a_vertex;\n"
-        "//in vec2 vertTexCoord;\n"
-        "//out vec2 fragTexCoord;\n"
+        "in vec2 vertTexCoord;\n"
+        "out vec2 fragTexCoord;\n"
 		"\n"
 		"\n"
 		"uniform mat4 transform;\n"
@@ -125,7 +127,7 @@ const bool Painter::initialize()
         "void main(void)\n"
         "{\n"
         "   vec4 vertex = transform * vec4(a_vertex, 1.0);\n"
-        "   //fragTexCoord = vertTexCoord;\n"
+        "   fragTexCoord = vertTexCoord;\n"
         "	gl_Position = vertex;\n"
         "}\n";
 
@@ -174,30 +176,25 @@ const bool Painter::initialize()
 
 	a_vertex = glGetAttribLocation(m_program, "a_vertex");
 	glError();
+
 	u_transform = glGetUniformLocation(m_program, "transform");
 	glError();
 
-    GLint bg = glGetUniformLocation(m_program, "bg");
-    glError();
-
-
 	// initialize geometry
-
 	static const GLfloat vertices[24] =
     {
-        -1.f,-1.f,-1.f,	// 0
-	    -1.f,-1.f, 1.f,	// 1
-		-1.f, 1.f,-1.f,	// 2
-		-1.f, 1.f, 1.f,	// 3
-		 1.f,-1.f,-1.f,	// 4
-		 1.f,-1.f, 1.f, // 5
-		 1.f, 1.f,-1.f, // 6
-		 1.f, 1.f, 1.f  // 7
+        -1.f,-1.f,-1.f,
+	    -1.f,-1.f, 1.f,
+		-1.f, 1.f,-1.f,
+		-1.f, 1.f, 1.f,
+		 1.f,-1.f,-1.f,
+		 1.f,-1.f, 1.f,
+		 1.f, 1.f,-1.f,
+		 1.f, 1.f, 1.f
     };
 
     static const GLubyte indices[14] = {
         2, 0, 6, 4, 5, 0, 1, 2, 3, 6, 7, 5, 3, 1 };
-
 
     glGenVertexArrays(1, &m_vao);
     glError();
@@ -218,15 +215,38 @@ const bool Painter::initialize()
 	glBufferData(GL_ARRAY_BUFFER, (8 * 3) * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
 	glError();
 
+
+    // texture coordinates
+
+    GLint a_vertTexCoord = glGetAttribLocation(m_program, "vertTexCoord");
+    glError();
+
+    GLfloat texCoords[] = {
+        // front
+        0.45, 0.55,
+        0.5, 0.6,
+        0.3, 0.4,
+        0.2, 0.5,
+        0.45, 0.55,
+        0.5, 0.6,
+        0.3, 0.4,
+        0.2, 0.5
+    };
+    glGenBuffers(1, &m_texCoords);
+    glError();
+    glBindBuffer(GL_ARRAY_BUFFER, m_texCoords);
+    glError();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
+    glError();
+    glEnableVertexAttribArray(a_vertTexCoord);
+    glError();
+    glVertexAttribPointer(a_vertTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glError();
+
 	// initialize state
-
-    glClearColor(1.f, 1.f, 1.f, 1.f);
-
+    glClearColor(0.2, 0.2, 0.2, 1.f);
     glUseProgram(m_program);
-    glUniform3f(bg, .3f, .4f, .5f);
-
     glEnable(GL_DEPTH_TEST);
-
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
 
@@ -262,16 +282,20 @@ void Painter::paint()
 	glUseProgram(m_program);
 	glError();
 
+    // bind texture
     glEnable(GL_TEXTURE_2D);
     glError();
     glBindTexture(GL_TEXTURE_2D, m_textureID);
     glError();
-   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  //  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA,GL_UNSIGNED_BYTE,(GLvoid*)textura );
+
+    GLint u_texture = glGetUniformLocation(m_program, "tex");
+    glError();
+
+    glUniform1i(u_texture, 0);
+    glError();
 
 
 	// bind vertices
-
     glBindVertexArray(m_vao);
     glError();
 
