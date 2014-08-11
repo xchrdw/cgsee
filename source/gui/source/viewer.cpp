@@ -203,7 +203,7 @@ void Viewer::initializeSceneTree()
 
 void Viewer::initializeMaterial()
 {
-	m_materialWidgetBuilder->initializeMaterialWidget(m_qtCanvas->format());
+	m_materialWidgetBuilder->initializeMaterialWidget(m_qtCanvas->format(), m_camera);
 	initializeDockWidgets(m_materialWidgetBuilder->getDockMaterial(), m_materialWidgetBuilder->getMaterialWidget(), Qt::RightDockWidgetArea);
 }
 
@@ -470,7 +470,7 @@ void Viewer::initialize(const GLFormat & format)
         m_qtCanvas, SIGNAL(mouseMoveEventTriggered(int)),
         this, SLOT(on_mouseMoveEventTriggered(int)));
 
-	m_materialWidgetBuilder = new MaterialWidgetBuilder(this);
+	m_materialWidgetBuilder = new MaterialWidgetBuilder(this, m_loader);
 
     // ToDo: revisit initialization sequence
     initializeExplorer();
