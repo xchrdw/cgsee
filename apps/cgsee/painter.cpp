@@ -116,18 +116,16 @@ const bool Painter::initialize()
         "#version 150 core\n"
         "\n"
         "in vec3 a_vertex;\n"
-        "in vec3 a_normal;\n"
+        "//in vec2 vertTexCoord;\n"
+        "//out vec2 fragTexCoord;\n"
 		"\n"
-		"out vec3 local;\n"
-        "out vec3 world;\n"
 		"\n"
 		"uniform mat4 transform;\n"
         "\n"
         "void main(void)\n"
         "{\n"
         "   vec4 vertex = transform * vec4(a_vertex, 1.0);\n"
-        "   local = a_vertex;\n"
-        "   world = vertex.xyz;\n"
+        "   //fragTexCoord = vertTexCoord;\n"
         "	gl_Position = vertex;\n"
         "}\n";
 
@@ -135,10 +133,8 @@ const bool Painter::initialize()
 
         "#version 150 core\n"
         "\n"
-        "uniform vec3 bg;\n"
-        "\n"
-		"in vec3 local;\n"
-        "in vec3 world;\n"
+        "uniform sampler2D tex;\n"
+        "in vec2 fragTexCoord;\n"
         "out vec4 fragcolor;\n"
         "\n"
         "void main()\n"
@@ -146,7 +142,8 @@ const bool Painter::initialize()
         "    float znear =  0.1;\n"
         "    float zfar  = 10.0;\n"
         "\n"
-        "    fragcolor = vec4(1.0, 1.0, 0.0, 1.0);\n"
+        "    //fragcolor = vec4(0.0, 1.0, 0.0, 1.0);\n"
+        "    fragcolor = texture(tex, fragTexCoord);\n"
         "}\n";
 
 	glShaderSource(m_vert, 1, &srcv, nullptr);
@@ -265,13 +262,16 @@ void Painter::paint()
 	glUseProgram(m_program);
 	glError();
 
-    // bind texture
     glEnable(GL_TEXTURE_2D);
     glError();
     glBindTexture(GL_TEXTURE_2D, m_textureID);
     glError();
+   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  //  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA,GL_UNSIGNED_BYTE,(GLvoid*)textura );
+
 
 	// bind vertices
+
     glBindVertexArray(m_vao);
     glError();
 
@@ -307,6 +307,7 @@ void Painter::paint()
 	glError();
 
     glDisable(GL_TEXTURE_2D);
+    glError();
 
 }
 
