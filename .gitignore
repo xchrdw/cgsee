@@ -1,6 +1,10 @@
 CMakeLists.txt.user
 
 build/
+codeblocks/
+3rdparty/
+temp/
+.localconfig/
 
 *.sublime-project
 *.sublime-workspace
@@ -13,6 +17,11 @@ build/
 *.vcproj.*.user
 *.vcxproj.user
 
-_configure.bat
-_open-project.bat
-_start-cmake-gui.bat
+*.bat
+*.sh
+
+cgsee.config
+cgsee.creator
+cgsee.files
+cgsee.includes
+cgsee.creator.user
