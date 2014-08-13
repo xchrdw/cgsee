@@ -77,6 +77,7 @@ const bool Shader::setSource(
 
     gl::GLint status(static_cast<gl::GLint>(gl::GL_FALSE));
     gl::glGetShaderiv(m_shader, gl::GL_COMPILE_STATUS, &status);
+    glError();
 
     m_compiled = (static_cast<gl::GLint>(gl::GL_TRUE) == status);
     m_log = "";

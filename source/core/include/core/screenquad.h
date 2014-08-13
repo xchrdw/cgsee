@@ -7,7 +7,10 @@
 
 class BufferObject;
 class Program;
-class FrameBufferObject;
+
+namespace glow{
+    class FrameBufferObject;
+}
 
 class CORE_API ScreenQuad
 {
@@ -17,7 +20,7 @@ public:
 
     void draw(
         const Program & program
-    ,   FrameBufferObject * target = nullptr) const;
+    ,   glow::FrameBufferObject * target = nullptr) const;
 
 protected:
     void initialize(const Program & program) const;

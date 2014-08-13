@@ -5,6 +5,8 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
+#include <glow/glow.h>
+
 #include <core/datacore/datablock.h>
 #include <core/aabb.h>
 #include <core/bufferobject.h>
@@ -166,9 +168,11 @@ void PolygonalGeometry::initialize(const Program & program)
 {
     if(!m_arrayBOsByAttribute.empty() && !m_elementArrayBOs.empty())
         return;
-    
+    glError();
     deleteBuffers();
 
+    glow::isInitialized();
+    glError();
     gl::glGenVertexArrays(1, &m_vao);
     glError();
     gl::glBindVertexArray(m_vao);                                                                  

@@ -7,8 +7,9 @@
 #include <glbinding/gl/bitfield.h>
 #include <glbinding/gl/boolean.h>
 
+#include <glow/FrameBufferObject.h>
+
 #include <core/bufferobject.h>
-#include <core/framebufferobject.h>
 #include <core/program.h>
 #include <core/shader.h>
 #include <core/gpuquery.h>
@@ -67,7 +68,7 @@ void ScreenQuad::initialize(const Program & program) const
 
 void ScreenQuad::draw(
     const Program & program
-,   FrameBufferObject * target) const
+,   glow::FrameBufferObject * target) const
 {
     if(-1 == m_vao)
         initialize(program);
@@ -96,5 +97,5 @@ void ScreenQuad::draw(
     glError();
 
     if(target)
-        target->release();
+        target->unbind();
 }

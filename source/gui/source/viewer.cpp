@@ -5,14 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#ifdef __GLEW_H__
-#undef __GLEW_H__
-#include <QOpenGLContext>
-#define __GLEW_H__
-#else
-#include <QOpenGLContext>
-#endif
-
 #ifdef WIN32
 
 #elif __APPLE__
@@ -45,6 +37,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <QListView>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QSurfaceFormat>
 
 #include <propertyguizeug/PropertyBrowser.h>
 
@@ -319,64 +312,6 @@ void Viewer::assignScene(Group * rootNode)
     updateInfoBox();
 }
 
-#ifdef WIN32
-const HGLRC Viewer::currentContextHandle()
-{
-    return  wglGetCurrentContext();
-#elif __APPLE__
-void * Viewer::currentContextHandle()
-{
-    return nullptr;
-#else
-const GLXContext Viewer::currentContextHandle()
-{
-    return glXGetCurrentContext();
-#endif
-}
-
-#ifdef WIN32
-const HGLRC Viewer::createQtContext(const GLFormat & format)
-#elif __APPLE__
-void * Viewer::createQtContext(const GLFormat & format)
-#else
-const GLXContext Viewer::createQtContext(const GLFormat & format)
-#endif
-{
-    m_qtCanvas = new Canvas(format, this);
-    setCentralWidget(m_qtCanvas);
-    m_qtCanvas->setRefreshTimeMSec(); //TODO , current default value 1
-
-    QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
-
-    if(!qContext)
-        qFatal("Creating QtGL-Context failed.");
-
-    qContext->makeCurrent();
-
-    if(QGLContext::currentContext() != qContext)
-        qFatal("Making QtGL-Context current failed.");
-
-#ifdef WIN32
-    const HGLRC qtContextHandle = currentContextHandle();
-#elif __APPLE__
-    void * qtContextHandle = currentContextHandle();
-#else
-    const GLXContext qtContextHandle = currentContextHandle();
-#endif
-
-    // NOTE: might work even if no context was returned.
-    // This just double checks...
-
-    if(nullptr == qtContextHandle)
-        qWarning("Acquiring QtGL-Context handle failed.");
-
-    // canvas verifies the context itself.
-
-    qContext->doneCurrent();
-
-    return qtContextHandle;
-}
-
 /**
  * @brief Updates the navigation history dock widget.
  * @details Updates the navigation history dock widget, check for all available
@@ -469,10 +404,8 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
 
 void Viewer::initialize(const GLFormat & format)
 {
-    if(!QGLFormat::hasOpenGL())
-        qFatal("OpenGL not supported.");
-
-    createQtContext(format);
+    m_qtCanvas = new Canvas(format, this);
+    setCentralWidget(m_qtCanvas);
 
     m_navigationHistory = m_qtCanvas->navigationHistory();
     m_navigationHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
@@ -491,7 +424,6 @@ void Viewer::initialize(const GLFormat & format)
     initializeMaterial();
 	initializeNavigationHistory();
 	
-
     tabifyDockWidget(m_dockScene, m_dockMaterial);
     m_dockScene->raise();
     m_dockMaterial->hide();
@@ -503,10 +435,9 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_GEOMETRY, saveGeometry());
     s.setValue(SETTINGS_STATE, saveState());
 
-    delete m_qtCanvas;
-
     delete m_painter;
     delete m_scene;
+    delete m_qtCanvas;
 
     delete m_dockNavigator;
     delete m_dockExplorer;
@@ -948,6 +879,7 @@ void Viewer::keyPressEvent(QKeyEvent * event)
     {
         navigation()->keyPressEvent(event);
     }
+    m_qtCanvas->repaint();
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )

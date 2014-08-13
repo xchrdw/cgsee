@@ -7,7 +7,7 @@
 #include <QVector>
 
 
-class QGLFormat;
+class QSurfaceFormat;
 
 class CORE_API GLFormat
 {
@@ -21,13 +21,13 @@ public:
 
 public:
     GLFormat();
-    GLFormat(const QGLFormat & format);
+    GLFormat(const QSurfaceFormat & format);
 
     virtual ~GLFormat();
 
-    const QGLFormat asQGLFormat() const;
+    const QSurfaceFormat asQSurfaceFormat() const;
 
-    const bool verify(const QGLFormat & format) const;
+    const bool verify(const QSurfaceFormat & format) const;
 
 
     const unsigned int majorVersion() const;

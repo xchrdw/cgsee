@@ -10,6 +10,10 @@ class Group;
 class Program;
 class PipelinePainter;
 
+namespace glow{
+    class FrameBufferObject;
+}
+
 class CORE_API AbstractRenderStage
 {
 public:
@@ -30,6 +34,8 @@ protected:
     void bindFBO();
     void releaseFBO();
 
+    
+    
     gl::GLuint createRenderbuffer(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat);
     void deleteRenderbuffer(gl::GLuint renderbuffer);
     void attachRenderbuffer(gl::GLenum attachment, gl::GLuint renderbuffer);
@@ -37,6 +43,6 @@ protected:
 protected:
     PipelinePainter & m_painter;
 
-    gl::GLuint m_fbo;
+    glow::FrameBufferObject *m_fbo;
     bool m_fboIsBound;
 };

@@ -48,6 +48,7 @@ void HighlightingDrawMethod::draw(const Program & program, const glm::mat4 & tra
     glError();
     
     gl::glEnable(gl::GL_DEPTH_TEST);
+    glError();
     //     glEnable(GL_CULL_FACE);
     //     glCullFace(GL_BACK);
     
@@ -55,7 +56,9 @@ void HighlightingDrawMethod::draw(const Program & program, const glm::mat4 & tra
         bo->draw( drawable.mode() );
     
     gl::glDisable(gl::GL_DEPTH_TEST);
+    glError();
     gl::glDisable(gl::GL_CULL_FACE);
+    glError();
     
     gl::glBindVertexArray(0);
     glError();

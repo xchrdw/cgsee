@@ -16,6 +16,7 @@
 #include <core/program.h>
 //#include <core/textureobject.h>
 #include <core/fileassociatedshader.h>
+#include <core/gpuquery.h>
 
 
 PipelinePainter::PipelinePainter(AbstractCamera * camera)
@@ -70,6 +71,7 @@ void PipelinePainter::paint()
 {
     AbstractPainter::paint();
     gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+    glError();
 
     foreach (AbstractRenderStage * renderStage, m_stages)
     {
@@ -80,11 +82,10 @@ void PipelinePainter::paint()
     if(!texture)
         return;
 
-    
-    //texture->bindTo(GL_TEXTURE0);
-    //m_flush->setUniform("selectedBuffer", 0);
-    //m_quad->draw(*m_flush);
-    //texture->releaseFrom(GL_TEXTURE0);
+    texture->bindActive(gl::GL_TEXTURE0);
+    m_flush->setUniform("selectedBuffer", 0);
+    m_quad->draw(*m_flush);
+    texture->unbindActive(gl::GL_TEXTURE0);
 }
 
 void PipelinePainter::resize(const int width, const int height)

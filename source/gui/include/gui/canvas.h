@@ -2,21 +2,25 @@
 
 #include <gui/gui_api.h>
 
-#include <QGLWidget>
+#include <QWidget>
 
 #include <core/glformat.h>
 
 #include <core/navigation/navigationhistory.h>
 
 class QBasicTimer;
+class QEvent;
 class QTimerEvent;
+class QResizeEvent;
+class QExposeEvent;
 class Timer;
 
 class AbstractPainter;
 class AbstractEventHandler;
 class AbstractCamera;
+class QtCanvas;
 
-class GUI_API Canvas : public QGLWidget
+class GUI_API Canvas : public QWidget
 {
     Q_OBJECT
 
@@ -49,39 +53,40 @@ public:
 
     virtual void resize(int width, int height);
 
+    virtual const GLFormat& format();
+
     virtual void setRefreshTimeMSec(int msec = 1);
     int refreshTimeMSec() const;
+
+    void repaint();
 
 signals:
 	void mouseReleaseEventSignal(QMouseEvent * event);
 	void mouseMoveEventTriggered(int triggered);
 
+public slots:
+    void onRenderingRequested();
+    void update();
+
 protected:
-
-    // QGLWidget Interface
-    virtual void initializeGL();
-    virtual void resizeGL(
-        int width
-    ,   int height);
-
-    // http://doc.qt.digia.com/qt/opengl-overpainting.html
-    // "Instead of implementing paintGL() to handle updates to the
-    //  widget, we implement a normal QWidget::paintEvent(). This
-    //  allows us to mix OpenGL calls and QPainter operations in a
-    //  controlled way."
-
-    //virtual void paintEvent(QPaintEvent * event); // Does not work for 3.2 anyway. :(
-    //void paintOverlay(QPainter & painter);
-
-    virtual void paintGL();
-
     // For Rendering Loop
     void timerEvent(QTimerEvent *event);
+
+    void resizeEvent(QResizeEvent *event);
+    void exposeEvent(QExposeEvent *event);
+    bool event(QEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event);
+
+    void initializeGL();
+    void paint();
+    virtual void paintGL();
 
 protected:
     NavigationHistory * m_navigationHistory;
     AbstractPainter * m_painter;
     AbstractEventHandler * m_eventHandler;
+    QtCanvas * m_qtCanvas;
+    QWidget * m_qtCanvasWidget;
 
     int m_refreshTimeMSec;
 
@@ -89,4 +94,5 @@ protected:
     float m_lastEvent;
 
     const GLFormat m_format;
+    bool m_isInitialized;
 };

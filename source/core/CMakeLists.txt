@@ -10,6 +10,7 @@ find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
 find_package(OpenGL     REQUIRED)
 find_package(ASSIMP     REQUIRED)
+find_package(GLBINDING  REQUIRED)
 find_package(GLOW       REQUIRED)
 
 find_package(Qt5Core    REQUIRED)
@@ -28,6 +29,7 @@ include_directories(
     ${GLM_INCLUDE_PATH}
     ${GLOW_INCLUDES}
     ${LIBZEUG_INCLUDES}
+	${GLBINDING_INCLUDES}
 )
 
 include_directories(
@@ -47,6 +49,7 @@ set(libs
     ${LIBZEUG_PROPERTYGUI_LIBRARY}
     ${GLOW_LIBRARIES}
     ${LIBZEUG_SIGNAL_LIBRARY}
+	${GLBINDING_LIBRARIES}
 )
 
 #
@@ -87,7 +90,6 @@ set(sources
 	${source_path}/datacore/vertexindexlist.cpp
 	${source_path}/datacore/vertexlist.cpp
 	${source_path}/fileassociatedshader.cpp
-	${source_path}/framebufferobject.cpp
 	${source_path}/geometryoptimizer.h
 	${source_path}/glformat.cpp
 	${source_path}/gpuquery.cpp
@@ -150,7 +152,6 @@ set(sources
 	${source_path}/scenegraph/absolutetransformator.cpp
 	${source_path}/screenquad.cpp
 	${source_path}/shader.cpp
-    ${source_path}/textureobject.cpp
 	${source_path}/timer.cpp
 	${source_path}/vertexcacheoptimizer.cpp
 	${source_path}/vertexcacheoptimizer.h
@@ -186,7 +187,6 @@ set(api_includes
 	${include_path}/datacore/attributeiterator.h
 	${include_path}/declspec.h
 	${include_path}/fileassociatedshader.h
-	${include_path}/framebufferobject.h
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
 	${include_path}/material/material.h
@@ -252,7 +252,6 @@ set(api_includes
 	${include_path}/scenegraph/cullingvisitor.h
 	${include_path}/screenquad.h
 	${include_path}/shader.h
-    ${include_path}/textureobject.h
 	${include_path}/timer.h
 	${include_path}/typedefs.h
 	${include_path}/viewfrustum.h

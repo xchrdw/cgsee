@@ -10,6 +10,7 @@ find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
 find_package(OpenGL     REQUIRED)
 find_package(ASSIMP     REQUIRED)
+find_package(GLBINDING  REQUIRED)
 find_package(GLOW       REQUIRED)
 
 find_package(Qt5Core    REQUIRED)
@@ -27,6 +28,7 @@ include_directories(
     ${GLM_INCLUDE_PATH}
     ${LIBZEUG_INCLUDES}
     ${GLOW_INCLUDES}
+	${GLBINDING_INCLUDES}
 )
 
 include_directories(
@@ -47,6 +49,7 @@ set(libs
     ${LIBZEUG_PROPERTYGUI_LIBRARY}
     ${LIBZEUG_SIGNAL_LIBRARY}
     ${GLOW_LIBRARIES}
+	${GLBINDING_LIBRARIES}
     core
 )
 
@@ -76,6 +79,7 @@ set(sources
 	${source_path}/fileExplorer.cpp
 	${source_path}/fileNavigator.cpp
 	${source_path}/propertywidgetbuilder.cpp
+	${source_path}/qtcanvas.cpp
 	${source_path}/viewer.cpp
 	${source_path}/viewer.ui
 )
@@ -87,6 +91,7 @@ set(api_includes
 	${include_path}/fileNavigator.h
 	${include_path}/gui_api.h
 	${include_path}/propertywidgetbuilder.h
+	${include_path}/qtcanvas.h
 	${include_path}/viewer.h
 )
 

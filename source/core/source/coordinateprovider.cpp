@@ -7,7 +7,6 @@
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/polygonaldrawable.h>
 #include <core/scenegraph/scenetraverser.h>
-#include <core/framebufferobject.h>
 
 
 CoordinateProvider::CoordinateProvider()

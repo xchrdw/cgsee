@@ -148,6 +148,7 @@ const bool Program::detach(Shader * shader)
         return true;
 
     gl::glDetachShader(m_program, shader->shader());
+    glError();
     const bool result(glIsError());
 
     m_dirty = true;

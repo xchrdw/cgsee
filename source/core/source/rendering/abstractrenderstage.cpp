@@ -5,6 +5,8 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
+#include <glow/FrameBufferObject.h>
+
 #include <core/gpuquery.h>
 
 #include <core/program.h>
@@ -16,16 +18,14 @@
 
 AbstractRenderStage::AbstractRenderStage(PipelinePainter & painter)
     : m_painter(painter)
-    , m_fbo(0)
+    , m_fbo(new glow::FrameBufferObject())
 {
-    gl::glGenFramebuffers(1, &m_fbo);
-    glError();
+
 }
 
 AbstractRenderStage::~AbstractRenderStage(void)
 {
-    gl::glDeleteFramebuffers(1, &m_fbo);
-    glError();
+    m_fbo->unref();
 }
 
 void AbstractRenderStage::drawScene(const glm::mat4 & transform, Program * program)
@@ -37,14 +37,12 @@ void AbstractRenderStage::drawScene(const glm::mat4 & transform, Program * progr
 
 void AbstractRenderStage::bindFBO()
 {
-    gl::glBindFramebuffer(gl::GL_FRAMEBUFFER, m_fbo);
-    glError();
+    m_fbo->bind();
 }
 
 void AbstractRenderStage::releaseFBO()
 {
-    gl::glBindFramebuffer(gl::GL_FRAMEBUFFER, 0);
-    glError();
+    m_fbo->unbind();
 }
 
 bool AbstractRenderStage::isSceneInvalid()
