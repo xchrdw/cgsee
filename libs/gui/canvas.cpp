@@ -1,4 +1,3 @@
-
 #include <GL/glew.h>
 
 #include <cassert>
@@ -13,23 +12,18 @@
 #include <core/glformat.h>
 
 
-Canvas::Canvas(
-    const GLFormat & format,
-    QWidget * parent)
-
+Canvas::Canvas(const GLFormat & format, QWidget * parent)
 :   QGLWidget(format.asQGLFormat(), parent)
 ,   m_format(format)
 ,   m_timer(nullptr)
 ,   m_painter(nullptr)
 {
     m_timer = new QBasicTimer();
-
     m_timer->start(format.vsync() ? 1000/60 : 0, this);
 
     setMinimumSize(1, 1);
-
-    // Important for overdraw, not occluding the scene.
-    setAutoFillBackground(false); 
+    setAutoFillBackground(false);
+    setMouseTracking(true);
 }
 
 Canvas::~Canvas()
@@ -63,61 +57,25 @@ void Canvas::initializeGL()
 void Canvas::updateViewport() const
 {
     glViewport(0, 0, width(), height());
-
-    // This is required e.g. for overlay painting
-
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//
-//#ifdef QT_OPENGL_ES
-//    glOrthof(0.f, 1.f, 0.f, 1.f, 0.f, 1.f);
-// #else
-//    glOrtho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
-// #endif
-//
-//    glMatrixMode(GL_MODELVIEW);
 }
 
-void Canvas::resizeGL(
-    int width
-,   int height)
+void Canvas::resizeGL(int width, int height)
 {
     updateViewport();
-    
+
     if(m_painter)
         m_painter->resize(width, height);
 }
 
-
-// http://doc.qt.digia.com/qt/opengl-overpainting-glwidget-cpp.html
-// http://harmattan-dev.nokia.com/docs/library/html/qt4/opengl-overpainting.html
-
 void Canvas::paintGL()
 {
-    //glPushAttrib(GL_ALL_ATTRIB_BITS);
-
-    //glMatrixMode(GL_MODELVIEW);
-    //glPushMatrix();
-
     paint();
-
-    //glPopMatrix();
-    //glPopAttrib();
-
-    //// The fixed function OGL is used to support old school OpenGL calls for overlay painting.
-    //// NOTE: it is not tested, what happens on contexts in newer core profiles.
-
-    //QPainter painter(this);
-    //paintOverlay(painter);
-    //painter.end();
 }
 
 void Canvas::paint()
 {
     if(m_painter)
         m_painter->paint();
-    //else 
-    //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Canvas::paintOverlay(QPainter & painter)
@@ -133,6 +91,12 @@ void Canvas::timerEvent(QTimerEvent *event)
         return;
 
     update();
+}
+
+void Canvas::mousePressEvent(QMouseEvent * event)
+{
+    if(m_painter)
+        m_painter->detectObject(mapFromGlobal(QCursor::pos()));
 }
 
 void Canvas::setPainter(AbstractPainter * painter)

@@ -1,4 +1,3 @@
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -18,31 +17,31 @@
 Painter::Painter()
 :   AbstractPainter()
 
-,	m_height(1)
-,	m_width (1)
-,	m_aspect(1.f)
+,    m_height(1)
+,    m_width (1)
+,    m_aspect(1.f)
 
-,	m_model(1.f)
-,	m_view(1.f)
-,	m_projection(1.f)
+,    m_model(1.f)
+,    m_view(1.f)
+,    m_projection(1.f)
 
-,	m_eye   (glm::vec3(0.f, 0.f,-1.5))
-,	m_center(glm::vec3(0.f, 0.f, 0.f))
-,	m_up    (glm::vec3(0.f, 1.f, 0.f))
+,    m_eye   (glm::vec3(0.f, 0.f,-1.5))
+,    m_center(glm::vec3(0.f, 0.f, 0.f))
+,    m_up    (glm::vec3(0.f, 1.f, 0.f))
 
-,	m_fovy  (45.f)
-,	m_zNear ( .1f)
-,	m_zFar  (10.f)
+,    m_fovy  (45.f)
+,    m_zNear ( .1f)
+,    m_zFar  (10.f)
 
-,	m_vert(-1)
-,	m_frag(-1)
-,	m_program(-1)
+,    m_vert(-1)
+,    m_frag(-1)
+,    m_program(-1)
 
-,	a_vertex(-1)
-,	u_transform(-1)
+,    a_vertex(-1)
+,    u_transform(-1)
 
-,	m_vao(-1)
-,	m_indices(-1)
+,    m_vao(-1)
+,    m_indices(-1)
 ,   m_vertices(-1)
 ,   m_texCoords(-1)
 ,   m_textureID(0)
@@ -55,26 +54,26 @@ Painter::~Painter()
     glDeleteBuffers(1, &m_texCoords);
     glDeleteBuffers(1, &m_indices);
 
-	glDetachShader(m_program, m_vert);
-	glError();
-	glDetachShader(m_program, m_frag);
-	glError();
+    glDetachShader(m_program, m_vert);
+    glError();
+    glDetachShader(m_program, m_frag);
+    glError();
 
-	glDeleteShader(m_vert);
-	glError();
-	glDeleteShader(m_frag);
-	glError();
+    glDeleteShader(m_vert);
+    glError();
+    glDeleteShader(m_frag);
+    glError();
 
-	glDeleteProgram(m_program);
-	glError();
+    glDeleteProgram(m_program);
+    glError();
 }
 
 void getCompileInfo(const GLint shader)
 {
-	GLint status(GL_FALSE);
+    GLint status(GL_FALSE);
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
-	const GLboolean compiled = (GL_TRUE == status);
+    const GLboolean compiled = (GL_TRUE == status);
     GLchar * log = "";
 
     if(!compiled)
@@ -82,7 +81,7 @@ void getCompileInfo(const GLint shader)
         GLint maxLength(0);
         GLint logLength(0);
 
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
         glError();
 
         GLchar *chr = new GLchar[maxLength];
@@ -91,7 +90,7 @@ void getCompileInfo(const GLint shader)
 
         log = chr;
 
-		qCritical("Compiling shader failed.");
+        qCritical("Compiling shader failed.");
         qCritical("%s", log);
     }
 }
@@ -100,39 +99,38 @@ void getCompileInfo(const GLint shader)
 const bool Painter::initialize()
 {
     // initialize view
+    m_view = glm::lookAt(m_eye, m_center, m_up);
 
-	m_view = glm::lookAt(m_eye, m_center, m_up);
-
-	// initialize shaders and program
+    // initialize shaders and program
     const QString TEXTURE_FILENAME = "data/gizmo.png";
     m_textureID = loadTexture(TEXTURE_FILENAME);
 
-	glError();
-	m_vert = glCreateShader(GL_VERTEX_SHADER);
-	glError();
-	m_frag = glCreateShader(GL_FRAGMENT_SHADER);
-	glError();
+    glError();
+    m_vert = glCreateShader(GL_VERTEX_SHADER);
+    glError();
+    m_frag = glCreateShader(GL_FRAGMENT_SHADER);
+    glError();
 
-	static const char * srcv = // c++11
-
+    // Vertex shader
+    static const char * srcv = // c++11
         "#version 150 core\n"
         "\n"
         "in vec3 a_vertex;\n"
         "in vec2 vertTexCoord;\n"
         "out vec2 fragTexCoord;\n"
-		"\n"
-		"\n"
-		"uniform mat4 transform;\n"
+        "\n"
+        "\n"
+        "uniform mat4 transform;\n"
         "\n"
         "void main(void)\n"
         "{\n"
-        "   vec4 vertex = transform * vec4(a_vertex, 1.0);\n"
-        "   fragTexCoord = vertTexCoord;\n"
-        "	gl_Position = vertex;\n"
+        "    vec4 vertex = transform * vec4(a_vertex, 1.0);\n"
+        "    fragTexCoord = vertTexCoord;\n"
+        "    gl_Position = vertex;\n"
         "}\n";
 
-	static const char * srcf =
-
+    // Fragement shader
+    static const char * srcf =
         "#version 150 core\n"
         "\n"
         "uniform sampler2D tex;\n"
@@ -145,49 +143,49 @@ const bool Painter::initialize()
         "    fragcolor = texture(tex, fragTexCoord);\n"
         "}\n";
 
-	glShaderSource(m_vert, 1, &srcv, nullptr);
-	glError();
-	glCompileShader(m_vert);
-	glError();
+    glShaderSource(m_vert, 1, &srcv, nullptr);
+    glError();
+    glCompileShader(m_vert);
+    glError();
 
-	getCompileInfo(m_vert);
+    getCompileInfo(m_vert);
 
-	glShaderSource(m_frag, 1, &srcf, nullptr);
-	glError();
-	glCompileShader(m_frag);
-	glError();
+    glShaderSource(m_frag, 1, &srcf, nullptr);
+    glError();
+    glCompileShader(m_frag);
+    glError();
 
-	getCompileInfo(m_frag);
+    getCompileInfo(m_frag);
 
 
-	m_program = glCreateProgram();
+    m_program = glCreateProgram();
 
-	glAttachShader(m_program, m_vert);
-	glError();
-	glAttachShader(m_program, m_frag);
-	glError();
+    glAttachShader(m_program, m_vert);
+    glError();
+    glAttachShader(m_program, m_frag);
+    glError();
 
-	glLinkProgram(m_program);
-	glError();
-	// get error log!
+    glLinkProgram(m_program);
+    glError();
+    // get error log!
 
-	a_vertex = glGetAttribLocation(m_program, "a_vertex");
-	glError();
+    a_vertex = glGetAttribLocation(m_program, "a_vertex");
+    glError();
 
-	u_transform = glGetUniformLocation(m_program, "transform");
-	glError();
+    u_transform = glGetUniformLocation(m_program, "transform");
+    glError();
 
-	// initialize geometry
-	static const GLfloat vertices[24] =
+    // initialize geometry
+    static const GLfloat vertices[24] =
     {
         -1.f,-1.f,-1.f,
-	    -1.f,-1.f, 1.f,
-		-1.f, 1.f,-1.f,
-		-1.f, 1.f, 1.f,
-		 1.f,-1.f,-1.f,
-		 1.f,-1.f, 1.f,
-		 1.f, 1.f,-1.f,
-		 1.f, 1.f, 1.f
+        -1.f,-1.f, 1.f,
+        -1.f, 1.f,-1.f,
+        -1.f, 1.f, 1.f,
+         1.f,-1.f,-1.f,
+         1.f,-1.f, 1.f,
+         1.f, 1.f,-1.f,
+         1.f, 1.f, 1.f
     };
 
     static const GLubyte indices[14] = {
@@ -199,46 +197,44 @@ const bool Painter::initialize()
     glError();
 
     glGenBuffers(1, &m_indices);
-	glError();
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
-	glError();
+    glError();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
+    glError();
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, (6 * 2 + 2) * sizeof(GLubyte), indices, GL_STATIC_DRAW);
-	glError();
+    glError();
 
     glGenBuffers(1, &m_vertices);
-	glError();
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertices);
-	glError();
-	glBufferData(GL_ARRAY_BUFFER, (8 * 3) * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-	glError();
+    glError();
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertices);
+    glError();
+    glBufferData(GL_ARRAY_BUFFER, (8 * 3) * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+    glError();
 
 
     // texture coordinates
-
     GLint a_vertTexCoord = glGetAttribLocation(m_program, "vertTexCoord");
     glError();
 
     GLfloat texCoords[] = {
-        // seite 1
+        // face 1
         0.0, 0.0, // 2
         1.0, 0.0, // 0
         0.0, 1.0, // 6
         1.0, 1.0, // 4
 
-        // seite 2
-        0.0, 0.0, // 5
-        0.0, 1.0, // 0
-        1.0, 0.0, // 1
-        0.0, 0.0 // 2
-        /*,
-        0.5, 0.6,
-        0.3, 0.4,
-        0.2, 0.5,
-        0.45, 0.55,
-        0.5, 0.6,
-        0.3, 0.4,
-        0.2, 0.5*/
+        // face 5 mirrored
+        0.0, 0.0, // 2
+        1.0, 0.0, // 0
+        0.0, 1.0, // 6
+        1.0, 1.0, // 4
+
+//        // face 2
+//        0.0, 0.0, // 5
+//        0.0, 1.0, // 0
+//        1.0, 0.0, // 1
+//        0.0, 0.0, // 2
     };
+
     glGenBuffers(1, &m_texCoords);
     glError();
     glBindBuffer(GL_ARRAY_BUFFER, m_texCoords);
@@ -250,14 +246,14 @@ const bool Painter::initialize()
     glVertexAttribPointer(a_vertTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glError();
 
-	// initialize state
+    // initialize state
     glClearColor(0.2, 0.2, 0.2, 1.f);
     glUseProgram(m_program);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
 
-	return true;
+    return true;
 }
 
 Timer t;
@@ -268,7 +264,7 @@ float angle (0.f);
 void Painter::paint()
 {
     AbstractPainter::paint();
-	glError();
+    glError();
 
     if(t.paused())
         t.start();
@@ -280,14 +276,13 @@ void Painter::paint()
     m_model = glm::rotate(glm::mat4(1), angleY, glm::vec3(0.f, 1.f, 0.f));
     m_model = glm::rotate(m_model, angleZ, glm::vec3(0.f, 0.f, 1.f));
 
-	const glm::mat4 M = m_projection * m_view * m_model;
+    const glm::mat4 M = m_projection * m_view * m_model;
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// use program and set uniforms
-
-	glUseProgram(m_program);
-	glError();
+    // use program and set uniforms
+    glUseProgram(m_program);
+    glError();
 
     // bind texture
     glEnable(GL_TEXTURE_2D);
@@ -301,8 +296,7 @@ void Painter::paint()
     glUniform1i(u_texture, 0);
     glError();
 
-
-	// bind vertices
+    // bind vertices
     glBindVertexArray(m_vao);
     glError();
 
@@ -334,26 +328,31 @@ void Painter::paint()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glError();
 
-	glUseProgram(0);
-	glError();
+    glUseProgram(0);
+    glError();
 
     glDisable(GL_TEXTURE_2D);
     glError();
 
 }
 
-void Painter::resize(
-    const int width
-,   const int height)
+void Painter::resize(const int width, const int height)
 {
     AbstractPainter::resize(width, height);
 
-	m_width = width;
-	m_height = height;
+    m_width = width;
+    m_height = height;
 
-	m_aspect = static_cast<float>(width) / static_cast<float>(height);
+    m_aspect = static_cast<float>(width) / static_cast<float>(height);
 
-	m_projection = glm::perspective(m_fovy, m_aspect, m_zNear, m_zFar);
+    m_projection = glm::perspective(m_fovy, m_aspect, m_zNear, m_zFar);
+}
+
+void Painter::detectObject(const QPoint &position)
+{
+    qDebug() << "Checking for object at" << position << "...";
+
+    // @TODO Check for objects existing on clicked position.
 }
 
 const GLuint Painter::loadTexture(const QString & filePath)

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <GL/glew.h>
@@ -18,13 +17,9 @@ public:
     virtual ~Painter();
 
     virtual void paint();
-
-    virtual void resize(
-        const int width
-    ,   const int height);
-
-    const GLuint loadTexture(const QString & filePath);
-
+    virtual void resize(const int width, const int height);
+    virtual void detectObject(const QPoint &position);
+    const GLuint loadTexture(const QString &filePath);
 
 protected:
     virtual const bool initialize();
@@ -60,5 +55,4 @@ protected:
 	GLuint m_indices;
     GLuint m_vertices;
     GLuint m_texCoords;
-
 };

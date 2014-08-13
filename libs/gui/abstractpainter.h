@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <QStringList>
@@ -7,25 +6,15 @@
 #include <core/glformat.h>
 
 
-class QKeyEvent;
-
 class CGSEE_API AbstractPainter
 {
 public:
     AbstractPainter();
     virtual ~AbstractPainter();
 
-    // calls initialize if not initialized - so call this when subclassed
     virtual void paint();
-
-    virtual void resize(
-        const int width
-    ,   const int height);
-
-    virtual void keyPress(QKeyEvent * event);
-    virtual void keyRelease(QKeyEvent * event);
-
-    // TODO: more to come...
+    virtual void resize(const int width, const int height);
+    virtual void detectObject(const QPoint &position);
 
 protected:
     virtual const bool initialize() = 0;
