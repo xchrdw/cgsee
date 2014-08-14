@@ -8,7 +8,7 @@ class CORE_API PointLight : public AbstractLight
 {
 
 public:
-	PointLight(const QString & name, const glm::vec3 & intensity, const glm::vec3 & position, float radius);
+	PointLight(const glm::vec3 & intensity, const glm::vec3 & position, float radius);
 	~PointLight();
 
 	void setPosition(const glm::vec3 & positionVector);
@@ -18,8 +18,9 @@ public:
 	float radius() const; 
 
 	void saveLightData(LightingSystem & manager, const glm::mat4 & transform) override;
-	const AxisAlignedBoundingBox boundingBox() const override;
-	const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;
+	void draw(const Program & program, const glm::mat4 & transform);
+	/*const AxisAlignedBoundingBox boundingBox() const override;
+	const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;*/
 
 private:
 	glm::vec3 m_position;

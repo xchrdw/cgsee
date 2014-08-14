@@ -8,15 +8,16 @@ class CORE_API DirectionalLight : public AbstractLight
 {
 
 public:
-	DirectionalLight(const QString name, const glm::vec3 intensity, const glm::vec3 direction);
+	DirectionalLight(const glm::vec3 intensity, const glm::vec3 direction);
 	virtual ~DirectionalLight();
 
 	void setDirection(const glm::vec3 & directionVector);
 	glm::vec3 direction() const;
 
 	void saveLightData(LightingSystem & manager, const glm::mat4 & transform) override;
-	const AxisAlignedBoundingBox boundingBox() const override;
-	const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;
+	/*const AxisAlignedBoundingBox boundingBox() const override;
+	const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;*/
+	void draw(const Program & program, const glm::mat4 & transform) override;
 
 private:
 	glm::vec3 m_direction;

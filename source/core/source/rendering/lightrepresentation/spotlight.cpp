@@ -1,10 +1,14 @@
 #include <core/rendering/lightrepresentation/spotlight.h>
+#include <reflectionzeug/extensions/GlmProperties.hpp>
 
-SpotLight::SpotLight(const QString & name, const glm::vec3 & intensity, const glm::vec3 & direction, float angle)
-: AbstractLight(name, intensity)
+SpotLight::SpotLight(const glm::vec3 & intensity, const glm::vec3 & direction, float angle)
+: AbstractLight(intensity)
 {
 	setDirection(direction);
 	setConeAngle(angle);
+
+	addProperty<glm::vec3>("Direction", this, & SpotLight::direction, & SpotLight::setDirection);
+	addProperty<float>("Angle", this, & SpotLight::coneAngle, & SpotLight::setConeAngle);
 }
 
 SpotLight::~SpotLight()
@@ -51,13 +55,18 @@ float SpotLight::coneAngle() const
 	return m_coneAngle;
 }
 
+void SpotLight::draw(const Program & program, const glm::mat4 & transform)
+{
+
+}
+
 void SpotLight::saveLightData(LightingSystem & manager, const glm::mat4 & transform)
 {
 	glm::vec4 worldPosition(transform * glm::vec4(position(), 1.0f));
 	manager.addSpotLight(worldPosition, direction(), intensity(), range(), coneAngle());
 }
 
-const AxisAlignedBoundingBox SpotLight::boundingBox() const
+/*const AxisAlignedBoundingBox SpotLight::boundingBox() const
 {
 	if (m_aabb.valid())
 		return m_aabb;
@@ -78,4 +87,4 @@ const AxisAlignedBoundingBox SpotLight::boundingBox(glm::mat4 transform) const
 	m_aabb = AxisAlignedBoundingBox(newPosition.xyz, newPosition.xyz);
 
 	return m_aabb;
-}
+}*/

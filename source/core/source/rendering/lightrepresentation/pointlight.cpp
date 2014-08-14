@@ -1,11 +1,15 @@
 #include <core/rendering/lightrepresentation/pointlight.h>
+#include <reflectionzeug/extensions/GlmProperties.hpp>
 
 
-PointLight::PointLight(const QString & name, const glm::vec3 & intensity, const glm::vec3 & position, float radius)
-: AbstractLight(name, intensity)
+PointLight::PointLight(const glm::vec3 & intensity, const glm::vec3 & position, float radius)
+: AbstractLight(intensity)
 {
 	setPosition(position);
 	setRadius(radius);
+
+	addProperty<glm::vec3>("Position", this, & PointLight::position, & PointLight::setPosition);
+	addProperty<float>("Radius", this, & PointLight::radius, & PointLight::setRadius);
 }
 
 PointLight::~PointLight()
@@ -38,7 +42,12 @@ void PointLight::saveLightData(LightingSystem & manager, const glm::mat4 & trans
 	manager.addPointLight(worldPosition, intensity(), radius());
 }
 
-const AxisAlignedBoundingBox PointLight::boundingBox() const
+void PointLight::draw(const Program & program, const glm::mat4 & transform)
+{
+
+}
+
+/*const AxisAlignedBoundingBox PointLight::boundingBox() const
 {
 	if (m_aabb.valid())
 		return m_aabb;
@@ -59,4 +68,4 @@ const AxisAlignedBoundingBox PointLight::boundingBox(glm::mat4 transform) const
 	m_aabb = AxisAlignedBoundingBox(newPosition.xyz, newPosition.xyz);
 
 	return m_aabb;
-}
+}*/

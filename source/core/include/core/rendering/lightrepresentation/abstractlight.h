@@ -2,15 +2,16 @@
 
 #include <core/core_api.h>
 #include <core/scenegraph/group.h>
+#include <reflectionzeug/PropertyGroup.h>
 
 class LightcollectVisitor;
 class LightingSystem;
 
-class CORE_API AbstractLight : public Group
+class CORE_API AbstractLight : public reflectionzeug::PropertyGroup
 {
 
 public:
-	AbstractLight(const QString & name, const glm::vec3 & intensity);
+	AbstractLight(const glm::vec3 & intensity);
 	virtual ~AbstractLight();
 
 	void toggle();
@@ -19,8 +20,8 @@ public:
 
 	virtual void saveLightData(LightingSystem & manager, const glm::mat4 & transform) = 0;
 	virtual void draw(const Program & program, const glm::mat4 & transform) = 0;
-	virtual const AxisAlignedBoundingBox boundingBox() const = 0;
-	virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const = 0;
+	/*virtual const AxisAlignedBoundingBox boundingBox() const = 0;
+	virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const = 0;*/
 
 protected: 
 	glm::vec3 m_intensity;

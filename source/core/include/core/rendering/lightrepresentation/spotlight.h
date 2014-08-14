@@ -8,7 +8,7 @@ class CORE_API SpotLight : public AbstractLight
 {
 
 public:
-	SpotLight(const QString & name, const glm::vec3 & intensity, const glm::vec3 & direction, float angle);
+	SpotLight(const glm::vec3 & intensity, const glm::vec3 & direction, float angle);
 	virtual ~SpotLight();
 
 	void setDirection(const glm::vec3 & directionVector);
@@ -22,8 +22,9 @@ public:
 	float coneAngle() const;
 
 	void saveLightData(LightingSystem & manager, const glm::mat4 & transform) override;
-	const AxisAlignedBoundingBox boundingBox() const override;
-	const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;
+	void draw(const Program & program, const glm::mat4 & transform) override;
+	/*const AxisAlignedBoundingBox boundingBox() const override;
+	const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;*/
 
 private:
 	glm::vec3 m_direction;
