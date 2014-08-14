@@ -82,6 +82,9 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/scenegraph/defaultdrawmethod.h>
 #include <core/scenegraph/highlightingdrawmethod.h>
 
+#include <gui/lightwidgetbuilder.h>
+#include <core/rendering/lightrepresentation/abstractlight.h>
+
 
 namespace
 {
@@ -118,6 +121,7 @@ Viewer::Viewer(
 ,   m_navigationHistory(nullptr)
 ,   m_scene(nullptr)
 ,   m_mouseMoving(false)
+,   m_lightWidgetBuilder(nullptr)
 {
 
     m_ui->setupUi(this);
@@ -132,6 +136,7 @@ Viewer::Viewer(
     initializeExplorer();
     initializeSceneTree();
     initializePropertyDemo();
+	initializeLight();
     initializeNavigationHistory();
 };
 
@@ -220,6 +225,13 @@ void Viewer::initializePropertyDemo()
 
     initializeDockWidgets(m_dockPropertyDemo, demoWidget, Qt::RightDockWidgetArea);
 }
+
+void Viewer::initializeLight()
+{
+	m_lightWidgetBuilder->initializeLightWidget();
+	initializeDockWidgets(m_lightWidgetBuilder->getDockLight(), m_lightWidgetBuilder->getLightWidget(), Qt::RightDockWidgetArea);
+}
+
 
 /**
  * @brief Initializes navigation history dock.
@@ -483,6 +495,12 @@ void Viewer::initialize(const GLFormat & format)
     QObject::connect(
         m_qtCanvas, SIGNAL(mouseMoveEventTriggered(int)),
         this, SLOT(on_mouseMoveEventTriggered(int)));
+
+	m_lightWidgetBuilder = new LightWidgetBuilder(this);
+
+	tabifyDockWidget(m_dockScene, m_lightWidgetBuilder->getDockLight());
+	m_dockScene->raise();
+	m_lightWidgetBuilder->getDockLight()->hide();
 }
 
 Viewer::~Viewer()
@@ -1165,6 +1183,54 @@ void Viewer::selectById(const unsigned int & id)
         }
     }
     updateInfoBox();
+}
+
+/*
+void Viewer::selectLightById(const unsigned int & id)
+{
+	SceneTraverser traverser;
+	Node * result = nullptr;
+	traverser.traverse(*m_camera, [&result, &id](Node & node)
+	{
+		if (node.id() == id)
+		{
+			result = &node;
+			return false;
+		}
+		return true;
+	});
+
+	if (result)
+	{
+		Node * parent = *result->parents().begin();
+		int siblings = parent->children().size() - 1;
+		if (m_selectedNodes.contains(id))
+		{
+			deselectNode(result);
+			if (!siblings)
+			{
+				deselectNode(parent);
+				treeToggleSelection(parent->id());
+			}
+		}
+		else
+		{
+			selectNode(result);
+			if (!siblings)
+			{
+				selectNode(parent);
+				treeToggleSelection(parent->id());
+			}
+		}
+	}
+	updateInfoBox();
+}*/
+
+void Viewer::showLightInWidget(AbstractLight & light)
+{
+	light.setName(m_selectedNodes.first()->name().toStdString());
+	m_lightWidgetBuilder->getPropertyBrowser()->setRoot(&light);
+	m_lightWidgetBuilder->getDockLight()->show();
 }
 
 void Viewer::selectNode(Node * node)

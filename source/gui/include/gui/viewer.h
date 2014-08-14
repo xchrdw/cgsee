@@ -45,6 +45,9 @@ class DataBlockRegistry;
 class CoordinateProvider;
 class AxisAlignedBoundingBox;
 
+class LightWidgetBuilder;
+class AbstractLight;
+
 
 class GUI_API Viewer : public QMainWindow
 {
@@ -84,6 +87,7 @@ public:
     void uncheckFboActions();
 
     void selectById(const unsigned int & id);
+	//void selectLightById(const unsigned int & id);
     void selectNode(Node * node);
     void deselectNode(Node * node);
     void treeToggleSelection(const unsigned int & id);
@@ -91,6 +95,7 @@ public:
     void hideById(const unsigned int & id, const bool & hideStatus);
     void updateInfoBox();
     void selectionBBoxChanged();
+	void showLightInWidget(AbstractLight & light);
 
 
 signals:
@@ -182,6 +187,7 @@ protected:
     void initializeExplorer();
     void initializeSceneTree();
     void initializePropertyDemo();
+	void initializeLight();
     void initializeNavigationHistory();
     void initializeDockWidgets(QDockWidget * dockWidget,
     QWidget * widget, Qt::DockWidgetArea area);
@@ -222,6 +228,7 @@ protected:
     QDockWidget * m_dockScene;
     QDockWidget * m_dockPropertyDemo;
     QDockWidget * m_dockNavigationHistory;
+	LightWidgetBuilder * m_lightWidgetBuilder;
 
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
