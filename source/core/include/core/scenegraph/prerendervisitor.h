@@ -5,7 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 class Camera;
-class AbstractLight;
+class LightProxy;
 class LightingSystem;
 
 class CORE_API PreRenderVisitor : public SceneVisitorInterface
@@ -16,7 +16,7 @@ public:
 
 	bool operator() (Node & node) override;
 	bool operator() (Camera & camera);
-	bool operator() (AbstractLight & light);
+	bool operator() (LightProxy & light);
 	
 private:
 	LightingSystem & m_manager;

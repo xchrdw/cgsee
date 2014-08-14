@@ -2,6 +2,7 @@
 
 #include <core/scenegraph/node.h>
 #include <core/camera.h>
+#include <core/rendering/lightrepresentation/lightproxy.h>
 #include <core/rendering/lightrepresentation/abstractlight.h>
 #include <core/rendering/lightingsystem.h>
 
@@ -34,15 +35,15 @@ bool PreRenderVisitor::operator() (Camera & camera)
 	return true;
 }
 
-bool PreRenderVisitor::operator() (AbstractLight & light)
+bool PreRenderVisitor::operator() (LightProxy & lightproxy)
 {
-	if (light.hidden())
+	if (lightproxy.hidden())
 		return false;
 
-	if (Node::RF_Relative == light.referenceFrame())
-		m_transform *= light.transform();
+	if (Node::RF_Relative == lightproxy.referenceFrame())
+		m_transform *= lightproxy.transform();
 
-	light.saveLightData(m_manager, m_transform);
+	lightproxy.current()->saveLightData(m_manager, m_transform);
 
 	return true;
 }
