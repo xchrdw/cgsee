@@ -42,6 +42,7 @@ set(libs
     ${OPENGL_LIBRARY}
     ${GLEW_LIBRARY}
     ${LIBZEUG_SIGNAL_LIBRARY}
+	${LIBZEUG_REFLECTION_LIBRARY}
 )
 
 #
@@ -126,6 +127,7 @@ set(sources
 	${source_path}/rendering/lightrepresentation/directionallight.cpp
 	${source_path}/rendering/lightrepresentation/spotlight.cpp
 	${source_path}/rendering/lightrepresentation/pointlight.cpp
+	${source_path}/rendering/lightrepresentation/lightproxy.cpp
 	${source_path}/scenegraph/node.cpp
 	${source_path}/scenegraph/drawvisitor.cpp
 	${source_path}/scenegraph/polygonalgeometry.cpp
@@ -220,6 +222,7 @@ set(api_includes
 	${include_path}/rendering/lightrepresentation/directionallight.h
 	${include_path}/rendering/lightrepresentation/spotlight.h
 	${include_path}/rendering/lightrepresentation/pointlight.h
+	${include_path}/rendering/lightrepresentation/lightproxy.h
 	${include_path}/scenegraph/group.h
 	${include_path}/scenegraph/highlightingdrawmethod.h
 	${include_path}/scenegraph/triangleobject.h
