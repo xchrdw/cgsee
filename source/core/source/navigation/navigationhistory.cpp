@@ -61,7 +61,7 @@ NavigationHistoryElement * NavigationHistory::navigationHistoryElement()
  */
 void NavigationHistory::save(const glm::mat4 & viewmatrix, const float & fovy, const QImage & thumbnail)
 {
-    if (!m_navigationHistory->isEqualViewMatrix(viewmatrix) || !m_navigationHistory->isEqualFovy(fovy))
+    if (m_navigationHistory != nullptr && (!m_navigationHistory->isEqualViewMatrix(viewmatrix) || !m_navigationHistory->isEqualFovy(fovy)))
     {
         m_navigationHistory = new NavigationHistoryElement(m_navigationHistory, viewmatrix, fovy, thumbnail);
         onHistoryChanged();
