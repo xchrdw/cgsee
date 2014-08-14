@@ -96,7 +96,7 @@ void Canvas::timerEvent(QTimerEvent *event)
 void Canvas::mousePressEvent(QMouseEvent * event)
 {
     if(m_painter)
-        m_painter->detectObject(mapFromGlobal(QCursor::pos()));
+        m_painter->objectDetected(mapFromGlobal(QCursor::pos()));
 }
 
 void Canvas::setPainter(AbstractPainter * painter)

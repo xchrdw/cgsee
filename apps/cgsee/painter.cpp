@@ -64,6 +64,9 @@ Painter::~Painter()
     glDeleteShader(m_frag);
     glError();
 
+    glDeleteTextures(1, &m_textureID);
+    glError();
+
     glDeleteProgram(m_program);
     glError();
 }
@@ -331,9 +334,6 @@ void Painter::paint()
     glUseProgram(0);
     glError();
 
-    glDeleteTextures(1, &m_textureID)
-    glError();
-
     glDisable(GL_TEXTURE_2D);
     glError();
 
@@ -352,11 +352,18 @@ void Painter::resize(const int width, const int height)
     m_projection = glm::perspective(m_fovy, m_aspect, m_zNear, m_zFar);
 }
 
-void Painter::detectObject(const QPoint &position)
+bool Painter::objectDetected(const QPoint &position)
 {
-    qDebug() << "Checking for object at" << position << "...";
+    GLfloat z;
+    glReadPixels(position.x(), position.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
+    glError();
 
-    // @TODO Check for objects existing on clicked position.
+    if (z < 1.f)
+    {
+        qDebug() << "Object clicked at Position" << position.x() << position.y();
+        return true;
+    }
+    return false;
 }
 
 const GLuint Painter::loadTexture(const QString & filePath)

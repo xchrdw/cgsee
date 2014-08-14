@@ -28,6 +28,7 @@ void AbstractPainter::resize(const int width, const int height)
         qFatal("Painter initialization failed.");
 }
 
-void AbstractPainter::detectObject(const QPoint &position)
+bool AbstractPainter::objectDetected(const QPoint &position)
 {
+    return false;
 }

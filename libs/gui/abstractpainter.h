@@ -14,7 +14,7 @@ public:
 
     virtual void paint();
     virtual void resize(const int width, const int height);
-    virtual void detectObject(const QPoint &position);
+    virtual bool objectDetected(const QPoint &position);
 
 protected:
     virtual const bool initialize() = 0;
