@@ -39,12 +39,16 @@ Painter::Painter()
 
 ,    a_vertex(-1)
 ,    u_transform(-1)
+,    u_clicked(-1)
 
 ,    m_vao(-1)
 ,    m_indices(-1)
 ,    m_vertices(-1)
 ,    m_texCoords(-1)
 ,    m_textureID(0)
+
+,    m_clockwise(1)
+,    m_clicked(false)
 {
 }
 
@@ -137,13 +141,14 @@ const bool Painter::initialize()
         "#version 150 core\n"
         "\n"
         "uniform sampler2D tex;\n"
+        "uniform float clicked;\n"
         "in vec2 fragTexCoord;\n"
         "out vec4 fragcolor;\n"
         "\n"
         "void main()\n"
         "{\n"
-        "    //fragcolor = vec4(0.0, 1.0, 0.0, 1.0);\n"
-        "    fragcolor = texture(tex, fragTexCoord);\n"
+        "    vec3 texRgb = texture(tex, fragTexCoord).xyz;\n"
+        "    fragcolor = vec4(clamp(texRgb.x + clicked, 0.f, 1.f), clamp(texRgb.y + clicked, 0.f, 1.f), texRgb.z, 1.f);\n"
         "}\n";
 
     glShaderSource(m_vert, 1, &srcv, nullptr);
@@ -160,7 +165,6 @@ const bool Painter::initialize()
 
     getCompileInfo(m_frag);
 
-
     m_program = glCreateProgram();
 
     glAttachShader(m_program, m_vert);
@@ -170,12 +174,14 @@ const bool Painter::initialize()
 
     glLinkProgram(m_program);
     glError();
-    // get error log!
 
     a_vertex = glGetAttribLocation(m_program, "a_vertex");
     glError();
 
     u_transform = glGetUniformLocation(m_program, "transform");
+    glError();
+
+    u_clicked = glGetUniformLocation(m_program, "clicked");
     glError();
 
     // initialize geometry
@@ -213,29 +219,22 @@ const bool Painter::initialize()
     glBufferData(GL_ARRAY_BUFFER, (8 * 3) * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
     glError();
 
-
     // texture coordinates
     GLint a_vertTexCoord = glGetAttribLocation(m_program, "vertTexCoord");
     glError();
 
     GLfloat texCoords[] = {
         // face 1
-        0.0, 0.0, // 2
-        1.0, 0.0, // 0
-        0.0, 1.0, // 6
-        1.0, 1.0, // 4
+        0.0, 0.0,
+        1.0, 0.0,
+        0.0, 1.0,
+        1.0, 1.0,
 
         // face 5 mirrored
-        0.0, 0.0, // 2
-        1.0, 0.0, // 0
-        0.0, 1.0, // 6
-        1.0, 1.0, // 4
-
-//        // face 2
-//        0.0, 0.0, // 5
-//        0.0, 1.0, // 0
-//        1.0, 0.0, // 1
-//        0.0, 0.0, // 2
+        0.0, 0.0,
+        1.0, 0.0,
+        0.0, 1.0,
+        1.0, 1.0,
     };
 
     glGenBuffers(1, &m_texCoords);
@@ -263,6 +262,8 @@ Timer t;
 float angleY(0.f);
 float angleZ(0.f);
 float angle (0.f);
+GLfloat highlight(0.f);
+long double clickevent(-1.f);
 
 void Painter::paint()
 {
@@ -272,7 +273,7 @@ void Painter::paint()
     if(t.paused())
         t.start();
 
-    angleY =  _deg(_PI2 * t.elapsed() / 8.f);
+    angleY +=  _deg(m_clockwise / 40.f);
     angleZ =  _deg(sin(_PI * t.elapsed() / 16.f));
     angle  =  ((sin(_PI2 / 16.f) + 1.f) * 0.5 + 1.0) * 0.1f;
 
@@ -297,6 +298,26 @@ void Painter::paint()
     glError();
 
     glUniform1i(u_texture, 0);
+    glError();
+
+    if (m_clicked)
+    {
+        clickevent = t.elapsed();
+        highlight = 0.3f;
+        m_clicked = !m_clicked;
+    }
+    else if (t.elapsed() < clickevent + 0.05f)
+    {
+        highlight = 0.3f;
+    }
+    else if (highlight > 0.f)
+    {
+        highlight -= 0.02f;
+        if (highlight < 0.f)
+            highlight = 0.f;
+    }
+
+    glUniform1f(u_clicked, highlight);
     glError();
 
     // bind vertices
@@ -360,7 +381,9 @@ bool Painter::objectDetected(const QPoint &position)
 
     if (z < 1.f)
     {
-        qDebug() << "Object clicked at Position" << position.x() << position.y();
+        qDebug() << "Object clicked at position" << position.x() << position.y();
+        m_clockwise *= -1;
+        m_clicked = true;
         return true;
     }
     return false;

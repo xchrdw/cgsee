@@ -25,34 +25,38 @@ protected:
     virtual const bool initialize();
 
 protected:
-	int m_width;
-	int m_height;
+    int m_width;
+    int m_height;
 
-	float m_aspect;
+    float m_aspect;
 
-	float m_fovy;
-	float m_zNear;
-	float m_zFar;
+    float m_fovy;
+    float m_zNear;
+    float m_zFar;
 
-	glm::vec3 m_eye;
-	glm::vec3 m_center;
-	glm::vec3 m_up;
+    glm::vec3 m_eye;
+    glm::vec3 m_center;
+    glm::vec3 m_up;
 
-	glm::mat4 m_projection;
-	glm::mat4 m_model;
-	glm::mat4 m_view;
+    glm::mat4 m_projection;
+    glm::mat4 m_model;
+    glm::mat4 m_view;
 
     GLuint m_textureID;
 
-	GLint m_vert;
-	GLint m_frag;
-	GLint m_program;
+    GLint m_vert;
+    GLint m_frag;
+    GLint m_program;
 
-	GLint a_vertex;
-	GLint u_transform;
+    GLint a_vertex;
+    GLint u_transform;
+    GLint u_clicked;
 
-	GLuint m_vao;
-	GLuint m_indices;
+    GLuint m_vao;
+    GLuint m_indices;
     GLuint m_vertices;
     GLuint m_texCoords;
+
+    int m_clockwise;
+    bool m_clicked;
 };
