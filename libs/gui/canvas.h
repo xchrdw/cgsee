@@ -29,6 +29,7 @@ protected:
     void paintOverlay(QPainter & painter);
     void timerEvent(QTimerEvent * event);
     void mousePressEvent(QMouseEvent * event);
+    void mouseDoubleClickEvent(QMouseEvent * event);
     void updateViewport() const;
 
 protected:

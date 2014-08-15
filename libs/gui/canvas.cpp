@@ -96,7 +96,15 @@ void Canvas::timerEvent(QTimerEvent *event)
 void Canvas::mousePressEvent(QMouseEvent * event)
 {
     if(m_painter)
-        m_painter->objectDetected(mapFromGlobal(QCursor::pos()));
+        if (m_painter->objectDetected(mapFromGlobal(QCursor::pos())))
+            return;
+}
+
+void Canvas::mouseDoubleClickEvent(QMouseEvent * event)
+{
+    if(m_painter)
+        if (m_painter->objectDetected(mapFromGlobal(QCursor::pos())))
+            m_painter->doMagic();
 }
 
 void Canvas::setPainter(AbstractPainter * painter)

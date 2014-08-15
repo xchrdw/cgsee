@@ -18,7 +18,8 @@ public:
 
     virtual void paint();
     virtual void resize(const int width, const int height);
-    virtual bool objectDetected(const QPoint &position);
+    virtual bool objectDetected(const QPoint &position) override;
+    virtual void doMagic() override;
     const GLuint loadTexture(const QString &filePath);
 
 protected:

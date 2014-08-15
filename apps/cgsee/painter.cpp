@@ -273,9 +273,9 @@ void Painter::paint()
     if(t.paused())
         t.start();
 
-    angleY +=  _deg(m_clockwise / 40.f);
-    angleZ =  _deg(sin(_PI * t.elapsed() / 16.f));
-    angle  =  ((sin(_PI2 / 16.f) + 1.f) * 0.5 + 1.0) * 0.1f;
+    angleY +=  _deg(m_clockwise /  64.f);
+    angleZ +=  _deg(m_clockwise / 128.f);
+    angle  =  ((sin(_PI2 / 16.f) + 1.f) * 0.5 + 1.0) * 0.1337f;
 
     m_model = glm::rotate(glm::mat4(1), angleY, glm::vec3(0.f, 1.f, 0.f));
     m_model = glm::rotate(m_model, angleZ, glm::vec3(0.f, 0.f, 1.f));
@@ -381,12 +381,15 @@ bool Painter::objectDetected(const QPoint &position)
 
     if (z < 1.f)
     {
-        qDebug() << "Object clicked at position" << position.x() << position.y();
-        m_clockwise *= -1;
         m_clicked = true;
         return true;
     }
     return false;
+}
+
+void Painter::doMagic()
+{
+    m_clockwise *= -1;
 }
 
 const GLuint Painter::loadTexture(const QString & filePath)

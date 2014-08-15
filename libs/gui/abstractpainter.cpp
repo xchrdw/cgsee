@@ -32,3 +32,8 @@ bool AbstractPainter::objectDetected(const QPoint &position)
 {
     return false;
 }
+
+void AbstractPainter::doMagic()
+{
+    return;
+}

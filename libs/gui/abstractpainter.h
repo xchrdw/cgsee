@@ -15,6 +15,7 @@ public:
     virtual void paint();
     virtual void resize(const int width, const int height);
     virtual bool objectDetected(const QPoint &position);
+    virtual void doMagic();
 
 protected:
     virtual const bool initialize() = 0;
