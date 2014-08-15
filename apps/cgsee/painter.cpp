@@ -384,6 +384,7 @@ bool Painter::objectDetected(const QPoint &position)
         m_clicked = true;
         return true;
     }
+    m_clicked = false;
     return false;
 }
 
