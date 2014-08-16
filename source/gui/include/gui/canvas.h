@@ -20,6 +20,11 @@ class AbstractEventHandler;
 class AbstractCamera;
 class QtCanvas;
 
+/**
+*   @brief A canvas where can be drawn on with OpenGL.
+*   @detail The Canvas encapsulates an OpenGL context. If OpenGL commands are called, it have to be ensured, that the right canvas is current.
+*/
+
 class GUI_API Canvas : public QWidget
 {
     Q_OBJECT
@@ -59,6 +64,8 @@ public:
     int refreshTimeMSec() const;
 
     void repaint();
+
+    void makeCurrent();
 
 signals:
 	void mouseReleaseEventSignal(QMouseEvent * event);

@@ -11,6 +11,7 @@
 #include <QResizeEvent>
 #include <QExposeEvent>
 #include <QEvent>
+#include <QPainter>
 
 #include <glbinding/gl/types.h>
 #include <glbinding/gl/enum.h>
@@ -212,61 +213,63 @@ const QImage Canvas::capture(
     }
     //TODO move camera responsibility to painter->paintTile(width,height)
     //TODO keep own fbo to avoid drawing on screen
-    //static const gl::GLuint tileW(512);
-    //static const gl::GLuint tileH(512);
-    //
-    //const gl::GLuint w(camera->viewport().x);
-    //const gl::GLuint h(camera->viewport().y);
-    //
-    //const gl::GLuint frameW = size.width();
-    //const gl::GLuint frameH = size.height();
-    //
-    //Projection * projection = new Projection(*camera->getProjection());
-    //
-    //const glm::mat4 proj(aspect ? glm::perspective(camera->fovy()
-    //    , static_cast<float>(frameW) / static_cast<float>(frameH)
-    //    , camera->zNear(), camera->zFar()) : camera->projection());
-    //
-    //const glm::mat4 view(camera->view());
-    //
-    //const glm::vec4 viewport(0, 0, frameW, frameH);
-    //
-    //QImage frame(frameW, frameH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
-    //QImage tile(tileW, tileH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
-    //
-    //QPainter p(&frame);
-    //
+    static const gl::GLuint tileW(512);
+    static const gl::GLuint tileH(512);
+    
+    const gl::GLuint w(camera->viewport().x);
+    const gl::GLuint h(camera->viewport().y);
+    
+    const gl::GLuint frameW = size.width();
+    const gl::GLuint frameH = size.height();
+    
+    Projection * projection = new Projection(*camera->getProjection());
+    
+    const glm::mat4 proj(aspect ? glm::perspective(camera->fovy()
+        , static_cast<float>(frameW) / static_cast<float>(frameH)
+        , camera->zNear(), camera->zFar()) : camera->projection());
+    
+    const glm::mat4 view(camera->view());
+    
+    const glm::vec4 viewport(0, 0, frameW, frameH);
+    
+    QImage frame(frameW, frameH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
+    QImage tile(tileW, tileH, alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
+    
+    QPainter p(&frame);
+    
     //// ToDo: Review after painter refactoring
-    //makeCurrent();
-    //
-    //m_painter->resize(tileW, tileH);
-    //camera->setViewport(tileW, tileH);
-    //
-    //
-    //for (gl::GLuint y = 0; y < frameH; y += tileH)
-    //for (gl::GLuint x = 0; x < frameW; x += tileW)
-    //    {
-    //    const glm::mat4 pick = glm::pickMatrix(glm::vec2(x + tileW / 2, y + tileH / 2),
-    //        glm::vec2(tileW, tileH), viewport);
-    //
-    //    const glm::mat4 projTile(pick * proj);
-    //
-    //    camera->setTransform(projTile * view);
-    //
-    //    m_painter->paint();
-    //
-    //    glReadPixels(0, 0, tileW, tileH, alpha ? gl::GL_RGBA : gl::GL_RGB, gl::GL_UNSIGNED_BYTE, tile.bits());
-    //    p.drawImage(x, y, tile);
-    //    }
-    //p.end();
-    //
-    //resizeGL(w, h);
-    //Projection * tempProjection = camera->getProjection();
-    //camera->setProjection(projection);
-    //delete tempProjection;
-    //camera->setView(view);
+    makeCurrent();
+    
+    m_painter->resize(tileW, tileH);
+    camera->setViewport(tileW, tileH);
+    
+    
+    for (gl::GLuint y = 0; y < frameH; y += tileH)
+    for (gl::GLuint x = 0; x < frameW; x += tileW)
+    {
+        const glm::mat4 pick = glm::pickMatrix(glm::vec2(x + tileW / 2, y + tileH / 2),
+            glm::vec2(tileW, tileH), viewport);
+    
+        const glm::mat4 projTile(pick * proj);
+    
+        camera->setTransform(projTile * view);
+    
+        m_painter->paint();
+    
+        glReadPixels(0, 0, tileW, tileH, alpha ? gl::GL_RGBA : gl::GL_RGB, gl::GL_UNSIGNED_BYTE, tile.bits());
+        p.drawImage(x, y, tile);
+    }
+    p.end();
+    
+    if (m_painter)
+        m_painter->resize(w, h);
+    if (m_eventHandler)
+        m_eventHandler->resize(QSize(w, h));
 
-    QImage frame(size.width(), size.height(), alpha ? QImage::Format_ARGB32 : QImage::Format_RGB888);
+    Projection * tempProjection = camera->getProjection();
+    camera->setProjection(projection);
+    delete tempProjection;
+    camera->setView(view);
 
     return frame.mirrored(false, true); // flip vertically
 }
@@ -404,4 +407,9 @@ bool Canvas::eventFilter(QObject *obj, QEvent *event)
 void Canvas::repaint()
 {
     update();
+}
+
+void Canvas::makeCurrent()
+{
+    m_qtCanvas->makeCurrent();
 }
