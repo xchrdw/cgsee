@@ -1,7 +1,8 @@
 #include <core/painter/pipelinepainter.h>
 
+#include <string>
+
 #include <core/rendering/abstractrenderstage.h>
-#include <core/rendering/pipelinebuilder.h>
 #include <core/rendering/renderstage.h>
 
 #include <core/camera/abstractcamera.h>
@@ -10,7 +11,17 @@
 #include <core/program.h>
 #include <core/textureobject.h>
 #include <core/fileassociatedshader.h>
+#include <core/rendering/rasterizationpipelinebuilder.h>
 
+
+const QString PipelinePainter::VIEWPORT_UNIFORM("viewport");
+const QString PipelinePainter::VIEW_UNIFORM("view");
+const QString PipelinePainter::PROJECTION_UNIFORM("projection");
+const QString PipelinePainter::TRANSFORM_UNIFORM("transform");
+const QString PipelinePainter::TRANSFORMINVERSE_UNIFORM("transformInverse");
+const QString PipelinePainter::ZNEAR_UNIFORM("znear");
+const QString PipelinePainter::ZFAR_UNIFORM("zfar");
+const QString PipelinePainter::CAMERAPOSITION_UNIFORM("cameraposition");
 
 PipelinePainter::PipelinePainter(AbstractCamera * camera)
 	: PipelinePainter(camera, camera)
@@ -19,10 +30,13 @@ PipelinePainter::PipelinePainter(AbstractCamera * camera)
 }
 
 PipelinePainter::PipelinePainter(AbstractCamera * camera, Group * scene)
-    : m_quad(new ScreenQuad())
+    : PropertyGroup()
+    , m_quad(new ScreenQuad())
     , m_flush(nullptr)
     //, m_coordFBO(new glow::FrameBufferObject())
 {
+    addProperty<bool>("viewInvalid", true);
+    addProperty<std::string>("selectedBufferName", "");
     assignScene(scene);
     assignCamera(camera);
 }
@@ -41,7 +55,10 @@ bool PipelinePainter::initialize()
     m_flush->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/dump.frag"));
     m_flush->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
-    addRenderStage(new RenderStage(*this));
+    AbstractPipelineBuilder * builder = new RasterizationPipelineBuilder(*this);
+    builder->build();
+
+    delete builder;
 
     return true;
 }
@@ -51,13 +68,23 @@ void PipelinePainter::pipelineConfigChanged()
 {
     //TODO think!
 }
+
 void PipelinePainter::sceneChanged()
 {
+    AbstractScenePainter::sceneChanged();
     //TODO think!
 }
+
 void PipelinePainter::cameraChanged()
 {
+    AbstractScenePainter::cameraChanged();
     pipelineConfigChanged();
+}
+
+void PipelinePainter::viewChanged()
+{
+    AbstractScenePainter::viewChanged();
+    setValue<bool>("viewInvalid", true);
 }
 
 void PipelinePainter::paint()
@@ -65,12 +92,15 @@ void PipelinePainter::paint()
     AbstractPainter::paint();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    setView(camera()->view());
+    setProjection(camera()->projection());
+
     foreach (AbstractRenderStage * renderStage, m_stages)
     {
         renderStage->render();
     }
 
-    TextureObject * texture = getTexture("normalz");
+    TextureObject * texture = getTexture(QString::fromStdString(value<std::string>("selectedBufferName")));
     if(!texture)
         return;
 
@@ -78,6 +108,8 @@ void PipelinePainter::paint()
     m_flush->setUniform("selectedBuffer", 0);
     m_quad->draw(*m_flush);
     texture->releaseFrom(GL_TEXTURE0);
+
+    setValue<bool>("viewInvalid", false);
 }
 
 void PipelinePainter::resize(const int width, const int height)
@@ -331,10 +363,68 @@ void PipelinePainter::removeTexture(QString name)
     m_textures.remove(name);
 }
 
-void PipelinePainter::setupPipeline(PipelineBuilder & builder)
+const glm::mat4 &  PipelinePainter::view() const
+{
+    return m_view;
+}
+
+const glm::mat4 & PipelinePainter::projection() const
+{
+    return m_projection;
+}
+
+const glm::mat4 & PipelinePainter::projectionInverse() const
+{
+    return m_projectionInverse;
+}
+
+const glm::mat4 & PipelinePainter::transform() const
+{
+    return m_transform;
+}
+
+const glm::mat4 & PipelinePainter::transformInverse() const
+{
+    return m_transformInverse;
+}
+
+void PipelinePainter::setView(const glm::mat4 & view)
+{
+    m_view = view;
+    recalculateTransform();
+}
+
+void PipelinePainter::setProjection(const glm::mat4 & projection)
+{
+    m_projection = projection;
+    m_projectionInverse = glm::inverse(projection);
+    recalculateTransform();
+}
+
+void PipelinePainter::setCameraUniforms(const Program & program)
+{
+    program.setUniform(PROJECTION_UNIFORM, m_projection);
+    program.setUniform(VIEWPORT_UNIFORM, m_viewport);
+    program.setUniform(ZNEAR_UNIFORM, m_zNear);
+    program.setUniform(ZFAR_UNIFORM, m_zFar);
+
+    program.setUniform(VIEW_UNIFORM, m_view);
+    program.setUniform(TRANSFORM_UNIFORM, m_transform);
+    program.setUniform(TRANSFORMINVERSE_UNIFORM, m_transformInverse);
+    program.setUniform(CAMERAPOSITION_UNIFORM, m_eye);
+}
+
+void PipelinePainter::recalculateTransform()
+{
+    m_transform = m_projection * m_view;
+    m_transformInverse = glm::inverse(m_transform);
+}
+
+void PipelinePainter::clearPipeline()
 {
     clearRenderStages();
-    //TODO invoke builder
+    // removes properties
+    //clear();
 }
 
 void PipelinePainter::clearRenderStages()

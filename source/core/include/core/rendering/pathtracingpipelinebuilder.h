@@ -1,10 +1,10 @@
 #pragma once
 
 #include <core/painter/pipelinepainter.h>
-#include <core/rendering/pipelinebuilder.h>
+#include <core/rendering/abstractpipelinebuilder.h>
 
 
-class PathtracingPipelineBuilder : public PipelineBuilder
+class PathtracingPipelineBuilder : public AbstractPipelineBuilder
 {
 public:
     PathtracingPipelineBuilder(PipelinePainter & painter);

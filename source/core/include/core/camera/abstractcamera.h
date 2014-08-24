@@ -8,6 +8,8 @@
 #include <QVector>
 #include <QString>
 
+#include <signalzeug/Signal.h>
+
 #include <core/scenegraph/group.h>
 
 class Projection;
@@ -17,15 +19,6 @@ class ViewFrustum;
 class CORE_API AbstractCamera : public Group
 {
 public:
-
-    static const QString VIEWPORT_UNIFORM;
-    static const QString VIEW_UNIFORM;
-    static const QString PROJECTION_UNIFORM;
-    static const QString TRANSFORM_UNIFORM;
-    static const QString TRANSFORMINVERSE_UNIFORM;
-    static const QString ZNEAR_UNIFORM;
-    static const QString ZFAR_UNIFORM;
-    static const QString CAMERAPOSITION_UNIFORM;
 
     AbstractCamera(const QString & name, Projection * projection);
     AbstractCamera(const AbstractCamera & camera);
@@ -62,8 +55,8 @@ public:
 
     virtual void invalidate();
 
-    //TODO move to appropiate RenderStage
-    virtual void setUniformsIn(const Program & program);
+    virtual const signalzeug::Signal<> & viewChangedSignal();
+
 protected:
     virtual void update();
     virtual void recalculate();
@@ -71,6 +64,8 @@ protected:
 
 protected:
     mutable bool m_invalid;
+    signalzeug::Signal<> m_viewChanged;
+
     Projection * m_projection;
 
     glm::mat4 m_view;

@@ -8,15 +8,6 @@
 #include <core/viewfrustum.h>
 #include <core/program.h>
 
-const QString AbstractCamera::VIEWPORT_UNIFORM("viewport");
-const QString AbstractCamera::VIEW_UNIFORM("view");
-const QString AbstractCamera::PROJECTION_UNIFORM("projection");
-const QString AbstractCamera::TRANSFORM_UNIFORM("transform");
-const QString AbstractCamera::TRANSFORMINVERSE_UNIFORM("transformInverse");
-const QString AbstractCamera::ZNEAR_UNIFORM("znear");
-const QString AbstractCamera::ZFAR_UNIFORM("zfar");
-const QString AbstractCamera::CAMERAPOSITION_UNIFORM("cameraposition");
-
 //takes ownership of projection
 AbstractCamera::AbstractCamera(const QString & name, Projection * projection)
 :   Group(name)
@@ -24,6 +15,7 @@ AbstractCamera::AbstractCamera(const QString & name, Projection * projection)
 ,   m_viewFrustum(new ViewFrustum(this))
 ,   m_projection(projection)
 ,   m_view(glm::mat4())
+,   m_viewChanged(signalzeug::Signal<>())
 {
     m_rf = RF_Absolute;
 //     m_rf = RF_Relative;
@@ -139,6 +131,8 @@ void AbstractCamera::invalidate()
     if(m_invalid)
         return;
     m_invalid = true;
+    // TODO filter for "significant" changes / provisionary
+    m_viewChanged();
 }
 
 void AbstractCamera::invalidateChildren()
@@ -202,15 +196,7 @@ glm::vec3 AbstractCamera::up() const
     return glm::row(m_view, 1).xyz();
 }
 
-void AbstractCamera::setUniformsIn(const Program & program)
+const signalzeug::Signal<> & AbstractCamera::viewChangedSignal()
 {
-    program.setUniform(PROJECTION_UNIFORM, projection());
-    program.setUniform(VIEWPORT_UNIFORM, m_projection->viewport());
-    program.setUniform(ZNEAR_UNIFORM, m_projection->zNear());
-    program.setUniform(ZFAR_UNIFORM, m_projection->zFar());
-
-    program.setUniform(VIEW_UNIFORM, view());
-    program.setUniform(TRANSFORM_UNIFORM, transform());
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, transformInverse());
-    program.setUniform(CAMERAPOSITION_UNIFORM, eye());
+    return m_viewChanged;
 }

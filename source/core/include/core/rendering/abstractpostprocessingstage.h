@@ -14,5 +14,6 @@ public:
     virtual void render() override;
 
 protected:
+    ScreenQuad * m_screenquad;
 	Program * m_program;
 };

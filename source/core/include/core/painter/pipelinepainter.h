@@ -12,6 +12,8 @@
 #include <QMap>
 #include <QList>
 
+#include <reflectionzeug/PropertyGroup.h>
+
 #include <core/painter/abstractscenepainter.h>
 #include <core/coordinateprovider.h>
 
@@ -24,13 +26,21 @@ class AbstractProperty;
 class RenderingPass;
 class LightSourcePass;
 class AbstractRenderStage;
-class PipelineBuilder;
 class TextureObject;
 class AbstractCamera;
 
-class CORE_API PipelinePainter : public AbstractScenePainter, public CoordinateProvider // , public PropertyGroup
+class CORE_API PipelinePainter : public AbstractScenePainter, public CoordinateProvider, public reflectionzeug::PropertyGroup
 {
 public:
+    static const QString VIEWPORT_UNIFORM;
+    static const QString VIEW_UNIFORM;
+    static const QString PROJECTION_UNIFORM;
+    static const QString TRANSFORM_UNIFORM;
+    static const QString TRANSFORMINVERSE_UNIFORM;
+    static const QString ZNEAR_UNIFORM;
+    static const QString ZFAR_UNIFORM;
+    static const QString CAMERAPOSITION_UNIFORM;
+
     PipelinePainter(AbstractCamera * camera);
     PipelinePainter(AbstractCamera * camera, Group * scene);
     virtual ~PipelinePainter();
@@ -41,6 +51,7 @@ public:
     virtual void pipelineConfigChanged();
     virtual void sceneChanged() override;
     virtual void cameraChanged() override;
+    virtual void viewChanged() override;
     virtual void paint() override;
     virtual void resize(const int width, const int height) override;
     virtual void reloadShaders() override;
@@ -64,25 +75,40 @@ public:
     virtual glm::dvec3 get3DPoint(unsigned int x, unsigned int y) override;
     virtual glm::ivec2 get2DPoint(unsigned int x, unsigned int y) override;
 
-    void selectionChanged(QMap<unsigned int, Node *> selectedNodes);
+    virtual void selectionChanged(QMap<unsigned int, Node *> selectedNodes);
 
     const ScreenQuad * screenQuad();
 
-    void addRenderStage(AbstractRenderStage * renderStage);
+    virtual void addRenderStage(AbstractRenderStage * renderStage);
 
-    bool isSceneInvalid();
-    bool isViewInvalid();
+    virtual bool isSceneInvalid();
+    virtual bool isViewInvalid();
 
-    TextureObject * getTexture(QString name);
-    bool textureExists(QString name);
-    void setTexture(QString name, TextureObject * texture);
-    bool addTexture(QString name, TextureObject * texture);
-    void removeTexture(QString name);
+    virtual TextureObject * getTexture(QString name);
+    virtual bool textureExists(QString name);
+    virtual void setTexture(QString name, TextureObject * texture);
+    virtual bool addTexture(QString name, TextureObject * texture);
+    virtual void removeTexture(QString name);
+
+    //camera matrices
+    virtual const glm::mat4 & view() const;
+    virtual const glm::mat4 & projection() const;
+    virtual const glm::mat4 & projectionInverse() const;
+    virtual const glm::mat4 & transform() const;
+    virtual const glm::mat4 & transformInverse() const;
+
+    virtual void setView(const glm::mat4 & view);
+    virtual void setProjection(const glm::mat4 & projection);
+
+    virtual void setCameraUniforms(const Program & program);
+
+    virtual void clearPipeline();
 
 protected:
     glm::dvec3 unproject(float x, float y, float z);
-    void setupPipeline(PipelineBuilder & builder);
     void clearRenderStages();
+
+    void recalculateTransform();
 
 
 protected:
@@ -97,4 +123,14 @@ protected:
 
     //for CoordinateProvider
     //glow::FrameBufferObject m_coordFBO;
+
+    glm::mat4 m_view;
+    glm::mat4 m_projection;
+    glm::mat4 m_projectionInverse;
+    glm::mat4 m_transform;
+    glm::mat4 m_transformInverse;
+    glm::vec2 m_viewport;
+    float m_zNear;
+    float m_zFar;
+    glm::vec3 m_eye;
 };

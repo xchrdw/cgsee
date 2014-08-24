@@ -8,7 +8,7 @@
 class CORE_API RenderStage : public AbstractSceneRenderStage
 {
 public:
-    RenderStage(PipelinePainter & painter);
+    RenderStage(PipelinePainter & painter, const QString & normalzBufferName);
     virtual ~RenderStage(void);
 
     virtual void render() override;

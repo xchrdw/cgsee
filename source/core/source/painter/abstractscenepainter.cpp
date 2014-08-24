@@ -1,6 +1,8 @@
 
 #include <core/painter/abstractscenepainter.h>
 
+#include <signalzeug/Signal.h>
+
 #include <core/scenegraph/group.h>
 #include <core/camera/abstractcamera.h>
 
@@ -23,6 +25,8 @@ void AbstractScenePainter::assignCamera(AbstractCamera *camera)
 
     delete m_camera;
     m_camera = camera;
+
+    m_camera->viewChangedSignal().connect<AbstractScenePainter>(this, &AbstractScenePainter::viewChanged);
 
     cameraChanged();
 }
@@ -50,8 +54,15 @@ Group * AbstractScenePainter::scene()
 
 void AbstractScenePainter::sceneChanged()
 {
+
 }
 
 void AbstractScenePainter::cameraChanged()
 {
+    viewChanged();
+}
+
+void AbstractScenePainter::viewChanged()
+{
+
 }

@@ -10,14 +10,14 @@
 #include <core/camera/abstractcamera.h>
 #include <core/fileassociatedshader.h>
 
-RenderStage::RenderStage(PipelinePainter & painter)
+RenderStage::RenderStage(PipelinePainter & painter, const QString & normalzBufferName)
     : AbstractSceneRenderStage(painter)
     , m_normalz(new TextureObject(GL_RGBA32F, GL_RGBA, GL_FLOAT))
     , m_colorId(nullptr)
     , m_depth(new RenderBufferObject(GL_DEPTH24_STENCIL8))
 {
 
-    m_painter.addTexture("normalz", m_normalz);
+    m_painter.addTexture(normalzBufferName, m_normalz);
 
     m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/normalz.frag"));
     m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/depth_util.frag"));
@@ -31,10 +31,10 @@ RenderStage::~RenderStage(void)
 
 void RenderStage::render()
 {
-    m_painter.camera()->setUniformsIn(*m_program);
+    m_painter.setCameraUniforms(*m_program);
     bindFBO();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    drawScene(m_painter.camera()->viewProjection(), m_program);
+    drawScene(m_painter.transform(), m_program);
     releaseFBO();
 }
 void RenderStage::reloadShaders()

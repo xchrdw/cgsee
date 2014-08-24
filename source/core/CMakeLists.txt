@@ -115,6 +115,8 @@ set(sources
 	${source_path}/property/announcer.cpp
 	${source_path}/property/propertylist.cpp
     ${source_path}/renderbufferobject.cpp
+	${source_path}/rendering/aaaccumulatestage.cpp
+	${source_path}/rendering/aasetupstage.cpp
 	${source_path}/rendering/blureffect.cpp
 	${source_path}/rendering/boundingboxpass.cpp
 	${source_path}/rendering/renderingpass.cpp
@@ -133,7 +135,7 @@ set(sources
 	${source_path}/rendering/defaultpass.cpp
 	${source_path}/rendering/rendertechnique.cpp
 	${source_path}/rendering/pathtracer.cpp
-    ${source_path}/rendering/pipelinebuilder.cpp
+    ${source_path}/rendering/abstractpipelinebuilder.cpp
 	${source_path}/rendering/rasterizationpipelinebuilder.cpp
 	${source_path}/rendering/pathtracingpipelinebuilder.cpp
 	${source_path}/scenegraph/scenetraverser.cpp
@@ -214,7 +216,8 @@ set(api_includes
 	${include_path}/property/abstractproperty.h
 	${include_path}/property/propertylist.h
     ${include_path}/renderbufferobject.h
-	${include_path}/rendering/rendertechnique.h
+	${include_path}/rendering/aaaccumulatestage.h
+	${include_path}/rendering/aasetupstage.h
     ${include_path}/rendering/renderstage.h
 	${include_path}/rendering/abstractpostprocessingstage.h
     ${include_path}/rendering/ssaostage.h
@@ -233,7 +236,7 @@ set(api_includes
 	${include_path}/rendering/boundingboxpass.h
 	${include_path}/rendering/renderingpass.h
 	${include_path}/rendering/pathtracer.h
-    ${include_path}/rendering/pipelinebuilder.h
+    ${include_path}/rendering/abstractpipelinebuilder.h
 	${include_path}/rendering/rasterizationpipelinebuilder.h
 	${include_path}/rendering/pathtracingpipelinebuilder.h
 	${include_path}/scenegraph/group.h

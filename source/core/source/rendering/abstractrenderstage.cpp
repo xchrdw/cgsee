@@ -18,10 +18,15 @@ AbstractRenderStage::AbstractRenderStage(PipelinePainter & painter)
     glError();
 }
 
-AbstractRenderStage::~AbstractRenderStage(void)
+AbstractRenderStage::~AbstractRenderStage()
 {
     glDeleteFramebuffers(1, &m_fbo);
     glError();
+}
+
+PipelinePainter & AbstractRenderStage::painter()
+{
+    return m_painter;
 }
 
 void AbstractRenderStage::drawScene(const glm::mat4 & transform, Program * program)

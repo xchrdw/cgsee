@@ -17,11 +17,13 @@ public:
     typedef GLuint FrameBuffer;
 
     AbstractRenderStage(PipelinePainter & painter);
-    virtual ~AbstractRenderStage(void);
+    virtual ~AbstractRenderStage();
 
     virtual void reloadShaders() = 0;
     virtual void resize(const int width, const int height) = 0;
     virtual void render() = 0;
+
+    PipelinePainter & painter();
 
 protected:
     void drawScene(const glm::mat4 & transform, Program * program);
