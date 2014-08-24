@@ -7,6 +7,7 @@ class RenderBufferObject;
 
 namespace glo{
     class Texture;
+    class RenderBufferObject;
 }
 
 class CORE_API RenderStage : public AbstractSceneRenderStage
@@ -23,5 +24,5 @@ public:
 protected:
     glo::Texture * m_normalz;
     glo::Texture * m_colorId;
-    RenderBufferObject * m_depth;
+    glo::RenderBufferObject * m_depth;
 };

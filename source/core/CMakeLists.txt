@@ -116,7 +116,6 @@ set(sources
 	${source_path}/property/listproperty.cpp
 	${source_path}/property/announcer.cpp
 	${source_path}/property/propertylist.cpp
-    ${source_path}/renderbufferobject.cpp
 	${source_path}/rendering/blureffect.cpp
 	${source_path}/rendering/boundingboxpass.cpp
 	${source_path}/rendering/renderingpass.cpp
@@ -213,7 +212,6 @@ set(api_includes
 	${include_path}/property/advancedlistproperty.h
 	${include_path}/property/abstractproperty.h
 	${include_path}/property/propertylist.h
-    ${include_path}/renderbufferobject.h
 	${include_path}/rendering/rendertechnique.h
     ${include_path}/rendering/renderstage.h
 	${include_path}/rendering/abstractpostprocessingstage.h
