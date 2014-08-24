@@ -138,6 +138,8 @@ set(sources
     ${source_path}/rendering/pipelinebuilder.cpp
 	${source_path}/rendering/rasterizationpipelinebuilder.cpp
 	${source_path}/rendering/pathtracingpipelinebuilder.cpp
+	${source_path}/rendering/shadowingstage.cpp
+	${source_path}/rendering/varianceshadowmapping.cpp
 	${source_path}/scenegraph/scenetraverser.cpp
 	${source_path}/scenegraph/node.cpp
 	${source_path}/scenegraph/drawvisitor.cpp
@@ -236,6 +238,8 @@ set(api_includes
     ${include_path}/rendering/pipelinebuilder.h
 	${include_path}/rendering/rasterizationpipelinebuilder.h
 	${include_path}/rendering/pathtracingpipelinebuilder.h
+	${include_path}/rendering/shadowingstage.h
+	${include_path}/rendering/varianceshadowmapping.h
 	${include_path}/scenegraph/group.h
 	${include_path}/scenegraph/highlightingdrawmethod.h
 	${include_path}/scenegraph/triangleobject.h

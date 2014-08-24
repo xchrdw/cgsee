@@ -7,16 +7,19 @@
 
 #include <glow/Texture.h>
 
+#include <core/camera/abstractcamera.h>
+#include <core/fileassociatedshader.h>
+#include <core/gpuquery.h>
+#include <core/program.h>
 #include <core/rendering/abstractrenderstage.h>
 #include <core/rendering/pipelinebuilder.h>
 #include <core/rendering/renderstage.h>
-#include <core/camera/abstractcamera.h>
+#include <core/rendering/shadowingstage.h>
 #include <core/scenegraph/group.h>
 #include <core/screenquad.h>
-#include <core/program.h>
-//#include <core/textureobject.h>
-#include <core/fileassociatedshader.h>
-#include <core/gpuquery.h>
+
+
+
 
 
 PipelinePainter::PipelinePainter(AbstractCamera * camera)
@@ -49,6 +52,7 @@ bool PipelinePainter::initialize()
     m_flush->attach(new FileAssociatedShader(gl::GL_VERTEX_SHADER, "data/screenquad.vert"));
 
     addRenderStage(new RenderStage(*this));
+    addRenderStage(new ShadowingStage(*this));
 
     return true;
 }

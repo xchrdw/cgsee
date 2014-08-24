@@ -31,7 +31,6 @@ RenderStage::RenderStage(PipelinePainter & painter)
     m_program->attach(new FileAssociatedShader(gl::GL_FRAGMENT_SHADER, "data/depth_util.frag"));
     m_program->attach(new FileAssociatedShader(gl::GL_VERTEX_SHADER, "data/normalz.vert"));
 
-    //m_normalz->image2D(0, gl::GL_RGBA, painter.camera()->viewport(), 0, gl::GL_RGBA, gl::GL_FLOAT, nullptr);
     resize(painter.camera()->viewport().x, painter.camera()->viewport().y);
 }
 

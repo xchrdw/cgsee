@@ -356,3 +356,15 @@ void Program::setUniform(
     gl::glUniformMatrix4fv(location, 1, gl::GLboolean(transpose), glm::value_ptr(mat));
     glError();
 }
+
+void Program::setUniform(
+	const QString & name
+	, const unsigned int count
+	, const glm::mat4 & mat
+	, const bool transpose) const
+{
+	const gl::GLint location(uniformLocation(name));
+
+	gl::glUniformMatrix4fv(location, count, gl::GLboolean(transpose), glm::value_ptr(mat));
+	glError();
+}

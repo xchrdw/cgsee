@@ -107,6 +107,12 @@ public:
     ,   const glm::mat4 & mat
     ,   const bool transpose = false) const;
 
+	void Program::setUniform(
+		const QString & name
+		, const unsigned int count
+		, const glm::mat4 & mat
+		, const bool transpose = false) const;
+
 protected:
     inline const bool isProgram() const;
 

@@ -14,7 +14,7 @@ void main()
     // therefore we don't apply the shadowing to that fragment.
 
     fragcolor = mix(
-        texture(source, v_uv) * min(texture(shadows, v_uv)+0.2, texture(ssao, v_uv)),
+        texture(source, v_uv) * min(texture(shadows, v_uv), texture(ssao, v_uv)),
         texture(source, v_uv),
         step(texture(source, v_uv).w, 0.0)
         );
