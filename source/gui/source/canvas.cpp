@@ -18,9 +18,9 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/bitfield.h>
 
-#include <glow/glow.h>
-#include <glow/Error.h>
-#include <glow/DebugMessage.h>
+#include <globjects/globjects.h>
+#include <globjects/Error.h>
+#include <globjects/DebugMessage.h>
 
 #include <core/navigation/navigationhistory.h>
 #include <core/navigation/abstractnavigation.h>
@@ -74,14 +74,14 @@ void Canvas::initializeGL()
 {
     m_qtCanvas->makeCurrent();
     
-    if (!glow::isInitialized())
+    if (!glo::isInitialized())
     {
-        if (!glow::init())
+        if (!glo::init())
         {
-            qCritical("Glow failed to initialized: %s\n", qPrintable(QString::fromStdString(glow::Error::get().name())));
+            qCritical("Glow failed to initialized: %s\n", qPrintable(QString::fromStdString(glo::Error::get().name())));
         }
 
-        glow::DebugMessage::enable();
+        glo::DebugMessage::enable();
 
         qDebug("Vendor: %s", qPrintable(GPUQuery::vendor()));
         qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));

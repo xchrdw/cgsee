@@ -5,7 +5,7 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
-#include <glow/glow.h>
+#include <globjects/globjects.h>
 
 
 // http://developer.download.nvidia.com/opengl/specs/GL_NVX_gpu_memory_info.txt
@@ -89,8 +89,8 @@ const QString GPUQuery::version()
 
 const bool GPUQuery::isCoreProfile()
 {
-    if (glow::isInitialized())
-        return glow::isCoreProfile();
+    if (glo::isInitialized())
+        return glo::isCoreProfile();
     else
         return false;
 }
@@ -110,7 +110,7 @@ const bool GPUQuery::error(
 
 const bool GPUQuery::extensionSupported(const char * extension)
 {
-    return glow::hasExtension(std::string(extension));
+    return glo::hasExtension(std::string(extension));
 }
 
 const bool GPUQuery::extensionSupported(const QString & extension)

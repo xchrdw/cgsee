@@ -5,7 +5,7 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
-#include <glow/glow.h>
+#include <globjects/globjects.h>
 
 #include <core/aabb.h>
 #include <core/bufferobject.h>
@@ -59,8 +59,8 @@ void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transfor
     for( const auto & bo : geometry->elementArrayBOs() )
         bo->draw( drawable.mode() );
     
-    glow::disable(gl::GL_DEPTH_TEST);
-    glow::disable(gl::GL_CULL_FACE);
+    glo::disable(gl::GL_DEPTH_TEST);
+    glo::disable(gl::GL_CULL_FACE);
     
     gl::glBindVertexArray(0);
     glError();

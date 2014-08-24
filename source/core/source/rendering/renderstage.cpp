@@ -9,9 +9,9 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/bitfield.h>
 
-#include <glow/Texture.h>
-#include <glow/FrameBufferObject.h>
-#include <glow/Error.h>
+#include <globjects/Texture.h>
+#include <globjects/FrameBufferObject.h>
+#include <globjects/Error.h>
 
 #include <core/program.h>
 #include <core/camera/abstractcamera.h>
@@ -21,7 +21,7 @@
 
 RenderStage::RenderStage(PipelinePainter & painter)
     : AbstractSceneRenderStage(painter)
-    , m_normalz(glow::Texture::createDefault())
+    , m_normalz(glo::Texture::createDefault())
     , m_colorId(nullptr)
     , m_depth(new RenderBufferObject(gl::GL_DEPTH24_STENCIL8))
 {

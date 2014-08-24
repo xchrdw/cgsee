@@ -8,7 +8,7 @@
 class BufferObject;
 class Program;
 
-namespace glow{
+namespace glo{
     class FrameBufferObject;
 }
 
@@ -20,7 +20,7 @@ public:
 
     void draw(
         const Program & program
-    ,   glow::FrameBufferObject * target = nullptr) const;
+    ,   glo::FrameBufferObject * target = nullptr) const;
 
 protected:
     void initialize(const Program & program) const;

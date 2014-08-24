@@ -5,7 +5,7 @@
 
 class RenderBufferObject;
 
-namespace glow{
+namespace glo{
     class Texture;
 }
 
@@ -21,7 +21,7 @@ public:
     virtual void resize(const int width, const int height) override;
 
 protected:
-    glow::Texture * m_normalz;
-    glow::Texture * m_colorId;
+    glo::Texture * m_normalz;
+    glo::Texture * m_colorId;
     RenderBufferObject * m_depth;
 };

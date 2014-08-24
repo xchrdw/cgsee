@@ -5,7 +5,7 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
-#include <glow/FrameBufferObject.h>
+#include <globjects/FrameBufferObject.h>
 
 #include <core/gpuquery.h>
 
@@ -18,7 +18,7 @@
 
 AbstractRenderStage::AbstractRenderStage(PipelinePainter & painter)
     : m_painter(painter)
-    , m_fbo(new glow::FrameBufferObject())
+    , m_fbo(new glo::FrameBufferObject())
 {
 
 }

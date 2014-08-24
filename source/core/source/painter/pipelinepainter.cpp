@@ -5,7 +5,7 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/bitfield.h>
 
-#include <glow/Texture.h>
+#include <globjects/Texture.h>
 
 #include <core/rendering/abstractrenderstage.h>
 #include <core/rendering/pipelinebuilder.h>
@@ -28,7 +28,7 @@ PipelinePainter::PipelinePainter(AbstractCamera * camera)
 PipelinePainter::PipelinePainter(AbstractCamera * camera, Group * scene)
     : m_quad(new ScreenQuad())
     , m_flush(nullptr)
-    //, m_coordFBO(new glow::FrameBufferObject())
+    //, m_coordFBO(new glo::FrameBufferObject())
 {
     assignScene(scene);
     assignCamera(camera);
@@ -78,7 +78,7 @@ void PipelinePainter::paint()
         renderStage->render();
     }
 
-    glow::Texture * texture = getTexture("normalz");
+    glo::Texture * texture = getTexture("normalz");
     if(!texture)
         return;
 
@@ -294,7 +294,7 @@ bool PipelinePainter::isViewInvalid()
     return true;//TODO
 }
 
-glow::Texture * PipelinePainter::getTexture(QString name)
+glo::Texture * PipelinePainter::getTexture(QString name)
 {
     return m_textures.value(name, nullptr);
 }
@@ -304,12 +304,12 @@ bool PipelinePainter::textureExists(QString name)
     return m_textures.contains(name);
 }
 
-void PipelinePainter::setTexture(QString name, glow::Texture * texture)
+void PipelinePainter::setTexture(QString name, glo::Texture * texture)
 {
     m_textures[name] = texture;
 }
 
-bool PipelinePainter::addTexture(QString name, glow::Texture * texture)
+bool PipelinePainter::addTexture(QString name, glo::Texture * texture)
 {
     if(textureExists(name))
         return false;

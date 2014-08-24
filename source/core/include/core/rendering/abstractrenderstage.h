@@ -10,7 +10,7 @@ class Group;
 class Program;
 class PipelinePainter;
 
-namespace glow{
+namespace glo{
     class FrameBufferObject;
 }
 
@@ -43,6 +43,6 @@ protected:
 protected:
     PipelinePainter & m_painter;
 
-    glow::FrameBufferObject *m_fbo;
+    glo::FrameBufferObject *m_fbo;
     bool m_fboIsBound;
 };
