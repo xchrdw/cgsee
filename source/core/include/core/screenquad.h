@@ -6,10 +6,10 @@
 
 
 class BufferObject;
-class Program;
 
 namespace glo{
     class FrameBufferObject;
+    class Program;
 }
 
 class CORE_API ScreenQuad
@@ -19,11 +19,11 @@ public:
     virtual ~ScreenQuad();
 
     void draw(
-        const Program & program
+        glo::Program & program
     ,   glo::FrameBufferObject * target = nullptr) const;
 
 protected:
-    void initialize(const Program & program) const;
+    void initialize(glo::Program & program) const;
 
 protected:  
     mutable gl::GLuint m_vao;

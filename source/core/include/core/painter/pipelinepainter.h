@@ -18,7 +18,6 @@
 class DataBlockRegistry;
 class Group;
 class ScreenQuad;
-class Program;
 class FrameBufferObject;
 class AbstractProperty;
 class RenderingPass;
@@ -28,6 +27,7 @@ class PipelineBuilder;
 class AbstractCamera;
 
 namespace glo{
+    class Program;
     class Texture;
 }
 
@@ -96,7 +96,7 @@ protected:
     QMap<QString, glo::Texture*> m_textures;
 
     ScreenQuad * m_quad;
-    Program * m_flush;
+    glo::Program * m_flush;
 
     //for CoordinateProvider
     //glo::FrameBufferObject m_coordFBO;

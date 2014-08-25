@@ -6,18 +6,18 @@
 #include <glbinding/gl/enum.h>
 
 #include <globjects/globjects.h>
+#include <globjects/Program.h>
 
 #include <core/aabb.h>
 #include <core/bufferobject.h>
-#include <core/program.h>
 
 #include <core/scenegraph/polygonaldrawable.h>
 #include <core/scenegraph/polygonalgeometry.h>
 
-
-const QString DefaultDrawMethod::TRANSFORM_UNIFORM("transform");
-const QString DefaultDrawMethod::ID_UNIFORM("u_id");
-const QString DefaultDrawMethod::MATERIAL_UNIFORM("material");
+//const gl::GLint DefaultDrawMethod::TRANSFORM_UNIFORM(0);
+const std::string DefaultDrawMethod::TRANSFORM_UNIFORM("transform");
+const std::string DefaultDrawMethod::ID_UNIFORM("u_id");
+const std::string DefaultDrawMethod::MATERIAL_UNIFORM("material");
 
 DefaultDrawMethod::DefaultDrawMethod()
 {
@@ -28,7 +28,7 @@ DefaultDrawMethod::~DefaultDrawMethod()
 }
 
 // void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalGeometry & geometry, const GLenum mode)
-void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
+void DefaultDrawMethod::draw(glo::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
 {
     PolygonalDrawable::t_geometryP geometry = drawable.geometry();
     

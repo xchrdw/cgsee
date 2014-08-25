@@ -39,6 +39,8 @@ extern GLXContext glXGetCurrentContext( void );
 #include <QStandardItem>
 #include <QSurfaceFormat>
 
+#include <globjects-base/File.h>
+
 #include <propertyguizeug/PropertyBrowser.h>
 
 #include "gui/ui_viewer.h"
@@ -55,7 +57,6 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/painter/abstractscenepainter.h>
 #include <core/painter/abstractpainter.h>
 #include <core/painter/pipelinepainter.h>
-#include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
 
@@ -495,7 +496,8 @@ void Viewer::on_enableCullingAction_triggered() {
 
 void Viewer::on_reloadAllShadersAction_triggered()
 {
-    FileAssociatedShader::reloadAll();
+    glo::File::reloadAll();
+    //TODO Question FileAssociatedShader::reloadAll();
     // Bugfix for https://github.com/hpicgs/cgsee/issues/162
     painter()->resize(m_qtCanvas->width(), m_qtCanvas->height());
     painter()->postShaderRelinked();

@@ -12,6 +12,7 @@ class PipelinePainter;
 
 namespace glo{
     class FrameBufferObject;
+    class Program;
 }
 
 class CORE_API AbstractRenderStage
@@ -25,7 +26,7 @@ public:
     virtual void render() = 0;
 
 protected:
-    void drawScene(const glm::mat4 & transform, Program * program);
+    void drawScene(const glm::mat4 & transform, glo::Program * program);
 
     bool isSceneInvalid();
     bool isViewInvalid();
@@ -33,12 +34,6 @@ protected:
 protected:
     void bindFBO();
     void releaseFBO();
-
-    
-    
-    gl::GLuint createRenderbuffer(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat);
-    void deleteRenderbuffer(gl::GLuint renderbuffer);
-    void attachRenderbuffer(gl::GLenum attachment, gl::GLuint renderbuffer);
 
 protected:
     PipelinePainter & m_painter;

@@ -2,8 +2,9 @@
 
 #include <core/core_api.h>
 
-#include <glm/glm.hpp>
+#include <string>
 
+#include <glm/glm.hpp>
 
 #include <QVector>
 #include <QString>
@@ -11,21 +12,24 @@
 #include <core/scenegraph/group.h>
 
 class Projection;
-class Program;
 class ViewFrustum;
+
+namespace glo{
+    class Program;
+}
 
 class CORE_API AbstractCamera : public Group
 {
 public:
 
-    static const QString VIEWPORT_UNIFORM;
-    static const QString VIEW_UNIFORM;
-    static const QString PROJECTION_UNIFORM;
-    static const QString TRANSFORM_UNIFORM;
-    static const QString TRANSFORMINVERSE_UNIFORM;
-    static const QString ZNEAR_UNIFORM;
-    static const QString ZFAR_UNIFORM;
-    static const QString CAMERAPOSITION_UNIFORM;
+    static const std::string VIEWPORT_UNIFORM;
+    static const std::string VIEW_UNIFORM;
+    static const std::string PROJECTION_UNIFORM;
+    static const std::string TRANSFORM_UNIFORM;
+    static const std::string TRANSFORMINVERSE_UNIFORM;
+    static const std::string ZNEAR_UNIFORM;
+    static const std::string ZFAR_UNIFORM;
+    static const std::string CAMERAPOSITION_UNIFORM;
 
     AbstractCamera(const QString & name, Projection * projection);
     AbstractCamera(const AbstractCamera & camera);
@@ -63,7 +67,7 @@ public:
     virtual void invalidate();
 
     //TODO move to appropiate RenderStage
-    virtual void setUniformsIn(const Program & program);
+    virtual void setUniformsIn(glo::Program & program);
 protected:
     virtual void update();
     virtual void recalculate();

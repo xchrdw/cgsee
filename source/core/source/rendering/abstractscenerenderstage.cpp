@@ -3,7 +3,8 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <core/program.h>
+#include <globjects/program.h>
+
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/camera/abstractcamera.h>
@@ -12,12 +13,12 @@
 AbstractSceneRenderStage::AbstractSceneRenderStage(PipelinePainter & painter)
     : AbstractRenderStage(painter)
 {
-	m_program = new Program();
+	m_program = new glo::Program();
 }
 
 AbstractSceneRenderStage::~AbstractSceneRenderStage(void)
 {
-    delete m_program;
+
 }
 
 void AbstractSceneRenderStage::render()

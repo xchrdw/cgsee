@@ -6,10 +6,10 @@
 #include <glbinding/gl/enum.h>
 
 #include <globjects/FrameBufferObject.h>
+#include <globjects/Program.h>
 
 #include <core/gpuquery.h>
 
-#include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/scenegraph/group.h>
@@ -28,7 +28,7 @@ AbstractRenderStage::~AbstractRenderStage(void)
     m_fbo->unref();
 }
 
-void AbstractRenderStage::drawScene(const glm::mat4 & transform, Program * program)
+void AbstractRenderStage::drawScene(const glm::mat4 & transform, glo::Program * program)
 {
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, transform);

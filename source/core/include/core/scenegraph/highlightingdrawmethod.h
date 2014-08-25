@@ -7,7 +7,10 @@
 #include <core/scenegraph/defaultdrawmethod.h>
 
 class PolygonalDrawable;
-class Program;
+
+namespace glo{
+    class Program;
+}
 
 class CORE_API HighlightingDrawMethod : public DefaultDrawMethod
 {
@@ -15,5 +18,5 @@ public:
     HighlightingDrawMethod();
     virtual ~HighlightingDrawMethod();
 
-    virtual void draw(const Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const override;
+    virtual void draw(glo::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const override;
 };

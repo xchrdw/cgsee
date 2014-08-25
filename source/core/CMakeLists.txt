@@ -89,7 +89,6 @@ set(sources
 	${source_path}/datacore/datablock.cpp
 	${source_path}/datacore/vertexindexlist.cpp
 	${source_path}/datacore/vertexlist.cpp
-	${source_path}/fileassociatedshader.cpp
 	${source_path}/geometryoptimizer.h
 	${source_path}/glformat.cpp
 	${source_path}/gpuquery.cpp
@@ -109,7 +108,6 @@ set(sources
 	${source_path}/painter/abstractpainter.cpp
     ${source_path}/painter/pipelinepainter.cpp
 	${source_path}/plane.cpp
-	${source_path}/program.cpp
 	${source_path}/property/abstractproperty.cpp
 	${source_path}/property/abstractpropertyvisitor.cpp
 	${source_path}/property/advancedlistproperty.cpp
@@ -150,7 +148,6 @@ set(sources
 	${source_path}/scenegraph/pathtracingbvh.cpp
 	${source_path}/scenegraph/absolutetransformator.cpp
 	${source_path}/screenquad.cpp
-	${source_path}/shader.cpp
 	${source_path}/timer.cpp
 	${source_path}/vertexcacheoptimizer.cpp
 	${source_path}/vertexcacheoptimizer.h
@@ -185,7 +182,6 @@ set(api_includes
 	${include_path}/datacore/vertexindexlist_impl.tli
 	${include_path}/datacore/attributeiterator.h
 	${include_path}/declspec.h
-	${include_path}/fileassociatedshader.h
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
 	${include_path}/material/material.h
@@ -203,7 +199,6 @@ set(api_includes
 	${include_path}/painter/abstractpainter.h
     ${include_path}/painter/pipelinepainter.h
 	${include_path}/plane.h
-	${include_path}/program.h
 	${include_path}/property/limitedproperty.h
 	${include_path}/property/abstractpropertyvisitor.h
 	${include_path}/property/announcer.h
@@ -249,7 +244,6 @@ set(api_includes
 	${include_path}/scenegraph/absolutetransformator.h
 	${include_path}/scenegraph/cullingvisitor.h
 	${include_path}/screenquad.h
-	${include_path}/shader.h
 	${include_path}/timer.h
 	${include_path}/typedefs.h
 	${include_path}/viewfrustum.h

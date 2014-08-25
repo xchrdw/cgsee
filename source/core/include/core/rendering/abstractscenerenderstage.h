@@ -6,6 +6,10 @@
 class Program;
 class PipelinePainter;
 
+namespace glo {
+    class Program;
+}
+
 // under construction
 class CORE_API AbstractSceneRenderStage : public AbstractRenderStage
 {
@@ -16,5 +20,5 @@ public:
     virtual void render() override;
 
 protected:
-    Program * m_program;
+    glo::Program * m_program;
 };
