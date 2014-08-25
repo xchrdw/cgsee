@@ -1,5 +1,7 @@
 #include <core/rendering/aasetupstage.h>
 
+#include <cstdlib>
+
 #include <core/gpuquery.h>
 
 #include <core/painter/pipelinepainter.h>
@@ -15,13 +17,6 @@ AASetupStage::~AASetupStage()
 {
 
 }
-
-glm::vec2 AASetupStage::s_offset[] = {
-        glm::vec2(0.375, 0.375), glm::vec2(0.375, -0.375), glm::vec2(-0.375, -0.375), glm::vec2(-0.375, 0.375),
-        glm::vec2(0.375, 0.125), glm::vec2(0.125, -0.375), glm::vec2(-0.375, -0.125), glm::vec2(-0.125, 0.375),
-        glm::vec2(0.125, 0.125), glm::vec2(0.125, -0.125), glm::vec2(-0.125, -0.125), glm::vec2(-0.125, 0.125),
-        glm::vec2(0.125, 0.375), glm::vec2(0.375, -0.125), glm::vec2(-0.125, -0.375), glm::vec2(-0.375, 0.125)
-};
 
 void AASetupStage::reloadShaders()
 {
@@ -42,13 +37,19 @@ void AASetupStage::render()
     else
     {
         int accumulatedSubpixels = painter().value<int>("accumulatedSubpixels");
-        if (accumulatedSubpixels < 16)
+        if (accumulatedSubpixels < 64)
         {
-            glm::vec2 offset = s_offset[accumulatedSubpixels];
+            glm::vec2 offset = randomOffset(1.35);
             painter().setProjection(
-                        glm::translate(painter().projection(),
-                                       glm::vec3(offset.x * m_pixelSize.x * 5.0,
-                                                 offset.y * m_pixelSize.y * 5.0, 0)));
+                        glm::translate(glm::mat4(),
+                                       glm::vec3(offset.x * m_pixelSize.x,
+                                                 offset.y * m_pixelSize.y, 0)) * painter().projection());
         }
     }
+}
+
+glm::vec2 AASetupStage::randomOffset(double kernelSize)
+{
+    return glm::vec2(static_cast<double>(rand() % 1000) / 1000.0 * kernelSize - kernelSize / 2,
+                     static_cast<double>(rand() % 1000) / 1000.0 * kernelSize - kernelSize / 2);
 }

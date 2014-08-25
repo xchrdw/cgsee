@@ -51,7 +51,7 @@ public:
     virtual void pipelineConfigChanged();
     virtual void sceneChanged() override;
     virtual void cameraChanged() override;
-    virtual void viewChanged() override;
+    virtual void onViewChanged() override;
     virtual void paint() override;
     virtual void resize(const int width, const int height) override;
     virtual void reloadShaders() override;

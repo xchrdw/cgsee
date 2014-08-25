@@ -37,7 +37,7 @@ CGSee::CGSee(int & argc, char ** argv)
 
     m_viewer->show();
 
-    m_viewer->on_loadFile("data/shadow_test.obj");
+    m_viewer->on_loadFile("data/cow.3ds");
 }
 
 CGSee::~CGSee()

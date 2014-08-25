@@ -54,15 +54,15 @@ Group * AbstractScenePainter::scene()
 
 void AbstractScenePainter::sceneChanged()
 {
-
+    //TODO
 }
 
 void AbstractScenePainter::cameraChanged()
 {
-    viewChanged();
+    onViewChanged();
 }
 
 void AbstractScenePainter::viewChanged()
 {
-
+    onViewChanged();
 }

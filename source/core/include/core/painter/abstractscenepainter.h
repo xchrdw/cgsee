@@ -39,7 +39,8 @@ public:
 protected:
     virtual void sceneChanged();
     virtual void cameraChanged();
-    virtual void viewChanged();
+    void viewChanged();
+    virtual void onViewChanged() = 0;
 
     Group * m_scene;
     AbstractCamera * m_camera;

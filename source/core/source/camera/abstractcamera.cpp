@@ -27,6 +27,7 @@ AbstractCamera::AbstractCamera(const AbstractCamera & camera)
 ,   m_viewFrustum(new ViewFrustum(this))
 ,   m_projection(new Projection(*(camera.m_projection))) //TODO find out what happens here
 ,   m_view(camera.m_view)
+,   m_viewChanged(signalzeug::Signal<>())
 {
     m_rf = camera.m_rf;
 }
@@ -128,11 +129,9 @@ void AbstractCamera::recalculate()
 
 void AbstractCamera::invalidate()
 {
-    if(m_invalid)
-        return;
     m_invalid = true;
     // TODO filter for "significant" changes / provisionary
-    m_viewChanged();
+    m_viewChanged.fire();
 }
 
 void AbstractCamera::invalidateChildren()

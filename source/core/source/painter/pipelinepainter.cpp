@@ -81,9 +81,8 @@ void PipelinePainter::cameraChanged()
     pipelineConfigChanged();
 }
 
-void PipelinePainter::viewChanged()
+void PipelinePainter::onViewChanged()
 {
-    AbstractScenePainter::viewChanged();
     setValue<bool>("viewInvalid", true);
 }
 

@@ -21,7 +21,8 @@ public:
     virtual void resize(const int width, const int height) override;
     virtual void render() override;
 
-    static glm::vec2 s_offset[16];
+protected:
+    static glm::vec2 randomOffset(double kernelSize);
 
 protected:
     glm::vec2 m_pixelSize;

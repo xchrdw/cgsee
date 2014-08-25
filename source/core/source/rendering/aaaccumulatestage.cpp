@@ -44,7 +44,7 @@ void AAAccumulateStage::render()
 {
     int accumulatedSubpixels = painter().value<int>("accumulatedSubpixels");
 
-    if (accumulatedSubpixels < 16)
+    if (accumulatedSubpixels < 64)
     {
         accumulatedSubpixels++;
         m_program->setUniform("accumulatedSubpixels", accumulatedSubpixels);
