@@ -2,10 +2,10 @@
 #include <core/scenegraph/polygonaldrawable.h>
 
 #include <glbinding/gl/enum.h>
+#include <globjects/Program.h>
 
 #include <core/aabb.h>
 #include <core/bufferobject.h>
-#include <core/program.h>
 
 #include <core/scenegraph/polygonalgeometry.h>
 #include <core/scenegraph/defaultdrawmethod.h>
@@ -87,7 +87,7 @@ void PolygonalDrawable::invalidateBoundingBox()
     return Node::invalidateBoundingBox();
 }
 
-void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transform)
+void PolygonalDrawable::draw(glo::Program & program, const glm::mat4 & transform)
 {
     if (m_geometry)
     {

@@ -4,18 +4,19 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
+#include <globjects/program.h>
+
 #include <core/camera/projection.h>
 #include <core/viewfrustum.h>
-#include <core/program.h>
 
-const QString AbstractCamera::VIEWPORT_UNIFORM("viewport");
-const QString AbstractCamera::VIEW_UNIFORM("view");
-const QString AbstractCamera::PROJECTION_UNIFORM("projection");
-const QString AbstractCamera::TRANSFORM_UNIFORM("transform");
-const QString AbstractCamera::TRANSFORMINVERSE_UNIFORM("transformInverse");
-const QString AbstractCamera::ZNEAR_UNIFORM("znear");
-const QString AbstractCamera::ZFAR_UNIFORM("zfar");
-const QString AbstractCamera::CAMERAPOSITION_UNIFORM("cameraposition");
+const std::string AbstractCamera::VIEWPORT_UNIFORM("viewport");
+const std::string AbstractCamera::VIEW_UNIFORM("view");
+const std::string AbstractCamera::PROJECTION_UNIFORM("projection");
+const std::string AbstractCamera::TRANSFORM_UNIFORM("transform");
+const std::string AbstractCamera::TRANSFORMINVERSE_UNIFORM("transformInverse");
+const std::string AbstractCamera::ZNEAR_UNIFORM("znear");
+const std::string AbstractCamera::ZFAR_UNIFORM("zfar");
+const std::string AbstractCamera::CAMERAPOSITION_UNIFORM("cameraposition");
 
 //takes ownership of projection
 AbstractCamera::AbstractCamera(const QString & name, Projection * projection)
@@ -202,7 +203,7 @@ glm::vec3 AbstractCamera::up() const
     return glm::row(m_view, 1).xyz();
 }
 
-void AbstractCamera::setUniformsIn(const Program & program)
+void AbstractCamera::setUniformsIn(glo::Program & program)
 {
     program.setUniform(PROJECTION_UNIFORM, projection());
     program.setUniform(VIEWPORT_UNIFORM, m_projection->viewport());

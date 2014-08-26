@@ -5,8 +5,9 @@
 
 class RenderBufferObject;
 
-namespace glow{
+namespace glo{
     class Texture;
+    class RenderBufferObject;
 }
 
 class CORE_API RenderStage : public AbstractSceneRenderStage
@@ -21,7 +22,7 @@ public:
     virtual void resize(const int width, const int height) override;
 
 protected:
-    glow::Texture * m_normalz;
-    glow::Texture * m_colorId;
-    RenderBufferObject * m_depth;
+    glo::Texture * m_normalz;
+    glo::Texture * m_colorId;
+    glo::RenderBufferObject * m_depth;
 };

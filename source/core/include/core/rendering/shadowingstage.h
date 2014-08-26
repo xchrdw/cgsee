@@ -2,11 +2,11 @@
 
 #include <core/core_api.h>
 #include <core/rendering/abstractscenerenderstage.h>
-#include <core/program.h>
 
-namespace glow{
-    class Texture;
+namespace glo{
     class FrameBufferObject;
+    class Program;
+    class Texture;    
 }
 
 class CORE_API ShadowingStage : public AbstractSceneRenderStage
@@ -23,11 +23,11 @@ protected:
     void calculateSplitPlanes(float znear, float zfar, int planesCount, float lambda, glm::vec4 &nearSplits, glm::vec4 &farSplits);
 
 protected:
-    glow::Texture *m_shadowmaps;
-    glow::Texture *m_shadowmapsDepth;
-    glow::Texture *m_blurTexture;
-    Program *m_blurHProgram;
-    Program *m_blurVProgram;
-    glow::FrameBufferObject *m_blurHFBO;
-    glow::FrameBufferObject *m_blurVFBO;
+    glo::Texture *m_shadowmaps;
+    glo::Texture *m_shadowmapsDepth;
+    glo::Texture *m_blurTexture;
+    glo::Program *m_blurHProgram;
+    glo::Program *m_blurVProgram;
+    glo::FrameBufferObject *m_blurHFBO;
+    glo::FrameBufferObject *m_blurVFBO;
 };

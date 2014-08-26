@@ -7,11 +7,10 @@
 #include <glbinding/gl/bitfield.h>
 #include <glbinding/gl/boolean.h>
 
-#include <glow/FrameBufferObject.h>
+#include <globjects/FrameBufferObject.h>
+#include <globjects/Program.h>
 
 #include <core/bufferobject.h>
-#include <core/program.h>
-#include <core/shader.h>
 #include <core/gpuquery.h>
 
 
@@ -32,7 +31,7 @@ ScreenQuad::~ScreenQuad()
     }
 }
 
-void ScreenQuad::initialize(const Program & program) const
+void ScreenQuad::initialize(glo::Program & program) const
 {
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
@@ -60,15 +59,15 @@ void ScreenQuad::initialize(const Program & program) const
 
     // bind all buffers to their attributes
 
-    m_vertexBO->bind(program.attributeLocation("a_vertex"));
+    m_vertexBO->bind(program.getAttributeLocation("a_vertex"));
 
     gl::glBindVertexArray(0);
     glError();
 }
 
 void ScreenQuad::draw(
-    const Program & program
-,   glow::FrameBufferObject * target) const
+    glo::Program & program
+,   glo::FrameBufferObject * target) const
 {
     if(-1 == m_vao)
         initialize(program);

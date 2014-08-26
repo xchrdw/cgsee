@@ -1,15 +1,16 @@
 
 #include <core/scenegraph/highlightingdrawmethod.h>
 
+#include <iostream>
+
 #include <glbinding/gl/types.h>
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
-#include <iostream>
+#include <globjects/Program.h>
 
 #include <core/aabb.h>
 #include <core/bufferobject.h>
-#include <core/program.h>
 
 #include <core/scenegraph/polygonalgeometry.h>
 #include <core/scenegraph/polygonaldrawable.h>
@@ -24,7 +25,7 @@ HighlightingDrawMethod::~HighlightingDrawMethod()
 }
 
 // void HighlightingDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalGeometry & geometry, const GLenum mode)
-void HighlightingDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
+void HighlightingDrawMethod::draw(glo::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
 {
     PolygonalDrawable::t_geometryP geometry = drawable.geometry();
     

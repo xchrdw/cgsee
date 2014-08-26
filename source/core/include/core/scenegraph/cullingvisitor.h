@@ -15,20 +15,23 @@ class AbstractCamera;
 class FrameBufferObject;
 class Node;
 class ViewFrustum;
-class Program;
+
+namespace glo{
+    class Program;
+}
 
 class CORE_API CullingVisitor final : public SceneVisitorInterface
 {
 public:
     typedef std::vector<std::shared_ptr<Node> >::iterator t_nodeIter;
     
-    CullingVisitor(AbstractCamera *camera, Program *program, glm::mat4 transform);
+    CullingVisitor(AbstractCamera *camera, glo::Program *program, glm::mat4 transform);
     ~CullingVisitor();
     bool operator() (Node &node);
 
 private:
     AbstractCamera *m_camera;
-    Program *m_program;
+    glo::Program *m_program;
     glm::mat4 m_transform;
     const ViewFrustum *m_viewFrustum;
     bool m_cull;

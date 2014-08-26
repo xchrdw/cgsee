@@ -10,16 +10,16 @@
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/functions.h>
 
-#include <glow/glow.h>
-#include <glow/Texture.h>
-#include <glow/FrameBufferObject.h>
+#include <globjects/globjects.h>
+#include <globjects/FrameBufferObject.h>
+#include <globjects/Program.h>
+#include <globjects/Texture.h>
+#include <globjects-base/File.h>
 
 #include <core/camera/abstractcamera.h>
 #include <core/camera/monocamera.h>
 #include <core/camera/projection.h>
-#include <core/fileassociatedshader.h>
 #include <core/painter/pipelinepainter.h>
-#include <core/program.h>
 #include <core/screenquad.h>
 
 
@@ -40,25 +40,25 @@ namespace
 
 ShadowingStage::ShadowingStage(PipelinePainter &painter)
 :   AbstractSceneRenderStage(painter)
-,   m_shadowmaps(glow::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
-,   m_shadowmapsDepth(glow::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
-,   m_blurTexture(glow::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
-,   m_blurHProgram(new Program())
-,   m_blurVProgram(new Program())
-,   m_blurHFBO(new glow::FrameBufferObject())
-,   m_blurVFBO(new glow::FrameBufferObject())
-{
-    m_program->attach(new FileAssociatedShader(gl::GL_FRAGMENT_SHADER, "data/shadows/vsm_light.frag"));
-    m_program->attach(new FileAssociatedShader(gl::GL_GEOMETRY_SHADER, "data/shadows/vsm_light.geom"));
-    m_program->attach(new FileAssociatedShader(gl::GL_VERTEX_SHADER, "data/shadows/vsm_light.vert"));
+,   m_shadowmaps(glo::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
+,   m_shadowmapsDepth(glo::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
+,   m_blurTexture(glo::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
+,   m_blurHProgram(new glo::Program())
+,   m_blurVProgram(new glo::Program())
+,   m_blurHFBO(new glo::FrameBufferObject())
+,   m_blurVFBO(new glo::FrameBufferObject())
+{    
+    m_program->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/vsm_light.vert")));
+    m_program->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/vsm_light.geom")));
+    m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/vsm_light.frag")));
 
-    m_blurHProgram->attach(new FileAssociatedShader(gl::GL_VERTEX_SHADER, "data/screenquad.vert"));
-    m_blurHProgram->attach(new FileAssociatedShader(gl::GL_GEOMETRY_SHADER, "data/shadows/screenquad_layered.geom"));
-    m_blurHProgram->attach(new FileAssociatedShader(gl::GL_FRAGMENT_SHADER, "data/shadows/gauss_blur_5_h_layered.frag"));
+    m_blurHProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
+    m_blurHProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/screenquad_layered.geom")));
+    m_blurHProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/gauss_blur_5_h_layered.frag")));
     
-    m_blurVProgram->attach(new FileAssociatedShader(gl::GL_VERTEX_SHADER, "data/screenquad.vert"));
-    m_blurVProgram->attach(new FileAssociatedShader(gl::GL_GEOMETRY_SHADER, "data/shadows/screenquad_layered.geom"));
-    m_blurVProgram->attach(new FileAssociatedShader(gl::GL_FRAGMENT_SHADER, "data/shadows/gauss_blur_5_v_layered.frag"));
+    m_blurVProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
+    m_blurVProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/screenquad_layered.geom")));
+    m_blurVProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/gauss_blur_5_v_layered.frag")));
 
     m_shadowmaps->image3D(0, gl::GL_RGBA32F, glm::ivec3(SHADOWMAP_SIZE, SHADOWMAP_SIZE, SHADOWMAP_COUNT), 0, gl::GL_RGBA, gl::GL_FLOAT, nullptr);
     m_shadowmapsDepth->image3D(0, gl::GL_DEPTH_COMPONENT32, glm::ivec3(SHADOWMAP_SIZE, SHADOWMAP_SIZE, SHADOWMAP_COUNT), 0, gl::GL_DEPTH_COMPONENT, gl::GL_UNSIGNED_INT, nullptr);
@@ -75,8 +75,7 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
 
 ShadowingStage::~ShadowingStage()
 {
-    delete m_blurHProgram;
-    delete m_blurVProgram;
+
 }
 
 void ShadowingStage::render()
@@ -107,15 +106,15 @@ void ShadowingStage::render()
         bb.center(), glm::vec3(0.0f, 1.0f, 0.0f)));
     light2Camera.invalidate();
 
-    glm::mat4x4 *biasLightViewProjection = new glm::mat4x4[SHADOWMAP_COUNT];
+    std::array<glm::mat4x4, SHADOWMAP_COUNT> biasLightViewProjection;
     biasLightViewProjection[0] = biasMatrix * lightCamera.viewProjection();
     biasLightViewProjection[1] = biasMatrix * light2Camera.viewProjection();
     
-    glm::mat4x4 *lightViewProjection = new glm::mat4x4[SHADOWMAP_COUNT];
+    std::array<glm::mat4x4, SHADOWMAP_COUNT> lightViewProjection;
     lightViewProjection[0] = lightCamera.viewProjection();
     lightViewProjection[1] = light2Camera.viewProjection();
     
-    m_program->setUniform("lightTransforms", SHADOWMAP_COUNT, lightViewProjection[0]);
+    m_program->setUniform("lightTransforms", lightViewProjection);
     m_program->setUniform("inverseViewProjection", glm::inverse(m_painter.camera()->viewProjection()));
 
     m_painter.camera()->setUniformsIn(*m_program);
@@ -125,20 +124,21 @@ void ShadowingStage::render()
     drawScene(m_painter.camera()->viewProjection(), m_program);
     m_fbo->unbind();
     
-    //ScreenQuad screenQuad;
-    //
-    //m_shadowmaps->bindActive(gl::GL_TEXTURE0);
-    //m_blurHProgram->setUniform("source", 0);
-    //m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    //screenQuad.draw(*m_blurHProgram, m_blurHFBO);
-    //
-    //m_blurTexture->bindActive(gl::GL_TEXTURE0);
-    //m_blurVProgram->setUniform("source", 0);
-    //m_blurVProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    //screenQuad.draw(*m_blurVProgram, m_blurVFBO);
+    ScreenQuad screenQuad;
+    gl::glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
+    m_shadowmaps->bindActive(gl::GL_TEXTURE0);
+    m_blurHProgram->setUniform("source", 0);
+    m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    screenQuad.draw(*m_blurHProgram, m_blurHFBO);
+    
+    m_blurTexture->bindActive(gl::GL_TEXTURE0);
+    m_blurVProgram->setUniform("source", 0);
+    m_blurVProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    screenQuad.draw(*m_blurVProgram, m_blurVFBO);
+    gl::glViewport(0, 0, m_painter.camera()->viewport().x, m_painter.camera()->viewport().y);
 
-    delete[] biasLightViewProjection;
-    delete[] lightViewProjection;
+    biasLightViewProjection;
+    lightViewProjection;
 }
 
 void ShadowingStage::resize(const int width, const int height)

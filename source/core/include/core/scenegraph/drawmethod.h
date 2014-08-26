@@ -6,7 +6,10 @@
 
 
 class PolygonalDrawable;
-class Program;
+
+namespace glo{
+    class Program;
+}
 
 class CORE_API DrawMethod
 {
@@ -14,5 +17,5 @@ public:
     DrawMethod() {}
     virtual ~DrawMethod() {}
 
-    virtual void draw(const Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const =0;
+    virtual void draw(glo::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const =0;
 };

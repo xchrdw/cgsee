@@ -5,12 +5,12 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
-#include <glow/glow.h>
+#include <globjects/globjects.h>
+#include <globjects/Program.h>
 
 #include <core/datacore/datablock.h>
 #include <core/aabb.h>
 #include <core/bufferobject.h>
-#include <core/program.h>
 
 #include "../vertexreuse.h"
 #include "../vertexcacheoptimizer.h"
@@ -164,14 +164,14 @@ void PolygonalGeometry::resize(unsigned int size)
     inds->resize(size);
 }
 
-void PolygonalGeometry::initialize(const Program & program)
+void PolygonalGeometry::initialize(glo::Program & program)
 {
     if(!m_arrayBOsByAttribute.empty() && !m_elementArrayBOs.empty())
         return;
     glError();
     deleteBuffers();
 
-    glow::isInitialized();
+    glo::isInitialized();
     glError();
     gl::glGenVertexArrays(1, &m_vao);
     glError();
@@ -215,7 +215,7 @@ void PolygonalGeometry::initialize(const Program & program)
     const t_bufferObjectsByAttribute::const_iterator iEnd(m_arrayBOsByAttribute.end());
 
     for( ; i != iEnd; ++i )
-        i.value()->bind(program.attributeLocation(i.key()));
+        i.value()->bind(program.getAttributeLocation(i.key().toStdString()));
 
     gl::glBindVertexArray(0);
     glError();

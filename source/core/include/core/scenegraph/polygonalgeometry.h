@@ -14,8 +14,11 @@
 class DataBlockRegistry;
 class AxisAlignedBoundingBox;
 class BufferObject;
-class Program;
 class GeometryOptimizer;
+
+namespace glo{
+    class Program;
+}
 
 class CORE_API PolygonalGeometry final
 {
@@ -43,7 +46,7 @@ public:
 
     void resize(unsigned int size);
 
-    void initialize(const Program & program);
+    void initialize(glo::Program & program);
     
     inline gl::GLuint vao() { return m_vao; }
     t_bufferObjects & elementArrayBOs() { return m_elementArrayBOs; } // TODO: perhaps as const.

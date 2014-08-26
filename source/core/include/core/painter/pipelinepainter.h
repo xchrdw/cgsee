@@ -4,7 +4,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-//TODO glow integration #include <glow/FrameBufferObject.h>
+//TODO glow integration #include <globjects/FrameBufferObject.h>
 
 #include <memory>
 
@@ -18,7 +18,6 @@
 class DataBlockRegistry;
 class Group;
 class ScreenQuad;
-class Program;
 class FrameBufferObject;
 class AbstractProperty;
 class RenderingPass;
@@ -27,7 +26,8 @@ class AbstractRenderStage;
 class PipelineBuilder;
 class AbstractCamera;
 
-namespace glow{
+namespace glo{
+    class Program;
     class Texture;
 }
 
@@ -76,10 +76,10 @@ public:
     bool isSceneInvalid();
     bool isViewInvalid();
 
-    glow::Texture * getTexture(QString name);
+    glo::Texture * getTexture(QString name);
     bool textureExists(QString name);
-    void setTexture(QString name, glow::Texture * texture);
-    bool addTexture(QString name, glow::Texture * texture);
+    void setTexture(QString name, glo::Texture * texture);
+    bool addTexture(QString name, glo::Texture * texture);
     void removeTexture(QString name);
 
 protected:
@@ -93,11 +93,11 @@ protected:
     QList<AbstractRenderStage *> m_stages;
 
     QString m_samplerToDisplay;
-    QMap<QString, glow::Texture*> m_textures;
+    QMap<QString, glo::Texture*> m_textures;
 
     ScreenQuad * m_quad;
-    Program * m_flush;
+    glo::Program * m_flush;
 
     //for CoordinateProvider
-    //glow::FrameBufferObject m_coordFBO;
+    //glo::FrameBufferObject m_coordFBO;
 };

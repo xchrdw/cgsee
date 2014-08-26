@@ -16,8 +16,11 @@
 
 class PolygonalGeometry;
 class DataBlockRegistry;
-class Program;
 class DrawMethod;
+
+namespace glo{
+    class Program;
+}
 
 
 class CORE_API PolygonalDrawable : public Node
@@ -31,7 +34,7 @@ public:
     PolygonalDrawable(const QString & name = "unnamed");
     virtual ~PolygonalDrawable();
 
-    virtual void draw(const Program & program, const glm::mat4 & transform) override;
+    virtual void draw(glo::Program & program, const glm::mat4 & transform) override;
 
     virtual const AxisAlignedBoundingBox boundingBox() const override;
     virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;

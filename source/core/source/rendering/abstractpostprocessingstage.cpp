@@ -3,8 +3,8 @@
 
 #include <glm/mat4x4.hpp>
 
-//#include <core/framebufferobject.h>
-#include <core/program.h>
+#include <globjects/Program.h>
+
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/screenquad.h>
@@ -13,12 +13,12 @@
 AbstractPostProcessingStage::AbstractPostProcessingStage(PipelinePainter & painter)
     : AbstractRenderStage(painter)
 {
-	m_program = new Program();
+	m_program = new glo::Program();
 }
 
 AbstractPostProcessingStage::~AbstractPostProcessingStage(void)
 {
-	delete m_program;
+
 }
 
 void AbstractPostProcessingStage::render()
