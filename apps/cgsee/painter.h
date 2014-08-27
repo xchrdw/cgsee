@@ -52,6 +52,8 @@ protected:
     GLint a_vertex;
     GLint u_transform;
     GLint u_clicked;
+    GLint u_texture;
+    GLint a_texCoord;
 
     GLuint m_vao;
     GLuint m_indices;

@@ -39,7 +39,9 @@ Painter::Painter()
 
 ,    a_vertex(-1)
 ,    u_transform(-1)
+,    u_texture(-1)
 ,    u_clicked(-1)
+,    a_texCoord(-1)
 
 ,    m_vao(-1)
 ,    m_indices(-1)
@@ -59,20 +61,14 @@ Painter::~Painter()
     glDeleteBuffers(1, &m_indices);
 
     glDetachShader(m_program, m_vert);
-    glError();
     glDetachShader(m_program, m_frag);
-    glError();
 
     glDeleteShader(m_vert);
-    glError();
     glDeleteShader(m_frag);
-    glError();
 
     glDeleteTextures(1, &m_textureID);
-    glError();
 
     glDeleteProgram(m_program);
-    glError();
 }
 
 void getCompileInfo(const GLint shader)
@@ -89,11 +85,9 @@ void getCompileInfo(const GLint shader)
         GLint logLength(0);
 
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
-        glError();
 
         GLchar *chr = new GLchar[maxLength];
         glGetShaderInfoLog(shader, maxLength, &logLength, chr);
-        glError();
 
         log = chr;
 
@@ -105,33 +99,27 @@ void getCompileInfo(const GLint shader)
 
 const bool Painter::initialize()
 {
-    // initialize view
+    // Initialize view
     m_view = glm::lookAt(m_eye, m_center, m_up);
 
-    // initialize shaders and program
-    const QString TEXTURE_FILENAME = "data/gizmo.png";
+    // Initialize shaders and program
+    const QString TEXTURE_FILENAME = "data/minion.png";
     m_textureID = loadTexture(TEXTURE_FILENAME);
-
-    glError();
     m_vert = glCreateShader(GL_VERTEX_SHADER);
-    glError();
     m_frag = glCreateShader(GL_FRAGMENT_SHADER);
-    glError();
 
     // Vertex shader
-    static const char * srcv = // c++11
+    static const char * srcv =
         "#version 150 core\n"
         "\n"
+        "uniform mat4 transform;\n"
         "in vec3 a_vertex;\n"
         "in vec2 vertTexCoord;\n"
         "out vec2 fragTexCoord;\n"
         "\n"
-        "\n"
-        "uniform mat4 transform;\n"
-        "\n"
         "void main(void)\n"
         "{\n"
-        "    vec4 vertex = transform * vec4(a_vertex, 1.0);\n"
+        "    vec4 vertex = transform * vec4(a_vertex, 1.f);\n"
         "    fragTexCoord = vertTexCoord;\n"
         "    gl_Position = vertex;\n"
         "}\n";
@@ -148,112 +136,162 @@ const bool Painter::initialize()
         "void main()\n"
         "{\n"
         "    vec3 texRgb = texture(tex, fragTexCoord).xyz;\n"
-        "    fragcolor = vec4(clamp(texRgb.x + clicked, 0.f, 1.f), clamp(texRgb.y + clicked, 0.f, 1.f), texRgb.z, 1.f);\n"
+        "    float x = clamp(texRgb.x + clicked, 0.f, 1.f);\n"
+        "    float y = clamp(texRgb.y + clicked, 0.f, 1.f);\n"
+        "    float z = clamp(texRgb.z + clicked, 0.f, 1.f);\n"
+        "    fragcolor = vec4(x, y, z, 1.f);\n"
         "}\n";
 
     glShaderSource(m_vert, 1, &srcv, nullptr);
-    glError();
     glCompileShader(m_vert);
-    glError();
-
     getCompileInfo(m_vert);
 
     glShaderSource(m_frag, 1, &srcf, nullptr);
-    glError();
     glCompileShader(m_frag);
-    glError();
-
     getCompileInfo(m_frag);
 
     m_program = glCreateProgram();
 
     glAttachShader(m_program, m_vert);
-    glError();
     glAttachShader(m_program, m_frag);
-    glError();
-
     glLinkProgram(m_program);
-    glError();
 
     a_vertex = glGetAttribLocation(m_program, "a_vertex");
-    glError();
-
     u_transform = glGetUniformLocation(m_program, "transform");
-    glError();
-
     u_clicked = glGetUniformLocation(m_program, "clicked");
-    glError();
+    a_texCoord = glGetAttribLocation(m_program, "vertTexCoord");
 
-    // initialize geometry
-    static const GLfloat vertices[24] =
+    // Initialize geometry: 6 faces * 4 vertices
+    static const GLfloat vertices[72] =
     {
-        -1.f,-1.f,-1.f,
-        -1.f,-1.f, 1.f,
-        -1.f, 1.f,-1.f,
-        -1.f, 1.f, 1.f,
-         1.f,-1.f,-1.f,
-         1.f,-1.f, 1.f,
-         1.f, 1.f,-1.f,
-         1.f, 1.f, 1.f
+        // front        // v // ii
+        -1.f,-1.f, 1.f, // 1 // 00
+         1.f,-1.f, 1.f, // 5 // 01
+         1.f, 1.f, 1.f, // 7 // 02
+        -1.f, 1.f, 1.f, // 3 // 03
+
+        // back         // v // ii
+        -1.f,-1.f,-1.f, // 0 // 04
+         1.f,-1.f,-1.f, // 4 // 05
+         1.f, 1.f,-1.f, // 6 // 06
+        -1.f, 1.f,-1.f, // 2 // 07
+
+        // left         // v // ii
+        -1.f,-1.f, 1.f, // 1 // 08
+        -1.f,-1.f,-1.f, // 0 // 09
+        -1.f, 1.f,-1.f, // 2 // 10
+        -1.f, 1.f, 1.f, // 3 // 11
+
+        // right        // v // ii
+         1.f,-1.f, 1.f, // 5 // 12
+         1.f,-1.f,-1.f, // 4 // 13
+         1.f, 1.f,-1.f, // 6 // 14
+         1.f, 1.f, 1.f, // 7 // 15
+
+        // top          // v // ii
+        -1.f, 1.f, 1.f, // 3 // 16
+         1.f, 1.f, 1.f, // 7 // 17
+         1.f, 1.f,-1.f, // 6 // 18
+        -1.f, 1.f,-1.f, // 2 // 19
+
+        // bottom       // v // ii
+        -1.f,-1.f, 1.f, // 1 // 20
+         1.f,-1.f, 1.f, // 5 // 21
+         1.f,-1.f,-1.f, // 4 // 22
+        -1.f,-1.f,-1.f, // 0 // 23
     };
 
-    static const GLubyte indices[14] = {
-        2, 0, 6, 4, 5, 0, 1, 2, 3, 6, 7, 5, 3, 1 };
+    // Triangle indices: 6 faces * 2 triangles
+    static const GLushort indices[36] =
+    {
+        // front
+         0,  1,  2,
+         2,  3,  0,
+
+        // back
+         4,  5,  6,
+         6,  7,  4,
+
+        // left
+         8,  9, 10,
+        10, 11,  8,
+
+        // right
+        12, 13, 14,
+        14, 15, 12,
+
+        // right
+        16, 17, 18,
+        18, 19, 16,
+
+        // right
+        20, 21, 22,
+        22, 23, 20,
+
+    };
 
     glGenVertexArrays(1, &m_vao);
-    glError();
     glBindVertexArray(m_vao);
-    glError();
 
     glGenBuffers(1, &m_indices);
-    glError();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
-    glError();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (6 * 2 + 2) * sizeof(GLubyte), indices, GL_STATIC_DRAW);
-    glError();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(GLushort), indices, GL_STATIC_DRAW);
 
     glGenBuffers(1, &m_vertices);
-    glError();
     glBindBuffer(GL_ARRAY_BUFFER, m_vertices);
-    glError();
-    glBufferData(GL_ARRAY_BUFFER, (8 * 3) * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-    glError();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
 
-    // texture coordinates
-    GLint a_vertTexCoord = glGetAttribLocation(m_program, "vertTexCoord");
-    glError();
+    // Texture coordinates: 6 faces * 4 coordinates
+    static const GLfloat texCoords[48] =
+    {
+        // front
+        0.f, 0.f,
+        0.5, 0.f,
+        0.5, 0.5,
+        0.f, 0.5,
 
-    GLfloat texCoords[] = {
-        // face 1
-        0.0, 0.0,
-        1.0, 0.0,
-        0.0, 1.0,
-        1.0, 1.0,
+        // back
+        0.5, 0.5,
+        1.f, 0.5,
+        1.f, 1.f,
+        0.5, 1.f,
 
-        // face 5 mirrored
-        0.0, 0.0,
-        1.0, 0.0,
-        0.0, 1.0,
-        1.0, 1.0,
+        // left
+        0.f, 0.f,
+        0.5, 0.f,
+        0.5, 0.5,
+        0.f, 0.5,
+
+        // right
+        0.f, 0.f,
+        0.5, 0.f,
+        0.5, 0.5,
+        0.f, 0.5,
+
+        // top
+        0.f, 0.5,
+        0.5, 0.5,
+        0.5, 1.f,
+        0.f, 1.f,
+
+        // bottom
+        0.5, 0.f,
+        1.f, 0.f,
+        1.f, 0.5,
+        0.5, 0.5,
     };
 
     glGenBuffers(1, &m_texCoords);
-    glError();
     glBindBuffer(GL_ARRAY_BUFFER, m_texCoords);
-    glError();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
-    glError();
-    glEnableVertexAttribArray(a_vertTexCoord);
-    glError();
-    glVertexAttribPointer(a_vertTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glError();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords) * sizeof(GLfloat), texCoords, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(a_texCoord);
+    glVertexAttribPointer(a_texCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-    // initialize state
+    // Initialize state
     glClearColor(0.2, 0.2, 0.2, 1.f);
     glUseProgram(m_program);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    glDisable(GL_CULL_FACE);
 
     return true;
 }
@@ -268,14 +306,13 @@ long double clickevent(-1.f);
 void Painter::paint()
 {
     AbstractPainter::paint();
-    glError();
 
     if(t.paused())
         t.start();
 
     angleY +=  _deg(m_clockwise /  64.f);
     angleZ +=  _deg(m_clockwise / 128.f);
-    angle  =  ((sin(_PI2 / 16.f) + 1.f) * 0.5 + 1.0) * 0.1337f;
+    angle  =  ((sin(_PI2 / 16.f) + 1.f) * 0.5 + 1.f) * 0.1337f;
 
     m_model = glm::rotate(glm::mat4(1), angleY, glm::vec3(0.f, 1.f, 0.f));
     m_model = glm::rotate(m_model, angleZ, glm::vec3(0.f, 0.f, 1.f));
@@ -284,22 +321,17 @@ void Painter::paint()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // use program and set uniforms
+    // Use program and set uniforms
     glUseProgram(m_program);
-    glError();
 
-    // bind texture
+    // Bind texture
     glEnable(GL_TEXTURE_2D);
-    glError();
     glBindTexture(GL_TEXTURE_2D, m_textureID);
-    glError();
 
-    GLint u_texture = glGetUniformLocation(m_program, "tex");
-    glError();
-
+    u_texture = glGetUniformLocation(m_program, "tex");
     glUniform1i(u_texture, 0);
-    glError();
 
+    // Highlight object if clicked
     if (m_clicked)
     {
         clickevent = t.elapsed();
@@ -312,27 +344,22 @@ void Painter::paint()
     }
     else if (highlight > 0.f)
     {
+        // Fade out
         highlight -= 0.02f;
         if (highlight < 0.f)
             highlight = 0.f;
     }
 
     glUniform1f(u_clicked, highlight);
-    glError();
 
-    // bind vertices
+    // Bind vertices
     glBindVertexArray(m_vao);
-    glError();
 
     glEnableVertexAttribArray(a_vertex);
-    glError();
     glBindBuffer(GL_ARRAY_BUFFER, m_vertices);
-    glError();
     glVertexAttribPointer(a_vertex, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glError();
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
-    glError();
 
     glm::mat4 t = glm::translate(m_model, glm::vec3(0, 0, 0));
     t = glm::scale(t, glm::vec3(angle, angle, angle));
@@ -340,23 +367,16 @@ void Painter::paint()
     const glm::mat4 T = m_projection * m_view * t;
 
     glUniformMatrix4fv(u_transform, 1, false, glm::value_ptr(T));
-    glError();
 
-    glDrawElements(GL_TRIANGLE_STRIP, 14, GL_UNSIGNED_BYTE, 0);
-    glError();
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
     glDisableVertexAttribArray(a_vertex);
-    glError();
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glError();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glError();
 
     glUseProgram(0);
-    glError();
 
     glDisable(GL_TEXTURE_2D);
-    glError();
 
 
 }
@@ -377,7 +397,6 @@ bool Painter::objectDetected(const QPoint &position)
 {
     GLfloat z;
     glReadPixels(position.x(), position.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
-    glError();
 
     if (z < 1.f)
     {
