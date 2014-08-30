@@ -93,6 +93,10 @@ set(sources
 	${source_path}/gpuquery.cpp
 	${source_path}/idpainter.cpp
 	${source_path}/idpainter.h
+	${source_path}/material/image.cpp
+	${source_path}/material/imageqt.cpp
+	${source_path}/material/imageraw.cpp
+	${source_path}/material/RawFile.cpp
 	${source_path}/material/material.cpp
 	${source_path}/material/materialdictionary.cpp
 	${source_path}/material/materialwidgeteventhandler.cpp
@@ -185,6 +189,10 @@ set(api_includes
 	${include_path}/material/material.h
 	${include_path}/material/materialdictionary.h
     ${include_path}/material/materialwidgeteventhandler.h
+	${include_path}/material/image.h
+	${include_path}/material/imageqt.h
+	${include_path}/material/imageraw.h
+	${include_path}/material/RawFile.h
 	${include_path}/mathmacros.h
 	${include_path}/messagehandler.h
 	${include_path}/monocamera.h
