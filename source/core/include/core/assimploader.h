@@ -37,6 +37,8 @@ protected:
     Group * parseNode(const aiScene & scene,
         const QList<PolygonalDrawable *> &drawables, const aiNode & node) const;
 
+    void parseTextures(aiTexture **textures, unsigned int numTextures) const;
+    void parseMaterials(aiMaterial **materials, unsigned int numMaterials) const;
     void parseMeshes(aiMesh ** meshes,
         const unsigned int numMeshes, QList<PolygonalDrawable *> & drawables) const;
 

@@ -6,6 +6,8 @@
 #include <core/scenegraph/polygonalgeometry.h>
 #include <core/scenegraph/polygonaldrawable.h>
 
+#include <iostream>
+
 AssimpLoader::AssimpLoader(std::shared_ptr<DataBlockRegistry> registry)
 : AbstractModelLoader(registry)
 , m_importer(new Assimp::Importer())
@@ -91,13 +93,40 @@ Group * AssimpLoader::importFromFile(const QString & filePath) const
 
     QList<PolygonalDrawable *> drawables;
     drawables.reserve(scene->mNumMeshes);
-    this->parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables);
+    parseTextures(scene->mTextures, scene->mNumTextures);
+    parseMaterials(scene->mMaterials, scene->mNumMaterials);
+    parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables);
     
     Group * group = parseNode(*scene, drawables, *(scene->mRootNode));
     
     m_importer->FreeScene();
     
     return group;
+}
+
+void AssimpLoader::parseTextures(aiTexture **textures, unsigned int numTextures) const {
+    std::cout << "Textures: " << numTextures << std::endl;
+}
+
+void AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials) const {
+    const int numTextureTypes = 6;
+    const aiTextureType TEXTURE_TYPES[] = { aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_AMBIENT, aiTextureType_EMISSIVE, aiTextureType_NORMALS, aiTextureType_SHININESS };
+
+    std::cout << "Materials: " << numMaterials << std::endl;
+    for (unsigned int m = 0; m < numMaterials; ++m) {
+        std::cout << "parse material" << std::endl;
+        aiMaterial *material = materials[m];
+        for (int type = 0; type < numTextureTypes; ++type) {
+            int numTextures = material->GetTextureCount(TEXTURE_TYPES[type]);
+            std::cout << "Material has " << numTextures << " textures of type " << type << std::endl;
+            for (int texture = 0; texture < numTextures; ++texture) {
+                aiString texturePath;
+                if (material->GetTexture(TEXTURE_TYPES[type], texture, &texturePath) == aiReturn_SUCCESS) {
+                    std::cout << "Texture " << texture << " of type " << type << " ist located at " << texturePath.C_Str() << std::endl;
+                }
+            }
+        }
+    }
 }
 
 Group * AssimpLoader::parseNode(const aiScene & scene,
