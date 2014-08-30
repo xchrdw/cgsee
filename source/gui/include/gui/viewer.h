@@ -42,6 +42,7 @@ class AbstractModelLoader;
 class Group;
 class Node;
 class DataBlockRegistry;
+class Groundplane;
 
 class CoordinateProvider;
 class AxisAlignedBoundingBox;
@@ -243,6 +244,7 @@ protected:
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
+	Groundplane * m_groundplane;
     QListView * m_historyList;
     NavigationHistory * m_navigationHistory;
     Group * m_scene;

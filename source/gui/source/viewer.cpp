@@ -72,6 +72,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/defaultdrawmethod.h>
 #include <core/scenegraph/highlightingdrawmethod.h>
+#include <core/scenegraph/groundplane.h>
 
 #include <core/material/material.h>
 
@@ -111,7 +112,8 @@ Viewer::Viewer(
 ,   m_sceneHierarchyTree(new QTreeView())
 ,   m_coordinateProvider(nullptr)
 ,   m_selectionBBox(new AxisAlignedBoundingBox)
-,   m_loader(new AssimpLoader( registry ))
+,   m_groundplane(new Groundplane(registry))
+,   m_loader(new AssimpLoader(registry))
 ,   m_historyList(new QListView(this))
 ,   m_navigationHistory(nullptr)
 ,   m_scene(nullptr)
@@ -446,6 +448,7 @@ Viewer::~Viewer()
     delete m_dockNavigationHistory;
     delete m_sceneHierarchy;
     delete m_loader;
+	delete m_groundplane;
     delete m_selectionBBox;
     delete m_dockMaterial;
 }
@@ -531,7 +534,10 @@ void Viewer::on_loadFile(const QString & path)
         m_scene = tempScene;
     }
     else
-    {
+	{
+		if (tempScene && tempScene->contains(m_groundplane->getGroundplane()))
+			tempScene->remove(m_groundplane->getGroundplane(), false);
+		m_scene->append(m_groundplane->getGroundplaneFor(m_scene));
         assignScene(m_scene);
         m_navigation->rescaleScene(m_scene);
 
@@ -548,7 +554,7 @@ void Viewer::on_loadFile(const QString & path)
         m_qtCanvas->update();//TODO should be done by timer
         selectionBBoxChanged();
         m_navigationHistory->reset();
-        delete tempScene;
+		delete tempScene;
     }
 }
 
