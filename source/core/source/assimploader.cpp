@@ -210,16 +210,14 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
 {
     auto geometry = std::make_shared<PolygonalGeometry>(m_registry);
     
-    const bool usesNormalIndices(mesh.mNormals != NULL);
-    
     for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
         glm::vec3 vector(
                          mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z
                          );
         geometry->setVertex(i, vector);
     }
-    
-    if (usesNormalIndices) {
+
+    if (mesh.HasNormals()) {
         for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
             glm::vec3 vector(
                              mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z
@@ -227,7 +225,14 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
             geometry->setNormal(i, vector);
         }
     }
-    
+  
+    if (mesh.HasTextureCoords(0)) {
+        for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
+            glm::vec2 vector(mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y);
+            geometry->setTexC(i, vector);
+        }
+    }
+
     unsigned int currentIndex = 0;
     for (unsigned int i = 0; i < mesh.mNumFaces; i++) {
         if (mesh.mFaces[i].mNumIndices != 3)
@@ -237,7 +242,7 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
                 geometry->setIndex(currentIndex++, mesh.mFaces[i].mIndices[j]);
     }
     
-    if (!usesNormalIndices)
+    if (!mesh.HasNormals())
         geometry->retrieveNormals();
     
     PolygonalDrawable * drawable = new PolygonalDrawable(mesh.mName.C_Str());
