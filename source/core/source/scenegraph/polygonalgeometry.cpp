@@ -201,6 +201,14 @@ void PolygonalGeometry::initialize(const Program & program)
         m_arrayBOsByAttribute["a_normal"] = normalBO;
     }
 
+    if (!texcs().isEmpty())
+    {
+        BufferObject * texcBO = new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+        texcBO->data<glm::vec2>(texcs(), GL_FLOAT, 2);
+
+        m_arrayBOsByAttribute["a_texc"] = texcBO;
+    }
+
     // bind all buffers to their attributes
 
     t_bufferObjectsByAttribute::const_iterator i(m_arrayBOsByAttribute.begin());
