@@ -109,23 +109,35 @@ void AssimpLoader::parseTextures(aiTexture **textures, unsigned int numTextures)
 }
 
 void AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials) const {
-    const int numTextureTypes = 6;
-    const aiTextureType TEXTURE_TYPES[] = { aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_AMBIENT, aiTextureType_EMISSIVE, aiTextureType_NORMALS, aiTextureType_SHININESS };
-
     std::cout << "Materials: " << numMaterials << std::endl;
     for (unsigned int m = 0; m < numMaterials; ++m) {
-        std::cout << "parse material" << std::endl;
-        aiMaterial *material = materials[m];
-        for (int type = 0; type < numTextureTypes; ++type) {
-            int numTextures = material->GetTextureCount(TEXTURE_TYPES[type]);
-            std::cout << "Material has " << numTextures << " textures of type " << type << std::endl;
-            for (int texture = 0; texture < numTextures; ++texture) {
-                aiString texturePath;
-                if (material->GetTexture(TEXTURE_TYPES[type], texture, &texturePath) == aiReturn_SUCCESS) {
-                    std::cout << "Texture " << texture << " of type " << type << " ist located at " << texturePath.C_Str() << std::endl;
-                }
-            }
-        }
+        parseMaterial(materials[m]);
+    }
+}
+
+void AssimpLoader::parseMaterial(aiMaterial *material) const {
+    std::cout << "parse material" << std::endl;
+    loadTextures(material);
+}
+
+void AssimpLoader::loadTextures(aiMaterial *material) const {
+    for (int type = aiTextureType::aiTextureType_DIFFUSE; type <= aiTextureType::aiTextureType_UNKNOWN; ++type) {
+        loadTextures(material, static_cast<aiTextureType>(type));
+    }
+}
+
+void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type) const {
+    int numTextures = material->GetTextureCount(type);
+    std::cout << "Material has " << numTextures << " textures of type " << type << std::endl;
+    for (int texture = 0; texture < numTextures; ++texture) {
+        loadTexture(material, type, texture);
+    }
+}
+
+void AssimpLoader::loadTexture(aiMaterial *material, aiTextureType type, int texture) const {
+    aiString texturePath;
+    if (material->GetTexture(type, texture, &texturePath) == aiReturn_SUCCESS) {
+        std::cout << "Texture " << texture << " of type " << type << " ist located at " << texturePath.C_Str() << std::endl;
     }
 }
 
