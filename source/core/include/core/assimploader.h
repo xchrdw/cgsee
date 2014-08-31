@@ -38,7 +38,14 @@ protected:
         const QList<PolygonalDrawable *> &drawables, const aiNode & node) const;
 
     void parseTextures(aiTexture **textures, unsigned int numTextures) const;
+    void parseTexture(aiTexture *texture) const;
+
     void parseMaterials(aiMaterial **materials, unsigned int numMaterials) const;
+    void parseMaterial(aiMaterial *material) const;
+    void loadTextures(aiMaterial *material) const;
+    void loadTextures(aiMaterial *material, aiTextureType type) const;
+    void loadTexture(aiMaterial *material, aiTextureType type, int texture) const;
+
     void parseMeshes(aiMesh ** meshes,
         const unsigned int numMeshes, QList<PolygonalDrawable *> & drawables) const;
 
