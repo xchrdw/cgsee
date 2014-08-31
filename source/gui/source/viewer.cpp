@@ -112,7 +112,7 @@ Viewer::Viewer(
 ,   m_sceneHierarchyTree(new QTreeView())
 ,   m_coordinateProvider(nullptr)
 ,   m_selectionBBox(new AxisAlignedBoundingBox)
-,   m_groundplane(new Groundplane(registry))
+,   m_registry(registry)
 ,   m_loader(new AssimpLoader(registry))
 ,   m_historyList(new QListView(this))
 ,   m_navigationHistory(nullptr)
@@ -448,7 +448,6 @@ Viewer::~Viewer()
     delete m_dockNavigationHistory;
     delete m_sceneHierarchy;
     delete m_loader;
-	delete m_groundplane;
     delete m_selectionBBox;
     delete m_dockMaterial;
 }
@@ -535,7 +534,7 @@ void Viewer::on_loadFile(const QString & path)
     }
     else
 	{
-		m_scene->append(m_groundplane->getGroundplaneFor(m_scene));
+		m_scene->append(new Groundplane(m_scene, m_registry));
         assignScene(m_scene);
         m_navigation->rescaleScene(m_scene);
 

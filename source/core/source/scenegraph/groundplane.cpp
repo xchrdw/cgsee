@@ -5,33 +5,36 @@
 
 #include <core/aabb.h>
 
-#include <core/scenegraph/group.h>
 #include <core/scenegraph/polygonalgeometry.h>
 #include <core/scenegraph/polygonaldrawable.h>
 
 
-Groundplane::Groundplane(std::shared_ptr<DataBlockRegistry> registry)
-: m_registry(registry)
+Groundplane::Groundplane(Group *scene, std::shared_ptr<DataBlockRegistry> registry)
+:   Group("Groundplane")
+,   m_polygonalDrawable(new PolygonalDrawable("Groundplane"))
+,   m_exteriorScene(scene)
+,   m_registry(registry)
 {
+	initializePolygonalDrawable();
+	setGeometryAccoringTo(scene);
 }
 
 Groundplane::~Groundplane()
 {
-	delete m_groundplaneGroup;
 }
 
-void Groundplane::updateGeometry(Group *scene)
+void Groundplane::initializePolygonalDrawable()
 {
-	PolygonalDrawable *polygonalDrawable = new PolygonalDrawable("groundplane");
-
 	auto geometry = std::make_shared<PolygonalGeometry>(m_registry);
 
-	polygonalDrawable->setGeometry(geometry);
-	polygonalDrawable->setMode(gl::GL_TRIANGLES);
+	m_polygonalDrawable->setGeometry(geometry);
+	m_polygonalDrawable->setMode(gl::GL_TRIANGLES);
 
-	m_groundplaneGroup = new Group("groundplane");
-	m_groundplaneGroup->append(polygonalDrawable);
+	Group::append(m_polygonalDrawable);
+}
 
+void Groundplane::setGeometryAccoringTo(Group *scene)
+{
 	const glm::vec3 diff(scene->boundingBox().urb() - scene->boundingBox().llf());
 	const glm::vec3 llf(scene->boundingBox().llf());
 	const glm::vec3 up(0, 1, 0);
@@ -46,26 +49,14 @@ void Groundplane::updateGeometry(Group *scene)
 
 	const unsigned int indices[6] { 0, 1, 3, 0, 3, 2 };
 
-	m_groundplaneGroup->setTransform(transform);
+	Group::setTransform(transform);
 
 	for (unsigned int i = 0; i < 4; i++) {
-		polygonalDrawable->geometry()->setVertex(i, vertices[i]);
-		polygonalDrawable->geometry()->setNormal(i, up);
+		m_polygonalDrawable->geometry()->setVertex(i, vertices[i]);
+		m_polygonalDrawable->geometry()->setNormal(i, up);
 	}
 
 	for (unsigned int i = 0; i < 6; i++) {
-		polygonalDrawable->geometry()->setIndex(i, indices[i]);
+		m_polygonalDrawable->geometry()->setIndex(i, indices[i]);
 	}
-}
-
-Group * Groundplane::getGroundplaneFor(Group *scene)
-{
-	updateGeometry(scene);
-
-	return m_groundplaneGroup;
-}
-
-Group * Groundplane::getGroundplane()
-{
-	return m_groundplaneGroup;
 }

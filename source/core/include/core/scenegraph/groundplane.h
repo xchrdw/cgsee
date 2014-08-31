@@ -11,26 +11,28 @@
 #include <glm/glm.hpp>
 
 #include <core/scenegraph/node.h>
+#include <core/scenegraph/group.h>
 
 class DataBlockRegistry;
-class Group;
 class PolygonalDrawable;
 
 
-class CORE_API Groundplane
+class CORE_API Groundplane : public Group
 {
 public:
-	Groundplane(std::shared_ptr<DataBlockRegistry> registry = nullptr);
+	Groundplane(Group *scene, std::shared_ptr<DataBlockRegistry> registry = nullptr);
 	virtual ~Groundplane();
 
 	Group * getGroundplaneFor(Group *scene);
 	Group * getGroundplane();
 
 protected:
-	void updateGeometry(Group *scene);
+	void initializePolygonalDrawable();
+	void setGeometryAccoringTo(Group *scene);
 
 protected:
-	Group * m_groundplaneGroup;
+	Group *m_exteriorScene;
+	PolygonalDrawable *m_polygonalDrawable;
 
 	std::shared_ptr<DataBlockRegistry> m_registry;
 };

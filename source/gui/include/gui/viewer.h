@@ -239,12 +239,12 @@ protected:
     Canvas * m_materialCanvas;
 	propertyguizeug::PropertyBrowser * m_propertyMaterialBrowser;
 
+	std::shared_ptr<DataBlockRegistry> m_registry;
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
     QStandardItemModel * m_sceneHierarchy;
     QTreeView * m_sceneHierarchyTree;
     AbstractModelLoader * m_loader;
-	Groundplane * m_groundplane;
     QListView * m_historyList;
     NavigationHistory * m_navigationHistory;
     Group * m_scene;
