@@ -27,14 +27,10 @@ public:
 	Group * getGroundplane();
 
 protected:
-	void initializeDrawable();
 	void updateGeometry(Group *scene);
 
 protected:
-	PolygonalDrawable * m_polygonalDrawable;
 	Group * m_groundplaneGroup;
-	
-	bool m_drawableInitialized;
 
 	std::shared_ptr<DataBlockRegistry> m_registry;
 };

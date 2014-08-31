@@ -535,8 +535,6 @@ void Viewer::on_loadFile(const QString & path)
     }
     else
 	{
-		if (tempScene && tempScene->contains(m_groundplane->getGroundplane()))
-			tempScene->remove(m_groundplane->getGroundplane(), false);
 		m_scene->append(m_groundplane->getGroundplaneFor(m_scene));
         assignScene(m_scene);
         m_navigation->rescaleScene(m_scene);

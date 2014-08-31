@@ -11,21 +11,27 @@
 
 
 Groundplane::Groundplane(std::shared_ptr<DataBlockRegistry> registry)
-:   m_polygonalDrawable(new PolygonalDrawable("groundplane"))
-,	m_groundplaneGroup(new Group("groundplane"))
-,   m_registry(registry)
-,	m_drawableInitialized(false)
+: m_registry(registry)
 {
 }
 
 Groundplane::~Groundplane()
 {
-	delete m_polygonalDrawable;
 	delete m_groundplaneGroup;
 }
 
 void Groundplane::updateGeometry(Group *scene)
 {
+	PolygonalDrawable *polygonalDrawable = new PolygonalDrawable("groundplane");
+
+	auto geometry = std::make_shared<PolygonalGeometry>(m_registry);
+
+	polygonalDrawable->setGeometry(geometry);
+	polygonalDrawable->setMode(gl::GL_TRIANGLES);
+
+	m_groundplaneGroup = new Group("groundplane");
+	m_groundplaneGroup->append(polygonalDrawable);
+
 	const glm::vec3 diff(scene->boundingBox().urb() - scene->boundingBox().llf());
 	const glm::vec3 llf(scene->boundingBox().llf());
 	const glm::vec3 up(0, 1, 0);
@@ -43,32 +49,17 @@ void Groundplane::updateGeometry(Group *scene)
 	m_groundplaneGroup->setTransform(transform);
 
 	for (unsigned int i = 0; i < 4; i++) {
-		m_polygonalDrawable->geometry()->setVertex(i, vertices[i]);
-		m_polygonalDrawable->geometry()->setNormal(i, up);
+		polygonalDrawable->geometry()->setVertex(i, vertices[i]);
+		polygonalDrawable->geometry()->setNormal(i, up);
 	}
 
 	for (unsigned int i = 0; i < 6; i++) {
-		m_polygonalDrawable->geometry()->setIndex(i, indices[i]);
+		polygonalDrawable->geometry()->setIndex(i, indices[i]);
 	}
-}
-
-void Groundplane::initializeDrawable()
-{
-	auto geometry = std::make_shared<PolygonalGeometry>(m_registry);
-
-	m_polygonalDrawable->setGeometry(geometry);
-	m_polygonalDrawable->setMode(gl::GL_TRIANGLES);
-
-	m_groundplaneGroup->append(m_polygonalDrawable);
-
-	m_drawableInitialized = true;
 }
 
 Group * Groundplane::getGroundplaneFor(Group *scene)
 {
-	if (!m_drawableInitialized)
-		initializeDrawable();
-
 	updateGeometry(scene);
 
 	return m_groundplaneGroup;
@@ -76,8 +67,5 @@ Group * Groundplane::getGroundplaneFor(Group *scene)
 
 Group * Groundplane::getGroundplane()
 {
-	if (!m_drawableInitialized)
-		initializeDrawable();
-
 	return m_groundplaneGroup;
 }
