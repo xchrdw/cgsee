@@ -37,7 +37,6 @@ void AbstractScenePainter::assignScene(Group * scene)
     if(m_scene == scene)
         return;
 
-    delete m_scene;
     m_scene = scene;
 
     sceneChanged();
