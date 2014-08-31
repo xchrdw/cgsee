@@ -15,12 +15,22 @@ AbstractLoader::~AbstractLoader()
 
 bool AbstractLoader::canLoad(const QString & extension) const
 {
-    return loadableExtensions().contains(extension);
+    QStringList extensions = loadableExtensions();
+    for (int i = 0; i < extensions.length(); ++i) {
+        if (extension.endsWith(extensions[i]))
+            return true;
+    }
+    return false;
 }
 
 bool AbstractLoader::canSave(const QString & extension) const
 {
-    return saveableExtensions().contains(extension);
+    QStringList extensions = saveableExtensions();
+    for (int i = 0; i < extensions.length(); ++i) {
+        if (extension.endsWith(extensions[i]))
+            return true;
+    }
+    return false;
 }
 
 QStringList AbstractLoader::namedLoadableTypes() const
