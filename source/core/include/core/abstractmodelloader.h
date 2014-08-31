@@ -4,33 +4,22 @@
 
 #include <memory>
 
-#include <QString>
-#include <QStringList>
+class QString;
+
+#include <core/abstractloader.h>
 
 class DataBlockRegistry;
 class Group;
 
-class CORE_API AbstractModelLoader
+class CORE_API AbstractModelLoader : public AbstractLoader
 {
 public:
     AbstractModelLoader(std::shared_ptr<DataBlockRegistry> registry = nullptr);
-    virtual ~AbstractModelLoader();
-    
-    bool canLoad(const QString & extension) const;
-    bool canSave(const QString & extension) const;
-
-    virtual QStringList namedLoadableTypes() const;
-    QStringList allLoadableTypes() const;
-
-    virtual QStringList namedSaveableTypes() const;
-    QStringList allSaveableTypes() const;
+    virtual ~AbstractModelLoader() = 0;
 
     virtual Group * importFromFile(const QString & filePath) const;
     virtual bool exportToFile(const Group & group,
         const QString & filePath, const QString & extension) const;
-protected:
-    virtual QStringList loadableExtensions() const;
-    virtual QStringList saveableExtensions() const;
 
 protected:
     std::shared_ptr<DataBlockRegistry> m_registry;

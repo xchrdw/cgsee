@@ -71,6 +71,8 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
 set(sources
 	${source_path}/aabb.cpp
 	${source_path}/abstractapplication.cpp
+	${source_path}/abstractloader.cpp
+	${source_path}/abstractimageloader.cpp
 	${source_path}/abstractmodelloader.cpp
 	${source_path}/abstractstereocamera.cpp
 	${source_path}/assimploader.cpp
@@ -95,7 +97,9 @@ set(sources
 	${source_path}/idpainter.h
 	${source_path}/material/image.cpp
 	${source_path}/material/imageqt.cpp
+	${source_path}/material/imageqtloader.cpp
 	${source_path}/material/imageraw.cpp
+	${source_path}/material/imagerawloader.cpp
 	${source_path}/material/RawFile.cpp
 	${source_path}/material/material.cpp
 	${source_path}/material/materialdictionary.cpp
@@ -160,6 +164,8 @@ set(api_includes
 	${include_path}/aabb.h
 	${include_path}/abstractapplication.h
 	${include_path}/abstracteventhandler.h
+	${include_path}/abstractloader.h
+	${include_path}/abstractimageloader.h
 	${include_path}/abstractmodelloader.h
 	${include_path}/abstractstereocamera.h
 	${include_path}/abstracttimer.h
@@ -191,7 +197,9 @@ set(api_includes
     ${include_path}/material/materialwidgeteventhandler.h
 	${include_path}/material/image.h
 	${include_path}/material/imageqt.h
+	${include_path}/material/imageqtloader.h
 	${include_path}/material/imageraw.h
+	${include_path}/material/imagerawloader.h
 	${include_path}/material/RawFile.h
 	${include_path}/mathmacros.h
 	${include_path}/messagehandler.h

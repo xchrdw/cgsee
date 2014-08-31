@@ -1,6 +1,10 @@
 
 #include <core/assimploader.h>
 
+#include <core/material/imageqtloader.h>
+#include <core/material/imagerawloader.h>
+#include <core/material/image.h>
+
 #include <core/datacore/datablock.h>
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/polygonalgeometry.h>
@@ -11,13 +15,19 @@
 AssimpLoader::AssimpLoader(std::shared_ptr<DataBlockRegistry> registry)
 : AbstractModelLoader(registry)
 , m_importer(new Assimp::Importer())
+, m_imageLoaders()
 {
-
+    m_imageLoaders.push_back(new ImageQtLoader());
+    m_imageLoaders.push_back(new ImageRawLoader());
 }
 
 AssimpLoader::~AssimpLoader()
 {
     delete m_importer;
+    for (AbstractImageLoader *loader : m_imageLoaders) {
+        delete loader;
+    }
+    m_imageLoaders.clear();
 }
 
 QStringList AssimpLoader::namedLoadableTypes() const
@@ -93,9 +103,12 @@ Group * AssimpLoader::importFromFile(const QString & filePath) const
 
     QList<PolygonalDrawable *> drawables;
     drawables.reserve(scene->mNumMeshes);
-    parseTextures(scene->mTextures, scene->mNumTextures);
-    parseMaterials(scene->mMaterials, scene->mNumMaterials);
-    parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables);
+    if (scene->HasTextures())
+        parseTextures(scene->mTextures, scene->mNumTextures);
+    if (scene->HasMaterials())
+        parseMaterials(scene->mMaterials, scene->mNumMaterials, filePath);
+    if (scene->HasMeshes())
+        parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables);
     
     Group * group = parseNode(*scene, drawables, *(scene->mRootNode));
     
@@ -108,37 +121,46 @@ void AssimpLoader::parseTextures(aiTexture **textures, unsigned int numTextures)
     std::cout << "Textures: " << numTextures << std::endl;
 }
 
-void AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials) const {
+void AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const {
     std::cout << "Materials: " << numMaterials << std::endl;
     for (unsigned int m = 0; m < numMaterials; ++m) {
-        parseMaterial(materials[m]);
+        parseMaterial(materials[m], filePath);
     }
 }
 
-void AssimpLoader::parseMaterial(aiMaterial *material) const {
+void AssimpLoader::parseMaterial(aiMaterial *material, const QString & filePath) const {
     std::cout << "parse material" << std::endl;
-    loadTextures(material);
+    loadTextures(material, filePath);
 }
 
-void AssimpLoader::loadTextures(aiMaterial *material) const {
+void AssimpLoader::loadTextures(aiMaterial *material, const QString & filePath) const {
     for (int type = aiTextureType::aiTextureType_DIFFUSE; type <= aiTextureType::aiTextureType_UNKNOWN; ++type) {
-        loadTextures(material, static_cast<aiTextureType>(type));
+        loadTextures(material, static_cast<aiTextureType>(type), filePath);
     }
 }
 
-void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type) const {
+void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath) const {
     int numTextures = material->GetTextureCount(type);
     std::cout << "Material has " << numTextures << " textures of type " << type << std::endl;
     for (int texture = 0; texture < numTextures; ++texture) {
-        loadTexture(material, type, texture);
+        loadTexture(material, type, texture, filePath);
     }
 }
 
-void AssimpLoader::loadTexture(aiMaterial *material, aiTextureType type, int texture) const {
+Image* AssimpLoader::loadTexture(aiMaterial *material, aiTextureType type, int texture, const QString & filePath) const {
     aiString texturePath;
     if (material->GetTexture(type, texture, &texturePath) == aiReturn_SUCCESS) {
         std::cout << "Texture " << texture << " of type " << type << " ist located at " << texturePath.C_Str() << std::endl;
+        QString path = QString(QFileInfo(filePath).absolutePath()).append("/").append(texturePath.C_Str());
+        std::cout << path.toStdString() << std::endl;
+        for (AbstractImageLoader *loader : m_imageLoaders) {
+            Image* img = loader->importFromFile(path);
+            if (img && img->isValid()) {
+                return img;
+            }
+        }
     }
+    return nullptr;
 }
 
 Group * AssimpLoader::parseNode(const aiScene & scene,

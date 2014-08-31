@@ -5,6 +5,7 @@
 #include <memory>
 
 #include <QString>
+#include <QList>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -16,6 +17,8 @@
 class DataBlockRegistry;
 class Group;
 class PolygonalDrawable;
+class AbstractImageLoader;
+class Image;
 struct aiNode;
 struct aiScene;
 struct aiMesh;
@@ -40,11 +43,11 @@ protected:
     void parseTextures(aiTexture **textures, unsigned int numTextures) const;
     void parseTexture(aiTexture *texture) const;
 
-    void parseMaterials(aiMaterial **materials, unsigned int numMaterials) const;
-    void parseMaterial(aiMaterial *material) const;
-    void loadTextures(aiMaterial *material) const;
-    void loadTextures(aiMaterial *material, aiTextureType type) const;
-    void loadTexture(aiMaterial *material, aiTextureType type, int texture) const;
+    void parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const;
+    void parseMaterial(aiMaterial *material, const QString & filePath) const;
+    void loadTextures(aiMaterial *material, const QString & filePath) const;
+    void loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath) const;
+    Image* loadTexture(aiMaterial *material, aiTextureType type, int texture, const QString & filePath) const;
 
     void parseMeshes(aiMesh ** meshes,
         const unsigned int numMeshes, QList<PolygonalDrawable *> & drawables) const;
@@ -53,4 +56,6 @@ protected:
 
 protected:
     Assimp::Importer * m_importer;
+
+    QList<AbstractImageLoader*> m_imageLoaders;
 };
