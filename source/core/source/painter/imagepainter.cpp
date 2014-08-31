@@ -59,8 +59,6 @@ const bool ImagePainter::initialize()
 {
     AutoTimer t("Initialization of ImagePainter");
 
-    m_image->setMagFilter(GL_NEAREST);
-
     m_imageProgram = new Program();
     m_imageProgram->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
     m_imageProgram->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/image.frag"));
@@ -217,6 +215,8 @@ void ImagePainter::assignImage(Image * image) {
     delete m_image;
     m_dirty = true;
     m_image = image;
+
+    m_image->setMagFilter(GL_NEAREST);
 
     m_zoom = 1;
     m_pan = glm::vec2(0,0);
