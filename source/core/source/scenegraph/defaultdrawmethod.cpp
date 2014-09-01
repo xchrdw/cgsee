@@ -32,6 +32,7 @@ void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transfor
         return;
     
     geometry->initialize(program);
+    geometry->bindMaterial(program);
     
     program.use();
     program.setUniform(TRANSFORM_UNIFORM, transform);

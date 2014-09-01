@@ -47,6 +47,8 @@ public:
     void resize(unsigned int size);
 
     void initialize(const Program & program);
+
+    void bindMaterial(const Program & program);
     
     inline GLuint vao() { return m_vao; }
     t_bufferObjects & elementArrayBOs() { return m_elementArrayBOs; } // TODO: perhaps as const.

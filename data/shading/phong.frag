@@ -11,7 +11,13 @@ in vec3 view_normal;
 in vec3 view_position;
 in vec2 v_texc;
 
-uniform sampler2D diffuse;
+struct Material {
+	sampler2D diffuse;
+	bool useDiffuse;
+};
+
+uniform Material material;
+
 uniform mat4 view;
 uniform vec3 cameraposition;
 
@@ -128,6 +134,6 @@ void main()
 
     fragColor = intensity_out;
     fragColor.w = 1.0;
-    fragColor = texture(diffuse,v_texc);
-    //fragColor = vec4(v_texc, 0, 1);
+	if(material.useDiffuse)
+		fragColor = texture(material.diffuse,v_texc);
 }

@@ -214,10 +214,7 @@ void PolygonalGeometry::initialize(const Program & program)
 
         m_arrayBOsByAttribute["a_texc"] = texcBO;
     }
-
-    if (m_material != nullptr)
-        m_material->loadToProgram(program);
-
+    
     // bind all buffers to their attributes
 
     t_bufferObjectsByAttribute::const_iterator i(m_arrayBOsByAttribute.begin());
@@ -228,6 +225,11 @@ void PolygonalGeometry::initialize(const Program & program)
 
     glBindVertexArray(0);
     glError();
+}
+
+void PolygonalGeometry::bindMaterial(const Program & program) {
+    if (m_material != nullptr)
+        m_material->bind(program);
 }
 
 void PolygonalGeometry::deleteBuffers()

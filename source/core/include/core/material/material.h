@@ -20,7 +20,7 @@ public:
 	virtual ~Material();
 
     void addTexture(enum aiTextureType textureType, Image* texture);
-    void loadToProgram(const Program & program);
+    void bind(const Program & program);
 
 protected:
     QMultiMap<enum aiTextureType, std::shared_ptr<Image>> m_textures;
