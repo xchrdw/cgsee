@@ -95,17 +95,17 @@ void main()
     //numDirL= uint(0);
 
     vec3 n = normalize(view_normal);
-    vec3 v = normalize(-view_position);
+    vec3 v = normalize(view_position);
     vec3 l;
     vec4 light_intensity;
     vec4 intensity_out = vec4(0.0);
     vec4 diff_color = vec4(1.0);
     if(material.useDiffuse)
-      diff_color = texture(material.diffuse,v_texc);
+		diff_color = texture(material.diffuse,v_texc);
 	vec4 spec_color = diff_color;
 	if(material.useSpecular)
 		spec_color = texture(material.specular,v_texc);
-
+	
     for (int t = 0; t < numDirL; t++)
     {
 	l = normalize(view * DirectionalLights.lights[t].direction).xyz;
