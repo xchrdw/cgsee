@@ -9,7 +9,9 @@ out vec4 fragColor;
 
 in vec3 view_normal;
 in vec3 view_position;
+in vec2 v_texc;
 
+uniform sampler2D diffuse;
 uniform mat4 view;
 uniform vec3 cameraposition;
 
@@ -126,4 +128,6 @@ void main()
 
     fragColor = intensity_out;
     fragColor.w = 1.0;
+    fragColor = texture(diffuse,v_texc);
+    //fragColor = vec4(v_texc, 0, 1);
 }

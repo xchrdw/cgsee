@@ -4,6 +4,7 @@
 #include <core/material/imageqtloader.h>
 #include <core/material/imagerawloader.h>
 #include <core/material/image.h>
+#include <core/material/material.h>
 
 #include <core/datacore/datablock.h>
 #include <core/scenegraph/group.h>
@@ -105,10 +106,12 @@ Group * AssimpLoader::importFromFile(const QString & filePath) const
     drawables.reserve(scene->mNumMeshes);
     if (scene->HasTextures())
         parseTextures(scene->mTextures, scene->mNumTextures);
+    
+    std::vector<Material*> materials;
     if (scene->HasMaterials())
-        parseMaterials(scene->mMaterials, scene->mNumMaterials, filePath);
+        materials = parseMaterials(scene->mMaterials, scene->mNumMaterials, filePath);
     if (scene->HasMeshes())
-        parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables);
+        parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables, materials);
     
     Group * group = parseNode(*scene, drawables, *(scene->mRootNode));
     
@@ -121,29 +124,34 @@ void AssimpLoader::parseTextures(aiTexture **textures, unsigned int numTextures)
     std::cout << "Textures: " << numTextures << std::endl;
 }
 
-void AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const {
+std::vector<Material*> AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const {
+    std::vector<Material*> newMaterials;
     std::cout << "Materials: " << numMaterials << std::endl;
     for (unsigned int m = 0; m < numMaterials; ++m) {
-        parseMaterial(materials[m], filePath);
+        newMaterials.push_back(parseMaterial(materials[m], filePath));
     }
+    return newMaterials;
 }
 
-void AssimpLoader::parseMaterial(aiMaterial *material, const QString & filePath) const {
+Material* AssimpLoader::parseMaterial(aiMaterial *material, const QString & filePath) const {
     std::cout << "parse material" << std::endl;
-    loadTextures(material, filePath);
+    
+    Material *newMaterial = new Material();
+    loadTextures(material, filePath, newMaterial);
+    return newMaterial;
 }
 
-void AssimpLoader::loadTextures(aiMaterial *material, const QString & filePath) const {
+void AssimpLoader::loadTextures(aiMaterial *material, const QString & filePath, Material *newMaterial) const {
     for (int type = aiTextureType::aiTextureType_DIFFUSE; type <= aiTextureType::aiTextureType_UNKNOWN; ++type) {
-        loadTextures(material, static_cast<aiTextureType>(type), filePath);
+        loadTextures(material, static_cast<aiTextureType>(type), filePath, newMaterial);
     }
 }
 
-void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath) const {
+void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath, Material *newMaterial) const {
     int numTextures = material->GetTextureCount(type);
     std::cout << "Material has " << numTextures << " textures of type " << type << std::endl;
     for (int texture = 0; texture < numTextures; ++texture) {
-        loadTexture(material, type, texture, filePath);
+        newMaterial->addTexture(type, loadTexture(material, type, texture, filePath));
     }
 }
 
@@ -200,16 +208,17 @@ Group * AssimpLoader::parseNode(const aiScene & scene,
 }
 
 void AssimpLoader::parseMeshes(aiMesh **meshes,
-    const unsigned int numMeshes, QList<PolygonalDrawable *> &drawables) const
+    const unsigned int numMeshes, QList<PolygonalDrawable *> &drawables, std::vector<Material*> materials) const
 {
     for (unsigned int i = 0; i < numMeshes; i++)
-        drawables.insert(i, parseMesh(*meshes[i]));
+        drawables.insert(i, parseMesh(*meshes[i], materials));
 }
 
-PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
+PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh, std::vector<Material*> materials) const
 {
     auto geometry = std::make_shared<PolygonalGeometry>(m_registry);
     
+    geometry->setMaterial(materials.at(mesh.mMaterialIndex));
     for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
         glm::vec3 vector(
                          mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z

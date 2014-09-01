@@ -1,5 +1,7 @@
 #include <core/material/material.h>
 
+#include <core/material/image.h>
+
 #include <reflectionzeug/extensions/GlmProperties.hpp>
 //ambient
 //diffuse
@@ -34,7 +36,21 @@ Material::Material()
 
 Material::~Material()
 {
+    m_textures.clear();
 }
+
+void Material::addTexture(enum aiTextureType textureType, Image* texture) {
+    if (texture != nullptr && texture->isValid())
+        m_textures.insert(textureType, std::shared_ptr<Image>(texture));
+};
+
+void Material::loadToProgram(const Program & program) {
+    if (m_textures.count(aiTextureType::aiTextureType_DIFFUSE) != 0) {
+        std::shared_ptr<Image> texture = m_textures.find(aiTextureType::aiTextureType_DIFFUSE).value();
+            texture->bind(program, "diffuse", 5);
+    }
+}
+
 /*
 std::string Material::name() const
 {

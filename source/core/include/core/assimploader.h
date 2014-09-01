@@ -14,6 +14,8 @@
 #include <core/typedefs.h>
 #include <core/abstractmodelloader.h>
 
+
+class Material;
 class DataBlockRegistry;
 class Group;
 class PolygonalDrawable;
@@ -43,16 +45,16 @@ protected:
     void parseTextures(aiTexture **textures, unsigned int numTextures) const;
     void parseTexture(aiTexture *texture) const;
 
-    void parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const;
-    void parseMaterial(aiMaterial *material, const QString & filePath) const;
-    void loadTextures(aiMaterial *material, const QString & filePath) const;
-    void loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath) const;
+    std::vector<Material*> parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const;
+    Material* parseMaterial(aiMaterial *material, const QString & filePath) const;
+    void loadTextures(aiMaterial *material, const QString & filePath, Material *newMaterial) const;
+    void loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath, Material *newMaterial) const;
     Image* loadTexture(aiMaterial *material, aiTextureType type, int texture, const QString & filePath) const;
 
     void parseMeshes(aiMesh ** meshes,
-        const unsigned int numMeshes, QList<PolygonalDrawable *> & drawables) const;
+        const unsigned int numMeshes, QList<PolygonalDrawable *> &, std::vector<Material*> materials) const;
 
-    PolygonalDrawable * parseMesh(const aiMesh & mesh) const;
+    PolygonalDrawable * parseMesh(const aiMesh & mesh, std::vector<Material*> materials) const;
 
 protected:
     Assimp::Importer * m_importer;

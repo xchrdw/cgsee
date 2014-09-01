@@ -6,11 +6,24 @@
 #include <reflectionzeug/PropertyGroup.h>
 #include <glm/vec4.hpp>
 
+#include <QMultiMap>
+
+#include <assimp/scene.h>
+
+class Image;
+class Program;
+
 class CORE_API Material : public reflectionzeug::PropertyGroup
 {
 public:
 	Material();
 	virtual ~Material();
+
+    void addTexture(enum aiTextureType textureType, Image* texture);
+    void loadToProgram(const Program & program);
+
+protected:
+    QMultiMap<enum aiTextureType, std::shared_ptr<Image>> m_textures;
 	/*
     std::string name() const;
     void setName(const std::string &name);

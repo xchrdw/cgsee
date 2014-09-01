@@ -12,6 +12,7 @@
 #include <core/datacore/vertexindexlist.h>  //includes vertexlist.h
 
 class DataBlockRegistry;
+class Material;
 class AxisAlignedBoundingBox;
 class BufferObject;
 class Program;
@@ -29,6 +30,8 @@ public:
     t_VertexListP vertices() const;
     t_vec3s copyVertices() const; // TODO: Temporary solution.
     
+    void setMaterial(Material *material);
+
     //t_vec3s & vertices();  
     void setVertex(int i, glm::vec3 const & data);
     t_vec3s normals() const;
@@ -64,6 +67,7 @@ protected:
     
 protected:
     std::shared_ptr<DataBlockRegistry> m_registry;
+    std::shared_ptr<Material> m_material;
     t_VertexListP m_datablock;
     GLuint m_vao;
     QString m_vertListHandle;

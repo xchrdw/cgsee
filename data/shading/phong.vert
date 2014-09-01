@@ -2,16 +2,19 @@
 
 in vec3 a_vertex;
 in vec3 a_normal;
+in vec2 a_texc;
 
 uniform mat4 transform;
 uniform mat4 view;
 
 out vec3 view_normal;
 out vec3 view_position;
+out vec2 v_texc;
 
 void main(void) 
 {
 	view_normal = normalize(view * vec4(a_normal, 0.0)).xyz;
 	view_position = vec3(view * vec4(a_vertex, 1.0));
+	v_texc = a_texc;
 	gl_Position = transform * vec4(a_vertex, 1.0);
 }
