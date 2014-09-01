@@ -16,5 +16,4 @@ float shadowing(
 void main()
 {
 	fragColor = vec4(vec3(shadowing(world, lightBiasedViewProjections, shadowmaps, 0)), 1.0);
-	//fragColor = vec4(world.xyz * 0.1 + 0.5, 1.0);
 }
