@@ -14,6 +14,8 @@ in vec2 v_texc;
 struct Material {
 	sampler2D diffuse;
 	bool useDiffuse;
+	sampler2D specular;
+	bool useSpecular;
 };
 
 uniform Material material;
@@ -100,12 +102,15 @@ void main()
     vec4 diff_color = vec4(1.0);
     if(material.useDiffuse)
       diff_color = texture(material.diffuse,v_texc);
+	vec4 spec_color = diff_color;
+	if(material.useSpecular)
+		spec_color = texture(material.specular,v_texc);
 
     for (int t = 0; t < numDirL; t++)
     {
 	l = normalize(view * DirectionalLights.lights[t].direction).xyz;
 	light_intensity = DirectionalLights.lights[t].intensity;
-	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, diff_color, 16.0, 1.0);
+	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, spec_color, 16.0, 1.0);
     }
 
     for (int t = 0; t < numPointL; t++)
@@ -116,7 +121,7 @@ void main()
 	float dist = length(l);
 	l = normalize(l);
 	float att = 1 / (PointLights.lights[t].falloff.x + PointLights.lights[t].falloff.y * dist + PointLights.lights[t].falloff.z * dist * dist);
-	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, diff_color, 64.0, att);
+	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, spec_color, 64.0, att);
     }
 
     for (int t = 0; t < numSpotL; t++)
@@ -131,7 +136,7 @@ void main()
 	float l_dot_s = max(dot(l, -s), 0.0); // rhoi - cosine(angle)
 	float spot_falloff = pow(l_dot_s, SpotLights.lights[t].conePower * 4);
 	float att = spot_falloff / (SpotLights.lights[t].falloff.x + SpotLights.lights[t].falloff.y * dist + SpotLights.lights[t].falloff.z * dist * dist);
-	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, diff_color, 16.0, att);
+	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, spec_color, 16.0, att);
     }
 
     fragColor = intensity_out;

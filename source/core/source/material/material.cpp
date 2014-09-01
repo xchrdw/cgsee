@@ -46,13 +46,22 @@ void Material::addTexture(enum aiTextureType textureType, Image* texture) {
 };
 
 void Material::bind(const Program & program) {
-    if (m_textures.count(aiTextureType::aiTextureType_DIFFUSE) != 0) {
-        std::shared_ptr<Image> texture = m_textures.find(aiTextureType::aiTextureType_DIFFUSE).value();
-        texture->bind(program, "material.diffuse", 5);
-        program.setUniform("material.useDiffuse", true);
+    bindTextures(program);
+}
+
+void Material::bindTextures(const Program & program) {
+    bindTexture(program, aiTextureType::aiTextureType_DIFFUSE, "Diffuse", 5);
+    bindTexture(program, aiTextureType::aiTextureType_SPECULAR, "Specular", 6);
+}
+
+void Material::bindTexture(const Program & program, aiTextureType type, QString name, GLubyte textureUnit) {
+    if (m_textures.count(type) != 0) {
+        std::shared_ptr<Image> texture = m_textures.find(type).value();
+        texture->bind(program, QString("material.").append(name.toLower()), textureUnit);
+        program.setUniform(QString("material.use").append(name), true);
     }
     else {
-        program.setUniform("material.useDiffuse", false);
+        program.setUniform(QString("material.use").append(name), false);
     }
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <core/core_api.h>
+#include <core/gpuquery.h>
 
 #include <reflectionzeug/Color.h>
 #include <reflectionzeug/PropertyGroup.h>
@@ -21,6 +22,8 @@ public:
 
     void addTexture(enum aiTextureType textureType, Image* texture);
     void bind(const Program & program);
+    void bindTextures(const Program & program);
+    void bindTexture(const Program & program, aiTextureType type, QString name, GLubyte textureUnit);
 
 protected:
     QMultiMap<enum aiTextureType, std::shared_ptr<Image>> m_textures;
