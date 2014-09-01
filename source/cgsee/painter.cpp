@@ -259,28 +259,11 @@ const bool Painter::initialize()
     // Lighting system code starts here
     m_lightingSystem = new LightingSystem();
     m_lightingSystem->initBuffers();
-    glm::vec3 colors[6] = {
-            glm::vec3(1.f, 0.f, 0.f),
-            glm::vec3(1.f, 0.6f, 0.f),
-            glm::vec3(0.f, 1.f, 1.f),
-            glm::vec3(1.f, 0.f, 0.f),
-            glm::vec3(1.f, 0.6f, 0.f),
-            glm::vec3(0.f, 1.f, 1.f),
-    };
-    for (uint t = 0; t < 6; t++) {
-            m_lightingSystem->addPointLight(glm::vec4((float)t - 3.f,1.5f,(float)t - 3.f, 1.f), colors[t], 3.f);
-    }
-    glm::vec4 spotlight_positions[4] = {
-            glm::vec4(-2.f, 5.f, 2.f, 1.f),
-            glm::vec4(-2.f, 5.f, -2.f, 1.f),
-            glm::vec4(2.f, 5.f, -2.f, 1.f),
-            glm::vec4(2.f, 5.f, 2.f, 1.f)
-    };
-    for (int t = 0; t < 4; t++) {
-            m_lightingSystem->addSpotLight(spotlight_positions[t], glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, 1.f), 5.f, 4.f);
-    }
-    m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(1.f, 1.f, 1.f)), glm::vec3(0.2, 0.1, 0));
-    m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(-1.f, 0, 0)), glm::vec3(0.2, 0.1, 0));
+  
+    m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(1.f, 1.f, 1.f)), glm::vec3(1.f, 1.f, 1.f));
+    m_lightingSystem->addDirectionalLight(glm::normalize(glm::vec3(-1.f, -1.f, -1.f)), glm::vec3(1.f, 1.f, 0.9f));
+    m_lightingSystem->addPointLight(glm::vec4(1.f, 4.f, 3.f, 1.f), glm::vec3(1.f, 0.f, 0.f), 6.f);
+    m_lightingSystem->addSpotLight(glm::vec4(0.f, 10.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, 1.f), 5.f, 4.f);
 
     return true;
 }
