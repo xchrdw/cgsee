@@ -49,6 +49,7 @@ bool PipelinePainter::initialize()
     m_flush = new glo::Program();
     
     m_flush->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/dump.frag")));
+    m_flush->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/shadowing.glsl")));
     m_flush->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
 
     addRenderStage(new RenderStage(*this));
@@ -86,8 +87,16 @@ void PipelinePainter::paint()
     if(!texture)
         return;
 
+    glo::Texture *lighting = getTexture("lighting");
+    if (!lighting)
+        return;
+
     texture->bindActive(gl::GL_TEXTURE0);
+    lighting->bindActive(gl::GL_TEXTURE1);
     m_flush->setUniform("selectedBuffer", 0);
+    m_flush->setUniform("lighting", 1);
+    camera()->setUniformsIn(*m_flush);
+
     m_quad->draw(*m_flush);
     texture->unbindActive(gl::GL_TEXTURE0);
 }

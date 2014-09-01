@@ -30,6 +30,8 @@ public:
     static const std::string ZNEAR_UNIFORM;
     static const std::string ZFAR_UNIFORM;
     static const std::string CAMERAPOSITION_UNIFORM;
+    static const std::string VIEW_PROJECTION_UNIFORM;
+    static const std::string VIEW_PROJECTION_INVERSE_UNIFORM;
 
     AbstractCamera(const QString & name, Projection * projection);
     AbstractCamera(const AbstractCamera & camera);

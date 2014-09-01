@@ -33,10 +33,8 @@ RenderStage::RenderStage(PipelinePainter & painter)
     m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/depth_util.frag")));
     m_program->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/normalz.vert")));
 
-    bindFBO();
     m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_normalz);
     m_fbo->attachRenderBuffer(gl::GL_DEPTH_STENCIL_ATTACHMENT, m_depth);
-    releaseFBO();
 
     resize(painter.camera()->viewport().x, painter.camera()->viewport().y);
 }

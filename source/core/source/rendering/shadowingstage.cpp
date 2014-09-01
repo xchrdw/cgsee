@@ -30,7 +30,7 @@ namespace
     const int SHADOWMAP_COUNT = 2;
     const float PI = 3.14159265358979323846f;
 
-    const glm::mat4 biasMatrix(
+    const glm::mat4 BIAS_MATRIX(
         0.5, 0.0, 0.0, 0.0,
         0.0, 0.5, 0.0, 0.0,
         0.0, 0.0, 0.5, 0.0,
@@ -47,7 +47,14 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
 ,   m_blurVProgram(new glo::Program())
 ,   m_blurHFBO(new glo::FrameBufferObject())
 ,   m_blurVFBO(new glo::FrameBufferObject())
+, m_testFBO(new glo::FrameBufferObject())
+, m_testTexture(glo::Texture::createDefault())
+, m_testTextureDepth(glo::Texture::createDefault())
+, m_testProgram(new glo::Program())
 {    
+    m_painter.addTexture("shadowmaps", m_shadowmaps);
+    m_painter.addTexture("lighting", m_testTexture);
+
     m_program->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/vsm_light.vert")));
     m_program->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/vsm_light.geom")));
     m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/vsm_light.frag")));
@@ -71,11 +78,20 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
 
     m_blurHFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_blurTexture);
     m_blurVFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_shadowmaps);
+
+    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/test.frag")));
+    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/shadowing.glsl")));
+    m_testProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/test.vert")));
+
+    m_testFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_testTexture);
+    m_testFBO->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_testTextureDepth);    
+
+    resize(painter.camera()->viewport().x, painter.camera()->viewport().y);
 }
 
 ShadowingStage::~ShadowingStage()
 {
-
+    m_painter.removeTexture("shadowmaps");
 }
 
 void ShadowingStage::render()
@@ -106,26 +122,26 @@ void ShadowingStage::render()
         bb.center(), glm::vec3(0.0f, 1.0f, 0.0f)));
     light2Camera.invalidate();
 
-    std::array<glm::mat4x4, SHADOWMAP_COUNT> biasLightViewProjection;
-    biasLightViewProjection[0] = biasMatrix * lightCamera.viewProjection();
-    biasLightViewProjection[1] = biasMatrix * light2Camera.viewProjection();
+    m_biasedViewProjections.clear();
+    m_biasedViewProjections.push_back(BIAS_MATRIX * lightCamera.viewProjection());
+    m_biasedViewProjections.push_back(BIAS_MATRIX * light2Camera.viewProjection());
+    m_biasedViewProjections.shrink_to_fit();
     
     std::array<glm::mat4x4, SHADOWMAP_COUNT> lightViewProjection;
     lightViewProjection[0] = lightCamera.viewProjection();
     lightViewProjection[1] = light2Camera.viewProjection();
     
     m_program->setUniform("lightTransforms", lightViewProjection);
-    m_program->setUniform("inverseViewProjection", glm::inverse(m_painter.camera()->viewProjection()));
 
     m_painter.camera()->setUniformsIn(*m_program);
 
+    gl::glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
     m_fbo->clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
     m_fbo->bind();
     drawScene(m_painter.camera()->viewProjection(), m_program);
     m_fbo->unbind();
     
     ScreenQuad screenQuad;
-    gl::glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
     m_shadowmaps->bindActive(gl::GL_TEXTURE0);
     m_blurHProgram->setUniform("source", 0);
     m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
@@ -137,13 +153,22 @@ void ShadowingStage::render()
     screenQuad.draw(*m_blurVProgram, m_blurVFBO);
     gl::glViewport(0, 0, m_painter.camera()->viewport().x, m_painter.camera()->viewport().y);
 
-    biasLightViewProjection;
-    lightViewProjection;
+
+    //visualization
+    m_shadowmaps->bindActive(gl::GL_TEXTURE0);
+    m_testProgram->setUniform("shadowmaps", 0);
+    m_testProgram->setUniform("lightBiasedViewProjections", getBiasedViewProjections());
+    m_painter.camera()->setUniformsIn(*m_testProgram);
+    m_testFBO->clear(gl::GL_DEPTH_BUFFER_BIT | gl::GL_COLOR_BUFFER_BIT);
+    m_testFBO->bind();
+    drawScene(m_painter.camera()->viewProjection(), m_testProgram);
+    m_testFBO->unbind();
 }
 
 void ShadowingStage::resize(const int width, const int height)
 {
-
+    m_testTexture->image2D(0, gl::GL_RGBA32F, width, height, 0, gl::GL_RGBA, gl::GL_FLOAT, nullptr);
+    m_testTextureDepth->image2D(0, gl::GL_DEPTH_COMPONENT32, width, height, 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 }
 
 void ShadowingStage::reloadShaders()
@@ -167,59 +192,12 @@ void ShadowingStage::calculateSplitPlanes(float znear, float zfar, int planesCou
     farSplits = glm::make_vec4(farResults);
 }
 
+std::vector<glm::mat4> ShadowingStage::getBiasedViewProjections()
+{
+    return m_biasedViewProjections;
+}
+
 //void ShadowingStage::calculateCropMatrices()
 //{
 //
-//}
-
-//void VarianceShadowMappingPass::render()
-//{
-//    AxisAlignedBoundingBox bb = m_camera->asGroup()->boundingBox();
-//
-//    Camera lightCamera = Camera();
-//    lightCamera.setFovy(90.0);
-//    lightCamera.setZNear(m_camera->zNear());
-//    lightCamera.setZFar(m_camera->zFar());
-//    lightCamera.setViewport(glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-//    lightCamera.setView(glm::lookAt(glm::vec3(4.0f, 5.5f, 6.0f) + bb.center(),
-//        bb.center(), glm::vec3(0.0f, 1.0f, 0.0f)));
-//    lightCamera.update();
-//
-//    Camera light2Camera = Camera();
-//    light2Camera.setFovy(90.0);
-//    light2Camera.setZNear(m_camera->zNear());
-//    light2Camera.setZFar(m_camera->zFar());
-//    light2Camera.setViewport(glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-//    light2Camera.setView(glm::lookAt(glm::vec3(-2.0f, 5.5f, -4.0f) + bb.center(),
-//        bb.center(), glm::vec3(0.0f, 1.0f, 0.0f)));
-//    light2Camera.update();
-//
-//	glm::mat4x4 *biasLightViewProjection = new glm::mat4x4[2];
-//	biasLightViewProjection[0] = biasMatrix * lightCamera.transform();
-//	biasLightViewProjection[1] = biasMatrix * light2Camera.transform();
-//
-//    glm::mat4x4 *lightViewProjection = new glm::mat4x4[2];
-//    lightViewProjection[0] = lightCamera.transform();
-//    lightViewProjection[1] = light2Camera.transform();
-//
-//    m_lightProgram->setUniform("lightTransforms", 2, lightViewProjection[0]);
-//    m_lightProgram->setUniform("inverseViewProjection", m_camera->transformInverse());
-//    drawScene(m_camera, m_lightProgram, m_shadowmapFBO3D);
-//
-//	ScreenQuad screenQuad;
-//	m_shadowmapFBO3D->bindTexture3D(*m_blurv, "source", 0);
-//	m_blurv->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-//	screenQuad.draw(*m_blurv, m_blurVFBO);
-//
-//	m_blurVFBO->bindTexture3D(*m_blurh, "source", 0);
-//	m_blurh->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-//	screenQuad.draw(*m_blurh, m_shadowmapFBO3D);
-//
-//	m_shadowmapFBO3D->bindTexture3D(*m_program, "shadowmap3D", 0);
-//	m_program->setUniform("inverseViewProjection", m_camera->transformInverse());
-//	m_program->setUniform("biasLightViewProjection", 2, biasLightViewProjection[0]);
-//	drawScene(m_camera, m_program, m_fbo);
-//
-//    delete[] biasLightViewProjection;
-//    delete[] lightViewProjection;
 //}

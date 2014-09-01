@@ -17,6 +17,8 @@ const std::string AbstractCamera::TRANSFORMINVERSE_UNIFORM("transformInverse");
 const std::string AbstractCamera::ZNEAR_UNIFORM("znear");
 const std::string AbstractCamera::ZFAR_UNIFORM("zfar");
 const std::string AbstractCamera::CAMERAPOSITION_UNIFORM("cameraposition");
+const std::string AbstractCamera::VIEW_PROJECTION_UNIFORM("viewProjection");
+const std::string AbstractCamera::VIEW_PROJECTION_INVERSE_UNIFORM("viewProjectionInverse");
 
 //takes ownership of projection
 AbstractCamera::AbstractCamera(const QString & name, Projection * projection)
@@ -211,7 +213,8 @@ void AbstractCamera::setUniformsIn(glo::Program & program)
     program.setUniform(ZFAR_UNIFORM, m_projection->zFar());
 
     program.setUniform(VIEW_UNIFORM, view());
-    program.setUniform(TRANSFORM_UNIFORM, transform());
-    program.setUniform(TRANSFORMINVERSE_UNIFORM, transformInverse());
     program.setUniform(CAMERAPOSITION_UNIFORM, eye());
+
+    program.setUniform(VIEW_PROJECTION_UNIFORM, viewProjection());
+    program.setUniform(VIEW_PROJECTION_INVERSE_UNIFORM, glm::inverse(viewProjection()));
 }
