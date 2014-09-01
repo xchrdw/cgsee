@@ -9,7 +9,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-disp textures\\companion_cube_displacement.png
+map_Bump textures\\companion_cube_displacement.png
 map_Kd textures\\companion_cube.png
 
 newmtl cube-heart
