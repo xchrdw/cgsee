@@ -98,12 +98,14 @@ void main()
     vec4 light_intensity;
     vec4 intensity_out = vec4(0.0);
     vec4 diff_color = vec4(1.0);
+    if(material.useDiffuse)
+      diff_color = texture(material.diffuse,v_texc);
 
     for (int t = 0; t < numDirL; t++)
     {
 	l = normalize(view * DirectionalLights.lights[t].direction).xyz;
 	light_intensity = DirectionalLights.lights[t].intensity;
-	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, diff_color, 16.0, 1.0); 
+	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, diff_color, 16.0, 1.0);
     }
 
     for (int t = 0; t < numPointL; t++)
@@ -134,6 +136,4 @@ void main()
 
     fragColor = intensity_out;
     fragColor.w = 1.0;
-	if(material.useDiffuse)
-		fragColor = texture(material.diffuse,v_texc);
 }
