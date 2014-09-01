@@ -11,7 +11,7 @@ class CORE_API Image
 {
 public:
     Image(const QString & filePath);
-    virtual ~Image() = 0;
+    virtual ~Image();
 
     bool bind(const Program & program, const QString & uniformName, const GLubyte textureUnit);
 
