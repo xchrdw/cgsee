@@ -171,8 +171,6 @@ void PolygonalGeometry::initialize(glo::Program & program)
     glError();
     deleteBuffers();
 
-    glo::isInitialized();
-    glError();
     gl::glGenVertexArrays(1, &m_vao);
     glError();
     gl::glBindVertexArray(m_vao);                                                                  

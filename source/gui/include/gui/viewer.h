@@ -42,6 +42,7 @@ class AbstractModelLoader;
 class Group;
 class Node;
 class DataBlockRegistry;
+class Groundplane;
 
 class CoordinateProvider;
 class AxisAlignedBoundingBox;
@@ -174,7 +175,8 @@ protected slots:
     void on_toggleExplorer_triggered();
     void on_toggleNavigationHistory_triggered();
     //void on_togglePropertyDemo_triggered(); //TODO: Check if neccessary.
-    void on_toggleFullscreen_triggered();
+	void on_toggleFullscreen_triggered();
+	void on_toggleGroundplane_triggered();
 
     void on_mouseMoveEventTriggered(int triggered);
     void on_mouseReleaseEventSignal(QMouseEvent * event);
@@ -238,6 +240,7 @@ protected:
     Canvas * m_materialCanvas;
 	propertyguizeug::PropertyBrowser * m_propertyMaterialBrowser;
 
+	std::shared_ptr<DataBlockRegistry> m_registry;
     FileNavigator * m_navigator;
     FileExplorer * m_explorer;
     QStandardItemModel * m_sceneHierarchy;
@@ -251,6 +254,9 @@ protected:
     QMap<unsigned int, Node *> m_selectedNodes;
 
     AxisAlignedBoundingBox * m_selectionBBox;
+
+	Groundplane *m_groundplane;
+	bool m_groundplaneActive;
 
     bool m_mouseMoving;
 };
