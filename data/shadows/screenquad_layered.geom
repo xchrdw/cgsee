@@ -10,7 +10,7 @@ out vec3 g_uv;
 
 void main()
 {
-	for(int layer = 0; layer < 2; ++layer)
+	for(int layer = 0; layer < 4; ++layer)
 	{
 		gl_Layer = layer;
 		for(int i = 0; i < 3; ++i)

@@ -177,16 +177,16 @@ void ShadowingStage::render()
     drawScene(m_painter.camera()->viewProjection(), m_program);
     m_fbo->unbind();
     
-    //ScreenQuad screenQuad;
-    //m_shadowmaps->bindActive(gl::GL_TEXTURE0);
-    //m_blurHProgram->setUniform("source", 0);
-    //m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    //screenQuad.draw(*m_blurHProgram, m_blurHFBO);
-    //
-    //m_blurTexture->bindActive(gl::GL_TEXTURE0);
-    //m_blurVProgram->setUniform("source", 0);
-    //m_blurVProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    //screenQuad.draw(*m_blurVProgram, m_blurVFBO);
+    ScreenQuad screenQuad;
+    m_shadowmaps->bindActive(gl::GL_TEXTURE0);
+    m_blurHProgram->setUniform("source", 0);
+    m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    screenQuad.draw(*m_blurHProgram, m_blurHFBO);
+    
+    m_blurTexture->bindActive(gl::GL_TEXTURE0);
+    m_blurVProgram->setUniform("source", 0);
+    m_blurVProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    screenQuad.draw(*m_blurVProgram, m_blurVFBO);
     gl::glViewport(0, 0, m_painter.camera()->viewport().x, m_painter.camera()->viewport().y);
 
 

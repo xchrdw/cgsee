@@ -5,7 +5,7 @@ uniform mat4 lightTransforms[4];
 layout( triangles ) in;
 layout( triangle_strip, max_vertices = 12 ) out;
 
-out int gl_Layer;
+out flat int gl_Layer;
 
 void main()
 {
