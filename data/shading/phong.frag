@@ -16,6 +16,10 @@ struct Material {
 	bool useDiffuse;
 	sampler2D specular;
 	bool useSpecular;
+	sampler2D ambient;
+	bool useAmbient;
+	sampler2D emissive;
+	bool useEmissive;
 };
 
 uniform Material material;
@@ -139,6 +143,15 @@ void main()
 	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, spec_color, 16.0, att);
     }
 
+	if(material.useEmissive) {
+		vec4 em_color = texture(material.emissive,v_texc);
+		intensity_out += mix(intensity_out, em_color, em_color.a);
+	}
+	if(material.useAmbient) {
+		vec4 amb_color = texture(material.ambient,v_texc);
+		intensity_out = mix(intensity_out, amb_color, amb_color.a);
+	}
+	
     fragColor = intensity_out;
     fragColor.w = 1.0;
 }

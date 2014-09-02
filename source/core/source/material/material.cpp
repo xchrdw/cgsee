@@ -52,6 +52,8 @@ void Material::bind(const Program & program) {
 void Material::bindTextures(const Program & program) {
     bindTexture(program, aiTextureType::aiTextureType_DIFFUSE, "Diffuse", 5);
     bindTexture(program, aiTextureType::aiTextureType_SPECULAR, "Specular", 6);
+    bindTexture(program, aiTextureType::aiTextureType_AMBIENT, "Ambient", 7);
+    bindTexture(program, aiTextureType::aiTextureType_EMISSIVE, "Emissive", 8);
 }
 
 void Material::bindTexture(const Program & program, aiTextureType type, QString name, GLubyte textureUnit) {
