@@ -186,6 +186,8 @@
     <addaction name="toggleExplorer"/>
     <addaction name="toggleNavigationHistory"/>
     <addaction name="separator"/>
+    <addaction name="toggleGroundplane"/>
+    <addaction name="separator"/>
     <addaction name="toggleFullscreen"/>
    </widget>
    <widget class="QMenu" name="renderingMenu">
@@ -925,6 +927,11 @@
    </property>
    <property name="text">
     <string>Oculus Rift Stereo-Camera</string>
+   </property>
+  </action>
+  <action name="toggleGroundplane">
+   <property name="text">
+    <string>Add/Remove &amp;Groundplane</string>
    </property>
   </action>
   <addaction name="toggleFullscreen"/>

@@ -3,6 +3,9 @@
 
 #include <glbinding/gl/enum.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <core/aabb.h>
 
 #include <core/scenegraph/polygonalgeometry.h>
@@ -38,13 +41,13 @@ void Groundplane::setGeometryAccoringTo(Group *scene)
 	const glm::vec3 diff(scene->boundingBox().urb() - scene->boundingBox().llf());
 	const glm::vec3 llf(scene->boundingBox().llf());
 	const glm::vec3 up(0, 1, 0);
-	const glm::mat4 transform;
+	const glm::mat4 transform(glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 1.0f, 1.5f)));
 
 	const glm::vec3 vertices[4] {
 		llf,
-			llf + (diff * glm::vec3(1, 0, 0)),
-			llf + (diff * glm::vec3(0, 0, 1)),
-			llf + (diff * glm::vec3(1, 0, 1))
+		llf + (diff * glm::vec3(1, 0, 0)),
+		llf + (diff * glm::vec3(0, 0, 1)),
+		llf + (diff * glm::vec3(1, 0, 1))
 	};
 
 	const unsigned int indices[6] { 0, 1, 3, 0, 3, 2 };

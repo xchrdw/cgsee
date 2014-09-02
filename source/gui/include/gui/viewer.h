@@ -175,7 +175,8 @@ protected slots:
     void on_toggleExplorer_triggered();
     void on_toggleNavigationHistory_triggered();
     //void on_togglePropertyDemo_triggered(); //TODO: Check if neccessary.
-    void on_toggleFullscreen_triggered();
+	void on_toggleFullscreen_triggered();
+	void on_toggleGroundplane_triggered();
 
     void on_mouseMoveEventTriggered(int triggered);
     void on_mouseReleaseEventSignal(QMouseEvent * event);
@@ -253,6 +254,9 @@ protected:
     QMap<unsigned int, Node *> m_selectedNodes;
 
     AxisAlignedBoundingBox * m_selectionBBox;
+
+	Groundplane *m_groundplane;
+	bool m_groundplaneActive;
 
     bool m_mouseMoving;
 };

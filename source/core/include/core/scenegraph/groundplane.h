@@ -8,8 +8,6 @@
 
 #include <QString>
 
-#include <glm/glm.hpp>
-
 #include <core/scenegraph/node.h>
 #include <core/scenegraph/group.h>
 

@@ -117,6 +117,8 @@ Viewer::Viewer(
 ,   m_historyList(new QListView(this))
 ,   m_navigationHistory(nullptr)
 ,   m_scene(nullptr)
+,   m_groundplane(nullptr)
+,   m_groundplaneActive(false)
 ,   m_mouseMoving(false)
 {
 
@@ -534,7 +536,10 @@ void Viewer::on_loadFile(const QString & path)
     }
     else
 	{
-		m_scene->append(new Groundplane(m_scene, m_registry));
+		if (m_groundplaneActive){
+			m_groundplane = new Groundplane(m_scene, m_registry);
+			m_scene->append(m_groundplane);
+		}
         assignScene(m_scene);
         m_navigation->rescaleScene(m_scene);
 
@@ -1294,4 +1299,16 @@ void Viewer::selectionBBoxChanged()
     if(painter)
         painter->selectionChanged(m_selectedNodes);
 
+}
+
+void Viewer::on_toggleGroundplane_triggered()
+{
+	if (!m_groundplaneActive){
+		m_groundplane = new Groundplane(m_scene, m_registry);
+		m_scene->append(m_groundplane); // scenegraph takes ownership
+		m_groundplaneActive = true;
+	} else {
+		m_scene->remove(m_groundplane);
+		m_groundplaneActive = false;
+	}
 }
