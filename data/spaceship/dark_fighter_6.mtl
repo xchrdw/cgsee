@@ -5,4 +5,5 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd color_6.jpg
 map_Ks specular_6.jpg
+map_Ka illumination_6.png
 Ni 1.00
