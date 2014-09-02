@@ -149,6 +149,8 @@ void AssimpLoader::loadTextures(aiMaterial *material, const QString & filePath, 
 
 void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath, Material *newMaterial) const {
     int numTextures = material->GetTextureCount(type);
+    if (!numTextures)
+        return;
     std::cout << "Material has " << numTextures << " textures of type " << type << std::endl;
     for (int texture = 0; texture < numTextures; ++texture) {
         newMaterial->addTexture(type, loadTexture(material, type, texture, filePath));
@@ -160,7 +162,6 @@ Image* AssimpLoader::loadTexture(aiMaterial *material, aiTextureType type, int t
     if (material->GetTexture(type, texture, &texturePath) == aiReturn_SUCCESS) {
         std::cout << "Texture " << texture << " of type " << type << " ist located at " << texturePath.C_Str() << std::endl;
         QString path = QString(QFileInfo(filePath).absolutePath()).append("/").append(texturePath.C_Str());
-        std::cout << path.toStdString() << std::endl;
         for (AbstractImageLoader *loader : m_imageLoaders) {
             Image* img = loader->importFromFile(path);
             if (img && img->isValid()) {
