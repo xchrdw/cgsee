@@ -1,7 +1,5 @@
 #version 150 core
 
-flat in int g_layer;
-
 out vec4 fragColor;
 
 void main()

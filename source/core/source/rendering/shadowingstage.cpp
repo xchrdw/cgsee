@@ -21,13 +21,14 @@
 #include <core/camera/projection.h>
 #include <core/painter/pipelinepainter.h>
 #include <core/screenquad.h>
+#include <core/viewfrustum.h>
 
 
 namespace
 {
     const int SHADOWMAP_SIZE = 512;
     const int LAYER_COUNT = 4;
-    const int SHADOWMAP_COUNT = 2;
+    const int SHADOWMAP_COUNT = 4;
     const float PI = 3.14159265358979323846f;
 
     const glm::mat4 BIAS_MATRIX(
@@ -36,6 +37,37 @@ namespace
         0.0, 0.0, 0.5, 0.0,
         0.5, 0.5, 0.5, 1.0
         );
+
+    std::array<glm::vec3, 8> calculatePointsOfViewFrustum(AbstractCamera *camera)
+    {
+   		std::array<glm::vec3, 8> result;
+   		glm::vec3 up = glm::normalize(camera->up());
+   		glm::vec3 eye = camera->eye();
+   		glm::vec3 direction = glm::normalize(camera->center() - eye);
+   		float zFar = camera->zFar();
+   		float zNear = camera->zNear();
+   
+   		glm::vec3 right = glm::normalize(glm::cross(direction, up));
+   
+   		glm::vec3 farPlaneCenter = eye + direction * zFar;
+   		glm::vec3 nearPlaneCenter = eye + direction * zNear;
+   
+   		float nearHeight = std::tan(camera->fovy() * PI / 360.f) * camera->zNear();
+   		float nearWidth = nearHeight * camera->aspect();
+   		float farHeight = std::tan(camera->fovy() * PI / 360.f) * camera->zFar();
+   		float farWidth = farHeight * camera->aspect();
+   
+   		result[0]=(nearPlaneCenter - up * nearHeight - right * nearWidth);
+   		result[1]=(nearPlaneCenter + up * nearHeight - right * nearWidth);
+   		result[2]=(nearPlaneCenter + up * nearHeight + right * nearWidth);
+   		result[3]=(nearPlaneCenter - up * nearHeight + right * nearWidth);
+   		result[4]=(farPlaneCenter - up * farHeight - right * farWidth);
+   		result[5]=(farPlaneCenter + up * farHeight - right * farWidth);
+   		result[6]=(farPlaneCenter + up * farHeight + right * farWidth);
+   		result[7]=(farPlaneCenter - up * farHeight + right * farWidth);
+   
+   		return result;
+    };
 }
 
 ShadowingStage::ShadowingStage(PipelinePainter &painter)
@@ -96,21 +128,19 @@ ShadowingStage::~ShadowingStage()
 
 void ShadowingStage::render()
 {
-    glm::vec4 foo, bar;
-    calculateSplitPlanes(1.f, 20.f, 4, 0.5f, foo, bar);
-
     AxisAlignedBoundingBox bb = m_painter.scene()->boundingBox();
 
     Projection *projection1 = new Projection(Projection::PERSPECTIVE);
     Projection *projection2 = new Projection(Projection::PERSPECTIVE);
+    Projection *projectionTest = new Projection(Projection::PERSPECTIVE);
 
     MonoCamera lightCamera = MonoCamera("light1", projection1);
     lightCamera.setFovy(90.0);
-    lightCamera.setZNear(m_painter.camera()->zNear());
-    lightCamera.setZFar(m_painter.camera()->zFar());
+    lightCamera.setZNear(1.0f);
+    lightCamera.setZFar(20.0f);
     lightCamera.setViewport(glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    lightCamera.setView(glm::lookAt(glm::vec3(4.0f, 5.5f, 6.0f) + bb.center(),
-        bb.center(), glm::vec3(0.0f, 1.0f, 0.0f)));
+    lightCamera.setView(glm::lookAt(glm::vec3(4.0f, 5.5f, 6.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
     lightCamera.invalidate();
     
     MonoCamera light2Camera = MonoCamera("light2", projection2);
@@ -122,14 +152,20 @@ void ShadowingStage::render()
         bb.center(), glm::vec3(0.0f, 1.0f, 0.0f)));
     light2Camera.invalidate();
 
+    std::vector<glm::vec2> splits = calculateSplitPlanes(m_painter.camera()->zNear(), m_painter.camera()->zFar(), 4, .5f);
+    std::vector<glm::mat4> cropMatrices = calculateCropMatrices(*m_painter.camera(), lightCamera.viewProjection(), splits);
+    std::vector<glm::mat4x4> lightViewProjection;
+    for (int i = 0; i < cropMatrices.size(); ++i)
+    {
+        lightViewProjection.push_back(cropMatrices[i] * lightCamera.viewProjection());
+    }
+
     m_biasedViewProjections.clear();
-    m_biasedViewProjections.push_back(BIAS_MATRIX * lightCamera.viewProjection());
-    m_biasedViewProjections.push_back(BIAS_MATRIX * light2Camera.viewProjection());
+    for (int i = 0; i < lightViewProjection.size(); ++i)
+    {
+        m_biasedViewProjections.push_back(BIAS_MATRIX * lightViewProjection[i]);
+    }
     m_biasedViewProjections.shrink_to_fit();
-    
-    std::array<glm::mat4x4, SHADOWMAP_COUNT> lightViewProjection;
-    lightViewProjection[0] = lightCamera.viewProjection();
-    lightViewProjection[1] = light2Camera.viewProjection();
     
     m_program->setUniform("lightTransforms", lightViewProjection);
 
@@ -141,16 +177,16 @@ void ShadowingStage::render()
     drawScene(m_painter.camera()->viewProjection(), m_program);
     m_fbo->unbind();
     
-    ScreenQuad screenQuad;
-    m_shadowmaps->bindActive(gl::GL_TEXTURE0);
-    m_blurHProgram->setUniform("source", 0);
-    m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    screenQuad.draw(*m_blurHProgram, m_blurHFBO);
-    
-    m_blurTexture->bindActive(gl::GL_TEXTURE0);
-    m_blurVProgram->setUniform("source", 0);
-    m_blurVProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    screenQuad.draw(*m_blurVProgram, m_blurVFBO);
+    //ScreenQuad screenQuad;
+    //m_shadowmaps->bindActive(gl::GL_TEXTURE0);
+    //m_blurHProgram->setUniform("source", 0);
+    //m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    //screenQuad.draw(*m_blurHProgram, m_blurHFBO);
+    //
+    //m_blurTexture->bindActive(gl::GL_TEXTURE0);
+    //m_blurVProgram->setUniform("source", 0);
+    //m_blurVProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    //screenQuad.draw(*m_blurVProgram, m_blurVFBO);
     gl::glViewport(0, 0, m_painter.camera()->viewport().x, m_painter.camera()->viewport().y);
 
 
@@ -176,20 +212,21 @@ void ShadowingStage::reloadShaders()
 
 }
 
-void ShadowingStage::calculateSplitPlanes(float znear, float zfar, int planesCount, float lambda, glm::vec4 &nearSplits, glm::vec4 &farSplits)
+std::vector<glm::vec2> ShadowingStage::calculateSplitPlanes(float znear, float zfar, int planesCount, float lambda)
 {
-    int splits = glm::max(1, glm::min(planesCount, LAYER_COUNT));
-    float nearResults[4] = { 0.f, 0.f, 0.f, 0.f };
-    float farResults[4] = { 0.f, 0.f, 0.f, 0.f };
+    int splitsCount = glm::max(1, glm::min(planesCount, LAYER_COUNT));
+    std::vector<glm::vec2> result;
 
-    for (int i = 0; i < splits; ++i)
+    for (int i = 0; i < splitsCount; ++i)
     {
-        nearResults[i] = lambda * (znear * pow(zfar / znear, static_cast<float>(i) / planesCount)) + (1.f - lambda) * (znear + (zfar - znear) * (static_cast<float>(i) / planesCount));
-        farResults[i] = lambda * (znear * pow(zfar / znear, (static_cast<float>(i) + 1.f) / planesCount)) + (1.f - lambda) * (znear + (zfar - znear) * ((static_cast<float>(i) + 1.f) / planesCount));
+        glm::vec2 split;
+        split.x = lambda * (znear * pow(zfar / znear, static_cast<float>(i) / splitsCount)) + (1.f - lambda) * (znear + (zfar - znear) * (static_cast<float>(i) / splitsCount));
+        split.y = lambda * (znear * pow(zfar / znear, (static_cast<float>(i)+1.f) / splitsCount)) + (1.f - lambda) * (znear + (zfar - znear) * ((static_cast<float>(i)+1.f) / splitsCount));
+        result.push_back(split);
     }
 
-    nearSplits = glm::make_vec4(nearResults);
-    farSplits = glm::make_vec4(farResults);
+    result.resize(splitsCount, glm::vec2(1.0, 1.0));
+    return result;
 }
 
 std::vector<glm::mat4> ShadowingStage::getBiasedViewProjections()
@@ -197,7 +234,47 @@ std::vector<glm::mat4> ShadowingStage::getBiasedViewProjections()
     return m_biasedViewProjections;
 }
 
-//void ShadowingStage::calculateCropMatrices()
-//{
-//
-//}
+std::vector<glm::mat4> ShadowingStage::calculateCropMatrices(AbstractCamera &camera, glm::mat4 lightTransform, std::vector<glm::vec2> splits)
+{
+    std::vector<glm::mat4> result;
+    int splitsCount = glm::max(1, glm::min(static_cast<int>(splits.size()), LAYER_COUNT));
+
+    float zNear = camera.zNear();
+    float zFar = camera.zFar();
+
+    for (int i = 0; i < splitsCount; ++i)
+    {
+        camera.setZNear(splits[i].x);
+        camera.setZFar(splits[i].y);
+
+        std::array<glm::vec3, 8> points = calculatePointsOfViewFrustum(&camera);
+
+        std::array<glm::vec3, 8>::const_iterator pointsBegin = points.begin();
+        std::array<glm::vec3, 8>::const_iterator pointsEnd = points.end();
+
+		glm::vec4 firstVertex = lightTransform * glm::vec4(*pointsBegin, 1.0);
+        glm::vec3 minValues ( (firstVertex / firstVertex.w).xyz );
+        glm::vec3 maxValues = minValues;
+
+		for (++pointsBegin; pointsBegin != pointsEnd; ++pointsBegin)
+        {
+            glm::vec4 vertex = lightTransform * glm::vec4(*pointsBegin, 1.0);
+            vertex /= vertex.w;
+            minValues.x = glm::min(minValues.x, vertex.x);
+            minValues.y = glm::min(minValues.y, vertex.y);
+            minValues.z = glm::min(minValues.z, vertex.z);
+
+            maxValues.x = glm::max(maxValues.x, vertex.x);
+            maxValues.y = glm::max(maxValues.y, vertex.y);
+            maxValues.z = glm::max(maxValues.z, vertex.z);
+        }
+
+		minValues = glm::clamp(minValues, glm::vec3(-1.f, -1.f, -1.f), glm::vec3(1.f, 1.f, 1.f));
+		maxValues = glm::clamp(maxValues, glm::vec3(-1.f, -1.f, -1.f), glm::vec3(1.f, 1.f, 1.f));
+		glm::mat4x4 cropMatrix = glm::ortho(minValues.x, maxValues.x, minValues.y, maxValues.y, 1.f, -1.f);
+		result.push_back(cropMatrix);
+	}
+	camera.setZFar(zFar);
+    camera.setZNear(zNear);
+	return result;
+}

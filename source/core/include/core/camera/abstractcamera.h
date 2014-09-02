@@ -61,7 +61,7 @@ public:
     virtual void setView(const glm::mat4 & view);
     virtual const glm::mat4 & view() const;
 
-    virtual const ViewFrustum * viewFrustum();
+    virtual ViewFrustum * viewFrustum();
     virtual glm::vec3 eye() const;
     virtual glm::vec3 up() const;
     virtual glm::vec3 center() const;

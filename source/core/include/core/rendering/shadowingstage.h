@@ -8,6 +8,8 @@
 
 #include <core/rendering/abstractscenerenderstage.h>
 
+class AbstractCamera;
+
 namespace glo{
     class FrameBufferObject;
     class Program;
@@ -26,7 +28,8 @@ public:
     virtual std::vector<glm::mat4> getBiasedViewProjections();
 
 protected:
-    void calculateSplitPlanes(float znear, float zfar, int planesCount, float lambda, glm::vec4 &nearSplits, glm::vec4 &farSplits);
+    std::vector<glm::vec2> calculateSplitPlanes(float znear, float zfar, int planesCount, float lambda);
+    std::vector<glm::mat4> calculateCropMatrices(AbstractCamera &camera, glm::mat4 lightTransform, std::vector<glm::vec2> splits);
 
 protected:
     glo::Texture *m_shadowmaps;

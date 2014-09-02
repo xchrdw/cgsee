@@ -1,7 +1,7 @@
 #version 150 core
 
 layout( triangles ) in;
-layout( triangle_strip, max_vertices = 6 ) out;
+layout( triangle_strip, max_vertices = 48 ) out;
 out int gl_Layer;
 
 in vec2 v_uv[];

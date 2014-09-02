@@ -160,7 +160,7 @@ const glm::mat4 & AbstractCamera::view() const
     return m_view;
 }
 
-const ViewFrustum * AbstractCamera::viewFrustum()
+ViewFrustum * AbstractCamera::viewFrustum()
 {
     update();
     return m_viewFrustum;
