@@ -33,6 +33,19 @@ float vsm(
 	return shadow;
 }
 
+int calculateLayer(
+	vec4 viewCoord,
+	int startIndex,
+	vec4 farSplits)
+{
+	int result = 0;
+	if(-viewCoord.z < farSplits.x) result = startIndex;
+	else if (-viewCoord.z < farSplits.y) result = startIndex + 1;
+	else if (-viewCoord.z < farSplits.z) result = startIndex + 2;
+	else if (-viewCoord.z < farSplits.w) result = startIndex + 3;
+	return result;
+}
+
 float shadowing(
 	vec4 worldCoord, 						//shader
 	vec4 viewCoord,							//shader
@@ -41,17 +54,7 @@ float shadowing(
 	int startIndex,							//light
 	vec4 farSplits)							//light
 {
-	int index = 0;
-	//if(-viewCoord.z < farSplits.x) index = startIndex;
-	//else if (-viewCoord.z < farSplits.y) index = startIndex + 1;
-	//else if (-viewCoord.z < farSplits.z) index = startIndex + 2;
-	//else if (-viewCoord.z < farSplits.w) index = startIndex + 3;
-	
-	if(-viewCoord.z < farSplits.x) index = 0;
-	else if (-viewCoord.z < farSplits.y) index = 1;
-	else if (-viewCoord.z < farSplits.z) index = 2;
-	else if (-viewCoord.z < farSplits.w) index = 3;
-
+	int index = calculateLayer(viewCoord, startIndex, farSplits);
 	float result = vsm(worldCoord, lightBiasedViewProjections, shadowmaps, index);
 	return result;
 }
