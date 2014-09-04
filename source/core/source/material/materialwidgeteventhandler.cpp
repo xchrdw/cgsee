@@ -47,7 +47,6 @@ void MaterialWidgetEventHandler::keyPressEvent(QKeyEvent *event) {}
 
 void MaterialWidgetEventHandler::keyReleaseEvent(QKeyEvent *event) {}
 
-void MaterialWidgetEventHandler::mouseMoveEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::mouseDoubleClickEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::wheelEvent(QWheelEvent * event) {}
 void MaterialWidgetEventHandler::resizeEvent(QResizeEvent * event) {}
@@ -98,6 +97,17 @@ glm::vec3 MaterialWidgetEventHandler::getArcballVector(glm::vec2 v)
 		P = glm::normalize(P);                  // nearest point to the ball
 	}
 	return P;
+}
+
+void MaterialWidgetEventHandler::mouseMoveEvent(QMouseEvent * event)
+{
+	m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
+	if (m_mouse_cur != m_mouse_last) { // avoid div/0
+		if (m_arcball_on)
+			updateArcball();
+		m_mouse_last = m_mouse_cur;
+		updateCamera();
+	}
 }
 
 void MaterialWidgetEventHandler::mousePressEvent(QMouseEvent * event)
