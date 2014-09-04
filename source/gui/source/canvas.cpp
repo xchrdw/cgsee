@@ -291,9 +291,10 @@ void Canvas::setEventHandler(AbstractEventHandler * eventHandler)
 
     /// Links navigation and navigation history and the view changed signal.
 	if (m_navigationHistory)
+	{
 		m_navigationHistory->setNavigation(dynamic_cast<AbstractNavigation*>(m_eventHandler));
     dynamic_cast<AbstractNavigation*>(m_eventHandler)->viewChanged.connect(this, &Canvas::saveHistory);
-
+	}
 }
 
 /**
