@@ -1,6 +1,7 @@
 #include <core/material/materialwidgeteventhandler.h>
 
 #include <QGLWidget>
+#include <QMouseEvent>
 
 #include <core/camera.h>
 
@@ -47,7 +48,6 @@ void MaterialWidgetEventHandler::keyPressEvent(QKeyEvent *event) {}
 void MaterialWidgetEventHandler::keyReleaseEvent(QKeyEvent *event) {}
 
 void MaterialWidgetEventHandler::mouseMoveEvent(QMouseEvent * event) {}
-void MaterialWidgetEventHandler::mousePressEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::mouseReleaseEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::mouseDoubleClickEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::wheelEvent(QWheelEvent * event) {}
@@ -99,6 +99,12 @@ glm::vec3 MaterialWidgetEventHandler::getArcballVector(glm::vec2 v)
 		P = glm::normalize(P);                  // nearest point to the ball
 	}
 	return P;
+}
+
+void MaterialWidgetEventHandler::mousePressEvent(QMouseEvent * event)
+{
+	m_arcball_on = event->button() == Qt::LeftButton;
+	m_mouse_last = m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
 }
 
 glm::mat4 MaterialWidgetEventHandler::topRightView()
