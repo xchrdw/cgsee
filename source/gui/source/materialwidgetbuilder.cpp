@@ -16,6 +16,7 @@
 #include <core/glformat.h>
 #include <core/camera.h>
 #include <core/navigation/arcballnavigation.h>
+//#include <core/material/materialwidgeteventhandler.h> TODO: Implement an correct an minimalistic EventHandler for the materialwidget.
 
 #include <gui/canvas.h>
 
@@ -60,6 +61,8 @@ void MaterialWidgetBuilder::initializeMaterialWidget(const GLFormat & format, Ca
 	camera->setZNear(1.0f);
 	camera->setZFar(20.0f);
 
+	//As soon as it is implemented correctly...
+	//MaterialWidgetEventHandler * eventhandler = new MaterialWidgetEventHandler(camera);
 	ArcballNavigation * eventhandler = new ArcballNavigation(camera);
 	m_materialCanvas->setEventHandler(dynamic_cast<AbstractEventHandler*>(eventhandler));
 	eventhandler->setCanvas(m_materialCanvas);
@@ -74,7 +77,7 @@ void MaterialWidgetBuilder::initializeMaterialWidget(const GLFormat & format, Ca
 
 	setPainter(dynamic_cast<AbstractScenePainter *>(painter));
 
-	loadFile("data/shadow_test.obj");
+	loadFile("data/material_sphere.obj");
 }
 
 QDockWidget * MaterialWidgetBuilder::getDockMaterial()
