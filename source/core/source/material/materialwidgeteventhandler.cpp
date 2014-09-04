@@ -20,6 +20,8 @@ MaterialWidgetEventHandler::~MaterialWidgetEventHandler() { }
 
 void MaterialWidgetEventHandler::updateCamera()
 {
+	m_camera->setFovy(m_fovy);
+	m_camera->setView(m_viewmatrix);
     if (m_canvas)
         m_canvas->repaint();
 }
