@@ -4,6 +4,8 @@
 
 #include <core/abstracteventhandler.h>
 
+#include <glm/glm.hpp>
+
 class Camera;
 class QWidget;
 class Group;
@@ -33,6 +35,15 @@ protected:
 
 protected:
     Camera * m_camera;
+
+	int m_width;
+	int m_height;
+
+	float m_BBRadius;
+
+	float m_fovy;
+	glm::mat4 m_viewmatrix;
+	glm::mat4 m_frontView;
 
 private:
     QWidget * m_canvas;
