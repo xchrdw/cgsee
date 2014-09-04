@@ -48,7 +48,6 @@ void MaterialWidgetEventHandler::keyPressEvent(QKeyEvent *event) {}
 void MaterialWidgetEventHandler::keyReleaseEvent(QKeyEvent *event) {}
 
 void MaterialWidgetEventHandler::mouseMoveEvent(QMouseEvent * event) {}
-void MaterialWidgetEventHandler::mouseReleaseEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::mouseDoubleClickEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::wheelEvent(QWheelEvent * event) {}
 void MaterialWidgetEventHandler::resizeEvent(QResizeEvent * event) {}
@@ -105,6 +104,12 @@ void MaterialWidgetEventHandler::mousePressEvent(QMouseEvent * event)
 {
 	m_arcball_on = event->button() == Qt::LeftButton;
 	m_mouse_last = m_mouse_cur = glm::vec2(event->pos().x(), event->pos().y());
+}
+
+void MaterialWidgetEventHandler::mouseReleaseEvent(QMouseEvent * event)
+{
+	if (event->button() == Qt::LeftButton)
+		m_arcball_on = false;
 }
 
 glm::mat4 MaterialWidgetEventHandler::topRightView()
