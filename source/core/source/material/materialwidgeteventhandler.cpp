@@ -33,3 +33,20 @@ void MaterialWidgetEventHandler::sceneChanged(Group * scene)
 {
     updateCamera();
 }
+
+void MaterialWidgetEventHandler::keyPressEvent(QKeyEvent *event) {}
+
+void MaterialWidgetEventHandler::keyReleaseEvent(QKeyEvent *event) {}
+
+void MaterialWidgetEventHandler::mouseMoveEvent(QMouseEvent * event) {}
+void MaterialWidgetEventHandler::mousePressEvent(QMouseEvent * event) {}
+void MaterialWidgetEventHandler::mouseReleaseEvent(QMouseEvent * event) {}
+void MaterialWidgetEventHandler::mouseDoubleClickEvent(QMouseEvent * event) {}
+void MaterialWidgetEventHandler::wheelEvent(QWheelEvent * event) {}
+void MaterialWidgetEventHandler::resizeEvent(QResizeEvent * event) {}
+void MaterialWidgetEventHandler::resize(const QSize & size) {}
+
+void MaterialWidgetEventHandler::onViewChanged()
+{
+	//viewChanged(m_viewmatrix, m_fovy);
+}

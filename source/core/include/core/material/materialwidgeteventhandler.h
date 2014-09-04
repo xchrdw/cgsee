@@ -20,6 +20,17 @@ public:
 
 protected:
     void updateCamera();
+	
+	void keyPressEvent(QKeyEvent *event);
+	void keyReleaseEvent(QKeyEvent *event);
+	void mouseMoveEvent(QMouseEvent * event);
+	void mousePressEvent(QMouseEvent * event);
+	void mouseReleaseEvent(QMouseEvent * event);
+	void mouseDoubleClickEvent(QMouseEvent * event);
+	void wheelEvent(QWheelEvent * event);
+	void resizeEvent(QResizeEvent * event);
+	void resize(const QSize & size);
+	void MaterialWidgetEventHandler::onViewChanged();
 
 protected:
     Camera * m_camera;
