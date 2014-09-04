@@ -36,6 +36,8 @@ protected:
 	void setViewPort(const int width, const int height);
 	glm::mat4 topRightView();
 	void setFromMatrix(const glm::mat4 & view);
+	float getBBRadius();
+	void setBBRadius(float radius);
 protected:
     Camera * m_camera;
 

@@ -4,6 +4,8 @@
 
 #include <core/camera.h>
 
+#include <glm/gtx/transform.hpp>
+
 MaterialWidgetEventHandler::MaterialWidgetEventHandler(Camera * camera)
     : m_camera(camera)
     , m_canvas(0)
@@ -83,5 +85,15 @@ void MaterialWidgetEventHandler::sceneChanged(Group * scene)
 	m_frontView = glm::lookAt(bb.center() + glm::vec3(0.f, 0.f, bb.radius()*2.5), bb.center(), glm::vec3(0.f, 1.f, 0.f));
 	setFromMatrix(topRightView());
 	updateCamera();
+}
+
+float MaterialWidgetEventHandler::getBBRadius()
+{
+	return m_BBRadius;
+}
+
+void MaterialWidgetEventHandler::setBBRadius(float radius)
+{
+	m_BBRadius = radius;
 }
 
