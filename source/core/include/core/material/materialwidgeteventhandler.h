@@ -52,4 +52,7 @@ protected:
 
 private:
     QWidget * m_canvas;
+	glm::vec2 m_mouse_last;
+	glm::vec2 m_mouse_cur;
+	bool m_arcball_on;
 };

@@ -14,6 +14,9 @@ MaterialWidgetEventHandler::MaterialWidgetEventHandler(Camera * camera)
 	, m_BBRadius(0)
 	, m_fovy(camera->fovy())
 	, m_viewmatrix(camera->view())
+	, m_mouse_last(0)
+	, m_mouse_cur(0)
+	, m_arcball_on(false)
 {
 	m_frontView = glm::lookAt(glm::vec3(0.f, 0.f, 2.f), glm::vec3(0), glm::vec3(0.f, 1.f, 0.f));
 }
