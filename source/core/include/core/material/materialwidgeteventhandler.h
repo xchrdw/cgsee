@@ -38,6 +38,10 @@ protected:
 	void setFromMatrix(const glm::mat4 & view);
 	float getBBRadius();
 	void setBBRadius(float radius);
+
+	glm::vec3 getArcballVector(glm::vec2 v);
+	void updateArcball();
+
 protected:
     Camera * m_camera;
 
