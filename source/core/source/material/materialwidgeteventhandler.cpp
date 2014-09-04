@@ -37,11 +37,6 @@ void MaterialWidgetEventHandler::setCamera(Camera * camera)
     updateCamera();
 }
 
-void MaterialWidgetEventHandler::sceneChanged(Group * scene)
-{
-    updateCamera();
-}
-
 void MaterialWidgetEventHandler::keyPressEvent(QKeyEvent *event) {}
 
 void MaterialWidgetEventHandler::keyReleaseEvent(QKeyEvent *event) {}
@@ -68,3 +63,25 @@ void MaterialWidgetEventHandler::onViewChanged()
 {
 	//viewChanged(m_viewmatrix, m_fovy);
 }
+
+glm::mat4 MaterialWidgetEventHandler::topRightView()
+{
+	return m_frontView * glm::rotate(30.f, glm::vec3(1, 0, 0)) * glm::rotate(45.f, glm::vec3(0, 1, 0));
+}
+
+void MaterialWidgetEventHandler::setFromMatrix(const glm::mat4 & view)
+{
+	m_viewmatrix = view;
+}
+
+void MaterialWidgetEventHandler::sceneChanged(Group * scene)
+{
+	AxisAlignedBoundingBox bb = scene->boundingBox();
+
+	m_BBRadius = bb.radius();
+
+	m_frontView = glm::lookAt(bb.center() + glm::vec3(0.f, 0.f, bb.radius()*2.5), bb.center(), glm::vec3(0.f, 1.f, 0.f));
+	setFromMatrix(topRightView());
+	updateCamera();
+}
+

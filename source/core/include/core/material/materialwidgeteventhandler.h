@@ -34,6 +34,8 @@ protected:
 	virtual void resize(const QSize & size) override;
 
 	void setViewPort(const int width, const int height);
+	glm::mat4 topRightView();
+	void setFromMatrix(const glm::mat4 & view);
 protected:
     Camera * m_camera;
 
