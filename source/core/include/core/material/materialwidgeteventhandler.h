@@ -21,16 +21,15 @@ public:
 protected:
     void updateCamera();
 	
-	void keyPressEvent(QKeyEvent *event);
-	void keyReleaseEvent(QKeyEvent *event);
-	void mouseMoveEvent(QMouseEvent * event);
-	void mousePressEvent(QMouseEvent * event);
-	void mouseReleaseEvent(QMouseEvent * event);
-	void mouseDoubleClickEvent(QMouseEvent * event);
-	void wheelEvent(QWheelEvent * event);
-	void resizeEvent(QResizeEvent * event);
-	void resize(const QSize & size);
-	void MaterialWidgetEventHandler::onViewChanged();
+	virtual void keyPressEvent(QKeyEvent *event) override;
+	virtual void keyReleaseEvent(QKeyEvent *event) override;
+	virtual void mouseMoveEvent(QMouseEvent * event) override;
+	virtual void mousePressEvent(QMouseEvent * event) override;
+	virtual void mouseReleaseEvent(QMouseEvent * event) override;
+	virtual void mouseDoubleClickEvent(QMouseEvent * event) override;
+	virtual void wheelEvent(QWheelEvent * event) override;
+	virtual void resizeEvent(QResizeEvent * event) override;
+	virtual void resize(const QSize & size) override;
 
 protected:
     Camera * m_camera;
