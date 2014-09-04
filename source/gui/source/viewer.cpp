@@ -326,7 +326,7 @@ void * Viewer::createQtContext(const GLFormat & format)
 const GLXContext Viewer::createQtContext(const GLFormat & format)
 #endif
 {
-    m_qtCanvas = new Canvas(format, this);
+    m_qtCanvas = new Canvas(format, true, this);
     setCentralWidget(m_qtCanvas);
     if (m_camera != nullptr)
         m_qtCanvas->setRefreshTimeMSec(m_camera->preferredRefreshTimeMSec());

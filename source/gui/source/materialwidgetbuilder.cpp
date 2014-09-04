@@ -49,7 +49,7 @@ void MaterialWidgetBuilder::initializeMaterialWidget(const GLFormat & format, Ca
 
 	m_propertyMaterialBrowser = new propertyguizeug::PropertyBrowser(obj);
 
-	m_materialCanvas = new Canvas(format);
+	m_materialCanvas = new Canvas(format, false);
 	// ToDo: add Vertical splitter layout and handle this 
 	m_materialCanvas->setMinimumHeight(128);
 
