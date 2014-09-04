@@ -33,6 +33,7 @@ protected:
 	virtual void resizeEvent(QResizeEvent * event) override;
 	virtual void resize(const QSize & size) override;
 
+	void setViewPort(const int width, const int height);
 protected:
     Camera * m_camera;
 

@@ -52,7 +52,17 @@ void MaterialWidgetEventHandler::mouseReleaseEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::mouseDoubleClickEvent(QMouseEvent * event) {}
 void MaterialWidgetEventHandler::wheelEvent(QWheelEvent * event) {}
 void MaterialWidgetEventHandler::resizeEvent(QResizeEvent * event) {}
-void MaterialWidgetEventHandler::resize(const QSize & size) {}
+
+void MaterialWidgetEventHandler::resize(const QSize & size) 
+{
+	setViewPort(size.width(), size.height());
+}
+
+void MaterialWidgetEventHandler::setViewPort(const int width, const int height)
+{
+	m_width = width;
+	m_height = height;
+}
 
 void MaterialWidgetEventHandler::onViewChanged()
 {
