@@ -25,6 +25,7 @@
 
 Canvas::Canvas(
     const GLFormat & format,
+	bool needsHistory,
     QWidget * parent)
 
 :   QGLWidget(format.asQGLFormat(), parent)
@@ -40,7 +41,8 @@ Canvas::Canvas(
     // Important for overdraw, not occluding the scene.
     setAutoFillBackground(false);
 
-    m_navigationHistory = new NavigationHistory();
+	if (needsHistory)
+		m_navigationHistory = new NavigationHistory();
 }
 
 Canvas::~Canvas()
@@ -288,7 +290,8 @@ void Canvas::setEventHandler(AbstractEventHandler * eventHandler)
 	m_eventHandler->resize(size());
 
     /// Links navigation and navigation history and the view changed signal.
-    m_navigationHistory->setNavigation(dynamic_cast<AbstractNavigation*>(m_eventHandler));
+	if (m_navigationHistory)
+		m_navigationHistory->setNavigation(dynamic_cast<AbstractNavigation*>(m_eventHandler));
     dynamic_cast<AbstractNavigation*>(m_eventHandler)->viewChanged.connect(this, &Canvas::saveHistory);
 
 }
@@ -313,7 +316,8 @@ NavigationHistory * Canvas::navigationHistory()
  */
 void Canvas::saveHistory(glm::mat4 viewmatrix, float fovy)
 {
-    m_navigationHistory->save(viewmatrix, fovy, capture(QSize(512, 512), true, false));
+	if (m_navigationHistory)
+		m_navigationHistory->save(viewmatrix, fovy, capture(QSize(512, 512), true, false));
 }
 
 void Canvas::mousePressEvent(QMouseEvent * event)

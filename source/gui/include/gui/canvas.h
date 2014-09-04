@@ -24,6 +24,7 @@ class GUI_API Canvas : public QGLWidget
 public:
     Canvas(
         const GLFormat & format,
+		bool needsHistory,
         QWidget * parent = nullptr);
     virtual ~Canvas();
 
