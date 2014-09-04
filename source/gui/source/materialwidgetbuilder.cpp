@@ -15,8 +15,7 @@
 #include <core/abstractmodelloader.h>
 #include <core/glformat.h>
 #include <core/camera.h>
-#include <core/navigation/arcballnavigation.h>
-//#include <core/material/materialwidgeteventhandler.h> TODO: Implement an correct an minimalistic EventHandler for the materialwidget.
+#include <core/material/materialwidgeteventhandler.h>
 
 #include <gui/canvas.h>
 
@@ -62,8 +61,7 @@ void MaterialWidgetBuilder::initializeMaterialWidget(const GLFormat & format, Ca
 	camera->setZFar(20.0f);
 
 	//As soon as it is implemented correctly...
-	//MaterialWidgetEventHandler * eventhandler = new MaterialWidgetEventHandler(camera);
-	ArcballNavigation * eventhandler = new ArcballNavigation(camera);
+	MaterialWidgetEventHandler * eventhandler = new MaterialWidgetEventHandler(camera);
 	m_materialCanvas->setEventHandler(dynamic_cast<AbstractEventHandler*>(eventhandler));
 	eventhandler->setCanvas(m_materialCanvas);
 
@@ -110,7 +108,7 @@ void MaterialWidgetBuilder::loadFile(const QString & path)
 		/*if (m_coordinateProvider)
 			m_coordinateProvider->assignPass(painter()->getSharedPass());*/
 		painter()->assignScene(m_scene);
-		dynamic_cast<AbstractNavigation*>(m_materialCanvas->eventHandler())->sceneChanged(m_scene);
+		dynamic_cast<MaterialWidgetEventHandler*>(m_materialCanvas->eventHandler())->sceneChanged(m_scene);
 		m_materialCanvas->update();
 	}
 }
