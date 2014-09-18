@@ -28,14 +28,19 @@ public:
     virtual void render() override;
     virtual void resize(const int width, const int height) override;
     virtual void reloadShaders() override;
-    virtual std::vector<glm::mat4> getBiasedViewProjections();
 
     virtual void removeAllLights();
-    virtual void addSpotLight(glm::vec3 position, glm::vec3 direction, float fovy);
+    virtual int addSpotLight(glm::vec3 position, glm::vec3 direction, float fovy);
+    virtual int addDirectionalLight(glm::vec3 direction);    
+    
+    virtual std::vector<glm::mat4> getBiasedViewProjections();
+    virtual std::vector<float> getFarSplits();
 
 protected:
     std::vector<glm::vec2> calculateSplitPlanes(float znear, float zfar, int planesCount, float lambda);
     std::vector<glm::mat4> calculateCropMatrices(AbstractCamera &camera, glm::mat4 lightTransform, std::vector<glm::vec2> splits);
+
+    virtual void smoothShadowmaps();
 
 protected:
     glo::Texture *m_shadowmaps;
@@ -53,4 +58,5 @@ protected:
 
     std::vector<glm::mat4> m_lightViewProjections;
     std::vector<glm::mat4> m_lightBiasedViewProjections;
+    std::vector<glm::vec2> m_splitPlanes;
 };

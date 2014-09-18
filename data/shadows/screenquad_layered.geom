@@ -1,7 +1,7 @@
 #version 150 core
 
 layout( triangles ) in;
-layout( triangle_strip, max_vertices = 48 ) out;
+layout( triangle_strip, max_vertices = LAYER_COUNT_3 ) out;
 out int gl_Layer;
 
 in vec2 v_uv[];
@@ -10,7 +10,7 @@ out vec3 g_uv;
 
 void main()
 {
-	for(int layer = 0; layer < 4; ++layer)
+	for(int layer = 0; layer < LAYER_COUNT_1; ++layer)
 	{
 		gl_Layer = layer;
 		for(int i = 0; i < 3; ++i)

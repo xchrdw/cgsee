@@ -49,7 +49,6 @@ bool PipelinePainter::initialize()
     m_flush = new glo::Program();
     
     m_flush->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/dump.frag")));
-    m_flush->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/shadowing.glsl")));
     m_flush->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
 
     addRenderStage(new RenderStage(*this));

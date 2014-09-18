@@ -15,6 +15,7 @@
 #include <globjects/Program.h>
 #include <globjects/Texture.h>
 #include <globjects-base/File.h>
+#include <globjects-utils/StringTemplate.h>
 
 #include <core/camera/abstractcamera.h>
 #include <core/camera/monocamera.h>
@@ -28,7 +29,7 @@ namespace
 {
     const int SHADOWMAP_SIZE = 512;
     const int LAYER_COUNT = 4;
-    const int SHADOWMAP_COUNT = 4;
+    const int SHADOWMAP_COUNT = 8;
     const float PI = 3.14159265358979323846f;
 
     const glm::mat4 BIAS_MATRIX(
@@ -88,16 +89,24 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
     m_painter.addTexture("shadowmaps", m_shadowmaps);
     m_painter.addTexture("lighting", m_testTexture);
 
+    gloutils::StringTemplate* shadowmapCreationGeomString = new gloutils::StringTemplate(new glo::File("data/shadows/shadowmap_creation.geom"));
+    shadowmapCreationGeomString->replace("SHADOWMAP_COUNT_3", SHADOWMAP_COUNT * 3);
+    shadowmapCreationGeomString->replace("SHADOWMAP_COUNT_1", SHADOWMAP_COUNT);
+
     m_program->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/shadowmap_creation.vert")));
-    m_program->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/shadowmap_creation.geom")));
+    m_program->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, shadowmapCreationGeomString));
     m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/shadowmap_creation.frag")));
 
+    gloutils::StringTemplate* screenquadLayeredGeomString = new gloutils::StringTemplate(new glo::File("data/shadows/screenquad_layered.geom"));
+    screenquadLayeredGeomString->replace("LAYER_COUNT_3", SHADOWMAP_COUNT * 3);
+    screenquadLayeredGeomString->replace("LAYER_COUNT_1", SHADOWMAP_COUNT);
+
     m_blurHProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
-    m_blurHProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/screenquad_layered.geom")));
+    m_blurHProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new gloutils::StringTemplate(screenquadLayeredGeomString)));
     m_blurHProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/gauss_blur_5_h_layered.frag")));
     
     m_blurVProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
-    m_blurVProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/screenquad_layered.geom")));
+    m_blurVProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, screenquadLayeredGeomString));
     m_blurVProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/gauss_blur_5_v_layered.frag")));
 
     m_shadowmaps->image3D(0, gl::GL_RGBA32F, glm::ivec3(SHADOWMAP_SIZE, SHADOWMAP_SIZE, SHADOWMAP_COUNT), 0, gl::GL_RGBA, gl::GL_FLOAT, nullptr);
@@ -113,8 +122,16 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
     m_blurVFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_shadowmaps);
 
     //visualisation begin
-    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/visualisation.frag")));
-    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/shadowing.glsl")));
+    gloutils::StringTemplate* visualisationFragString = new gloutils::StringTemplate(new glo::File("data/shadows/visualisation.frag"));
+    visualisationFragString->replace("LAYER_COUNT", LAYER_COUNT);
+    visualisationFragString->replace("SHADOWMAP_COUNT", SHADOWMAP_COUNT);
+
+    gloutils::StringTemplate* shadowingGlslString = new gloutils::StringTemplate(new glo::File("data/shadows/shadowing.glsl"));
+    shadowingGlslString->replace("LAYER_COUNT", LAYER_COUNT);
+    shadowingGlslString->replace("SHADOWMAP_COUNT", SHADOWMAP_COUNT);
+
+    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, visualisationFragString));
+    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, shadowingGlslString));
     m_testProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/visualisation.vert")));
 
     m_testFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_testTexture);
@@ -135,9 +152,17 @@ void ShadowingStage::removeAllLights()
     m_lightBiasedViewProjections.clear();
 }
 
-void ShadowingStage::addSpotLight(glm::vec3 position, glm::vec3 direction, float fovy)
+int ShadowingStage::addDirectionalLight(glm::vec3 direction)
 {
-    std::vector<glm::vec2> splits = calculateSplitPlanes(m_painter.camera()->zNear(), m_painter.camera()->zFar(), 4, .5f);
+    return 0;
+}
+
+int ShadowingStage::addSpotLight(glm::vec3 position, glm::vec3 direction, float fovy)
+{
+    if (m_lightViewProjections.size() > SHADOWMAP_COUNT - LAYER_COUNT) return 0;
+
+    int startIndex = m_lightViewProjections.size();
+    m_splitPlanes = calculateSplitPlanes(m_painter.camera()->zNear(), m_painter.camera()->zFar(), LAYER_COUNT, .5f);
 
     Projection *projection = new Projection(Projection::PERSPECTIVE);
     MonoCamera lightCamera = MonoCamera("light", projection);
@@ -148,21 +173,37 @@ void ShadowingStage::addSpotLight(glm::vec3 position, glm::vec3 direction, float
     lightCamera.setView(glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f)));
     lightCamera.invalidate();
 
-    std::vector<glm::mat4> cropMatrices = calculateCropMatrices(*m_painter.camera(), lightCamera.viewProjection(), splits);
+    std::vector<glm::mat4> cropMatrices = calculateCropMatrices(*m_painter.camera(), lightCamera.viewProjection(), m_splitPlanes);
     for (int i = 0; i < cropMatrices.size(); ++i)
     {
         glm::mat4 lightCroppedViewProjection = cropMatrices[i] * lightCamera.viewProjection();
         m_lightViewProjections.push_back(lightCroppedViewProjection);
         m_lightBiasedViewProjections.push_back(BIAS_MATRIX * lightCroppedViewProjection);
     }
+    return startIndex;
+}
+
+void ShadowingStage::smoothShadowmaps()
+{
+    ScreenQuad screenQuad;
+    m_shadowmaps->bindActive(gl::GL_TEXTURE0);
+    m_blurHProgram->setUniform("source", 0);
+    m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    screenQuad.draw(*m_blurHProgram, m_blurHFBO);
+
+    m_blurTexture->bindActive(gl::GL_TEXTURE0);
+    m_blurVProgram->setUniform("source", 0);
+    m_blurVProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    screenQuad.draw(*m_blurVProgram, m_blurVFBO);
 }
 
 void ShadowingStage::render()
 {
-    AxisAlignedBoundingBox bb = m_painter.scene()->boundingBox();
-
+    //visualisation begin
     removeAllLights();
     addSpotLight(glm::vec3(4.0f, 5.5f, 6.0f), glm::vec3(-4.0f, -5.5f, -6.0f), 90.f);
+    addSpotLight(glm::vec3(-4.0f, 10.0f, 6.0f), glm::vec3(4.0f, -10.0f, -6.0f), 90.f);
+    //visualisation end
     
     m_lightViewProjections.shrink_to_fit();
     m_program->setUniform("lightTransforms", m_lightViewProjections);
@@ -175,23 +216,14 @@ void ShadowingStage::render()
     drawScene(m_painter.camera()->viewProjection(), m_program);
     m_fbo->unbind();
     
-    ScreenQuad screenQuad;
-    m_shadowmaps->bindActive(gl::GL_TEXTURE0);
-    m_blurHProgram->setUniform("source", 0);
-    m_blurHProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    screenQuad.draw(*m_blurHProgram, m_blurHFBO);
-    
-    m_blurTexture->bindActive(gl::GL_TEXTURE0);
-    m_blurVProgram->setUniform("source", 0);
-    m_blurVProgram->setUniform("viewport", glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    screenQuad.draw(*m_blurVProgram, m_blurVFBO);
+    smoothShadowmaps();
     gl::glViewport(0, 0, m_painter.camera()->viewport().x, m_painter.camera()->viewport().y);
-
 
     //visualization
     m_shadowmaps->bindActive(gl::GL_TEXTURE0);
     m_testProgram->setUniform("shadowmaps", 0);
     m_testProgram->setUniform("lightBiasedViewProjections", getBiasedViewProjections());
+    m_testProgram->setUniform("farSplits", getFarSplits());
     m_painter.camera()->setUniformsIn(*m_testProgram);
     m_testFBO->clear(gl::GL_DEPTH_BUFFER_BIT | gl::GL_COLOR_BUFFER_BIT);
     m_testFBO->bind();
@@ -228,12 +260,6 @@ std::vector<glm::vec2> ShadowingStage::calculateSplitPlanes(float znear, float z
     return result;
 }
 
-std::vector<glm::mat4> ShadowingStage::getBiasedViewProjections()
-{
-    m_lightBiasedViewProjections.shrink_to_fit();
-    return m_lightBiasedViewProjections;
-}
-
 std::vector<glm::mat4> ShadowingStage::calculateCropMatrices(AbstractCamera &camera, glm::mat4 lightTransform, std::vector<glm::vec2> splits)
 {
     std::vector<glm::mat4> result;
@@ -253,7 +279,7 @@ std::vector<glm::mat4> ShadowingStage::calculateCropMatrices(AbstractCamera &cam
         std::array<glm::vec3, 8>::const_iterator pointsEnd = points.end();
 
 		glm::vec4 firstVertex = lightTransform * glm::vec4(*pointsBegin, 1.0);
-        glm::vec3 minValues ( (firstVertex / firstVertex.w).xyz );
+        glm::vec3 minValues = (firstVertex / firstVertex.w).xyz;
         glm::vec3 maxValues = minValues;
 
 		for (++pointsBegin; pointsBegin != pointsEnd; ++pointsBegin)
@@ -277,4 +303,18 @@ std::vector<glm::mat4> ShadowingStage::calculateCropMatrices(AbstractCamera &cam
 	camera.setZFar(zFar);
     camera.setZNear(zNear);
 	return result;
+}
+
+std::vector<glm::mat4> ShadowingStage::getBiasedViewProjections()
+{
+    m_lightBiasedViewProjections.shrink_to_fit();
+    return m_lightBiasedViewProjections;
+}
+
+std::vector<float> ShadowingStage::getFarSplits()
+{
+    std::vector<float> result;
+    for (int i = 0; i < m_splitPlanes.size(); ++i)
+        result.push_back(m_splitPlanes[i].y);
+    return result;
 }
