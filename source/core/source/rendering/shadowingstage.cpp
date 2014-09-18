@@ -79,6 +79,7 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
 ,   m_blurVProgram(new glo::Program())
 ,   m_blurHFBO(new glo::FrameBufferObject())
 ,   m_blurVFBO(new glo::FrameBufferObject())
+//following members are only needed for visualisation of shadows, because no ligthingsystem exists
 , m_testFBO(new glo::FrameBufferObject())
 , m_testTexture(glo::Texture::createDefault())
 , m_testTextureDepth(glo::Texture::createDefault())
@@ -87,9 +88,9 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
     m_painter.addTexture("shadowmaps", m_shadowmaps);
     m_painter.addTexture("lighting", m_testTexture);
 
-    m_program->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/vsm_light.vert")));
-    m_program->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/vsm_light.geom")));
-    m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/vsm_light.frag")));
+    m_program->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/shadowmap_creation.vert")));
+    m_program->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/shadowmap_creation.geom")));
+    m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/shadowmap_creation.frag")));
 
     m_blurHProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
     m_blurHProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new glo::File("data/shadows/screenquad_layered.geom")));
@@ -111,12 +112,14 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
     m_blurHFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_blurTexture);
     m_blurVFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_shadowmaps);
 
-    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/test.frag")));
+    //visualisation begin
+    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/visualisation.frag")));
     m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/shadowing.glsl")));
-    m_testProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/test.vert")));
+    m_testProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/visualisation.vert")));
 
     m_testFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_testTexture);
-    m_testFBO->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_testTextureDepth);    
+    m_testFBO->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_testTextureDepth);
+    //visualisation end
 
     resize(painter.camera()->viewport().x, painter.camera()->viewport().y);
 }
@@ -198,6 +201,7 @@ void ShadowingStage::render()
 
 void ShadowingStage::resize(const int width, const int height)
 {
+    //only needed for visualisation
     m_testTexture->image2D(0, gl::GL_RGBA32F, width, height, 0, gl::GL_RGBA, gl::GL_FLOAT, nullptr);
     m_testTextureDepth->image2D(0, gl::GL_DEPTH_COMPONENT32, width, height, 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 }
