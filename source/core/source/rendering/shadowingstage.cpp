@@ -126,48 +126,43 @@ ShadowingStage::~ShadowingStage()
     m_painter.removeTexture("shadowmaps");
 }
 
+void ShadowingStage::removeAllLights()
+{
+    m_lightViewProjections.clear();
+    m_lightBiasedViewProjections.clear();
+}
+
+void ShadowingStage::addSpotLight(glm::vec3 position, glm::vec3 direction, float fovy)
+{
+    std::vector<glm::vec2> splits = calculateSplitPlanes(m_painter.camera()->zNear(), m_painter.camera()->zFar(), 4, .5f);
+
+    Projection *projection = new Projection(Projection::PERSPECTIVE);
+    MonoCamera lightCamera = MonoCamera("light", projection);
+    lightCamera.setFovy(fovy);
+    lightCamera.setZNear(1.0f);
+    lightCamera.setZFar(20.0f);
+    lightCamera.setViewport(glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
+    lightCamera.setView(glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+    lightCamera.invalidate();
+
+    std::vector<glm::mat4> cropMatrices = calculateCropMatrices(*m_painter.camera(), lightCamera.viewProjection(), splits);
+    for (int i = 0; i < cropMatrices.size(); ++i)
+    {
+        glm::mat4 lightCroppedViewProjection = cropMatrices[i] * lightCamera.viewProjection();
+        m_lightViewProjections.push_back(lightCroppedViewProjection);
+        m_lightBiasedViewProjections.push_back(BIAS_MATRIX * lightCroppedViewProjection);
+    }
+}
+
 void ShadowingStage::render()
 {
     AxisAlignedBoundingBox bb = m_painter.scene()->boundingBox();
 
-    Projection *projection1 = new Projection(Projection::PERSPECTIVE);
-    Projection *projection2 = new Projection(Projection::PERSPECTIVE);
-    Projection *projectionTest = new Projection(Projection::PERSPECTIVE);
-
-    MonoCamera lightCamera = MonoCamera("light1", projection1);
-    lightCamera.setFovy(90.0);
-    lightCamera.setZNear(1.0f);
-    lightCamera.setZFar(20.0f);
-    lightCamera.setViewport(glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    lightCamera.setView(glm::lookAt(glm::vec3(4.0f, 5.5f, 6.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-    lightCamera.invalidate();
+    removeAllLights();
+    addSpotLight(glm::vec3(4.0f, 5.5f, 6.0f), glm::vec3(-4.0f, -5.5f, -6.0f), 90.f);
     
-    MonoCamera light2Camera = MonoCamera("light2", projection2);
-    light2Camera.setFovy(90.0);
-    light2Camera.setZNear(m_painter.camera()->zNear());
-    light2Camera.setZFar(m_painter.camera()->zFar());
-    light2Camera.setViewport(glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
-    light2Camera.setView(glm::lookAt(glm::vec3(-2.0f, 5.5f, -4.0f) + bb.center(),
-        bb.center(), glm::vec3(0.0f, 1.0f, 0.0f)));
-    light2Camera.invalidate();
-
-    std::vector<glm::vec2> splits = calculateSplitPlanes(m_painter.camera()->zNear(), m_painter.camera()->zFar(), 4, .5f);
-    std::vector<glm::mat4> cropMatrices = calculateCropMatrices(*m_painter.camera(), lightCamera.viewProjection(), splits);
-    std::vector<glm::mat4x4> lightViewProjection;
-    for (int i = 0; i < cropMatrices.size(); ++i)
-    {
-        lightViewProjection.push_back(cropMatrices[i] * lightCamera.viewProjection());
-    }
-
-    m_biasedViewProjections.clear();
-    for (int i = 0; i < lightViewProjection.size(); ++i)
-    {
-        m_biasedViewProjections.push_back(BIAS_MATRIX * lightViewProjection[i]);
-    }
-    m_biasedViewProjections.shrink_to_fit();
-    
-    m_program->setUniform("lightTransforms", lightViewProjection);
+    m_lightViewProjections.shrink_to_fit();
+    m_program->setUniform("lightTransforms", m_lightViewProjections);
 
     m_painter.camera()->setUniformsIn(*m_program);
 
@@ -231,7 +226,8 @@ std::vector<glm::vec2> ShadowingStage::calculateSplitPlanes(float znear, float z
 
 std::vector<glm::mat4> ShadowingStage::getBiasedViewProjections()
 {
-    return m_biasedViewProjections;
+    m_lightBiasedViewProjections.shrink_to_fit();
+    return m_lightBiasedViewProjections;
 }
 
 std::vector<glm::mat4> ShadowingStage::calculateCropMatrices(AbstractCamera &camera, glm::mat4 lightTransform, std::vector<glm::vec2> splits)
