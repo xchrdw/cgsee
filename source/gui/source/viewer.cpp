@@ -1311,4 +1311,5 @@ void Viewer::on_toggleGroundplane_triggered()
 		m_scene->remove(m_groundplane);
 		m_groundplaneActive = false;
 	}
+	assignScene(m_scene);
 }
