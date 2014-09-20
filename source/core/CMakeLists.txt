@@ -122,7 +122,6 @@ set(sources
     ${source_path}/rendering/coloridpass.cpp
     ${source_path}/rendering/defaultpass.cpp
     ${source_path}/rendering/lightingsystem.cpp
-    ${source_path}/rendering/lightsource.cpp
     ${source_path}/rendering/normalzpass.cpp
     ${source_path}/rendering/pathtracer.cpp
     ${source_path}/rendering/pathtracingpipelinebuilder.cpp
@@ -133,10 +132,8 @@ set(sources
     ${source_path}/rendering/renderstage.cpp
     ${source_path}/rendering/rendertechnique.cpp
     ${source_path}/rendering/shadowingstage.cpp
-    ${source_path}/rendering/shadowmapping.cpp
     ${source_path}/rendering/ssaoeffect.cpp
     ${source_path}/rendering/ssaostage.cpp
-    ${source_path}/rendering/varianceshadowmapping.cpp
     ${source_path}/scenegraph/absolutetransformator.cpp
     ${source_path}/scenegraph/cullingvisitor.cpp
     ${source_path}/scenegraph/defaultdrawmethod.cpp
@@ -218,7 +215,6 @@ set(api_includes
     ${include_path}/rendering/coloridpass.h
     ${include_path}/rendering/defaultpass.h
     ${include_path}/rendering/lightingsystem.h
-    ${include_path}/rendering/lightsource.h
     ${include_path}/rendering/lighttypes.h
     ${include_path}/rendering/normalzpass.h
     ${include_path}/rendering/pathtracer.h
@@ -230,10 +226,8 @@ set(api_includes
     ${include_path}/rendering/renderstage.h
     ${include_path}/rendering/rendertechnique.h
     ${include_path}/rendering/shadowingstage.h
-    ${include_path}/rendering/shadowmapping.h
     ${include_path}/rendering/ssaoeffect.h
     ${include_path}/rendering/ssaostage.h
-    ${include_path}/rendering/varianceshadowmapping.h
     ${include_path}/scenegraph/absolutetransformator.h
     ${include_path}/scenegraph/cullingvisitor.h
     ${include_path}/scenegraph/defaultdrawmethod.h
