@@ -119,8 +119,19 @@ const AxisAlignedBoundingBox AxisAlignedBoundingBox::operator*(const glm::mat4 &
 
 AxisAlignedBoundingBox & AxisAlignedBoundingBox::operator*=(const glm::mat4 & rhs)
 {
-    m_urb = glm::vec3(glm::vec4(m_urb, 1.f) * rhs);
-    m_llf = glm::vec3(glm::vec4(m_llf, 1.f) * rhs);
+    std::array<glm::vec3, 8> vertices = allVertices();
+    glm::vec3 minValues = glm::vec3(glm::vec4(vertices[0], 1.f) * rhs);
+    glm::vec3 maxValues = minValues;
+    
+    for (int i = 1; i < 8; ++i)
+    {
+        glm::vec3 currentVertex = glm::vec3(glm::vec4(vertices[i], 1.f) * rhs);
+        minValues = glm::min(minValues, currentVertex);
+        maxValues = glm::max(maxValues, currentVertex);
+    }
+
+    m_urb = glm::vec3(maxValues.x, maxValues.y, minValues.z);
+    m_llf = glm::vec3(minValues.x, minValues.y, maxValues.z);
 
     m_center = (m_urb + m_llf) * .5f;
     m_radius = glm::length(m_urb - m_llf) * .5f;
