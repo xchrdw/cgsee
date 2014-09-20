@@ -87,7 +87,6 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
 , m_testProgram(new glo::Program())
 {    
     m_painter.addTexture("shadowmaps", m_shadowmaps);
-    m_painter.addTexture("lighting", m_testTexture);
 
     gloutils::StringTemplate* shadowmapCreationGeomString = new gloutils::StringTemplate(new glo::File("data/shadows/shadowmap_creation.geom"));
     shadowmapCreationGeomString->replace("SHADOWMAP_COUNT_3", SHADOWMAP_COUNT * 3);
@@ -122,6 +121,7 @@ ShadowingStage::ShadowingStage(PipelinePainter &painter)
     m_blurVFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_shadowmaps);
 
     //visualisation begin
+    m_painter.addTexture("lighting", m_testTexture);
     gloutils::StringTemplate* visualisationFragString = new gloutils::StringTemplate(new glo::File("data/shadows/visualisation.frag"));
     visualisationFragString->replace("LAYER_COUNT", LAYER_COUNT);
     visualisationFragString->replace("SHADOWMAP_COUNT", SHADOWMAP_COUNT);
@@ -154,12 +154,51 @@ void ShadowingStage::removeAllLights()
 
 int ShadowingStage::addDirectionalLight(glm::vec3 direction)
 {
-    return 0;
+    if (m_lightViewProjections.size() > SHADOWMAP_COUNT - LAYER_COUNT) return -1;
+    int startIndex = m_lightViewProjections.size();
+    m_splitPlanes = calculateSplitPlanes(m_painter.camera()->zNear(), m_painter.camera()->zFar(), LAYER_COUNT, .5f);
+
+    MonoCamera lightCamera = MonoCamera("light", nullptr);
+    lightCamera.setView(glm::lookAt(glm::vec3(0.f, 0.f, 0.f), direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+    lightCamera.invalidate();
+
+    AxisAlignedBoundingBox bb = m_painter.scene()->boundingBox();
+    bb *= lightCamera.view();
+    
+    glm::vec3 minValues = glm::min(bb.urb(), bb.llf());
+    glm::vec3 maxValues = glm::max(bb.urb(), bb.llf());
+
+    float scaleX, scaleY, scaleZ;
+    float translateX, translateY, translateZ;
+
+    scaleX = 2.0f / (maxValues.x - minValues.x);
+    scaleY = 2.0f / (maxValues.y - minValues.y);
+    translateX = -0.5f * (maxValues.x + minValues.x) * scaleX;
+    translateY = -0.5f * (maxValues.y + minValues.y) * scaleY;
+    scaleZ = 1.0f / (-maxValues.z + minValues.z);
+    translateZ = -minValues.z * scaleZ;
+    
+    glm::mat4 projection(
+        scaleX, 0.f, 0.f, 0.f,
+        0.f, scaleY, 0.f, 0.f,
+        0.f, 0.f, scaleZ, 0.f,
+        translateX, translateY, translateZ, 1.f);
+
+    glm::mat4 viewProjection = projection * lightCamera.view();
+
+    std::vector<glm::mat4> cropMatrices = calculateCropMatrices(*m_painter.camera(), viewProjection, m_splitPlanes);
+    for (int i = 0; i < cropMatrices.size(); ++i)
+    {
+        glm::mat4 lightCroppedViewProjection = cropMatrices[i] * viewProjection;
+        m_lightViewProjections.push_back(lightCroppedViewProjection);
+        m_lightBiasedViewProjections.push_back(BIAS_MATRIX * lightCroppedViewProjection);
+    }
+    return startIndex;
 }
 
 int ShadowingStage::addSpotLight(glm::vec3 position, glm::vec3 direction, float fovy)
 {
-    if (m_lightViewProjections.size() > SHADOWMAP_COUNT - LAYER_COUNT) return 0;
+    if (m_lightViewProjections.size() > SHADOWMAP_COUNT - LAYER_COUNT) return -1;
 
     int startIndex = m_lightViewProjections.size();
     m_splitPlanes = calculateSplitPlanes(m_painter.camera()->zNear(), m_painter.camera()->zFar(), LAYER_COUNT, .5f);
@@ -169,7 +208,6 @@ int ShadowingStage::addSpotLight(glm::vec3 position, glm::vec3 direction, float 
     lightCamera.setFovy(fovy);
     lightCamera.setZNear(1.0f);
     lightCamera.setZFar(20.0f);
-    lightCamera.setViewport(glm::ivec2(SHADOWMAP_SIZE, SHADOWMAP_SIZE));
     lightCamera.setView(glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f)));
     lightCamera.invalidate();
 
@@ -201,8 +239,8 @@ void ShadowingStage::render()
 {
     //visualisation begin
     removeAllLights();
-    addSpotLight(glm::vec3(4.0f, 5.5f, 6.0f), glm::vec3(-4.0f, -5.5f, -6.0f), 90.f);
-    addSpotLight(glm::vec3(-4.0f, 10.0f, 6.0f), glm::vec3(4.0f, -10.0f, -6.0f), 90.f);
+    addSpotLight(glm::vec3(4.0f, 5.5f, -6.0f), glm::vec3(-4.0f, -5.5f, 6.0f), 45.f);
+    addDirectionalLight(glm::vec3(1.f, -1.f, 1.f));
     //visualisation end
     
     m_lightViewProjections.shrink_to_fit();
@@ -286,13 +324,8 @@ std::vector<glm::mat4> ShadowingStage::calculateCropMatrices(AbstractCamera &cam
         {
             glm::vec4 vertex = lightTransform * glm::vec4(*pointsBegin, 1.0);
             vertex /= vertex.w;
-            minValues.x = glm::min(minValues.x, vertex.x);
-            minValues.y = glm::min(minValues.y, vertex.y);
-            minValues.z = glm::min(minValues.z, vertex.z);
-
-            maxValues.x = glm::max(maxValues.x, vertex.x);
-            maxValues.y = glm::max(maxValues.y, vertex.y);
-            maxValues.z = glm::max(maxValues.z, vertex.z);
+            minValues = glm::min(minValues, glm::vec3(vertex.xyz));
+            maxValues = glm::max(maxValues, glm::vec3(vertex.xyz));
         }
 
 		minValues = glm::clamp(minValues, glm::vec3(-1.f, -1.f, -1.f), glm::vec3(1.f, 1.f, 1.f));
