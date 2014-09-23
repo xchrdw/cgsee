@@ -1,21 +1,34 @@
 
 #include <core/assimploader.h>
 
+#include <core/material/imageqtloader.h>
+#include <core/material/imagerawloader.h>
+#include <core/material/image.h>
+#include <core/material/material.h>
+
 #include <core/datacore/datablock.h>
 #include <core/scenegraph/group.h>
 #include <core/scenegraph/polygonalgeometry.h>
 #include <core/scenegraph/polygonaldrawable.h>
 
+#include <iostream>
+
 AssimpLoader::AssimpLoader(std::shared_ptr<DataBlockRegistry> registry)
 : AbstractModelLoader(registry)
 , m_importer(new Assimp::Importer())
+, m_imageLoaders()
 {
-
+    m_imageLoaders.push_back(new ImageQtLoader());
+    m_imageLoaders.push_back(new ImageRawLoader());
 }
 
 AssimpLoader::~AssimpLoader()
 {
     delete m_importer;
+    for (AbstractImageLoader *loader : m_imageLoaders) {
+        delete loader;
+    }
+    m_imageLoaders.clear();
 }
 
 QStringList AssimpLoader::namedLoadableTypes() const
@@ -91,13 +104,72 @@ Group * AssimpLoader::importFromFile(const QString & filePath) const
 
     QList<PolygonalDrawable *> drawables;
     drawables.reserve(scene->mNumMeshes);
-    this->parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables);
+    if (scene->HasTextures())
+        parseTextures(scene->mTextures, scene->mNumTextures);
+    
+    std::vector<Material*> materials;
+    if (scene->HasMaterials())
+        materials = parseMaterials(scene->mMaterials, scene->mNumMaterials, filePath);
+    if (scene->HasMeshes())
+        parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables, materials);
     
     Group * group = parseNode(*scene, drawables, *(scene->mRootNode));
     
     m_importer->FreeScene();
     
     return group;
+}
+
+void AssimpLoader::parseTextures(aiTexture **textures, unsigned int numTextures) const {
+    std::cout << "Textures: " << numTextures << std::endl;
+}
+
+std::vector<Material*> AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const {
+    std::vector<Material*> newMaterials;
+    std::cout << "Materials: " << numMaterials << std::endl;
+    for (unsigned int m = 0; m < numMaterials; ++m) {
+        newMaterials.push_back(parseMaterial(materials[m], filePath));
+    }
+    return newMaterials;
+}
+
+Material* AssimpLoader::parseMaterial(aiMaterial *material, const QString & filePath) const {
+    std::cout << "parse material" << std::endl;
+    
+    Material *newMaterial = new Material();
+    loadTextures(material, filePath, newMaterial);
+    return newMaterial;
+}
+
+void AssimpLoader::loadTextures(aiMaterial *material, const QString & filePath, Material *newMaterial) const {
+    for (int type = aiTextureType::aiTextureType_DIFFUSE; type <= aiTextureType::aiTextureType_UNKNOWN; ++type) {
+        loadTextures(material, static_cast<aiTextureType>(type), filePath, newMaterial);
+    }
+}
+
+void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath, Material *newMaterial) const {
+    int numTextures = material->GetTextureCount(type);
+    if (!numTextures)
+        return;
+    std::cout << "Material has " << numTextures << " textures of type " << type << std::endl;
+    for (int texture = 0; texture < numTextures; ++texture) {
+        newMaterial->addTexture(type, loadTexture(material, type, texture, filePath));
+    }
+}
+
+Image* AssimpLoader::loadTexture(aiMaterial *material, aiTextureType type, int texture, const QString & filePath) const {
+    aiString texturePath;
+    if (material->GetTexture(type, texture, &texturePath) == aiReturn_SUCCESS) {
+        std::cout << "Texture " << texture << " of type " << type << " ist located at " << texturePath.C_Str() << std::endl;
+        QString path = QString(QFileInfo(filePath).absolutePath()).append("/").append(texturePath.C_Str());
+        for (AbstractImageLoader *loader : m_imageLoaders) {
+            Image* img = loader->importFromFile(path);
+            if (img && img->isValid()) {
+                return img;
+            }
+        }
+    }
+    return nullptr;
 }
 
 Group * AssimpLoader::parseNode(const aiScene & scene,
@@ -137,26 +209,25 @@ Group * AssimpLoader::parseNode(const aiScene & scene,
 }
 
 void AssimpLoader::parseMeshes(aiMesh **meshes,
-    const unsigned int numMeshes, QList<PolygonalDrawable *> &drawables) const
+    const unsigned int numMeshes, QList<PolygonalDrawable *> &drawables, std::vector<Material*> materials) const
 {
     for (unsigned int i = 0; i < numMeshes; i++)
-        drawables.insert(i, parseMesh(*meshes[i]));
+        drawables.insert(i, parseMesh(*meshes[i], materials));
 }
 
-PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
+PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh, std::vector<Material*> materials) const
 {
     auto geometry = std::make_shared<PolygonalGeometry>(m_registry);
     
-    const bool usesNormalIndices(mesh.mNormals != NULL);
-    
+    geometry->setMaterial(materials.at(mesh.mMaterialIndex));
     for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
         glm::vec3 vector(
                          mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z
                          );
         geometry->setVertex(i, vector);
     }
-    
-    if (usesNormalIndices) {
+
+    if (mesh.HasNormals()) {
         for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
             glm::vec3 vector(
                              mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z
@@ -164,7 +235,14 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
             geometry->setNormal(i, vector);
         }
     }
-    
+  
+    if (mesh.HasTextureCoords(0)) {
+        for (unsigned int i = 0; i < mesh.mNumVertices; i++) {
+            glm::vec2 vector(mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y);
+            geometry->setTexC(i, vector);
+        }
+    }
+
     unsigned int currentIndex = 0;
     for (unsigned int i = 0; i < mesh.mNumFaces; i++) {
         if (mesh.mFaces[i].mNumIndices != 3)
@@ -174,7 +252,7 @@ PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh) const
                 geometry->setIndex(currentIndex++, mesh.mFaces[i].mIndices[j]);
     }
     
-    if (!usesNormalIndices)
+    if (!mesh.HasNormals())
         geometry->retrieveNormals();
     
     PolygonalDrawable * drawable = new PolygonalDrawable(mesh.mName.C_Str());

@@ -1,16 +1,32 @@
 #pragma once
 
 #include <core/core_api.h>
+#include <core/gpuquery.h>
 
 #include <reflectionzeug/Color.h>
 #include <reflectionzeug/PropertyGroup.h>
 #include <glm/vec4.hpp>
+
+#include <QMultiMap>
+
+#include <assimp/scene.h>
+
+class Image;
+class Program;
 
 class CORE_API Material : public reflectionzeug::PropertyGroup
 {
 public:
 	Material();
 	virtual ~Material();
+
+    void addTexture(enum aiTextureType textureType, Image* texture);
+    void bind(const Program & program);
+    void bindTextures(const Program & program);
+    void bindTexture(const Program & program, aiTextureType type, QString name, GLubyte textureUnit);
+
+protected:
+    QMultiMap<enum aiTextureType, std::shared_ptr<Image>> m_textures;
 	/*
     std::string name() const;
     void setName(const std::string &name);

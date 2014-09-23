@@ -30,6 +30,7 @@ void HighlightingDrawMethod::draw(const Program & program, const glm::mat4 & tra
         return;
     
     geometry->initialize(program);
+    geometry->bindMaterial(program);
     
     program.use();
     program.setUniform(TRANSFORM_UNIFORM, transform);

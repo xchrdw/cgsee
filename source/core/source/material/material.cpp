@@ -1,5 +1,8 @@
 #include <core/material/material.h>
 
+#include <core/material/image.h>
+#include <core/program.h>
+
 #include <reflectionzeug/extensions/GlmProperties.hpp>
 //ambient
 //diffuse
@@ -34,7 +37,36 @@ Material::Material()
 
 Material::~Material()
 {
+    m_textures.clear();
 }
+
+void Material::addTexture(enum aiTextureType textureType, Image* texture) {
+    if (texture != nullptr && texture->isValid())
+        m_textures.insert(textureType, std::shared_ptr<Image>(texture));
+};
+
+void Material::bind(const Program & program) {
+    bindTextures(program);
+}
+
+void Material::bindTextures(const Program & program) {
+    bindTexture(program, aiTextureType::aiTextureType_DIFFUSE, "Diffuse", 5);
+    bindTexture(program, aiTextureType::aiTextureType_SPECULAR, "Specular", 6);
+    bindTexture(program, aiTextureType::aiTextureType_AMBIENT, "Ambient", 7);
+    bindTexture(program, aiTextureType::aiTextureType_EMISSIVE, "Emissive", 8);
+}
+
+void Material::bindTexture(const Program & program, aiTextureType type, QString name, GLubyte textureUnit) {
+    if (m_textures.count(type) != 0) {
+        std::shared_ptr<Image> texture = m_textures.find(type).value();
+        texture->bind(program, QString("material.").append(name.toLower()), textureUnit);
+        program.setUniform(QString("material.use").append(name), true);
+    }
+    else {
+        program.setUniform(QString("material.use").append(name), false);
+    }
+}
+
 /*
 std::string Material::name() const
 {

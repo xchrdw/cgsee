@@ -1,6 +1,8 @@
 
 #include <core/scenegraph/polygonalgeometry.h>
 
+#include <core/material/material.h>
+
 #include <core/datacore/datablock.h>
 #include <core/aabb.h>
 #include <core/bufferobject.h>
@@ -52,6 +54,10 @@ t_vec3s PolygonalGeometry::copyVertices() const // TODO: Temporary solution.
         }
     );
     return temp;
+}
+
+void PolygonalGeometry::setMaterial(Material *material) {
+    m_material = std::make_shared<Material>(*material);
 }
 
 void PolygonalGeometry::setVertex(int i, const glm::vec3 & data)
@@ -201,6 +207,14 @@ void PolygonalGeometry::initialize(const Program & program)
         m_arrayBOsByAttribute["a_normal"] = normalBO;
     }
 
+    if (!texcs().isEmpty())
+    {
+        BufferObject * texcBO = new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+        texcBO->data<glm::vec2>(texcs(), GL_FLOAT, 2);
+
+        m_arrayBOsByAttribute["a_texc"] = texcBO;
+    }
+    
     // bind all buffers to their attributes
 
     t_bufferObjectsByAttribute::const_iterator i(m_arrayBOsByAttribute.begin());
@@ -211,6 +225,11 @@ void PolygonalGeometry::initialize(const Program & program)
 
     glBindVertexArray(0);
     glError();
+}
+
+void PolygonalGeometry::bindMaterial(const Program & program) {
+    if (m_material != nullptr)
+        m_material->bind(program);
 }
 
 void PolygonalGeometry::deleteBuffers()
