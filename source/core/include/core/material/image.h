@@ -15,10 +15,10 @@ public:
 
     bool bind(const Program & program, const QString & uniformName, const GLubyte textureUnit);
 
-    virtual bool isValid() = 0;
+    virtual bool isValid() const = 0;
 
-    virtual int width() = 0;
-    virtual int height() = 0;
+    virtual int width() const = 0;
+    virtual int height() const = 0;
 
     virtual void setTexParameteri(GLenum pname, GLint param);
     virtual void setMagFilter(GLint param);

@@ -15,14 +15,14 @@ ImageQt::ImageQt(const QString & filePath)
 
 ImageQt::~ImageQt() { }
 
-bool ImageQt::isValid() {
+bool ImageQt::isValid() const {
     return !m_image.isNull();
 }
 
-int ImageQt::width() {
+int ImageQt::width() const {
     return m_image.width();
 }
-int ImageQt::height() {
+int ImageQt::height() const {
     return m_image.height();
 }
 

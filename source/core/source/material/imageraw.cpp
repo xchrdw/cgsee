@@ -12,14 +12,14 @@ ImageRaw::ImageRaw(const QString & filePath)
 
 ImageRaw::~ImageRaw() { }
 
-bool ImageRaw::isValid() {
+bool ImageRaw::isValid() const {
     return m_image.isValid() && m_image.hasIntProperty("width") && m_image.hasIntProperty("height");
 }
 
-int ImageRaw::width() {
+int ImageRaw::width() const {
     return m_image.intProperty("width");
 }
-int ImageRaw::height() {
+int ImageRaw::height() const {
     return m_image.intProperty("height");
 }
 

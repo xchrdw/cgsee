@@ -14,10 +14,10 @@ public:
     ImageRaw(const QString & filePath);
     virtual ~ImageRaw();
 
-    virtual bool isValid();
+    virtual bool isValid() const;
 
-    virtual int width();
-    virtual int height();
+    virtual int width() const;
+    virtual int height() const;
 
 protected:
     virtual bool texImage();
