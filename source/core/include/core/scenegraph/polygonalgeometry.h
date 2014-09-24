@@ -30,7 +30,7 @@ public:
     t_VertexListP vertices() const;
     t_vec3s copyVertices() const; // TODO: Temporary solution.
     
-    void setMaterial(Material *material);
+    void setMaterial(const Material *material);
 
     //t_vec3s & vertices();  
     void setVertex(int i, glm::vec3 const & data);

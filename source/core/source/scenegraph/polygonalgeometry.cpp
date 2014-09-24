@@ -56,7 +56,7 @@ t_vec3s PolygonalGeometry::copyVertices() const // TODO: Temporary solution.
     return temp;
 }
 
-void PolygonalGeometry::setMaterial(Material *material) {
+void PolygonalGeometry::setMaterial(const Material *material) {
     m_material = std::make_shared<Material>(*material);
 }
 
