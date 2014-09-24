@@ -105,11 +105,11 @@ void main()
     vec4 intensity_out = vec4(0.0);
     vec4 diff_color = vec4(1.0);
     if(material.useDiffuse)
-		diff_color = texture(material.diffuse,v_texc);
-	vec4 spec_color = diff_color;
-	if(material.useSpecular)
-		spec_color = texture(material.specular,v_texc);
-	
+        diff_color = texture(material.diffuse,v_texc);
+    vec4 spec_color = diff_color;
+    if(material.useSpecular)
+        spec_color = texture(material.specular,v_texc);
+    
     for (int t = 0; t < numDirL; t++)
     {
 	l = normalize(view * DirectionalLights.lights[t].direction).xyz;
@@ -143,15 +143,15 @@ void main()
 	intensity_out += BlinnPhong(n, v, l, light_intensity, diff_color, spec_color, 16.0, att);
     }
 
-	if(material.useEmissive) {
-		vec4 em_color = texture(material.emissive,v_texc);
-		intensity_out += mix(intensity_out, em_color, em_color.a);
-	}
-	if(material.useAmbient) {
-		vec4 amb_color = texture(material.ambient,v_texc);
-		intensity_out = mix(intensity_out, amb_color, amb_color.a);
-	}
-	
+    if(material.useEmissive) {
+        vec4 em_color = texture(material.emissive,v_texc);
+        intensity_out += mix(intensity_out, em_color, em_color.a);
+    }
+    if(material.useAmbient) {
+        vec4 amb_color = texture(material.ambient,v_texc);
+        intensity_out = mix(intensity_out, amb_color, amb_color.a);
+    }
+    
     fragColor = intensity_out;
     fragColor.w = 1.0;
 }
