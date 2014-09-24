@@ -2,8 +2,6 @@
 
 #include <core/core_api.h>
 
-#include <memory>
-
 class QString;
 class QStringList;
 
