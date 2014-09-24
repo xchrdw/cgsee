@@ -109,7 +109,7 @@ Group * AssimpLoader::importFromFile(const QString & filePath) const
     
     std::vector<Material*> materials;
     if (scene->HasMaterials())
-        materials = parseMaterials(scene->mMaterials, scene->mNumMaterials, filePath);
+        parseMaterials(scene->mMaterials, scene->mNumMaterials, filePath, materials);
     if (scene->HasMeshes())
         parseMeshes(scene->mMeshes, scene->mNumMeshes, drawables, materials);
     
@@ -124,16 +124,14 @@ void AssimpLoader::parseTextures(aiTexture **textures, unsigned int numTextures)
     std::cout << "Textures: " << numTextures << std::endl;
 }
 
-std::vector<Material*> AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const {
-    std::vector<Material*> newMaterials;
+void AssimpLoader::parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath, std::vector<Material*> & newMaterials) const {
     std::cout << "Materials: " << numMaterials << std::endl;
     for (unsigned int m = 0; m < numMaterials; ++m) {
         newMaterials.push_back(parseMaterial(materials[m], filePath));
     }
-    return newMaterials;
 }
 
-Material* AssimpLoader::parseMaterial(aiMaterial *material, const QString & filePath) const {
+Material* AssimpLoader::parseMaterial(const aiMaterial *material, const QString & filePath) const {
     std::cout << "parse material" << std::endl;
     
     Material *newMaterial = new Material();
@@ -141,13 +139,13 @@ Material* AssimpLoader::parseMaterial(aiMaterial *material, const QString & file
     return newMaterial;
 }
 
-void AssimpLoader::loadTextures(aiMaterial *material, const QString & filePath, Material *newMaterial) const {
+void AssimpLoader::loadTextures(const aiMaterial *material, const QString & filePath, Material * const newMaterial) const {
     for (int type = aiTextureType::aiTextureType_DIFFUSE; type <= aiTextureType::aiTextureType_UNKNOWN; ++type) {
         loadTextures(material, static_cast<aiTextureType>(type), filePath, newMaterial);
     }
 }
 
-void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath, Material *newMaterial) const {
+void AssimpLoader::loadTextures(const aiMaterial *material, aiTextureType type, const QString & filePath, Material * const newMaterial) const {
     int numTextures = material->GetTextureCount(type);
     if (!numTextures)
         return;
@@ -157,7 +155,7 @@ void AssimpLoader::loadTextures(aiMaterial *material, aiTextureType type, const 
     }
 }
 
-Image* AssimpLoader::loadTexture(aiMaterial *material, aiTextureType type, int texture, const QString & filePath) const {
+Image* AssimpLoader::loadTexture(const aiMaterial *material, aiTextureType type, int texture, const QString & filePath) const {
     aiString texturePath;
     if (material->GetTexture(type, texture, &texturePath) == aiReturn_SUCCESS) {
         std::cout << "Texture " << texture << " of type " << type << " ist located at " << texturePath.C_Str() << std::endl;
@@ -209,13 +207,13 @@ Group * AssimpLoader::parseNode(const aiScene & scene,
 }
 
 void AssimpLoader::parseMeshes(aiMesh **meshes,
-    const unsigned int numMeshes, QList<PolygonalDrawable *> &drawables, std::vector<Material*> materials) const
+    const unsigned int numMeshes, QList<PolygonalDrawable *> &drawables, const std::vector<Material*> & materials) const
 {
     for (unsigned int i = 0; i < numMeshes; i++)
         drawables.insert(i, parseMesh(*meshes[i], materials));
 }
 
-PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh, std::vector<Material*> materials) const
+PolygonalDrawable * AssimpLoader::parseMesh(const aiMesh & mesh, const std::vector<Material*> & materials) const
 {
     auto geometry = std::make_shared<PolygonalGeometry>(m_registry);
     

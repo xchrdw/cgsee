@@ -45,16 +45,16 @@ protected:
     void parseTextures(aiTexture **textures, unsigned int numTextures) const;
     void parseTexture(aiTexture *texture) const;
 
-    std::vector<Material*> parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath) const;
-    Material* parseMaterial(aiMaterial *material, const QString & filePath) const;
-    void loadTextures(aiMaterial *material, const QString & filePath, Material *newMaterial) const;
-    void loadTextures(aiMaterial *material, aiTextureType type, const QString & filePath, Material *newMaterial) const;
-    Image* loadTexture(aiMaterial *material, aiTextureType type, int texture, const QString & filePath) const;
+    void parseMaterials(aiMaterial **materials, unsigned int numMaterials, const QString & filePath, std::vector<Material*> & newMaterials) const;
+    Material* parseMaterial(const aiMaterial *material, const QString & filePath) const;
+    void loadTextures(const aiMaterial *material, const QString & filePath, Material * const newMaterial) const;
+    void loadTextures(const aiMaterial *material, aiTextureType type, const QString & filePath, Material * const newMaterial) const;
+    Image* loadTexture(const aiMaterial *material, aiTextureType type, int texture, const QString & filePath) const;
 
     void parseMeshes(aiMesh ** meshes,
-        const unsigned int numMeshes, QList<PolygonalDrawable *> &, std::vector<Material*> materials) const;
+        const unsigned int numMeshes, QList<PolygonalDrawable *> &, const std::vector<Material*> & materials) const;
 
-    PolygonalDrawable * parseMesh(const aiMesh & mesh, std::vector<Material*> materials) const;
+    PolygonalDrawable * parseMesh(const aiMesh & mesh, const std::vector<Material*> & materials) const;
 
 protected:
     Assimp::Importer * m_importer;
