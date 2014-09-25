@@ -21,7 +21,6 @@ class DataBlockRegistry;
 class Group;
 class ScreenQuad;
 class Program;
-class FrameBufferObject;
 class AbstractProperty;
 class RenderingPass;
 class LightSourcePass;
@@ -120,6 +119,8 @@ protected:
 
     ScreenQuad * m_quad;
     Program * m_flush;
+
+
 
     //for CoordinateProvider
     //glow::FrameBufferObject m_coordFBO;

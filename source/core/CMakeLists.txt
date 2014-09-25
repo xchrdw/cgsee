@@ -87,7 +87,6 @@ set(sources
 	${source_path}/datacore/vertexindexlist.cpp
 	${source_path}/datacore/vertexlist.cpp
 	${source_path}/fileassociatedshader.cpp
-	${source_path}/framebufferobject.cpp
 	${source_path}/geometryoptimizer.h
 	${source_path}/glformat.cpp
 	${source_path}/gpuquery.cpp
@@ -117,9 +116,6 @@ set(sources
     ${source_path}/renderbufferobject.cpp
 	${source_path}/rendering/aaaccumulatestage.cpp
 	${source_path}/rendering/aasetupstage.cpp
-	${source_path}/rendering/blureffect.cpp
-	${source_path}/rendering/boundingboxpass.cpp
-	${source_path}/rendering/renderingpass.cpp
     ${source_path}/rendering/renderstage.cpp
 	${source_path}/rendering/abstractpostprocessingstage.cpp
     ${source_path}/rendering/ssaostage.cpp
@@ -127,14 +123,6 @@ set(sources
     ${source_path}/rendering/abstractrenderstage.cpp
 	${source_path}/rendering/lightingsystem.cpp
 	${source_path}/rendering/lightsource.cpp
-	${source_path}/rendering/rasterizer.cpp
-	${source_path}/rendering/normalzpass.cpp
-	${source_path}/rendering/ssaoeffect.cpp
-	${source_path}/rendering/coloridpass.cpp
-	${source_path}/rendering/shadowmapping.cpp
-	${source_path}/rendering/defaultpass.cpp
-	${source_path}/rendering/rendertechnique.cpp
-	${source_path}/rendering/pathtracer.cpp
     ${source_path}/rendering/abstractpipelinebuilder.cpp
 	${source_path}/rendering/rasterizationpipelinebuilder.cpp
 	${source_path}/rendering/pathtracingpipelinebuilder.cpp
@@ -188,7 +176,6 @@ set(api_includes
 	${include_path}/datacore/attributeiterator.h
 	${include_path}/declspec.h
 	${include_path}/fileassociatedshader.h
-	${include_path}/framebufferobject.h
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
 	${include_path}/material/material.h
@@ -223,19 +210,9 @@ set(api_includes
     ${include_path}/rendering/ssaostage.h
 	${include_path}/rendering/abstractscenerenderstage.h
     ${include_path}/rendering/abstractrenderstage.h
-	${include_path}/rendering/shadowmapping.h
-	${include_path}/rendering/ssaoeffect.h
-	${include_path}/rendering/normalzpass.h
-	${include_path}/rendering/coloridpass.h
-	${include_path}/rendering/blureffect.h
 	${include_path}/rendering/lightingsystem.h
 	${include_path}/rendering/lighttypes.h
 	${include_path}/rendering/lightsource.h
-	${include_path}/rendering/rasterizer.h
-	${include_path}/rendering/defaultpass.h
-	${include_path}/rendering/boundingboxpass.h
-	${include_path}/rendering/renderingpass.h
-	${include_path}/rendering/pathtracer.h
     ${include_path}/rendering/abstractpipelinebuilder.h
 	${include_path}/rendering/rasterizationpipelinebuilder.h
 	${include_path}/rendering/pathtracingpipelinebuilder.h

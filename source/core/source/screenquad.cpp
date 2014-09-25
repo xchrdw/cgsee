@@ -59,15 +59,10 @@ void ScreenQuad::initialize(const Program & program) const
     glError();
 }
 
-void ScreenQuad::draw(
-    const Program & program
-,   FrameBufferObject * target) const
+void ScreenQuad::draw(const Program & program) const
 {
     if(-1 == m_vao)
         initialize(program);
-
-    if(target)
-        target->bind();
 
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -88,7 +83,4 @@ void ScreenQuad::draw(
 
     glBindVertexArray(0);
     glError();
-
-    if(target)
-        target->release();
 }

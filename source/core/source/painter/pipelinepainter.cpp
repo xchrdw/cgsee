@@ -50,14 +50,15 @@ PipelinePainter::~PipelinePainter()
 
 bool PipelinePainter::initialize()
 {
-    // Post Processing Shader
+    // dump buffer to screen shader
     m_flush = new Program();
     m_flush->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/dump.frag"));
     m_flush->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
 
+
+    //TODO should be chosen according to property
     AbstractPipelineBuilder * builder = new RasterizationPipelineBuilder(*this);
     builder->build();
-
     delete builder;
 
     return true;
@@ -189,7 +190,7 @@ bool PipelinePainter::isViewFrustumCullingEnabled()
 //from coordinateProvider
 unsigned int PipelinePainter::getObjectID(unsigned int x, unsigned int y)
 {
-//  TODO glow integration necessary to use FBO
+//  TODO globjects integration necessary to use FBO
 //    TextureObject texture = getTexture("colorID");//TODO ---> constant?
 
 //    if (!texture || x >= texture->width() || y >= texture->height())
@@ -212,7 +213,7 @@ unsigned int PipelinePainter::getObjectID(unsigned int x, unsigned int y)
 
 glm::dvec3 PipelinePainter::get3DPoint(unsigned int x, unsigned int y)
 {
-//  TODO glow integration necessary to use FBO
+//  TODO globjects integration necessary to use FBO
 //    if (!m_pass) return glm::dvec3(0.0f,0.0f,0.0f);
 
 //    bool status = m_pass->isActive();
@@ -244,7 +245,7 @@ glm::dvec3 PipelinePainter::get3DPoint(unsigned int x, unsigned int y)
 
 glm::ivec2 PipelinePainter::get2DPoint(unsigned int x, unsigned int y)
 {
-//  TODO glow integration necessary to use FBO
+//  TODO globjects integration necessary to use FBO
 //    if (!m_pass) return glm::dvec3(0.0f,0.0f,0.0f);
 
 //    bool status = m_pass->isActive();

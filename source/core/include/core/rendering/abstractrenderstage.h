@@ -9,7 +9,6 @@
 
 class Group;
 class Program;
-class FrameBufferObject;
 
 class CORE_API AbstractRenderStage
 {

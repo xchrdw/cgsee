@@ -7,7 +7,6 @@
 
 class BufferObject;
 class Program;
-class FrameBufferObject;
 
 class CORE_API ScreenQuad
 {
@@ -15,9 +14,7 @@ public:
     ScreenQuad();
     virtual ~ScreenQuad();
 
-    void draw(
-        const Program & program
-    ,   FrameBufferObject * target = nullptr) const;
+    void draw(const Program & program) const;
 
 protected:
     void initialize(const Program & program) const;

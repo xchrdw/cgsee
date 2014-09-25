@@ -12,7 +12,6 @@
 
 
 class AbstractCamera;
-class FrameBufferObject;
 class Node;
 class ViewFrustum;
 class Program;
