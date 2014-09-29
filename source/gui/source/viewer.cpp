@@ -2,10 +2,9 @@
 
 #include <cassert>
 
-#include <GL/glew.h>
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 
 #ifdef __GLEW_H__
 #undef __GLEW_H__

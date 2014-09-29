@@ -2,8 +2,7 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
-
+#include <globjects/globjects.h>
 #include <glm/glm.hpp>
 
 #include <QSet>
@@ -23,7 +22,7 @@ public:
     const bool use() const;
     const bool release() const;
 
-    const GLuint program() const;
+    const gl::GLuint program() const;
 
     const bool attach(Shader * shader);
     const bool detach(Shader * shader);
@@ -40,8 +39,8 @@ public:
 
     // TODO: location cache
 
-    const GLint attributeLocation(const QString & name) const;
-    const GLint uniformLocation(const QString & name) const;
+    const gl::GLint attributeLocation(const QString & name) const;
+    const gl::GLint uniformLocation(const QString & name) const;
 
     // value access
 
@@ -111,7 +110,7 @@ protected:
     inline const bool isProgram() const;
 
 protected:
-    GLuint m_program;
+    gl::GLuint m_program;
 
     mutable QString m_log;
 

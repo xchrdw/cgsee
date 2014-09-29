@@ -14,7 +14,7 @@ class CORE_API FileAssociatedShader : public Shader
 {
 public:
     FileAssociatedShader(
-        const GLenum type
+        const gl::GLenum type
     ,   const QString & filePath);
 
     virtual ~FileAssociatedShader();

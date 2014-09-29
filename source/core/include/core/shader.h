@@ -2,7 +2,7 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
+#include <globjects/globjects.h>
 
 #include <QString>
 #include <QMap>
@@ -17,7 +17,7 @@ public:
     typedef QSet<Program *> t_programs;
 
 public:
-    Shader(const GLenum type);
+    Shader(const gl::GLenum type);
     virtual ~Shader();
 
     const bool setSource(
@@ -27,8 +27,8 @@ public:
 
     void update();
 
-    const GLenum type() const;
-    const GLuint shader() const;
+    const gl::GLenum type() const;
+    const gl::GLuint shader() const;
 
     const bool isCompiled() const;
 
@@ -39,8 +39,8 @@ protected:
     inline const bool isShader() const;
 
 protected:
-    const GLenum m_type;
-    GLuint m_shader;
+    const gl::GLenum m_type;
+    gl::GLuint m_shader;
 
     QString m_source;
     QString m_log;
@@ -50,7 +50,7 @@ protected:
     t_programs m_programs;
 
 protected:
-    typedef QMap<GLenum, QString> t_typeStrings;
+    typedef QMap<gl::GLenum, QString> t_typeStrings;
     static const t_typeStrings typeStrings;
 
     static const t_typeStrings initializeTypeStrings();

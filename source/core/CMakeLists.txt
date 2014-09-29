@@ -7,7 +7,6 @@ message(STATUS "Lib ${target}")
 #
 
 find_package(GLM        REQUIRED)
-find_package(GLEW       REQUIRED)
 find_package(OpenGL     REQUIRED)
 find_package(ASSIMP     REQUIRED)
 find_package(GLOBJECTS       REQUIRED)
@@ -24,9 +23,8 @@ find_package(libzeug    REQUIRED)
 
 include_directories(
     ${ASSIMP_INCLUDE_DIRS}
-    ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
-    ${GLOW_INCLUDES}
+    ${GLOBJECTS_INCLUDES}
     ${LIBZEUG_INCLUDES}
 )
 
@@ -42,10 +40,9 @@ include_directories(
 set(libs
     ${ASSIMP_LIBRARIES}
     ${OPENGL_LIBRARY}
-    ${GLEW_LIBRARY}
     ${LIBZEUG_REFLECTION_LIBRARY}
     ${LIBZEUG_PROPERTYGUI_LIBRARY}
-    ${GLOW_LIBRARIES}
+    ${GLOBJECTS_LIBRARIES}
     ${LIBZEUG_SIGNAL_LIBRARY}
 )
 
@@ -89,9 +86,6 @@ set(sources
 	${source_path}/fileassociatedshader.cpp
 	${source_path}/geometryoptimizer.h
 	${source_path}/glformat.cpp
-	${source_path}/gpuquery.cpp
-	${source_path}/idpainter.cpp
-	${source_path}/idpainter.h
 	${source_path}/material/material.cpp
 	${source_path}/material/materialdictionary.cpp
 	${source_path}/messagehandler.cpp
@@ -177,7 +171,6 @@ set(api_includes
 	${include_path}/declspec.h
 	${include_path}/fileassociatedshader.h
 	${include_path}/glformat.h
-	${include_path}/gpuquery.h
 	${include_path}/material/material.h
 	${include_path}/material/materialdictionary.h
 	${include_path}/mathmacros.h

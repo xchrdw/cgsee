@@ -6,7 +6,7 @@
 #include <QImage>
 
 #include <core/camera/abstractcamera.h>
-#include <core/gpuquery.h>
+#include <globjects/globjects.h>
 #include <core/property/propertylist.h>
 
 
@@ -33,8 +33,8 @@ void AbstractPainter::resize(
     const int width
 ,   const int height)
 {
-    glViewport(0, 0, width, height);
-    glError();
+    gl::glViewport(0, 0, width, height);
+
 
     if(m_initialized)
         return;

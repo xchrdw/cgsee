@@ -1,7 +1,8 @@
 #include <core/rendering/abstractrenderstage.h>
 
 #include <glm/mat4x4.hpp>
-#include <core/gpuquery.h>
+#include <glbinding/glbinding.h>
+#include <globjects/globjects.h>
 
 #include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
@@ -13,14 +14,14 @@ AbstractRenderStage::AbstractRenderStage(PipelinePainter & painter)
     : m_painter(painter)
     , m_fbo(0)
 {
-    glGenFramebuffers(1, &m_fbo);
-    glError();
+    gl::glGenFramebuffers(1, &m_fbo);
+
 }
 
 AbstractRenderStage::~AbstractRenderStage()
 {
-    glDeleteFramebuffers(1, &m_fbo);
-    glError();
+    gl::glDeleteFramebuffers(1, &m_fbo);
+
 }
 
 PipelinePainter & AbstractRenderStage::painter()
@@ -37,14 +38,14 @@ void AbstractRenderStage::drawScene(const glm::mat4 & transform, Program * progr
 
 void AbstractRenderStage::bindFBO()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glError();
+    gl::glBindFramebuffer(gl::GLenum::GL_FRAMEBUFFER, m_fbo);
+
 }
 
 void AbstractRenderStage::releaseFBO()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glError();
+    gl::glBindFramebuffer(gl::GLenum::GL_FRAMEBUFFER, 0);
+
 }
 
 bool AbstractRenderStage::isSceneInvalid()

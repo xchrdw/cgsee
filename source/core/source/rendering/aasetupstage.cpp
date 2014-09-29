@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include <core/gpuquery.h>
+#include <globjects/globjects.h>
 
 #include <core/painter/pipelinepainter.h>
 

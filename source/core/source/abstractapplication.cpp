@@ -59,7 +59,7 @@ const GLFormat AbstractApplication::format() const
     format.setVSync(false);
 
     // NOTE: If profile is core, extensions availability will not 
-    // be verified, since they are not listed by glew.
+    // be verified, since they are not listed by gl ew.
 
     const QStringList extensions = QStringList() 
         << "GL_EXT_abgr" // extension with number 1 ;)

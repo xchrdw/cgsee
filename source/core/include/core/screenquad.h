@@ -2,8 +2,7 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
-
+#include <globjects/globjects.h>
 
 class BufferObject;
 class Program;
@@ -20,6 +19,6 @@ protected:
     void initialize(const Program & program) const;
 
 protected:  
-    mutable GLuint m_vao;
+    mutable gl::GLuint m_vao;
     mutable BufferObject * m_vertexBO;
 };

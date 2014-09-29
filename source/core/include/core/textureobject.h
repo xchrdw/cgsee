@@ -3,38 +3,38 @@
 #include <core/core_api.h>
 
 #include <core/typedefs.h>
-#include <core/gpuquery.h>
+#include <globjects/globjects.h>
 
 
 class CORE_API TextureObject
 {
 public:
     TextureObject();
-    TextureObject(GLenum internalFormat, GLenum format, GLenum type);
-    TextureObject(GLuint width, GLuint height, GLenum internalFormat, GLenum format, GLenum type);
+    TextureObject(gl::GLenum internalFormat, gl::GLenum format, gl::GLenum type);
+    TextureObject(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat, gl::GLenum format, gl::GLenum type);
     virtual ~TextureObject();
 
     bool isInitialized();
 
-    void configure(GLuint width, GLuint height, GLenum internalFormat, GLenum format, GLenum type);
-    void resize(GLuint width, GLuint height);
+    void configure(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat, gl::GLenum format, gl::GLenum type);
+    void resize(gl::GLuint width, gl::GLuint height);
 
-    void attachTo(GLenum attachment);
+    void attachTo(gl::GLenum attachment);
 
-    void bindTo(GLenum textureUnit);
-    void releaseFrom(GLenum textureUnit);
+    void bindTo(gl::GLenum textureUnit);
+    void releaseFrom(gl::GLenum textureUnit);
 
 protected:
     void generateGLTexture();
     void deleteGLTexture();
 
 protected:
-    GLuint m_texture;
+    gl::GLuint m_texture;
 
-    GLuint m_width;
-    GLuint m_height;
-    GLenum m_internalFormat;
-    GLenum m_format;
-    GLenum m_type;
+    gl::GLuint m_width;
+    gl::GLuint m_height;
+    gl::GLenum m_internalFormat;
+    gl::GLenum m_format;
+    gl::GLenum m_type;
 
 };

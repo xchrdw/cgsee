@@ -1,8 +1,6 @@
 
 #include <core/scenegraph/triangleobject.h>
 
-#include <GL/glew.h>
-
 #include <core/aabb.h>
 #include <core/program.h>
 

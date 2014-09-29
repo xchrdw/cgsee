@@ -23,15 +23,15 @@ PathTracingBVH::~PathTracingBVH() {
     delete m_geometry;
 }
 
-void PathTracingBVH::geometryToTexture(GLuint textureSlot) {
-    BufferObject geometryBuffer(GL_TEXTURE_BUFFER, GL_STATIC_READ);
-    geometryBuffer.data<glm::vec4>(m_geometry->data(), m_geometry->size(), GL_RGBA32F, sizeof(glm::vec4));
-    glActiveTexture(textureSlot);
-    GLuint textureHandle;
-    glGenTextures(1, &textureHandle);
-    glBindTexture(GL_TEXTURE_BUFFER, textureHandle);
-    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, geometryBuffer.buffer());
-    glError();
+void PathTracingBVH::geometryToTexture(gl::GLuint textureSlot) {
+    BufferObject geometryBuffer(gl::GLenum::GL_TEXTURE_BUFFER, gl::GLenum::GL_STATIC_READ);
+    geometryBuffer.data<glm::vec4>(m_geometry->data(), m_geometry->size(), gl::GLenum::GL_RGBA32F, sizeof(glm::vec4));
+    gl::glActiveTexture(textureSlot);
+    gl::GLuint textureHandle;
+    gl::glGenTextures(1, &textureHandle);
+    gl::glBindTexture(gl::GLenum::GL_TEXTURE_BUFFER, textureHandle);
+    gl::glTexBuffer(gl::GLenum::GL_TEXTURE_BUFFER, gl::GLenum::GL_RGBA32F, geometryBuffer.buffer());
+
 }
 
 void PathTracingBVH::buildBVHFromObjectsHierarchy(Node *node) {

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <glbinding/glbinding.h>
+
 #include <core/rendering/abstractrenderstage.h>
 #include <core/rendering/renderstage.h>
 
@@ -52,8 +54,8 @@ bool PipelinePainter::initialize()
 {
     // dump buffer to screen shader
     m_flush = new Program();
-    m_flush->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/dump.frag"));
-    m_flush->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
+    m_flush->attach(new FileAssociatedShader(gl::GLenum::GL_FRAGMENT_SHADER, "data/dump.frag"));
+    m_flush->attach(new FileAssociatedShader(gl::GLenum::GL_VERTEX_SHADER, "data/screenquad.vert"));
 
 
     //TODO should be chosen according to property
@@ -90,7 +92,7 @@ void PipelinePainter::onViewChanged()
 void PipelinePainter::paint()
 {
     AbstractPainter::paint();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
     setView(camera()->view());
     setProjection(camera()->projection());
@@ -104,10 +106,10 @@ void PipelinePainter::paint()
     if(!texture)
         return;
 
-    texture->bindTo(GL_TEXTURE0);
+    texture->bindTo(gl::GLenum::GL_TEXTURE0);
     m_flush->setUniform("selectedBuffer", 0);
     m_quad->draw(*m_flush);
-    texture->releaseFrom(GL_TEXTURE0);
+    texture->releaseFrom(gl::GLenum::GL_TEXTURE0);
 
     setValue<bool>("viewInvalid", false);
 }
@@ -197,12 +199,12 @@ unsigned int PipelinePainter::getObjectID(unsigned int x, unsigned int y)
 //        return 0;
 
 //    m_coordFBO->bind();
-//    m_coordFBO->attachTexture2D(GL_COLOR_ATTACHMENT0, texture);
-//    glReadBuffer(GL_COLOR_ATTACHMENT0);
-//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//    m_coordFBO->attachTexture2D(gl::GLenum::GL_COLOR_ATTACHMENT0, texture);
+//    gl::glReadBuffer(gl::GLenum::GL_COLOR_ATTACHMENT0);
+//    gl::glPixelStorei(gl::GLenum::GL_UNPACK_ALIGNMENT, 1);
 
 //    float data[4];
-//    glReadPixels(x, fbo->height()-y, 1, 1, GL_RGBA, GL_FLOAT, data);
+//    gl::glReadPixels(x, fbo->height()-y, 1, 1, gl::GLenum::GL_RGBA, gl::GLenum::GL_FLOAT, data);
 //    fbo->release();
 
 //    m_pass->setActive(status);
@@ -227,14 +229,14 @@ glm::dvec3 PipelinePainter::get3DPoint(unsigned int x, unsigned int y)
 //        return glm::dvec3(0.0f,0.0f,0.0f);
 
 //    fbo->bind();
-//    glFlush();
-//    glFinish();
-//    // glReadBuffer(GL_COLOR_ATTACHMENT0);
-//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//    gl::glFlush();
+//    gl::glFinish();
+//    // gl::glReadBuffer(gl::GLenum::GL_COLOR_ATTACHMENT0);
+//    gl::glPixelStorei(gl::GLenum::GL_UNPACK_ALIGNMENT, 1);
 
 //    float z;
 //    y = fbo->height()-y;
-//    glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
+//    gl::glReadPixels(x, y, 1, 1, gl::GLenum::GL_DEPTH_COMPONENT, gl::GLenum::GL_FLOAT, &z);
 //    fbo->release();
 
 //    m_pass->setActive(status);
@@ -259,14 +261,14 @@ glm::ivec2 PipelinePainter::get2DPoint(unsigned int x, unsigned int y)
 //        return glm::dvec3(0.0f,0.0f,0.0f);
 
 //    fbo->bind();
-//    glFlush();
-//    glFinish();
-//    // glReadBuffer(GL_COLOR_ATTACHMENT0);
-//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//    gl::glFlush();
+//    gl::glFinish();
+//    // gl::glReadBuffer(gl::GLenum::GL_COLOR_ATTACHMENT0);
+//    gl::glPixelStorei(gl::GLenum::GL_UNPACK_ALIGNMENT, 1);
 
 //    float z;
 //    y = fbo->height()-y;
-//    glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
+//    gl::glReadPixels(x, y, 1, 1, gl::GLenum::GL_DEPTH_COMPONENT, gl::GLenum::GL_FLOAT, &z);
 //    fbo->release();
 
 //    m_pass->setActive(status);
@@ -287,32 +289,14 @@ void PipelinePainter::selectionChanged(QMap<unsigned int, Node *> selectedNodes)
 //    m_selectionBBox->urb();
 }
 
-glm::dvec3 PipelinePainter::unproject(float x, float y, float z)
+glm::dvec3 PipelinePainter::unproject(double x, double y, double z)
 {
-    GLdouble modelview[16];
-    GLdouble projection[16];
-    GLint viewport[4];
+    glm::dmat4 viewMat = glm::dmat4(camera()->view());
+    glm::dmat4 projectionMat = glm::dmat4(camera()->projection());
 
-    glm::mat4 viewMat = camera()->view();
-    glm::mat4 projectionMat = camera()->projection();
+    glm::ivec4 viewport = glm::ivec4(0, 0, camera()->viewport().x, camera()->viewport().y);
 
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            modelview[i*4+j] = viewMat[i][j];
-            projection[i*4+j] = projectionMat[i][j];
-        }
-    }
-
-    viewport[0] = viewport[1] = 0;
-    viewport[2] = camera()->viewport().x;
-    viewport[3] = camera()->viewport().y;
-
-    glm::dvec3 position;
-    gluUnProject( x, y, z, modelview, projection, viewport, &position.x, &position.y, &position.z );
-
-    return position;
+    return glm::unProject(glm::dvec3(x, y, z), viewMat, projectionMat, viewport);
 }
 
 const ScreenQuad * PipelinePainter::screenQuad()

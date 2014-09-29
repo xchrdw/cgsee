@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-#include <core/gpuquery.h>
+#include <globjects/globjects.h>
 
 MonoCamera::MonoCamera(const QString & name, Projection * projection)
 :   AbstractCamera(name, projection)

@@ -1,8 +1,6 @@
 
 #include <core/scenegraph/defaultdrawmethod.h>
 
-#include <GL/glew.h>
-
 #include <core/aabb.h>
 #include <core/bufferobject.h>
 #include <core/program.h>
@@ -23,7 +21,7 @@ DefaultDrawMethod::~DefaultDrawMethod()
 {
 }
 
-// void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalGeometry & geometry, const GLenum mode)
+// void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalGeometry & geometry, const gl::GLenum mode)
 void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
 {
     PolygonalDrawable::t_geometryP geometry = drawable.geometry();
@@ -44,21 +42,21 @@ void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transfor
     materialCoeff[3] = glm::vec4(0,0,0,0);            //emission
     program.setUniform(MATERIAL_UNIFORM, materialCoeff);
     
-    glBindVertexArray(geometry->vao());
-    glError();
+    gl::glBindVertexArray(geometry->vao());
+
     
-    glEnable(GL_DEPTH_TEST);
-    //     glEnable(GL_CULL_FACE);
-    //     glCullFace(GL_BACK);
+    gl::glEnable(gl::GLenum::GL_DEPTH_TEST);
+    //     gl::glEnable(gl::GLenum::GL_CULL_FACE);
+    //     gl::glCullFace(gl::GLenum::GL_BACK);
     
     for( const auto & bo : geometry->elementArrayBOs() )
         bo->draw( drawable.mode() );
     
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+    gl::glDisable(gl::GLenum::GL_DEPTH_TEST);
+    gl::glDisable(gl::GLenum::GL_CULL_FACE);
     
-    glBindVertexArray(0);
-    glError();
+    gl::glBindVertexArray(0);
+
     
     program.release();
 }

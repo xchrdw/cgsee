@@ -7,7 +7,6 @@ message(STATUS "Lib ${target}")
 #
 
 find_package(GLM        REQUIRED)
-find_package(GLEW       REQUIRED)
 find_package(OpenGL     REQUIRED)
 find_package(ASSIMP     REQUIRED)
 find_package(GLOBJECTS       REQUIRED)
@@ -23,10 +22,9 @@ find_package(libzeug    REQUIRED)
 
 include_directories(
     ${ASSIMP_INCLUDE_DIRS}
-    ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
     ${LIBZEUG_INCLUDES}
-    ${GLOW_INCLUDES}
+    ${GLOBJECTS_INCLUDES}
 )
 
 include_directories(
@@ -42,11 +40,10 @@ include_directories(
 set(libs
     ${ASSIMP_LIBRARIES}
     ${OPENGL_LIBRARY}
-    ${GLEW_LIBRARY}
     ${LIBZEUG_REFLECTION_LIBRARY}
     ${LIBZEUG_PROPERTYGUI_LIBRARY}
     ${LIBZEUG_SIGNAL_LIBRARY}
-    ${GLOW_LIBRARIES}
+    ${GLOBJECTS_LIBRARIES}
     core
 )
 

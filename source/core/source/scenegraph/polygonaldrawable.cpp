@@ -1,8 +1,6 @@
 
 #include <core/scenegraph/polygonaldrawable.h>
 
-#include <GL/glew.h>
-
 #include <core/aabb.h>
 #include <core/bufferobject.h>
 #include <core/program.h>
@@ -21,7 +19,7 @@ namespace
 PolygonalDrawable::PolygonalDrawable(const QString & name)
 :   Node( name )
 ,   m_geometry( std::shared_ptr<PolygonalGeometry>())
-,   m_mode( GL_TRIANGLES )
+,   m_mode( gl::GLenum::GL_TRIANGLES )
 ,   m_drawMethod( new DefaultDrawMethod )
 {
 }

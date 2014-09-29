@@ -1,10 +1,12 @@
 
 #include <core/screenquad.h>
 
+#include <glbinding/glbinding.h>
+#include <globjects/globjects.h>
+
 #include <core/bufferobject.h>
 #include <core/program.h>
 #include <core/shader.h>
-#include <core/gpuquery.h>
 
 
 ScreenQuad::ScreenQuad()
@@ -19,8 +21,8 @@ ScreenQuad::~ScreenQuad()
     {
         delete m_vertexBO;
 
-        glDeleteVertexArrays(1, &m_vao);
-        glError();
+        gl::glDeleteVertexArrays(1, &m_vao);
+    
     }
 }
 
@@ -29,7 +31,7 @@ void ScreenQuad::initialize(const Program & program) const
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
 
-    static const GLfloat vertices[] =
+    static const gl::GLfloat vertices[] =
     {
         +1.f, -1.f
     ,   +1.f, +1.f
@@ -37,25 +39,25 @@ void ScreenQuad::initialize(const Program & program) const
     ,   -1.f, +1.f
     };
 
-    glGenVertexArrays(1, &m_vao);
-    glError();
-    glBindVertexArray(m_vao);                                                                  
-    glError();
+    gl::glGenVertexArrays(1, &m_vao);
+
+    gl::glBindVertexArray(m_vao);                                                                  
+
 
     // setup array buffer
 
     if(!m_vertexBO)
     {
-        m_vertexBO = new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-	    m_vertexBO->data<GLfloat>(vertices, 8, GL_FLOAT, 2);
+        m_vertexBO = new BufferObject(gl::GLenum::GL_ARRAY_BUFFER, gl::GLenum::GL_STATIC_DRAW);
+	    m_vertexBO->data<gl::GLfloat>(vertices, 8, gl::GLenum::GL_FLOAT, 2);
     }
 
     // bind all buffers to their attributes
 
     m_vertexBO->bind(program.attributeLocation("a_vertex"));
 
-    glBindVertexArray(0);
-    glError();
+    gl::glBindVertexArray(0);
+
 }
 
 void ScreenQuad::draw(const Program & program) const
@@ -63,23 +65,23 @@ void ScreenQuad::draw(const Program & program) const
     if(-1 == m_vao)
         initialize(program);
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    gl::glClear(gl::GL_COLOR_BUFFER_BIT);
 
     program.use();
 
-    glBindVertexArray(m_vao);                                                                  
-    glError();
+    gl::glBindVertexArray(m_vao);                                                                  
 
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glDepthMask(GL_FALSE);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glError();
+    gl::glDisable(gl::GLenum::GL_DEPTH_TEST);
+    gl::glEnable(gl::GLenum::GL_CULL_FACE);
+    gl::glDepthMask(gl::GL_FALSE);
 
-    glDisable(GL_CULL_FACE);
-    glDepthMask(GL_TRUE);
+    gl::glDrawArrays(gl::GLenum::GL_TRIANGLE_STRIP, 0, 4);
 
-    glBindVertexArray(0);
-    glError();
+
+    gl::glDisable(gl::GLenum::GL_CULL_FACE);
+    gl::glDepthMask(gl::GL_TRUE);
+
+    gl::glBindVertexArray(0);
+
 }

@@ -1,14 +1,12 @@
 
 #include <core/shader.h>
 
-#include <GL/glew.h>
-
 #include <map>
 #include <cassert>
 #include <iostream>
 
-
-#include <core/gpuquery.h>
+#include <glbinding/glbinding.h>
+#include <globjects/globjects.h>
 #include <core/program.h>
 
 
@@ -19,19 +17,19 @@ const Shader::t_typeStrings Shader::initializeTypeStrings()
 {
     t_typeStrings typeStrings;
 
-    typeStrings[GL_TESS_EVALUATION_SHADER] = "GL_TESS_EVALUATION_SHADER";
-    typeStrings[GL_TESS_CONTROL_SHADER]    = "GL_TESS_CONTROL_SHADER";
+    typeStrings[gl::GLenum::GL_TESS_EVALUATION_SHADER] = "GL_TESS_EVALUATION_SHADER";
+    typeStrings[gl::GLenum::GL_TESS_CONTROL_SHADER]    = "GL_TESS_CONTROL_SHADER";
 #ifdef GL_COMPUTE_SHADER
-    typeStrings[GL_COMPUTE_SHADER]         = "GL_COMPUTE_SHADER";
+    typeStrings[gl::GLenum::GL_COMPUTE_SHADER]         = "GL_COMPUTE_SHADER";
 #endif
-    typeStrings[GL_FRAGMENT_SHADER]        = "GL_FRAGMENT_SHADER";
-    typeStrings[GL_GEOMETRY_SHADER]        = "GL_GEOMETRY_SHADER";
-    typeStrings[GL_VERTEX_SHADER]          = "GL_VERTEX_SHADER";
+    typeStrings[gl::GLenum::GL_FRAGMENT_SHADER]        = "GL_FRAGMENT_SHADER";
+    typeStrings[gl::GLenum::GL_GEOMETRY_SHADER]        = "GL_GEOMETRY_SHADER";
+    typeStrings[gl::GLenum::GL_VERTEX_SHADER]          = "GL_VERTEX_SHADER";
 
     return typeStrings;
 }
 
-Shader::Shader(const GLenum type)
+Shader::Shader(const gl::GLenum type)
 :   m_type(type)
 ,   m_shader(-1)
 ,   m_compiled(false)
@@ -39,16 +37,16 @@ Shader::Shader(const GLenum type)
     if(typeStrings.end() == typeStrings.find(type))
         qCritical("Shader type %i is not supported.", type);
 
-    m_shader = glCreateShader(type);
-    glError();
+    m_shader = gl::glCreateShader(type);
+
 }
     
 Shader::~Shader()
 {
     if(isShader())
     {
-        glDeleteShader(m_shader);
-        glError();
+        gl::glDeleteShader(m_shader);
+    
 
         m_shader = 0;
     }
@@ -66,30 +64,30 @@ const bool Shader::setSource(
     m_source = source;
 
     const QByteArray bytes(m_source.toLocal8Bit());
-    const GLchar * chr(bytes.constData());
+    const gl::GLchar * chr(bytes.constData());
 
-    glShaderSource(m_shader, 1, &chr, nullptr);
-    glError();
-    glCompileShader(m_shader);
-    glError();
+    gl::glShaderSource(m_shader, 1, &chr, nullptr);
 
-    GLint status(GL_FALSE);
-    glGetShaderiv(m_shader, GL_COMPILE_STATUS, &status);
+    gl::glCompileShader(m_shader);
+
+
+    gl::GLint status(GL_FALSE);
+    gl::glGetShaderiv(m_shader, gl::GLenum::GL_COMPILE_STATUS, &status);
 
     m_compiled = (GL_TRUE == status);
     m_log = "";
 
     if(!m_compiled)
     {
-        GLint maxLength(0);
-        GLint logLength(0);
+        gl::GLint maxLength(0);
+        gl::GLint logLength(0);
 
-        glGetShaderiv(m_shader, GL_INFO_LOG_LENGTH, &maxLength);
-        glError();
+        gl::glGetShaderiv(m_shader, gl::GLenum::GL_INFO_LOG_LENGTH, &maxLength);
+    
 
         GLchar *log = new GLchar[maxLength];
-        glGetShaderInfoLog(m_shader, maxLength, &logLength, log);
-        glError();
+        gl::glGetShaderInfoLog(m_shader, maxLength, &logLength, log);
+    
 
         m_log = log;
 
@@ -123,12 +121,12 @@ void Shader::update()
         (*i)->invalidate();
 }
 
-const GLenum Shader::type() const
+const gl::GLenum Shader::type() const
 {
     return m_type;
 }
 
-const GLuint Shader::shader() const
+const gl::GLuint Shader::shader() const
 {
     return m_shader;
 }

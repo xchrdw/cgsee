@@ -3,19 +3,7 @@
 
 #include <cassert>
 
-#include <GL/glew.h>
-
 #include <QGLFormat>
-
-#include <core/gpuquery.h>
-
-#ifdef WIN32
-
-#elif defined(__APPLE__)
-
-#else
-#include <GL/glx.h>
-#endif
 
 
 const GLFormat::t_minorsByMajor GLFormat::m_validGLVersions 
@@ -485,7 +473,7 @@ const bool GLFormat::verifySwapInterval(
 
     if(!result)
     {
-        glError();
+    
         qWarning("Setting swap interval to %i failed.", requestedInterval);
     }
 

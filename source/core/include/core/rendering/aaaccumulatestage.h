@@ -2,7 +2,6 @@
 
 #include <core/core_api.h>
 
-
 #include <core/rendering/abstractpostprocessingstage.h>
 
 

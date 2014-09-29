@@ -7,7 +7,7 @@
 #include <QDebug>
 
 #include <core/program.h>
-#include <core/gpuquery.h>
+#include <globjects/globjects.h>
 #include <core/viewfrustum.h>
 
 #include <core/camera/monocamera.h>

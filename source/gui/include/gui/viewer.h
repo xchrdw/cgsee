@@ -6,7 +6,7 @@
 #ifdef WIN32
 #include <windows.h>
 #else
-//from <GL/glew.h>
+//from <GL/gl ew.h>
 typedef struct __GLXcontextRec *GLXContext;
 #endif
 

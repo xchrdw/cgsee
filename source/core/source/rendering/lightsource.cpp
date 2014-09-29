@@ -20,9 +20,9 @@
 //    m_lightcam->setZFar(camera->zFar());
 //    m_lightcam->setZNear(camera->zNear());
 
-//    m_program->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/shadows/lightsource.frag"));
+//    m_program->attach(new FileAssociatedShader(gl::GLenum::GL_FRAGMENT_SHADER, "data/shadows/lightsource.frag"));
 //    m_program->attach(depth_util);
-//    m_program->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/shadows/lightsource.vert"));
+//    m_program->attach(new FileAssociatedShader(gl::GLenum::GL_VERTEX_SHADER, "data/shadows/lightsource.vert"));
 //}
 
 

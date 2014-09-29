@@ -2,6 +2,7 @@
 #include <core/objloader.h>
 
 #include <glm/glm.hpp>
+#include <glbinding/glbinding.h>
 
 #include <cstring>
 #include <iostream>
@@ -212,9 +213,9 @@ inline void ObjLoader::parseF(
 
     const e_FaceFormat format(parseFaceFormat(line));
 
-    group.foffs.push_back(static_cast<GLuint>(group.vis.size()));
+    group.foffs.push_back(static_cast<gl::GLuint>(group.vis.size()));
 
-    GLuint i;
+    gl::GLuint i;
 
     while(line >> i)
     {
@@ -345,10 +346,10 @@ PolygonalDrawable * ObjLoader::createPolygonalDrawable(
 
     auto geom = make_shared<PolygonalGeometry>( registry );
 
-    const GLuint size(static_cast<GLuint>(group.vis.size()));
+    const gl::GLuint size(static_cast<gl::GLuint>(group.vis.size()));
     geom->resize(size);
 
-    for(GLuint i = 0; i < size; ++i)
+    for(gl::GLuint i = 0; i < size; ++i)
     {
         // add vertex and its new index based on obj index
 
@@ -371,7 +372,7 @@ PolygonalDrawable * ObjLoader::createPolygonalDrawable(
     PolygonalDrawable * drawable(new PolygonalDrawable(object.qname()));
     drawable->setGeometry(geom);
     // TODO: support other modes here!
-    drawable->setMode(GL_TRIANGLES);
+    drawable->setMode(gl::GLenum::GL_TRIANGLES);
 
     return drawable;
 }

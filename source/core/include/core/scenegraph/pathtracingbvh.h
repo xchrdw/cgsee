@@ -2,8 +2,6 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
-
 #include <memory>
 #include <vector>
 
@@ -19,7 +17,7 @@ public:
     PathTracingBVH();
     ~PathTracingBVH();
     
-    void geometryToTexture(GLuint textureSlot);
+    void geometryToTexture(gl::GLuint textureSlot);
 
     void buildBVHFromObjectsHierarchy(Node *node);
     void addToGeometry(Node *node);

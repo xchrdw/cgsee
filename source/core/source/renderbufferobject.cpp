@@ -1,23 +1,23 @@
 
 #include <core/renderbufferobject.h>
 
-#include <GL/glew.h>
+#include <glbinding/glbinding.h>
 
 RenderBufferObject::RenderBufferObject()
     : m_buffer(0)
-    , m_internalFormat(GL_DEPTH32F_STENCIL8)
+    , m_internalFormat(gl::GLenum::GL_DEPTH32F_STENCIL8)
 {
 
 }
 
-RenderBufferObject::RenderBufferObject(GLenum internalFormat)
+RenderBufferObject::RenderBufferObject(gl::GLenum internalFormat)
     : m_buffer(0)
     , m_internalFormat(internalFormat)
 {
 
 }
 
-RenderBufferObject::RenderBufferObject(GLuint width, GLuint height, GLenum internalFormat)
+RenderBufferObject::RenderBufferObject(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat)
     : m_buffer(0)
     , m_width(width)
     , m_height(height)
@@ -36,7 +36,7 @@ bool RenderBufferObject::isInitialized()
     return m_buffer != 0;
 }
 
-void RenderBufferObject::configure(GLuint width, GLuint height, GLenum internalFormat)
+void RenderBufferObject::configure(gl::GLuint width, gl::GLuint height, gl::GLenum internalFormat)
 {
     m_width = width;
     m_height = height;
@@ -46,7 +46,7 @@ void RenderBufferObject::configure(GLuint width, GLuint height, GLenum internalF
     generateGLRenderBuffer();
 }
 
-void RenderBufferObject::resize(GLuint width, GLuint height)
+void RenderBufferObject::resize(gl::GLuint width, gl::GLuint height)
 {
     m_width = width;
     m_height = height;
@@ -55,30 +55,30 @@ void RenderBufferObject::resize(GLuint width, GLuint height)
     generateGLRenderBuffer();
 }
 
-void RenderBufferObject::attachTo(GLenum attachment)
+void RenderBufferObject::attachTo(gl::GLenum attachment)
 {
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, m_buffer);
-    glError();
+    gl::glFramebufferRenderbuffer(gl::GLenum::GL_FRAMEBUFFER, attachment, gl::GLenum::GL_RENDERBUFFER, m_buffer);
+
 }
 
 void RenderBufferObject::generateGLRenderBuffer()
 {
-    glGenRenderbuffers(1, &m_buffer);
-    glError();
-    glBindRenderbuffer(GL_RENDERBUFFER, m_buffer);
-    glError();
-    glRenderbufferStorage(GL_RENDERBUFFER, m_internalFormat, m_width, m_height);
-    glError();
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    glError();
+    gl::glGenRenderbuffers(1, &m_buffer);
+
+    gl::glBindRenderbuffer(gl::GLenum::GL_RENDERBUFFER, m_buffer);
+
+    gl::glRenderbufferStorage(gl::GLenum::GL_RENDERBUFFER, m_internalFormat, m_width, m_height);
+
+    gl::glBindRenderbuffer(gl::GLenum::GL_RENDERBUFFER, 0);
+
 }
 
 void RenderBufferObject::deleteGLRenderBuffer()
 {
     if (m_buffer != 0)
     {
-        glDeleteRenderbuffers(1, &m_buffer);
-        glError();
+        gl::glDeleteRenderbuffers(1, &m_buffer);
+    
     }
 }
 

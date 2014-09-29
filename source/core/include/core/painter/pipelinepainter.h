@@ -2,6 +2,7 @@
 
 #include <core/core_api.h>
 
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 //TODO glow integration #include <glow/FrameBufferObject.h>
@@ -104,7 +105,7 @@ public:
     virtual void clearPipeline();
 
 protected:
-    glm::dvec3 unproject(float x, float y, float z);
+    glm::dvec3 unproject(double x, double y, double z);
     void clearRenderStages();
 
     void recalculateTransform();
