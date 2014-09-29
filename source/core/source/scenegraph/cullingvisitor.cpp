@@ -7,7 +7,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <core/framebufferobject.h>
 #include <core/camera/abstractcamera.h>
 #include <core/scenegraph/node.h>
 #include <core/viewfrustum.h>

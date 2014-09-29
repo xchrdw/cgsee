@@ -182,7 +182,7 @@ void PipelinePainter::setViewFrustumCulling(bool viewFrustumCullingEnabled)
 
 bool PipelinePainter::isViewFrustumCullingEnabled()
 {
-
+    return true;
 }
 
 // TODO end

@@ -2,7 +2,6 @@
 #include <core/screenquad.h>
 
 #include <core/bufferobject.h>
-#include <core/framebufferobject.h>
 #include <core/program.h>
 #include <core/shader.h>
 #include <core/gpuquery.h>
