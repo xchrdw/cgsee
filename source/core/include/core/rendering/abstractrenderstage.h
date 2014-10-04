@@ -10,8 +10,8 @@ class Group;
 class Program;
 class PipelinePainter;
 
-namespace glo{
-    class FrameBufferObject;
+namespace globjects{
+    class Framebuffer;
     class Program;
 }
 
@@ -26,7 +26,7 @@ public:
     virtual void render() = 0;
 
 protected:
-    void drawScene(const glm::mat4 & transform, glo::Program * program);
+    void drawScene(const glm::mat4 & transform, globjects::Program * program);
 
     bool isSceneInvalid();
     bool isViewInvalid();
@@ -38,6 +38,6 @@ protected:
 protected:
     PipelinePainter & m_painter;
 
-    glo::FrameBufferObject *m_fbo;
+    globjects::Framebuffer *m_fbo;
     bool m_fboIsBound;
 };

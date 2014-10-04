@@ -5,9 +5,9 @@
 
 class RenderBufferObject;
 
-namespace glo{
+namespace globjects{
     class Texture;
-    class RenderBufferObject;
+    class Renderbuffer;
 }
 
 class CORE_API RenderStage : public AbstractSceneRenderStage
@@ -22,7 +22,7 @@ public:
     virtual void resize(const int width, const int height) override;
 
 protected:
-    glo::Texture * m_normalz;
-    glo::Texture * m_colorId;
-    glo::RenderBufferObject * m_depth;
+    globjects::Texture * m_normalz;
+    globjects::Texture * m_colorId;
+    globjects::Renderbuffer * m_depth;
 };

@@ -36,7 +36,7 @@
 #include <core/glformat.h>
 #include <core/timer.h>
 
-#include <gui/QtCanvas.h>
+#include <gui/CanvasImplementation.h>
 
 
 Canvas::Canvas(
@@ -50,7 +50,7 @@ Canvas::Canvas(
 ,   m_eventHandler(nullptr)
 ,   m_timer(new QBasicTimer)
 ,   m_format(format)
-,   m_qtCanvas(new QtCanvas(format))
+,   m_qtCanvas(new CanvasImplementation(format))
 ,   m_qtCanvasWidget(QWidget::createWindowContainer(m_qtCanvas, this))
 ,   m_isInitialized(false)
 {
@@ -74,28 +74,23 @@ void Canvas::initializeGL()
 {
     m_qtCanvas->makeCurrent();
     
-    if (!glo::isInitialized())
+    globjects::init();
+    globjects::DebugMessage::enable();
+
+    qDebug("Vendor: %s", qPrintable(GPUQuery::vendor()));
+    qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));
+    qDebug("Version: %s", qPrintable(GPUQuery::version()));
+
+    if (!GPUQuery::isCoreProfile())
     {
-        if (!glo::init())
-        {
-            qCritical("Glow failed to initialized: %s\n", qPrintable(QString::fromStdString(glo::Error::get().name())));
-        }
-
-        glo::DebugMessage::enable();
-
-        qDebug("Vendor: %s", qPrintable(GPUQuery::vendor()));
-        qDebug("Renderer: %s", qPrintable(GPUQuery::renderer()));
-        qDebug("Version: %s", qPrintable(GPUQuery::version()));
-
-        if (!GPUQuery::isCoreProfile())
-        {
-            qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
-            qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
-        }
+        qDebug("Memory (total):     %i MiB", GPUQuery::totalMemory() / 1024);
+        qDebug("Memory (available): %i MiB\n", GPUQuery::availableMemory() / 1024);
     }
     
     gl::glClearColor(1.f, 1.f, 1.f, 1.f);
     glError();
+
+    m_isInitialized = true;
 }
 
 void Canvas::resizeEvent(QResizeEvent *event)
@@ -103,7 +98,7 @@ void Canvas::resizeEvent(QResizeEvent *event)
     if (!m_isInitialized)
         initializeGL();
     
-    m_qtCanvas->makeCurrent();
+    makeCurrent();
     glError();
 
     if (m_painter)
@@ -131,7 +126,7 @@ void Canvas::paintGL()
 {
     if (!m_isInitialized)
         initializeGL();
-    m_qtCanvas->makeCurrent();
+    makeCurrent();
     glError();
     gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
     glError();
@@ -411,5 +406,7 @@ void Canvas::repaint()
 
 void Canvas::makeCurrent()
 {
+    if (!m_isInitialized) initializeGL();
     m_qtCanvas->makeCurrent();
+    globjects::setCurrentContext();
 }

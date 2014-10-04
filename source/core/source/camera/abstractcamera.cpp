@@ -205,7 +205,7 @@ glm::vec3 AbstractCamera::up() const
     return glm::row(m_view, 1).xyz();
 }
 
-void AbstractCamera::setUniformsIn(glo::Program & program)
+void AbstractCamera::setUniformsIn(globjects::Program & program)
 {
     program.setUniform(PROJECTION_UNIFORM, projection());
     program.setUniform(VIEWPORT_UNIFORM, m_projection->viewport());

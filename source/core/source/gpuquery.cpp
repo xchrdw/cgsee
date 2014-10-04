@@ -89,10 +89,7 @@ const QString GPUQuery::version()
 
 const bool GPUQuery::isCoreProfile()
 {
-    if (glo::isInitialized())
-        return glo::isCoreProfile();
-    else
-        return false;
+    return globjects::isCoreProfile();
 }
 
 const bool GPUQuery::error(
@@ -110,7 +107,7 @@ const bool GPUQuery::error(
 
 const bool GPUQuery::extensionSupported(const char * extension)
 {
-    return glo::hasExtension(std::string(extension));
+    return globjects::hasExtension(std::string(extension));
 }
 
 const bool GPUQuery::extensionSupported(const QString & extension)

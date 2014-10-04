@@ -20,5 +20,5 @@ public:
     virtual void render() override;
 
 protected:
-    glo::Program * m_program;
+    globjects::Program * m_program;
 };

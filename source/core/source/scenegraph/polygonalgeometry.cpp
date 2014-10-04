@@ -164,7 +164,7 @@ void PolygonalGeometry::resize(unsigned int size)
     inds->resize(size);
 }
 
-void PolygonalGeometry::initialize(glo::Program & program)
+void PolygonalGeometry::initialize(globjects::Program & program)
 {
     if(!m_arrayBOsByAttribute.empty() && !m_elementArrayBOs.empty())
         return;

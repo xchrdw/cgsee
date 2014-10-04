@@ -13,7 +13,7 @@
 AbstractPostProcessingStage::AbstractPostProcessingStage(PipelinePainter & painter)
     : AbstractRenderStage(painter)
 {
-	m_program = new glo::Program();
+	m_program = new globjects::Program();
 }
 
 AbstractPostProcessingStage::~AbstractPostProcessingStage(void)

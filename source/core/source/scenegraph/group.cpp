@@ -19,7 +19,7 @@ Group::~Group()
         removeLast();
 }
 
-void Group::draw(glo::Program & program, const glm::mat4 & transform)
+void Group::draw(globjects::Program & program, const glm::mat4 & transform)
 {
 }
 

@@ -10,7 +10,7 @@
 
 class PolygonalDrawable;
 
-namespace glo{
+namespace globjects{
     class Program;
 }
 
@@ -20,7 +20,7 @@ public:
     DefaultDrawMethod();
     virtual ~DefaultDrawMethod();
 
-    virtual void draw(glo::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const override;
+    virtual void draw(globjects::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const override;
     
 protected:
     glm::vec4 colorVectorFromId(const unsigned int id) const;

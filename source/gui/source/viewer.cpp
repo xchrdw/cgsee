@@ -39,7 +39,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <QStandardItem>
 #include <QSurfaceFormat>
 
-#include <globjects-base/File.h>
+#include <globjects/base/File.h>
 
 #include <propertyguizeug/PropertyBrowser.h>
 
@@ -75,7 +75,6 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/scenegraph/groundplane.h>
 
 #include <core/material/material.h>
-
 
 namespace
 {
@@ -208,6 +207,8 @@ void Viewer::initializeMaterial()
 
     m_propertyMaterialBrowser = new propertyguizeug::PropertyBrowser(obj);
     m_materialCanvas = new Canvas(m_qtCanvas->format());
+    m_materialCanvas->makeCurrent();
+
     // ToDo: add Vertical splitter layout and handle this 
     m_materialCanvas->setMinimumHeight(128);
 
@@ -410,6 +411,7 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
 void Viewer::initialize(const GLFormat & format)
 {
     m_qtCanvas = new Canvas(format, this);
+    m_qtCanvas->makeCurrent();
     setCentralWidget(m_qtCanvas);
 
     m_navigationHistory = m_qtCanvas->navigationHistory();
@@ -500,7 +502,7 @@ void Viewer::on_enableCullingAction_triggered() {
 
 void Viewer::on_reloadAllShadersAction_triggered()
 {
-    glo::File::reloadAll();
+    globjects::File::reloadAll();
 
     // Bugfix for https://github.com/hpicgs/cgsee/issues/162
     painter()->resize(m_qtCanvas->width(), m_qtCanvas->height());

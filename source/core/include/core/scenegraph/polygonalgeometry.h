@@ -16,7 +16,7 @@ class AxisAlignedBoundingBox;
 class BufferObject;
 class GeometryOptimizer;
 
-namespace glo{
+namespace globjects{
     class Program;
 }
 
@@ -46,7 +46,7 @@ public:
 
     void resize(unsigned int size);
 
-    void initialize(glo::Program & program);
+    void initialize(globjects::Program & program);
     
     inline gl::GLuint vao() { return m_vao; }
     t_bufferObjects & elementArrayBOs() { return m_elementArrayBOs; } // TODO: perhaps as const.

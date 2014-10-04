@@ -18,7 +18,7 @@ class Timer;
 class AbstractPainter;
 class AbstractEventHandler;
 class AbstractCamera;
-class QtCanvas;
+class CanvasImplementation;
 
 /**
 *   @brief A canvas where can be drawn on with OpenGL.
@@ -92,7 +92,7 @@ protected:
     NavigationHistory * m_navigationHistory;
     AbstractPainter * m_painter;
     AbstractEventHandler * m_eventHandler;
-    QtCanvas * m_qtCanvas;
+    CanvasImplementation * m_qtCanvas;
     QWidget * m_qtCanvasWidget;
 
     int m_refreshTimeMSec;

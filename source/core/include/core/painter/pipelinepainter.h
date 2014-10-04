@@ -26,7 +26,7 @@ class AbstractRenderStage;
 class PipelineBuilder;
 class AbstractCamera;
 
-namespace glo{
+namespace globjects{
     class Program;
     class Texture;
 }
@@ -76,10 +76,10 @@ public:
     bool isSceneInvalid();
     bool isViewInvalid();
 
-    glo::Texture * getTexture(QString name);
+    globjects::Texture * getTexture(QString name);
     bool textureExists(QString name);
-    void setTexture(QString name, glo::Texture * texture);
-    bool addTexture(QString name, glo::Texture * texture);
+    void setTexture(QString name, globjects::Texture * texture);
+    bool addTexture(QString name, globjects::Texture * texture);
     void removeTexture(QString name);
 
 protected:
@@ -93,11 +93,11 @@ protected:
     QList<AbstractRenderStage *> m_stages;
 
     QString m_samplerToDisplay;
-    QMap<QString, glo::Texture*> m_textures;
+    QMap<QString, globjects::Texture*> m_textures;
 
     ScreenQuad * m_quad;
-    glo::Program * m_flush;
+    globjects::Program * m_flush;
 
     //for CoordinateProvider
-    //glo::FrameBufferObject m_coordFBO;
+    //globjects::Framebuffer m_coordFBO;
 };
