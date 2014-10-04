@@ -76,11 +76,52 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/material/material.h>
 
 
+//test begin
+#include <core/screenquad.h>
+#include <globjects/Program.h>
+#include <globjects/Shader.h>
+#include <glbinding/gl/enum.h>
+//test end
+
 namespace
 {
     const QString SETTINGS_GEOMETRY ("Geometry");
     const QString SETTINGS_STATE    ("State");
     const QString SETTINGS_SAVED_VIEWS    ("SavedViews");
+
+    class TestPainter : public QObject, public AbstractPainter
+    {
+    public: 
+        ScreenQuad *m_quad;
+        globjects::Program *m_program;
+
+        TestPainter()
+            :AbstractPainter()
+            , m_quad(new ScreenQuad())
+            , m_program(new globjects::Program())
+        {
+        };
+
+        virtual ~TestPainter(){
+            delete m_quad;
+        };
+
+        virtual bool initialize()
+        {
+            m_program->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/test.frag")));
+            m_program->attach(new globjects::Shader(gl::GL_VERTEX_SHADER, new globjects::File("data/screenquad.vert")));
+            return true;
+        }
+
+        virtual void postShaderRelinked(){};
+
+        virtual void paint()
+        {
+            AbstractPainter::paint();
+            m_quad->draw(*m_program);
+        }
+
+    };
 }
 
 
@@ -204,6 +245,8 @@ void Viewer::initializeMaterial()
 
     m_propertyMaterialBrowser = new propertyguizeug::PropertyBrowser(obj);
     m_materialCanvas = new Canvas(m_qtCanvas->format());
+    m_materialCanvas->makeCurrent();
+    m_materialCanvas->setPainter(new TestPainter());
     // ToDo: add Vertical splitter layout and handle this 
     m_materialCanvas->setMinimumHeight(128);
 
@@ -406,6 +449,7 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
 void Viewer::initialize(const GLFormat & format)
 {
     m_qtCanvas = new Canvas(format, this);
+    m_qtCanvas->makeCurrent();
     setCentralWidget(m_qtCanvas);
 
     m_navigationHistory = m_qtCanvas->navigationHistory();

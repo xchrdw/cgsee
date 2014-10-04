@@ -98,7 +98,7 @@ void Canvas::resizeEvent(QResizeEvent *event)
     if (!m_isInitialized)
         initializeGL();
     
-    m_qtCanvas->makeCurrent();
+    makeCurrent();
     glError();
 
     if (m_painter)
@@ -126,7 +126,7 @@ void Canvas::paintGL()
 {
     if (!m_isInitialized)
         initializeGL();
-    m_qtCanvas->makeCurrent();
+    makeCurrent();
     glError();
     gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
     glError();
@@ -406,5 +406,7 @@ void Canvas::repaint()
 
 void Canvas::makeCurrent()
 {
+    if (!m_isInitialized) initializeGL();
     m_qtCanvas->makeCurrent();
+    globjects::setCurrentContext();
 }
