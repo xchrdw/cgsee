@@ -7,7 +7,7 @@ float linstep(float low, float high, float v)
 
 float vsm(
 	vec4 worldCoord,
-	mat4 lightBiasedViewProjections[SHADOWMAP_COUNT],
+	mat4 lightBiasedViewProjections[8],
 	in sampler2DArray shadowmaps,
 	int layer)
 {
@@ -36,10 +36,10 @@ float vsm(
 int calculateLayer(
 	vec4 viewCoord,
 	int startIndex,
-	float farSplits[LAYER_COUNT])
+	float farSplits[4])
 {
 	int result = 0;
-	for (int i = 0; i < LAYER_COUNT; ++i)
+	for (int i = 0; i < 4; ++i)
 		if(-viewCoord.z < farSplits[i])
 		{
 			return startIndex + i;
@@ -51,10 +51,10 @@ int calculateLayer(
 float shadowing(
 	vec4 worldCoord, 									//shader
 	vec4 viewCoord,										//shader
-	mat4 lightBiasedViewProjections[SHADOWMAP_COUNT], 	//uniform
+	mat4 lightBiasedViewProjections[8], 				//uniform
 	in sampler2DArray shadowmaps, 						//uniform
 	int startIndex,										//light
-	float farSplits[LAYER_COUNT])						//uniform
+	float farSplits[4])									//uniform
 {
 	int index = calculateLayer(viewCoord, startIndex, farSplits);
 	float result = vsm(worldCoord, lightBiasedViewProjections, shadowmaps, index);

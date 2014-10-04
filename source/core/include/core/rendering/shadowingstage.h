@@ -13,7 +13,7 @@
 
 class AbstractCamera;
 
-namespace glo{
+namespace globjects{
     class FrameBufferObject;
     class Program;
     class Texture;    
@@ -43,18 +43,18 @@ protected:
     virtual void smoothShadowmaps();
 
 protected:
-    glo::Texture *m_shadowmaps;
-    glo::Texture *m_shadowmapsDepth;
-    glo::Texture *m_blurTexture;
-    glo::Program *m_blurHProgram;
-    glo::Program *m_blurVProgram;
-    glo::FrameBufferObject *m_blurHFBO;
-    glo::FrameBufferObject *m_blurVFBO;
+    globjects::Texture *m_shadowmaps;
+    globjects::Texture *m_shadowmapsDepth;
+    globjects::Texture *m_blurTexture;
+    globjects::Program *m_blurHProgram;
+    globjects::Program *m_blurVProgram;
+    globjects::Framebuffer *m_blurHFBO;
+    globjects::Framebuffer *m_blurVFBO;
 
-    glo::Program *m_testProgram;
-    glo::Texture *m_testTexture;
-    glo::Texture *m_testTextureDepth;
-    glo::FrameBufferObject *m_testFBO;
+    globjects::Program *m_testProgram;
+    globjects::Texture *m_testTexture;
+    globjects::Texture *m_testTextureDepth;
+    globjects::Framebuffer *m_testFBO;
 
     std::vector<glm::mat4> m_lightViewProjections;
     std::vector<glm::mat4> m_lightBiasedViewProjections;

@@ -86,7 +86,7 @@ void PipelinePainter::paint()
     if(!texture)
         return;
 
-    glo::Texture *lighting = getTexture("lighting");
+    globjects::Texture *lighting = getTexture("lighting");
     if (!lighting)
         return;
 

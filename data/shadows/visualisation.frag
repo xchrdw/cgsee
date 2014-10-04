@@ -1,8 +1,8 @@
 #version 150 core
 
 uniform sampler2DArray shadowmaps;
-uniform mat4 lightBiasedViewProjections[SHADOWMAP_COUNT];
-uniform float farSplits[LAYER_COUNT];
+uniform mat4 lightBiasedViewProjections[8];
+uniform float farSplits[4];
 
 in vec4 gl_FragCoord;
 in vec4 worldCoord;
@@ -12,10 +12,10 @@ out vec4 fragColor;
 float shadowing(
 	vec4 worldCoord,
 	vec4 viewCoord,
-	mat4 lightBiasedViewProjections[SHADOWMAP_COUNT],
+	mat4 lightBiasedViewProjections[8],
 	in sampler2DArray shadowmaps,
 	int startIndex,
-	float farSplits[LAYER_COUNT]);
+	float farSplits[4]);
 
 void main()
 {

@@ -11,11 +11,10 @@
 #include <glbinding/gl/functions.h>
 
 #include <globjects/globjects.h>
-#include <globjects/FrameBufferObject.h>
+#include <globjects/Framebuffer.h>
 #include <globjects/Program.h>
 #include <globjects/Texture.h>
-#include <globjects-base/File.h>
-#include <globjects-utils/StringTemplate.h>
+#include <globjects/base/File.h>
 
 #include <core/camera/abstractcamera.h>
 #include <core/camera/monocamera.h>
@@ -73,66 +72,50 @@ namespace
 
 ShadowingStage::ShadowingStage(PipelinePainter &painter)
 :   AbstractSceneRenderStage(painter)
-,   m_shadowmaps(glo::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
-,   m_shadowmapsDepth(glo::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
-,   m_blurTexture(glo::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
-,   m_blurHProgram(new glo::Program())
-,   m_blurVProgram(new glo::Program())
-,   m_blurHFBO(new glo::FrameBufferObject())
-,   m_blurVFBO(new glo::FrameBufferObject())
+,   m_shadowmaps(globjects::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
+,   m_shadowmapsDepth(globjects::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
+,   m_blurTexture(globjects::Texture::createDefault(gl::GL_TEXTURE_2D_ARRAY))
+,   m_blurHProgram(new globjects::Program())
+,   m_blurVProgram(new globjects::Program())
+,   m_blurHFBO(new globjects::Framebuffer())
+,   m_blurVFBO(new globjects::Framebuffer())
 //following members are only needed for visualisation of shadows, because no ligthingsystem exists
-, m_testFBO(new glo::FrameBufferObject())
-, m_testTexture(glo::Texture::createDefault())
-, m_testTextureDepth(glo::Texture::createDefault())
-, m_testProgram(new glo::Program())
+, m_testFBO(new globjects::Framebuffer())
+, m_testTexture(globjects::Texture::createDefault())
+, m_testTextureDepth(globjects::Texture::createDefault())
+, m_testProgram(new globjects::Program())
 {    
     m_painter.addTexture("shadowmaps", m_shadowmaps);
 
-    gloutils::StringTemplate* shadowmapCreationGeomString = new gloutils::StringTemplate(new glo::File("data/shadows/shadowmap_creation.geom"));
-    shadowmapCreationGeomString->replace("SHADOWMAP_COUNT_3", SHADOWMAP_COUNT * 3);
-    shadowmapCreationGeomString->replace("SHADOWMAP_COUNT_1", SHADOWMAP_COUNT);
+    m_program->attach(new globjects::Shader(gl::GL_VERTEX_SHADER, new globjects::File("data/shadows/shadowmap_creation.vert")));
+    m_program->attach(new globjects::Shader(gl::GL_GEOMETRY_SHADER, new globjects::File("data/shadows/shadowmap_creation.geom")));
+    m_program->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/shadows/shadowmap_creation.frag")));
 
-    m_program->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/shadowmap_creation.vert")));
-    m_program->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, shadowmapCreationGeomString));
-    m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/shadowmap_creation.frag")));
-
-    gloutils::StringTemplate* screenquadLayeredGeomString = new gloutils::StringTemplate(new glo::File("data/shadows/screenquad_layered.geom"));
-    screenquadLayeredGeomString->replace("LAYER_COUNT_3", SHADOWMAP_COUNT * 3);
-    screenquadLayeredGeomString->replace("LAYER_COUNT_1", SHADOWMAP_COUNT);
-
-    m_blurHProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
-    m_blurHProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, new gloutils::StringTemplate(screenquadLayeredGeomString)));
-    m_blurHProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/gauss_blur_5_h_layered.frag")));
+    m_blurHProgram->attach(new globjects::Shader(gl::GL_VERTEX_SHADER, new globjects::File("data/screenquad.vert")));
+    m_blurHProgram->attach(new globjects::Shader(gl::GL_GEOMETRY_SHADER, new globjects::File("data/shadows/screenquad_layered.geom")));
+    m_blurHProgram->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/shadows/gauss_blur_5_h_layered.frag")));
     
-    m_blurVProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
-    m_blurVProgram->attach(new glo::Shader(gl::GL_GEOMETRY_SHADER, screenquadLayeredGeomString));
-    m_blurVProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/shadows/gauss_blur_5_v_layered.frag")));
+    m_blurVProgram->attach(new globjects::Shader(gl::GL_VERTEX_SHADER, new globjects::File("data/screenquad.vert")));
+    m_blurVProgram->attach(new globjects::Shader(gl::GL_GEOMETRY_SHADER, new globjects::File("data/shadows/screenquad_layered.geom")));
+    m_blurVProgram->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/shadows/gauss_blur_5_v_layered.frag")));
 
     m_shadowmaps->image3D(0, gl::GL_RGBA32F, glm::ivec3(SHADOWMAP_SIZE, SHADOWMAP_SIZE, SHADOWMAP_COUNT), 0, gl::GL_RGBA, gl::GL_FLOAT, nullptr);
     m_shadowmapsDepth->image3D(0, gl::GL_DEPTH_COMPONENT32, glm::ivec3(SHADOWMAP_SIZE, SHADOWMAP_SIZE, SHADOWMAP_COUNT), 0, gl::GL_DEPTH_COMPONENT, gl::GL_UNSIGNED_INT, nullptr);
     m_blurTexture->image3D(0, gl::GL_RGBA32F, glm::ivec3(SHADOWMAP_SIZE, SHADOWMAP_SIZE, SHADOWMAP_COUNT), 0, gl::GL_RGBA, gl::GL_FLOAT, nullptr);    
 
-    m_fbo->bind();
+    m_fbo->bind(gl::GL_FRAMEBUFFER);
     m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_shadowmaps);
     m_fbo->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_shadowmapsDepth);
-    m_fbo->unbind();
+    m_fbo->unbind(gl::GL_FRAMEBUFFER);
 
     m_blurHFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_blurTexture);
     m_blurVFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_shadowmaps);
 
     //visualisation begin
     m_painter.addTexture("lighting", m_testTexture);
-    gloutils::StringTemplate* visualisationFragString = new gloutils::StringTemplate(new glo::File("data/shadows/visualisation.frag"));
-    visualisationFragString->replace("LAYER_COUNT", LAYER_COUNT);
-    visualisationFragString->replace("SHADOWMAP_COUNT", SHADOWMAP_COUNT);
-
-    gloutils::StringTemplate* shadowingGlslString = new gloutils::StringTemplate(new glo::File("data/shadows/shadowing.glsl"));
-    shadowingGlslString->replace("LAYER_COUNT", LAYER_COUNT);
-    shadowingGlslString->replace("SHADOWMAP_COUNT", SHADOWMAP_COUNT);
-
-    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, visualisationFragString));
-    m_testProgram->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, shadowingGlslString));
-    m_testProgram->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/shadows/visualisation.vert")));
+    m_testProgram->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/shadows/visualisation.frag")));
+    m_testProgram->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/shadows/shadowing.glsl")));
+    m_testProgram->attach(new globjects::Shader(gl::GL_VERTEX_SHADER, new globjects::File("data/shadows/visualisation.vert")));
 
     m_testFBO->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_testTexture);
     m_testFBO->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_testTextureDepth);
@@ -250,9 +233,9 @@ void ShadowingStage::render()
 
     gl::glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
     m_fbo->clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
-    m_fbo->bind();
+    m_fbo->bind(gl::GL_FRAMEBUFFER);
     drawScene(m_painter.camera()->viewProjection(), m_program);
-    m_fbo->unbind();
+    m_fbo->unbind(gl::GL_FRAMEBUFFER);
     
     smoothShadowmaps();
     gl::glViewport(0, 0, m_painter.camera()->viewport().x, m_painter.camera()->viewport().y);
@@ -264,9 +247,9 @@ void ShadowingStage::render()
     m_testProgram->setUniform("farSplits", getFarSplits());
     m_painter.camera()->setUniformsIn(*m_testProgram);
     m_testFBO->clear(gl::GL_DEPTH_BUFFER_BIT | gl::GL_COLOR_BUFFER_BIT);
-    m_testFBO->bind();
+    m_testFBO->bind(gl::GL_FRAMEBUFFER);
     drawScene(m_painter.camera()->viewProjection(), m_testProgram);
-    m_testFBO->unbind();
+    m_testFBO->unbind(gl::GL_FRAMEBUFFER);
 }
 
 void ShadowingStage::resize(const int width, const int height)
