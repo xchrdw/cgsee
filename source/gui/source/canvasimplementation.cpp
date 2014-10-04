@@ -1,4 +1,4 @@
-#include <gui/qtcanvas.h>
+#include <gui/canvasimplementation.h>
 
 #include <QWindow>
 #include <QOpenGLContext>
@@ -7,7 +7,7 @@
 
 #include <core/glformat.h>
 
-QtCanvas::QtCanvas(const GLFormat & format)
+CanvasImplementation::CanvasImplementation(const GLFormat & format)
 :   QWindow()
 {
     setSurfaceType(QSurface::OpenGLSurface);
@@ -19,27 +19,27 @@ QtCanvas::QtCanvas(const GLFormat & format)
     m_context->create();
 }
 
-QtCanvas::~QtCanvas(){
+CanvasImplementation::~CanvasImplementation(){
     //Qt should take care of deletion, because m_context is child of this
 }
 
-void QtCanvas::makeCurrent()
+void CanvasImplementation::makeCurrent()
 {
     m_context->makeCurrent(this);
 }
 
-void QtCanvas::doneCurrent()
+void CanvasImplementation::doneCurrent()
 {
     if (QOpenGLContext::currentContext() == m_context)
         m_context->doneCurrent();
 }
 
-void QtCanvas::swapBuffers()
+void CanvasImplementation::swapBuffers()
 {
     m_context->swapBuffers(this);
 }
 
-void QtCanvas::paint()
+void CanvasImplementation::paint()
 {
     if (isExposed())
     {
@@ -49,18 +49,18 @@ void QtCanvas::paint()
     }
 }
 
-void QtCanvas::resizeEvent(QResizeEvent * event)
+void CanvasImplementation::resizeEvent(QResizeEvent * event)
 {
     paint();
 }
 
-void QtCanvas::exposeEvent(QExposeEvent * event)
+void CanvasImplementation::exposeEvent(QExposeEvent * event)
 {
     QWindow::exposeEvent(event);
     paint();
 }
 
-bool QtCanvas::event(QEvent *event)
+bool CanvasImplementation::event(QEvent *event)
 {
     switch (event->type()) {
     case QEvent::UpdateRequest:

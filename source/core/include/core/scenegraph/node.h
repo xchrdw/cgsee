@@ -8,7 +8,7 @@
 
 #include <core/aabb.h>
 
-namespace glo{
+namespace globjects{
     class Program;
 }
 
@@ -28,7 +28,7 @@ public:
     Node(const QString & name);
     virtual ~Node();
 
-    virtual void draw(glo::Program & program, const glm::mat4 & transform) = 0;
+    virtual void draw(globjects::Program & program, const glm::mat4 & transform) = 0;
     virtual const AxisAlignedBoundingBox boundingBox() const = 0;
     virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const = 0;
 

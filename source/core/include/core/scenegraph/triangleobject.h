@@ -8,7 +8,7 @@
 
 #include <core/scenegraph/node.h>
 
-namespace glo{
+namespace globjects{
     class Program;
 }
 
@@ -20,7 +20,7 @@ public:
     TriangleObject(const QString & name = "unnamed");
     virtual ~TriangleObject();
 
-    virtual void draw(glo::Program & program, const glm::mat4 & transform) override;
+    virtual void draw(globjects::Program & program, const glm::mat4 & transform) override;
 
     virtual const AxisAlignedBoundingBox boundingBox() const override;
     virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;

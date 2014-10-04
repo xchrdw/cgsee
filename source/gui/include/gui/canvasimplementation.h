@@ -8,13 +8,19 @@ class GLFormat;
 class QOpenGLContext;
 class QResizeEvent;
 
-class GUI_API QtCanvas : public QWindow
+/**
+*   @brief The implementation of a canvas. 
+*   @details A QWindow is used as drawing surface. This QWindow is connected with a QOpenGLContext in order to enable drawing with OpenGL.
+*   Both are wrapped by this class in order to do not include gl.h.
+*/
+
+class GUI_API CanvasImplementation : public QWindow
 {
     Q_OBJECT
 
 public:
-    QtCanvas(const GLFormat & format);
-    virtual ~QtCanvas();
+    CanvasImplementation(const GLFormat & format);
+    virtual ~CanvasImplementation();
 
     void makeCurrent();
     void doneCurrent();

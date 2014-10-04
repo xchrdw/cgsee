@@ -7,7 +7,7 @@
 #include <glbinding/gl/bitfield.h>
 #include <glbinding/gl/boolean.h>
 
-#include <globjects/FrameBufferObject.h>
+#include <globjects/Framebuffer.h>
 #include <globjects/Program.h>
 
 #include <core/bufferobject.h>
@@ -31,7 +31,7 @@ ScreenQuad::~ScreenQuad()
     }
 }
 
-void ScreenQuad::initialize(glo::Program & program) const
+void ScreenQuad::initialize(globjects::Program & program) const
 {
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
@@ -66,14 +66,14 @@ void ScreenQuad::initialize(glo::Program & program) const
 }
 
 void ScreenQuad::draw(
-    glo::Program & program
-,   glo::FrameBufferObject * target) const
+    globjects::Program & program
+,   globjects::Framebuffer * target) const
 {
     if(-1 == m_vao)
         initialize(program);
 
     if(target)
-        target->bind();
+        target->bind(gl::GL_FRAMEBUFFER);
 
     gl::glClear(gl::GL_COLOR_BUFFER_BIT);
 
@@ -96,5 +96,5 @@ void ScreenQuad::draw(
     glError();
 
     if(target)
-        target->unbind();
+        target->unbind(gl::GL_FRAMEBUFFER);
 }

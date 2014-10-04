@@ -28,7 +28,7 @@ DefaultDrawMethod::~DefaultDrawMethod()
 }
 
 // void DefaultDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalGeometry & geometry, const GLenum mode)
-void DefaultDrawMethod::draw(glo::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
+void DefaultDrawMethod::draw(globjects::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
 {
     PolygonalDrawable::t_geometryP geometry = drawable.geometry();
     
@@ -59,8 +59,8 @@ void DefaultDrawMethod::draw(glo::Program & program, const glm::mat4 & transform
     for( const auto & bo : geometry->elementArrayBOs() )
         bo->draw( drawable.mode() );
     
-    glo::disable(gl::GL_DEPTH_TEST);
-    glo::disable(gl::GL_CULL_FACE);
+    globjects::disable(gl::GL_DEPTH_TEST);
+    globjects::disable(gl::GL_CULL_FACE);
     
     gl::glBindVertexArray(0);
     glError();

@@ -7,7 +7,7 @@
 
 class PolygonalDrawable;
 
-namespace glo{
+namespace globjects{
     class Program;
 }
 
@@ -17,5 +17,5 @@ public:
     DrawMethod() {}
     virtual ~DrawMethod() {}
 
-    virtual void draw(glo::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const =0;
+    virtual void draw(globjects::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const =0;
 };

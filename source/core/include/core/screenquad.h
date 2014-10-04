@@ -7,8 +7,8 @@
 
 class BufferObject;
 
-namespace glo{
-    class FrameBufferObject;
+namespace globjects{
+    class Framebuffer;
     class Program;
 }
 
@@ -19,11 +19,11 @@ public:
     virtual ~ScreenQuad();
 
     void draw(
-        glo::Program & program
-    ,   glo::FrameBufferObject * target = nullptr) const;
+        globjects::Program & program
+    ,   globjects::Framebuffer * target = nullptr) const;
 
 protected:
-    void initialize(glo::Program & program) const;
+    void initialize(globjects::Program & program) const;
 
 protected:  
     mutable gl::GLuint m_vao;

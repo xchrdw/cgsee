@@ -5,7 +5,7 @@
 #include <core/scenegraph/node.h>
 
 
-DrawVisitor::DrawVisitor(glo::Program * p, glm::mat4 t) 
+DrawVisitor::DrawVisitor(globjects::Program * p, glm::mat4 t) 
 : m_program(p)
 , m_transform(t)
 {}

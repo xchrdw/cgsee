@@ -87,7 +87,7 @@ void PolygonalDrawable::invalidateBoundingBox()
     return Node::invalidateBoundingBox();
 }
 
-void PolygonalDrawable::draw(glo::Program & program, const glm::mat4 & transform)
+void PolygonalDrawable::draw(globjects::Program & program, const glm::mat4 & transform)
 {
     if (m_geometry)
     {

@@ -7,7 +7,7 @@
 
 #include <globjects/Program.h>
 #include <globjects/Texture.h>
-#include <globjects-base/File.h>
+#include <globjects/base/File.h>
 
 #include <core/rendering/abstractrenderstage.h>
 #include <core/rendering/pipelinebuilder.h>
@@ -27,7 +27,7 @@ PipelinePainter::PipelinePainter(AbstractCamera * camera)
 PipelinePainter::PipelinePainter(AbstractCamera * camera, Group * scene)
     : m_quad(new ScreenQuad())
     , m_flush(nullptr)
-    //, m_coordFBO(new glo::FrameBufferObject())
+    //, m_coordFBO(new globjects::Framebuffer())
 {
     assignScene(scene);
     assignCamera(camera);
@@ -42,10 +42,10 @@ PipelinePainter::~PipelinePainter()
 bool PipelinePainter::initialize()
 {
     // Post Processing Shader
-    m_flush = new glo::Program();
+    m_flush = new globjects::Program();
     
-    m_flush->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/dump.frag")));
-    m_flush->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/screenquad.vert")));
+    m_flush->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/dump.frag")));
+    m_flush->attach(new globjects::Shader(gl::GL_VERTEX_SHADER, new globjects::File("data/screenquad.vert")));
 
     addRenderStage(new RenderStage(*this));
 
@@ -77,7 +77,7 @@ void PipelinePainter::paint()
         renderStage->render();
     }
 
-    glo::Texture * texture = getTexture("normalz");
+    globjects::Texture * texture = getTexture("normalz");
     if(!texture)
         return;
 
@@ -293,7 +293,7 @@ bool PipelinePainter::isViewInvalid()
     return true;//TODO
 }
 
-glo::Texture * PipelinePainter::getTexture(QString name)
+globjects::Texture * PipelinePainter::getTexture(QString name)
 {
     return m_textures.value(name, nullptr);
 }
@@ -303,12 +303,12 @@ bool PipelinePainter::textureExists(QString name)
     return m_textures.contains(name);
 }
 
-void PipelinePainter::setTexture(QString name, glo::Texture * texture)
+void PipelinePainter::setTexture(QString name, globjects::Texture * texture)
 {
     m_textures[name] = texture;
 }
 
-bool PipelinePainter::addTexture(QString name, glo::Texture * texture)
+bool PipelinePainter::addTexture(QString name, globjects::Texture * texture)
 {
     if(textureExists(name))
         return false;

@@ -25,7 +25,7 @@ HighlightingDrawMethod::~HighlightingDrawMethod()
 }
 
 // void HighlightingDrawMethod::draw(const Program & program, const glm::mat4 & transform, PolygonalGeometry & geometry, const GLenum mode)
-void HighlightingDrawMethod::draw(glo::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
+void HighlightingDrawMethod::draw(globjects::Program & program, const glm::mat4 & transform, PolygonalDrawable & drawable) const
 {
     PolygonalDrawable::t_geometryP geometry = drawable.geometry();
     

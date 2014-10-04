@@ -9,12 +9,11 @@
 
 #include <globjects/Error.h>
 #include <globjects/globjects.h>
-#include <globjects/FrameBufferObject.h>
+#include <globjects/Framebuffer.h>
 #include <globjects/Texture.h>
 #include <globjects/Program.h>
-#include <globjects/RenderBufferObject.h>
-#include <globjects-base/File.h>
-#include <globjects-utils/StringTemplate.h>
+#include <globjects/Renderbuffer.h>
+#include <globjects/base/File.h>
 
 #include <core/camera/abstractcamera.h>
 #include <core/gpuquery.h>
@@ -23,15 +22,15 @@
 
 RenderStage::RenderStage(PipelinePainter & painter)
     : AbstractSceneRenderStage(painter)
-    , m_normalz(glo::Texture::createDefault())
+    , m_normalz(globjects::Texture::createDefault())
     , m_colorId(nullptr)
-    , m_depth(new glo::RenderBufferObject())
+    , m_depth(new globjects::Renderbuffer())
 {
     m_painter.addTexture("normalz", m_normalz);
 
-    m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/normalz.frag")));
-    m_program->attach(new glo::Shader(gl::GL_FRAGMENT_SHADER, new glo::File("data/depth_util.frag")));
-    m_program->attach(new glo::Shader(gl::GL_VERTEX_SHADER, new glo::File("data/normalz.vert")));
+    m_program->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/normalz.frag")));
+    m_program->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/depth_util.frag")));
+    m_program->attach(new globjects::Shader(gl::GL_VERTEX_SHADER, new globjects::File("data/normalz.vert")));
 
     bindFBO();
     m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_normalz);

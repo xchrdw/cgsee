@@ -164,15 +164,13 @@ void PolygonalGeometry::resize(unsigned int size)
     inds->resize(size);
 }
 
-void PolygonalGeometry::initialize(glo::Program & program)
+void PolygonalGeometry::initialize(globjects::Program & program)
 {
     if(!m_arrayBOsByAttribute.empty() && !m_elementArrayBOs.empty())
         return;
     glError();
     deleteBuffers();
 
-    glo::isInitialized();
-    glError();
     gl::glGenVertexArrays(1, &m_vao);
     glError();
     gl::glBindVertexArray(m_vao);                                                                  

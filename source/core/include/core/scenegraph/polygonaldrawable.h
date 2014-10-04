@@ -18,7 +18,7 @@ class PolygonalGeometry;
 class DataBlockRegistry;
 class DrawMethod;
 
-namespace glo{
+namespace globjects{
     class Program;
 }
 
@@ -34,7 +34,7 @@ public:
     PolygonalDrawable(const QString & name = "unnamed");
     virtual ~PolygonalDrawable();
 
-    virtual void draw(glo::Program & program, const glm::mat4 & transform) override;
+    virtual void draw(globjects::Program & program, const glm::mat4 & transform) override;
 
     virtual const AxisAlignedBoundingBox boundingBox() const override;
     virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;

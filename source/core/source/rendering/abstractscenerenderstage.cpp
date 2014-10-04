@@ -13,7 +13,7 @@
 AbstractSceneRenderStage::AbstractSceneRenderStage(PipelinePainter & painter)
     : AbstractRenderStage(painter)
 {
-	m_program = new glo::Program();
+	m_program = new globjects::Program();
 }
 
 AbstractSceneRenderStage::~AbstractSceneRenderStage(void)

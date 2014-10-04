@@ -14,7 +14,7 @@
 #include <core/viewfrustum.h>
 
 
-CullingVisitor::CullingVisitor(AbstractCamera *camera, glo::Program *program, glm::mat4 transform) :
+CullingVisitor::CullingVisitor(AbstractCamera *camera, globjects::Program *program, glm::mat4 transform) :
     m_camera(camera),
     m_program(program),
     m_transform(transform),

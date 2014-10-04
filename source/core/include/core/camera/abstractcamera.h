@@ -14,7 +14,7 @@
 class Projection;
 class ViewFrustum;
 
-namespace glo{
+namespace globjects{
     class Program;
 }
 
@@ -67,7 +67,7 @@ public:
     virtual void invalidate();
 
     //TODO move to appropiate RenderStage
-    virtual void setUniformsIn(glo::Program & program);
+    virtual void setUniformsIn(globjects::Program & program);
 protected:
     virtual void update();
     virtual void recalculate();

@@ -39,7 +39,7 @@ extern GLXContext glXGetCurrentContext( void );
 #include <QStandardItem>
 #include <QSurfaceFormat>
 
-#include <globjects-base/File.h>
+#include <globjects/base/File.h>
 
 #include <propertyguizeug/PropertyBrowser.h>
 
@@ -496,7 +496,7 @@ void Viewer::on_enableCullingAction_triggered() {
 
 void Viewer::on_reloadAllShadersAction_triggered()
 {
-    glo::File::reloadAll();
+    globjects::File::reloadAll();
 
     // Bugfix for https://github.com/hpicgs/cgsee/issues/162
     painter()->resize(m_qtCanvas->width(), m_qtCanvas->height());

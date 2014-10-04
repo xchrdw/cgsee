@@ -5,7 +5,7 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
-#include <globjects/FrameBufferObject.h>
+#include <globjects/Framebuffer.h>
 #include <globjects/Program.h>
 
 #include <core/gpuquery.h>
@@ -18,7 +18,7 @@
 
 AbstractRenderStage::AbstractRenderStage(PipelinePainter & painter)
     : m_painter(painter)
-    , m_fbo(new glo::FrameBufferObject())
+    , m_fbo(new globjects::Framebuffer())
 {
 
 }
@@ -28,7 +28,7 @@ AbstractRenderStage::~AbstractRenderStage(void)
     m_fbo->unref();
 }
 
-void AbstractRenderStage::drawScene(const glm::mat4 & transform, glo::Program * program)
+void AbstractRenderStage::drawScene(const glm::mat4 & transform, globjects::Program * program)
 {
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, transform);
@@ -37,12 +37,12 @@ void AbstractRenderStage::drawScene(const glm::mat4 & transform, glo::Program * 
 
 void AbstractRenderStage::bindFBO()
 {
-    m_fbo->bind();
+    m_fbo->bind(gl::GL_FRAMEBUFFER);
 }
 
 void AbstractRenderStage::releaseFBO()
 {
-    m_fbo->unbind();
+    m_fbo->unbind(gl::GL_FRAMEBUFFER);
 }
 
 bool AbstractRenderStage::isSceneInvalid()

@@ -57,7 +57,7 @@ void TriangleObject::invalidateBoundingBox()
     return Node::invalidateBoundingBox();
 }
 
-void TriangleObject::draw(glo::Program & program, const glm::mat4 & transform)
+void TriangleObject::draw(globjects::Program & program, const glm::mat4 & transform)
 {
     // TriangleObject is only a helper class for the raytracer, no need to implement a draw function
 }
