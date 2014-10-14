@@ -10,7 +10,8 @@ find_package(GLM        REQUIRED)
 find_package(GLEW       REQUIRED)
 find_package(OpenGL     REQUIRED)
 find_package(ASSIMP     REQUIRED)
-find_package(GLOW       REQUIRED)
+find_package(GLBINDING  REQUIRED)
+find_package(GLOBJECTS  REQUIRED)
 
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5OpenGL  REQUIRED)
@@ -26,8 +27,9 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
     ${GLEW_INCLUDE_PATH}
     ${GLM_INCLUDE_PATH}
-    ${GLOW_INCLUDES}
+    ${GLOBJECTS_INCLUDES}
     ${LIBZEUG_INCLUDES}
+	${GLBINDING_INCLUDES}
 )
 
 include_directories(
@@ -45,8 +47,9 @@ set(libs
     ${GLEW_LIBRARY}
     ${LIBZEUG_REFLECTION_LIBRARY}
     ${LIBZEUG_PROPERTYGUI_LIBRARY}
-    ${GLOW_LIBRARIES}
+    ${GLOBJECTS_LIBRARIES}
     ${LIBZEUG_SIGNAL_LIBRARY}
+	${GLBINDING_LIBRARIES}
 )
 
 #
@@ -86,7 +89,6 @@ set(sources
 	${source_path}/datacore/datablock.cpp
 	${source_path}/datacore/vertexindexlist.cpp
 	${source_path}/datacore/vertexlist.cpp
-	${source_path}/fileassociatedshader.cpp
 	${source_path}/geometryoptimizer.h
 	${source_path}/glformat.cpp
 	${source_path}/gpuquery.cpp
@@ -106,14 +108,12 @@ set(sources
 	${source_path}/painter/abstractpainter.cpp
     ${source_path}/painter/pipelinepainter.cpp
 	${source_path}/plane.cpp
-	${source_path}/program.cpp
 	${source_path}/property/abstractproperty.cpp
 	${source_path}/property/abstractpropertyvisitor.cpp
 	${source_path}/property/advancedlistproperty.cpp
 	${source_path}/property/listproperty.cpp
 	${source_path}/property/announcer.cpp
 	${source_path}/property/propertylist.cpp
-    ${source_path}/renderbufferobject.cpp
 	${source_path}/rendering/aaaccumulatestage.cpp
 	${source_path}/rendering/aasetupstage.cpp
     ${source_path}/rendering/renderstage.cpp
@@ -139,8 +139,6 @@ set(sources
 	${source_path}/scenegraph/pathtracingbvh.cpp
 	${source_path}/scenegraph/absolutetransformator.cpp
 	${source_path}/screenquad.cpp
-	${source_path}/shader.cpp
-    ${source_path}/textureobject.cpp
 	${source_path}/timer.cpp
 	${source_path}/vertexcacheoptimizer.cpp
 	${source_path}/vertexcacheoptimizer.h
@@ -175,7 +173,6 @@ set(api_includes
 	${include_path}/datacore/vertexindexlist_impl.tli
 	${include_path}/datacore/attributeiterator.h
 	${include_path}/declspec.h
-	${include_path}/fileassociatedshader.h
 	${include_path}/glformat.h
 	${include_path}/gpuquery.h
 	${include_path}/material/material.h
@@ -193,7 +190,6 @@ set(api_includes
 	${include_path}/painter/abstractpainter.h
     ${include_path}/painter/pipelinepainter.h
 	${include_path}/plane.h
-	${include_path}/program.h
 	${include_path}/property/limitedproperty.h
 	${include_path}/property/abstractpropertyvisitor.h
 	${include_path}/property/announcer.h
@@ -202,7 +198,6 @@ set(api_includes
 	${include_path}/property/advancedlistproperty.h
 	${include_path}/property/abstractproperty.h
 	${include_path}/property/propertylist.h
-    ${include_path}/renderbufferobject.h
 	${include_path}/rendering/aaaccumulatestage.h
 	${include_path}/rendering/aasetupstage.h
     ${include_path}/rendering/renderstage.h
@@ -231,8 +226,6 @@ set(api_includes
 	${include_path}/scenegraph/absolutetransformator.h
 	${include_path}/scenegraph/cullingvisitor.h
 	${include_path}/screenquad.h
-	${include_path}/shader.h
-    ${include_path}/textureobject.h
 	${include_path}/timer.h
 	${include_path}/typedefs.h
 	${include_path}/viewfrustum.h

@@ -1,27 +1,32 @@
 #include <core/painter/pipelinepainter.h>
 
 #include <string>
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/bitfield.h>
+
+#include <globjects/Program.h>
+#include <globjects/Texture.h>
+#include <globjects/base/File.h>
 
 #include <core/rendering/abstractrenderstage.h>
 #include <core/rendering/renderstage.h>
-
 #include <core/camera/abstractcamera.h>
 #include <core/scenegraph/group.h>
 #include <core/screenquad.h>
-#include <core/program.h>
-#include <core/textureobject.h>
-#include <core/fileassociatedshader.h>
 #include <core/rendering/rasterizationpipelinebuilder.h>
 
+#include <core/gpuquery.h>
 
-const QString PipelinePainter::VIEWPORT_UNIFORM("viewport");
-const QString PipelinePainter::VIEW_UNIFORM("view");
-const QString PipelinePainter::PROJECTION_UNIFORM("projection");
-const QString PipelinePainter::TRANSFORM_UNIFORM("transform");
-const QString PipelinePainter::TRANSFORMINVERSE_UNIFORM("transformInverse");
-const QString PipelinePainter::ZNEAR_UNIFORM("znear");
-const QString PipelinePainter::ZFAR_UNIFORM("zfar");
-const QString PipelinePainter::CAMERAPOSITION_UNIFORM("cameraposition");
+const std::string PipelinePainter::VIEWPORT_UNIFORM("viewport");
+const std::string PipelinePainter::VIEW_UNIFORM("view");
+const std::string PipelinePainter::PROJECTION_UNIFORM("projection");
+const std::string PipelinePainter::TRANSFORM_UNIFORM("transform");
+const std::string PipelinePainter::TRANSFORMINVERSE_UNIFORM("transformInverse");
+const std::string PipelinePainter::ZNEAR_UNIFORM("znear");
+const std::string PipelinePainter::ZFAR_UNIFORM("zfar");
+const std::string PipelinePainter::CAMERAPOSITION_UNIFORM("cameraposition");
 
 PipelinePainter::PipelinePainter(AbstractCamera * camera)
 	: PipelinePainter(camera, camera)
@@ -33,7 +38,7 @@ PipelinePainter::PipelinePainter(AbstractCamera * camera, Group * scene)
     : PropertyGroup()
     , m_quad(new ScreenQuad())
     , m_flush(nullptr)
-    //, m_coordFBO(new glow::FrameBufferObject())
+    //, m_coordFBO(new globjects::Framebuffer())
 {
     addProperty<bool>("viewInvalid", true);
     addProperty<std::string>("selectedBufferName", "");
@@ -44,17 +49,16 @@ PipelinePainter::PipelinePainter(AbstractCamera * camera, Group * scene)
 PipelinePainter::~PipelinePainter()
 {
     clearRenderStages();
-    delete m_flush;
     delete m_quad;
 }
 
 bool PipelinePainter::initialize()
 {
-    // dump buffer to screen shader
-    m_flush = new Program();
-    m_flush->attach(new FileAssociatedShader(GL_FRAGMENT_SHADER, "data/dump.frag"));
-    m_flush->attach(new FileAssociatedShader(GL_VERTEX_SHADER, "data/screenquad.vert"));
-
+    // Post Processing Shader
+    m_flush = new globjects::Program();
+    
+    m_flush->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/dump.frag")));
+    m_flush->attach(new globjects::Shader(gl::GL_VERTEX_SHADER, new globjects::File("data/screenquad.vert")));
 
     //TODO should be chosen according to property
     AbstractPipelineBuilder * builder = new RasterizationPipelineBuilder(*this);
@@ -90,7 +94,8 @@ void PipelinePainter::onViewChanged()
 void PipelinePainter::paint()
 {
     AbstractPainter::paint();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+    glError();
 
     setView(camera()->view());
     setProjection(camera()->projection());
@@ -100,16 +105,16 @@ void PipelinePainter::paint()
         renderStage->render();
     }
 
-    TextureObject * texture = getTexture(QString::fromStdString(value<std::string>("selectedBufferName")));
+    globjects::Texture * texture = getTexture(QString::fromStdString(value<std::string>("selectedBufferName")));
     if(!texture)
         return;
 
-    texture->bindTo(GL_TEXTURE0);
+    texture->bindActive(gl::GL_TEXTURE0);
     m_flush->setUniform("selectedBuffer", 0);
     m_quad->draw(*m_flush);
-    texture->releaseFrom(GL_TEXTURE0);
 
     setValue<bool>("viewInvalid", false);
+    texture->unbindActive(gl::GL_TEXTURE0);
 }
 
 void PipelinePainter::resize(const int width, const int height)
@@ -182,7 +187,7 @@ void PipelinePainter::setViewFrustumCulling(bool viewFrustumCullingEnabled)
 
 bool PipelinePainter::isViewFrustumCullingEnabled()
 {
-
+    return false;
 }
 
 // TODO end
@@ -191,7 +196,7 @@ bool PipelinePainter::isViewFrustumCullingEnabled()
 unsigned int PipelinePainter::getObjectID(unsigned int x, unsigned int y)
 {
 //  TODO globjects integration necessary to use FBO
-//    TextureObject texture = getTexture("colorID");//TODO ---> constant?
+//    globjects::Texture texture = getTexture("colorID");//TODO ---> constant?
 
 //    if (!texture || x >= texture->width() || y >= texture->height())
 //        return 0;
@@ -287,32 +292,15 @@ void PipelinePainter::selectionChanged(QMap<unsigned int, Node *> selectedNodes)
 //    m_selectionBBox->urb();
 }
 
-glm::dvec3 PipelinePainter::unproject(float x, float y, float z)
+glm::vec3 PipelinePainter::unproject(float x, float y, float z)
 {
-    GLdouble modelview[16];
-    GLdouble projection[16];
-    GLint viewport[4];
-
-    glm::mat4 viewMat = camera()->view();
-    glm::mat4 projectionMat = camera()->projection();
-
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            modelview[i*4+j] = viewMat[i][j];
-            projection[i*4+j] = projectionMat[i][j];
-        }
-    }
-
-    viewport[0] = viewport[1] = 0;
-    viewport[2] = camera()->viewport().x;
-    viewport[3] = camera()->viewport().y;
+    glm::mat4 modelview = camera()->view();
+    glm::mat4 projection = camera()->projection();
+    glm::vec4 viewport = glm::vec4(0.f, 0.f, static_cast<float>(camera()->viewport().x), static_cast<float>(camera()->viewport().y));
 
     glm::dvec3 position;
-    gluUnProject( x, y, z, modelview, projection, viewport, &position.x, &position.y, &position.z );
 
-    return position;
+    return glm::unProject(glm::vec3(x, y, z), modelview, projection, viewport);
 }
 
 const ScreenQuad * PipelinePainter::screenQuad()
@@ -335,7 +323,7 @@ bool PipelinePainter::isViewInvalid()
     return true;//TODO
 }
 
-TextureObject * PipelinePainter::getTexture(QString name)
+globjects::Texture * PipelinePainter::getTexture(QString name)
 {
     return m_textures.value(name, nullptr);
 }
@@ -345,12 +333,12 @@ bool PipelinePainter::textureExists(QString name)
     return m_textures.contains(name);
 }
 
-void PipelinePainter::setTexture(QString name, TextureObject * texture)
+void PipelinePainter::setTexture(QString name, globjects::Texture * texture)
 {
     m_textures[name] = texture;
 }
 
-bool PipelinePainter::addTexture(QString name, TextureObject * texture)
+bool PipelinePainter::addTexture(QString name, globjects::Texture * texture)
 {
     if(textureExists(name))
         return false;
@@ -401,7 +389,7 @@ void PipelinePainter::setProjection(const glm::mat4 & projection)
     recalculateTransform();
 }
 
-void PipelinePainter::setCameraUniforms(const Program & program)
+void PipelinePainter::setCameraUniforms(globjects::Program & program)
 {
     program.setUniform(PROJECTION_UNIFORM, m_projection);
     program.setUniform(VIEWPORT_UNIFORM, m_viewport);

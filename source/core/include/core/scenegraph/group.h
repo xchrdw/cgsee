@@ -5,7 +5,10 @@
 #include <core/scenegraph/node.h>
 
 class PolygonalDrawable;
-class Program;
+
+namespace globjects{
+    class Program;
+}
 
 class CORE_API Group : public Node
 {
@@ -15,7 +18,7 @@ public:
 
     virtual Group * asGroup();
 
-    virtual void draw(const Program & program, const glm::mat4 & transform);
+    virtual void draw(globjects::Program & program, const glm::mat4 & transform);
 
     const bool contains(Node * node) const;
 

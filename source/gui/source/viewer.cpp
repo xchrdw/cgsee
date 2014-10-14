@@ -2,18 +2,8 @@
 
 #include <cassert>
 
-#include <GL/glew.h>
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#ifdef __GLEW_H__
-#undef __GLEW_H__
-#include <QOpenGLContext>
-#define __GLEW_H__
-#else
-#include <QOpenGLContext>
-#endif
 
 #ifdef WIN32
 
@@ -47,6 +37,9 @@ extern GLXContext glXGetCurrentContext( void );
 #include <QListView>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QSurfaceFormat>
+
+#include <globjects/base/File.h>
 
 #include <propertyguizeug/PropertyBrowser.h>
 
@@ -64,7 +57,6 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/painter/abstractscenepainter.h>
 #include <core/painter/abstractpainter.h>
 #include <core/painter/pipelinepainter.h>
-#include <core/fileassociatedshader.h>
 #include <core/glformat.h>
 #include <core/assimploader.h>
 
@@ -82,7 +74,6 @@ extern GLXContext glXGetCurrentContext( void );
 #include <core/scenegraph/highlightingdrawmethod.h>
 
 #include <core/material/material.h>
-
 
 namespace
 {
@@ -212,6 +203,8 @@ void Viewer::initializeMaterial()
 
     m_propertyMaterialBrowser = new propertyguizeug::PropertyBrowser(obj);
     m_materialCanvas = new Canvas(m_qtCanvas->format());
+    m_materialCanvas->makeCurrent();
+
     // ToDo: add Vertical splitter layout and handle this 
     m_materialCanvas->setMinimumHeight(128);
 
@@ -321,64 +314,6 @@ void Viewer::assignScene(Group * rootNode)
     updateInfoBox();
 }
 
-#ifdef WIN32
-const HGLRC Viewer::currentContextHandle()
-{
-    return  wglGetCurrentContext();
-#elif __APPLE__
-void * Viewer::currentContextHandle()
-{
-    return nullptr;
-#else
-const GLXContext Viewer::currentContextHandle()
-{
-    return glXGetCurrentContext();
-#endif
-}
-
-#ifdef WIN32
-const HGLRC Viewer::createQtContext(const GLFormat & format)
-#elif __APPLE__
-void * Viewer::createQtContext(const GLFormat & format)
-#else
-const GLXContext Viewer::createQtContext(const GLFormat & format)
-#endif
-{
-    m_qtCanvas = new Canvas(format, this);
-    setCentralWidget(m_qtCanvas);
-    m_qtCanvas->setRefreshTimeMSec(); //TODO , current default value 1
-
-    QGLContext * qContext(const_cast<QGLContext *>(m_qtCanvas->context()));
-
-    if(!qContext)
-        qFatal("Creating QtGL-Context failed.");
-
-    qContext->makeCurrent();
-
-    if(QGLContext::currentContext() != qContext)
-        qFatal("Making QtGL-Context current failed.");
-
-#ifdef WIN32
-    const HGLRC qtContextHandle = currentContextHandle();
-#elif __APPLE__
-    void * qtContextHandle = currentContextHandle();
-#else
-    const GLXContext qtContextHandle = currentContextHandle();
-#endif
-
-    // NOTE: might work even if no context was returned.
-    // This just double checks...
-
-    if(nullptr == qtContextHandle)
-        qWarning("Acquiring QtGL-Context handle failed.");
-
-    // canvas verifies the context itself.
-
-    qContext->doneCurrent();
-
-    return qtContextHandle;
-}
-
 /**
  * @brief Updates the navigation history dock widget.
  * @details Updates the navigation history dock widget, check for all available
@@ -471,10 +406,9 @@ void Viewer::on_m_historyList_clicked(const QModelIndex & index)
 
 void Viewer::initialize(const GLFormat & format)
 {
-    if(!QGLFormat::hasOpenGL())
-        qFatal("OpenGL not supported.");
-
-    createQtContext(format);
+    m_qtCanvas = new Canvas(format, this);
+    m_qtCanvas->makeCurrent();
+    setCentralWidget(m_qtCanvas);
 
     m_navigationHistory = m_qtCanvas->navigationHistory();
     m_navigationHistory->historyChanged.connect(this, &Viewer::updateHistoryList);
@@ -490,10 +424,9 @@ void Viewer::initialize(const GLFormat & format)
     // ToDo: revisit initialization sequence
     initializeExplorer();
     initializeSceneTree();
-    initializeMaterial();
 	initializeNavigationHistory();
+	initializeMaterial();
 	
-
     tabifyDockWidget(m_dockScene, m_dockMaterial);
     m_dockScene->raise();
     m_dockMaterial->hide();
@@ -505,10 +438,9 @@ Viewer::~Viewer()
     s.setValue(SETTINGS_GEOMETRY, saveGeometry());
     s.setValue(SETTINGS_STATE, saveState());
 
-    delete m_qtCanvas;
-
     delete m_painter;
     delete m_scene;
+    delete m_qtCanvas;
 
     delete m_dockNavigator;
     delete m_dockExplorer;
@@ -566,7 +498,8 @@ void Viewer::on_enableCullingAction_triggered() {
 
 void Viewer::on_reloadAllShadersAction_triggered()
 {
-    FileAssociatedShader::reloadAll();
+    globjects::File::reloadAll();
+
     // Bugfix for https://github.com/hpicgs/cgsee/issues/162
     painter()->resize(m_qtCanvas->width(), m_qtCanvas->height());
     painter()->postShaderRelinked();
@@ -950,6 +883,7 @@ void Viewer::keyPressEvent(QKeyEvent * event)
     {
         navigation()->keyPressEvent(event);
     }
+    m_qtCanvas->repaint();
 }
 
 void Viewer::keyReleaseEvent( QKeyEvent *event )

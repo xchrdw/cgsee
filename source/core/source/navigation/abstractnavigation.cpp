@@ -217,6 +217,7 @@ void AbstractNavigation::onNavigated()
 {
     // send viewChanged signal only after the n seconds of inactivity
     // (see AbstractNavigation::timerEvent)
+    emit navigated();
     m_eventTimer.start(DURATION * 1.5f, this);
 }
 

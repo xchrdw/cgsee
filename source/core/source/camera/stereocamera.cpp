@@ -6,7 +6,6 @@
 
 #include <QDebug>
 
-#include <core/program.h>
 #include <core/gpuquery.h>
 #include <core/viewfrustum.h>
 

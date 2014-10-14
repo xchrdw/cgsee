@@ -2,11 +2,11 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
-
 #include <memory>
 
 #include <QString>
+
+#include <glbinding/gl/types.h>
 
 #include <core/typedefs.h>
 #include <core/datacore/vertexindexlist.h>  //includes vertexlist.h
@@ -14,8 +14,11 @@
 class DataBlockRegistry;
 class AxisAlignedBoundingBox;
 class BufferObject;
-class Program;
 class GeometryOptimizer;
+
+namespace globjects{
+    class Program;
+}
 
 class CORE_API PolygonalGeometry final
 {
@@ -43,9 +46,9 @@ public:
 
     void resize(unsigned int size);
 
-    void initialize(const Program & program);
+    void initialize(globjects::Program & program);
     
-    inline GLuint vao() { return m_vao; }
+    inline gl::GLuint vao() { return m_vao; }
     t_bufferObjects & elementArrayBOs() { return m_elementArrayBOs; } // TODO: perhaps as const.
     t_bufferObjectsByAttribute & arrayBOsByAttribute() { return m_arrayBOsByAttribute; }
     
@@ -65,7 +68,7 @@ protected:
 protected:
     std::shared_ptr<DataBlockRegistry> m_registry;
     t_VertexListP m_datablock;
-    GLuint m_vao;
+    gl::GLuint m_vao;
     QString m_vertListHandle;
     QString m_indicesHandle;
 

@@ -1,10 +1,11 @@
-
 #include <core/scenegraph/drawvisitor.h>
+
+#include <globjects/Program.h>
 
 #include <core/scenegraph/node.h>
 
 
-DrawVisitor::DrawVisitor(const Program * p, glm::mat4 t) 
+DrawVisitor::DrawVisitor(globjects::Program * p, glm::mat4 t) 
 : m_program(p)
 , m_transform(t)
 {}

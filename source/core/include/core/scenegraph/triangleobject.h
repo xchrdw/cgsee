@@ -8,7 +8,9 @@
 
 #include <core/scenegraph/node.h>
 
-class Program;
+namespace globjects{
+    class Program;
+}
 
 typedef std::vector<glm::vec3> *p_TriangleList;
 
@@ -18,7 +20,7 @@ public:
     TriangleObject(const QString & name = "unnamed");
     virtual ~TriangleObject();
 
-    virtual void draw(const Program & program, const glm::mat4 & transform) override;
+    virtual void draw(globjects::Program & program, const glm::mat4 & transform) override;
 
     virtual const AxisAlignedBoundingBox boundingBox() const override;
     virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;

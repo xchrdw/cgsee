@@ -1,27 +1,30 @@
 #include <core/rendering/abstractrenderstage.h>
 
 #include <glm/mat4x4.hpp>
+
+#include <glbinding/gl/enum.h>
+
+#include <globjects/Framebuffer.h>
+#include <globjects/Program.h>
+
 #include <core/gpuquery.h>
 
-#include <core/framebufferobject.h>
-#include <core/program.h>
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/scenegraph/group.h>
+#include <core/painter/pipelinepainter.h>
 
 
 AbstractRenderStage::AbstractRenderStage(PipelinePainter & painter)
     : m_painter(painter)
-    , m_fbo(0)
+    , m_fbo(new globjects::Framebuffer())
 {
-    glGenFramebuffers(1, &m_fbo);
-    glError();
+
 }
 
 AbstractRenderStage::~AbstractRenderStage()
 {
-    glDeleteFramebuffers(1, &m_fbo);
-    glError();
+    m_fbo->unref();
 }
 
 PipelinePainter & AbstractRenderStage::painter()
@@ -29,7 +32,7 @@ PipelinePainter & AbstractRenderStage::painter()
     return m_painter;
 }
 
-void AbstractRenderStage::drawScene(const glm::mat4 & transform, Program * program)
+void AbstractRenderStage::drawScene(const glm::mat4 & transform, globjects::Program * program)
 {
     SceneTraverser traverser;
     DrawVisitor drawVisitor(program, transform);
@@ -38,14 +41,12 @@ void AbstractRenderStage::drawScene(const glm::mat4 & transform, Program * progr
 
 void AbstractRenderStage::bindFBO()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glError();
+    m_fbo->bind(gl::GL_FRAMEBUFFER);
 }
 
 void AbstractRenderStage::releaseFBO()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glError();
+    m_fbo->unbind(gl::GL_FRAMEBUFFER);
 }
 
 bool AbstractRenderStage::isSceneInvalid()

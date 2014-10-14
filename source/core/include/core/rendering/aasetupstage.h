@@ -2,8 +2,6 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
-
 #include <glm/glm.hpp>
 
 #include <core/property/valueproperty.h>

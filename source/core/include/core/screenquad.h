@@ -2,11 +2,15 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/types.h>
 
 
 class BufferObject;
-class Program;
+
+namespace globjects{
+    class Framebuffer;
+    class Program;
+}
 
 class CORE_API ScreenQuad
 {
@@ -14,12 +18,14 @@ public:
     ScreenQuad();
     virtual ~ScreenQuad();
 
-    void draw(const Program & program) const;
+    void draw(
+        globjects::Program & program
+    ,   globjects::Framebuffer * target = nullptr) const;
 
 protected:
-    void initialize(const Program & program) const;
+    void initialize(globjects::Program & program) const;
 
 protected:  
-    mutable GLuint m_vao;
+    mutable gl::GLuint m_vao;
     mutable BufferObject * m_vertexBO;
 };

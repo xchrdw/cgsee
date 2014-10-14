@@ -2,8 +2,9 @@
 
 #include <core/core_api.h>
 
-#include <glm/glm.hpp>
+#include <string>
 
+#include <glm/glm.hpp>
 
 #include <QVector>
 #include <QString>
@@ -13,8 +14,11 @@
 #include <core/scenegraph/group.h>
 
 class Projection;
-class Program;
 class ViewFrustum;
+
+namespace globjects{
+    class Program;
+}
 
 class CORE_API AbstractCamera : public Group
 {

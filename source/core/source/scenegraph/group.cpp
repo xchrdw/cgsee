@@ -1,7 +1,7 @@
 
 #include <core/scenegraph/group.h>
 
-#include <core/program.h>
+#include <globjects/Program.h>
 
 #include <core/scenegraph/polygonaldrawable.h>
 #include <core/aabb.h>
@@ -19,7 +19,7 @@ Group::~Group()
         removeLast();
 }
 
-void Group::draw(const Program & program, const glm::mat4 & transform)
+void Group::draw(globjects::Program & program, const glm::mat4 & transform)
 {
 }
 

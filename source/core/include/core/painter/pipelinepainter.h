@@ -4,11 +4,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-//TODO glow integration #include <glow/FrameBufferObject.h>
-
 #include <memory>
+#include <string>
 
-#include <QString>
 #include <QMap>
 #include <QList>
 
@@ -20,25 +18,29 @@
 class DataBlockRegistry;
 class Group;
 class ScreenQuad;
-class Program;
 class AbstractProperty;
 class RenderingPass;
 class LightSourcePass;
 class AbstractRenderStage;
-class TextureObject;
+class PipelineBuilder;
 class AbstractCamera;
+
+namespace globjects{
+    class Program;
+    class Texture;
+}
 
 class CORE_API PipelinePainter : public AbstractScenePainter, public CoordinateProvider, public reflectionzeug::PropertyGroup
 {
 public:
-    static const QString VIEWPORT_UNIFORM;
-    static const QString VIEW_UNIFORM;
-    static const QString PROJECTION_UNIFORM;
-    static const QString TRANSFORM_UNIFORM;
-    static const QString TRANSFORMINVERSE_UNIFORM;
-    static const QString ZNEAR_UNIFORM;
-    static const QString ZFAR_UNIFORM;
-    static const QString CAMERAPOSITION_UNIFORM;
+    static const std::string VIEWPORT_UNIFORM;
+    static const std::string VIEW_UNIFORM;
+    static const std::string PROJECTION_UNIFORM;
+    static const std::string TRANSFORM_UNIFORM;
+    static const std::string TRANSFORMINVERSE_UNIFORM;
+    static const std::string ZNEAR_UNIFORM;
+    static const std::string ZFAR_UNIFORM;
+    static const std::string CAMERAPOSITION_UNIFORM;
 
     PipelinePainter(AbstractCamera * camera);
     PipelinePainter(AbstractCamera * camera, Group * scene);
@@ -83,10 +85,10 @@ public:
     virtual bool isSceneInvalid();
     virtual bool isViewInvalid();
 
-    virtual TextureObject * getTexture(QString name);
+	virtual globjects::Texture * getTexture(QString name);
     virtual bool textureExists(QString name);
-    virtual void setTexture(QString name, TextureObject * texture);
-    virtual bool addTexture(QString name, TextureObject * texture);
+    virtual void setTexture(QString name, globjects::Texture *texture);
+	virtual bool addTexture(QString name, globjects::Texture *texture);
     virtual void removeTexture(QString name);
 
     //camera matrices
@@ -99,31 +101,29 @@ public:
     virtual void setView(const glm::mat4 & view);
     virtual void setProjection(const glm::mat4 & projection);
 
-    virtual void setCameraUniforms(const Program & program);
+    virtual void setCameraUniforms(globjects::Program & program);
 
     virtual void clearPipeline();
 
 protected:
-    glm::dvec3 unproject(float x, float y, float z);
-    void clearRenderStages();
+    glm::vec3 unproject(float x, float y, float z);
+
+	void clearRenderStages();
 
     void recalculateTransform();
-
 
 protected:
 
     QList<AbstractRenderStage *> m_stages;
 
     QString m_samplerToDisplay;
-    QMap<QString, TextureObject*> m_textures;
+    QMap<QString, globjects::Texture*> m_textures;
 
     ScreenQuad * m_quad;
-    Program * m_flush;
-
-
-
-    //for CoordinateProvider
-    //glow::FrameBufferObject m_coordFBO;
+    globjects::Program * m_flush;
+	
+	//for CoordinateProvider
+    //globjects::FrameBufferObject m_coordFBO;
 
     glm::mat4 m_view;
     glm::mat4 m_projection;

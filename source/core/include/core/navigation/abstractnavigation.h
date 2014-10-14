@@ -22,6 +22,8 @@ class Group;
 
 class CORE_API AbstractNavigation : public QObject, public AbstractEventHandler
 {    
+    Q_OBJECT
+
 public:
     AbstractNavigation(AbstractCamera *camera);
     virtual ~ AbstractNavigation();
@@ -72,6 +74,9 @@ public:
 
     void onNavigated();
     signalzeug::Signal<glm::mat4, float> viewChanged;
+
+signals:
+    void navigated();
 
 protected:
     void startTimer();

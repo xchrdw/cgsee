@@ -2,9 +2,14 @@
 
 #include <core/core_api.h>
 
+#include <QString>
 
 #include <core/rendering/abstractpostprocessingstage.h>
 
+
+namespace globjects{
+	class Texture;
+}
 
 // under construction
 class CORE_API AAAccumulateStage : public AbstractPostProcessingStage
@@ -19,8 +24,8 @@ public:
 
 protected:
     QString m_outputBufferName;
-    TextureObject * m_accumulateBuffer[2];
+	globjects::Texture *m_accumulateBuffer[2];
     bool m_targetBuffer;
     // ownership lies somewhere else
-    TextureObject * m_inputBuffer;
+	globjects::Texture *m_inputBuffer;
 };

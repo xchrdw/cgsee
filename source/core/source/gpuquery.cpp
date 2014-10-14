@@ -1,13 +1,11 @@
 
 #include <core/gpuquery.h>
 
-#ifdef WIN32
-#include <GL/wglew.h>
-#elif defined(__APPLE__)
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/enum.h>
 
-#else
-#include <GL/glxew.h>
-#endif
+#include <globjects/globjects.h>
 
 
 // http://developer.download.nvidia.com/opengl/specs/GL_NVX_gpu_memory_info.txt
@@ -19,64 +17,56 @@
 #define GPU_MEMORY_INFO_EVICTED_MEMORY_NVX            0x904B
 
 
-const GLint GPUQuery::totalMemory()
+const gl::GLint GPUQuery::totalMemory()
 {
     return memoryInfo(GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX);
 }
 
-const GLint GPUQuery::dedicatedMemory()
+const gl::GLint GPUQuery::dedicatedMemory()
 {
     return memoryInfo(GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX);
 }
 
-const GLint GPUQuery::availableMemory()
+const gl::GLint GPUQuery::availableMemory()
 {
     return memoryInfo(GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX);
 }
 
-const GLint GPUQuery::evictionCount()
+const gl::GLint GPUQuery::evictionCount()
 {
     return memoryInfo(GPU_MEMORY_INFO_EVICTION_COUNT_NVX);
 }
 
-const GLint GPUQuery::evictedMemory()
+const gl::GLint GPUQuery::evictedMemory()
 {
     return memoryInfo(GPU_MEMORY_INFO_EVICTED_MEMORY_NVX);
 }
 
-const GLint GPUQuery::memoryInfo(const GLenum penum)
+const gl::GLint GPUQuery::memoryInfo(const gl::GLint penum)
 {
     if(!extensionSupported("GL_NVX_gpu_memory_info"))
         return -1;
 
-    GLint memory(0); // in kb
-    glGetIntegerv(penum, &memory);
+    gl::GLint memory(0); // in kb
+    gl::glGetIntegerv(static_cast<gl::GLenum>(penum), &memory);
     glError();
 
     return memory;
 }
 
-const GLint GPUQuery::queryi(const GLenum penum)
+const gl::GLint GPUQuery::queryi(const gl::GLenum penum)
 {
-    GLint result;
-    glGetIntegerv(penum, &result);
+    gl::GLint result;
+    gl::glGetIntegerv(penum, &result);
 
     glError();
 
     return result;
 }
 
-const QString GPUQuery::querys(const GLenum penum)
+const QString GPUQuery::querys(const gl::GLenum penum)
 {
-    const QString result = reinterpret_cast<const char*>(glGetString(penum));
-    glError();
-
-    return result;
-}
-
-const QString GPUQuery::glew(const GLenum penum)
-{
-    const QString result(reinterpret_cast<const char*>(glewGetString(penum)));
+    const QString result = reinterpret_cast<const char*>(gl::glGetString(penum));
     glError();
 
     return result;
@@ -84,68 +74,40 @@ const QString GPUQuery::glew(const GLenum penum)
 
 const QString GPUQuery::vendor()
 {
-    return querys(GL_VENDOR);
+    return querys(gl::GL_VENDOR);
 }
 
 const QString GPUQuery::renderer()
 {
-    return querys(GL_RENDERER);
+    return querys(gl::GL_RENDERER);
 }
 
 const QString GPUQuery::version()
 {
-    return querys(GL_VERSION);
-}
-
-const QString GPUQuery::glewVersion()
-{
-    return glew(GLEW_VERSION);
+    return querys(gl::GL_VERSION);
 }
 
 const bool GPUQuery::isCoreProfile()
 {
-    // HACK: just check for single extension. If it is
-    // not supported, its probably core profile.. :P
-
-    return !glewIsSupported("GL_EXT_abgr"); // extension with number 1 ;)
-}
-
-const QString GPUQuery::glewError(const GLenum penum)
-{
-    const QString result = reinterpret_cast<const char*>(glewGetErrorString(penum));
-    return result;
+    return globjects::isCoreProfile();
 }
 
 const bool GPUQuery::error(
     const char * file
 ,   const int line)
 {
-    const GLenum error(glGetError());
-    const bool errorOccured(GL_NO_ERROR != error);
+    const gl::GLenum error(gl::glGetError());
+    const bool errorOccured(gl::GL_NO_ERROR != error);
 
     if(errorOccured) 
-        qCritical("OpenGL: %s [0x%x %s : %i]\n", glewGetErrorString(error), error, file, line);
+        qCritical("OpenGL: [0x%x %s : %i]\n", error, file, line);
 
     return errorOccured;
 }
 
 const bool GPUQuery::extensionSupported(const char * extension)
 {
-    if(isCoreProfile())
-        return false;
-
-    bool supported = glewIsSupported(extension) ? true : false;
-
-    if(!supported)
-#ifdef WIN32
-        return wglewIsSupported(extension) ? true : false;
-#elif defined(LINUX)
-        return glxewIsSupported(extension) ? true : false;
-#else
-        return supported;
-#endif
-
-    return supported;
+    return globjects::hasExtension(std::string(extension));
 }
 
 const bool GPUQuery::extensionSupported(const QString & extension)

@@ -2,7 +2,7 @@
 
 #include <core/core_api.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/types.h>
 
 #include <memory>
 
@@ -16,8 +16,11 @@
 
 class PolygonalGeometry;
 class DataBlockRegistry;
-class Program;
 class DrawMethod;
+
+namespace globjects{
+    class Program;
+}
 
 
 class CORE_API PolygonalDrawable : public Node
@@ -31,7 +34,7 @@ public:
     PolygonalDrawable(const QString & name = "unnamed");
     virtual ~PolygonalDrawable();
 
-    virtual void draw(const Program & program, const glm::mat4 & transform) override;
+    virtual void draw(globjects::Program & program, const glm::mat4 & transform) override;
 
     virtual const AxisAlignedBoundingBox boundingBox() const override;
     virtual const AxisAlignedBoundingBox boundingBox(glm::mat4 transform) const override;
@@ -39,8 +42,8 @@ public:
     void setGeometry(t_geometryP geometry);
     t_geometryP geometry() { return m_geometry; }
 
-    void setMode(const GLenum mode) { m_mode = mode; }
-    inline const GLenum mode(void) const { return m_mode; }
+    void setMode(const gl::GLenum mode) { m_mode = mode; }
+    inline const gl::GLenum mode(void) const { return m_mode; }
     
     void setDrawMethod( t_drawMethodP drawmethod );
     t_drawMethodP drawmethod(void);
@@ -52,6 +55,6 @@ protected:
 
 protected:
     t_geometryP m_geometry;
-    GLenum  m_mode;
+    gl::GLenum  m_mode;
     t_drawMethodP m_drawMethod;
 };

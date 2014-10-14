@@ -1,10 +1,15 @@
-
 #include <core/screenquad.h>
 
+#include <glbinding/gl/types.h>
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/functions.h>
+#include <glbinding/gl/bitfield.h>
+#include <glbinding/gl/boolean.h>
+
+#include <globjects/Framebuffer.h>
+#include <globjects/Program.h>
+
 #include <core/bufferobject.h>
-#include <core/framebufferobject.h>
-#include <core/program.h>
-#include <core/shader.h>
 #include <core/gpuquery.h>
 
 
@@ -20,17 +25,17 @@ ScreenQuad::~ScreenQuad()
     {
         delete m_vertexBO;
 
-        glDeleteVertexArrays(1, &m_vao);
+        gl::glDeleteVertexArrays(1, &m_vao);
         glError();
     }
 }
 
-void ScreenQuad::initialize(const Program & program) const
+void ScreenQuad::initialize(globjects::Program & program) const
 {
     // By default, counterclockwise polygons are taken to be front-facing.
     // http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
 
-    static const GLfloat vertices[] =
+    static const gl::GLfloat vertices[] =
     {
         +1.f, -1.f
     ,   +1.f, +1.f
@@ -38,49 +43,64 @@ void ScreenQuad::initialize(const Program & program) const
     ,   -1.f, +1.f
     };
 
-    glGenVertexArrays(1, &m_vao);
+    gl::glGenVertexArrays(1, &m_vao);
     glError();
-    glBindVertexArray(m_vao);                                                                  
+    gl::glBindVertexArray(m_vao);                                                                  
     glError();
 
     // setup array buffer
 
     if(!m_vertexBO)
     {
-        m_vertexBO = new BufferObject(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-	    m_vertexBO->data<GLfloat>(vertices, 8, GL_FLOAT, 2);
+        m_vertexBO = new BufferObject(gl::GL_ARRAY_BUFFER, gl::GL_STATIC_DRAW);
+	    m_vertexBO->data<gl::GLfloat>(vertices, 8, gl::GL_FLOAT, 2);
     }
 
     // bind all buffers to their attributes
 
-    m_vertexBO->bind(program.attributeLocation("a_vertex"));
+    m_vertexBO->bind(program.getAttributeLocation("a_vertex"));
 
-    glBindVertexArray(0);
+    gl::glBindVertexArray(0);
     glError();
 }
 
-void ScreenQuad::draw(const Program & program) const
+void ScreenQuad::draw(
+    globjects::Program & program
+,   globjects::Framebuffer * target) const
 {
     if(-1 == m_vao)
         initialize(program);
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    if(target)
+        target->bind(gl::GL_FRAMEBUFFER);
+
+	glError();
+    gl::glClear(gl::GL_COLOR_BUFFER_BIT);
+	glError();
 
     program.use();
 
-    glBindVertexArray(m_vao);                                                                  
+    gl::glBindVertexArray(m_vao);                                                                  
     glError();
 
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glDepthMask(GL_FALSE);
+    gl::glDisable(gl::GL_DEPTH_TEST);
+	glError();
+    gl::glEnable(gl::GL_CULL_FACE);
+	glError();
+    gl::glDepthMask(gl::GL_FALSE);
+	glError();
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    gl::glDrawArrays(gl::GL_TRIANGLE_STRIP, 0, 4);
     glError();
 
-    glDisable(GL_CULL_FACE);
-    glDepthMask(GL_TRUE);
+    gl::glDisable(gl::GL_CULL_FACE);
+	glError();
+    gl::glDepthMask(gl::GL_TRUE);
+	glError();
 
-    glBindVertexArray(0);
+    gl::glBindVertexArray(0);
     glError();
+	
+    if(target)
+        target->unbind(gl::GL_FRAMEBUFFER);
 }

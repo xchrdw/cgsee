@@ -3,23 +3,23 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <core/framebufferobject.h>
-#include <core/program.h>
+#include <globjects/Program.h>
+
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 #include <core/screenquad.h>
+#include <core/painter/pipelinepainter.h>
 
 AbstractPostProcessingStage::AbstractPostProcessingStage(PipelinePainter & painter)
     : AbstractRenderStage(painter)
-    , m_program(new Program())
+    , m_program(new globjects::Program())
     , m_screenquad(new ScreenQuad())
 {
-
 }
 
 AbstractPostProcessingStage::~AbstractPostProcessingStage(void)
 {
-	delete m_program;
+	m_program->unref();
     delete m_screenquad;
 }
 

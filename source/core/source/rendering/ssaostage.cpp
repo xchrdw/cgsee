@@ -2,8 +2,8 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <core/framebufferobject.h>
-#include <core/program.h>
+#include <globjects/Program.h>
+
 #include <core/scenegraph/scenetraverser.h>
 #include <core/scenegraph/drawvisitor.h>
 

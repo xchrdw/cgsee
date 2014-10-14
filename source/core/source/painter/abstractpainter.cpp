@@ -1,9 +1,10 @@
-
 #include <core/painter/abstractpainter.h>
 
 #include <QKeyEvent>
 #include <QPainter>
 #include <QImage>
+
+#include <glbinding/gl/functions.h>
 
 #include <core/camera/abstractcamera.h>
 #include <core/gpuquery.h>
@@ -33,7 +34,7 @@ void AbstractPainter::resize(
     const int width
 ,   const int height)
 {
-    glViewport(0, 0, width, height);
+    gl::glViewport(0, 0, width, height);
     glError();
 
     if(m_initialized)

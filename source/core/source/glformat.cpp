@@ -3,14 +3,12 @@
 
 #include <cassert>
 
-#include <GL/glew.h>
-
-#include <QGLFormat>
+#include <QSurfaceFormat>
 
 #include <core/gpuquery.h>
 
 #ifdef WIN32
-
+#include <Windows.h>
 #elif defined(__APPLE__)
 
 #else
@@ -50,7 +48,7 @@ GLFormat::GLFormat()
 {
 }
 
-GLFormat::GLFormat(const QGLFormat & format)
+GLFormat::GLFormat(const QSurfaceFormat & format)
 
 :   m_majorVersion(format.majorVersion())
 ,   m_minorVersion(format.minorVersion())
@@ -58,72 +56,90 @@ GLFormat::GLFormat(const QGLFormat & format)
 ,   m_redBufferSize  (format.redBufferSize())
 ,   m_greenBufferSize(format.greenBufferSize())
 ,   m_blueBufferSize (format.blueBufferSize())
-,   m_alphaBufferSize(format.alpha() ? format.alphaBufferSize() : 0)
+,   m_alphaBufferSize(format.hasAlpha() ? format.alphaBufferSize() : 0)
 
-,   m_depthBufferSize  (format.depth()   ? format.depthBufferSize()   : 0)
-,   m_stencilBufferSize(format.stencil() ? format.stencilBufferSize() : 0)
+,   m_depthBufferSize  (format.depthBufferSize())
+,   m_stencilBufferSize(format.stencilBufferSize())
 
-,   m_doubleBuffer(format.doubleBuffer())
 ,   m_stereo(format.stereo())
 
-,   m_sampleBuffers(format.sampleBuffers())
+,   m_sampleBuffers(false)
 ,   m_samples(format.samples())
 
-,   m_swapInterval(format.swapInterval())
+,   m_swapInterval(10)
+//,   m_swapInterval(format.swapInterval()) //requires Qt 5.3
 {
   switch(format.profile())
     {
     default:
-    case QGLFormat::NoProfile:
+    case QSurfaceFormat::NoProfile:
         m_profile = NoProfile; 
         break;
-    case QGLFormat::CoreProfile:
+    case QSurfaceFormat::CoreProfile:
         m_profile = CoreProfile; 
         break;
-    case QGLFormat::CompatibilityProfile:
+    case QSurfaceFormat::CompatibilityProfile:
         m_profile = CompatibilityProfile; 
         break;
     };
+  switch (format.swapBehavior())
+  {
+  case QSurfaceFormat::SingleBuffer:
+      m_doubleBuffer = false;
+      break;
+  case QSurfaceFormat::DoubleBuffer:
+      m_doubleBuffer = true;
+      break;
+  default:
+      m_doubleBuffer = false;
+  }
+
 }
 
 GLFormat::~GLFormat()
 {
 }
 
-const QGLFormat GLFormat::asQGLFormat() const
+const QSurfaceFormat GLFormat::asQSurfaceFormat() const
 {
-    QGLFormat format;
+    QSurfaceFormat format;
+    format.setVersion(m_majorVersion, m_minorVersion);
 
     format.setVersion(m_majorVersion, m_minorVersion);
-    
-    switch(m_profile)
+
+    switch (m_profile)
     {
     default:
     case NoProfile:
-        format.setProfile(QGLFormat::NoProfile); 
+        format.setProfile(QSurfaceFormat::NoProfile);
         break;
     case CoreProfile:
-        format.setProfile(QGLFormat::CoreProfile); 
+        format.setProfile(QSurfaceFormat::CoreProfile);
         break;
     case CompatibilityProfile:
-        format.setProfile(QGLFormat::CompatibilityProfile); 
+        format.setProfile(QSurfaceFormat::CompatibilityProfile);
         break;
     };
 
-    format.setRedBufferSize    (m_redBufferSize);
-    format.setGreenBufferSize  (m_greenBufferSize);
-    format.setBlueBufferSize   (m_blueBufferSize);
-    format.setAlphaBufferSize  (m_alphaBufferSize);
+    format.setRedBufferSize(m_redBufferSize);
+    format.setGreenBufferSize(m_greenBufferSize);
+    format.setBlueBufferSize(m_blueBufferSize);
+    format.setAlphaBufferSize(m_alphaBufferSize);
 
-    format.setDepthBufferSize  (m_depthBufferSize);
+    format.setDepthBufferSize(m_depthBufferSize);
     format.setStencilBufferSize(m_stencilBufferSize);
-    format.setDoubleBuffer     (m_doubleBuffer);
-    format.setStereo           (m_stereo);
-    format.setSampleBuffers    (m_sampleBuffers);
-    format.setSamples          (m_samples);
-    format.setSwapInterval     (m_swapInterval);
+    
+    if (m_doubleBuffer)
+        format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    else
+        format.setSwapBehavior(QSurfaceFormat::SingleBuffer);
+
+    format.setStereo(m_stereo);
+    format.setSamples(m_samples);
+    //format.setSwapInterval(m_swapInterval);   //supported with Qt 5.3
 
     return format;
+
 }
 
 const unsigned int GLFormat::majorVersion() const
@@ -360,7 +376,7 @@ const GLFormat::t_profileIdentifier GLFormat::validProfileIdentifier()
 
 // VERIFICATION
 
-const bool GLFormat::verify(const QGLFormat & format) const
+const bool GLFormat::verify(const QSurfaceFormat & format) const
 {
     GLFormat current(format);
  

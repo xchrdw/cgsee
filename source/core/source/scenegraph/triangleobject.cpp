@@ -1,10 +1,9 @@
 
 #include <core/scenegraph/triangleobject.h>
 
-#include <GL/glew.h>
+#include <globjects/Program.h>
 
 #include <core/aabb.h>
-#include <core/program.h>
 
 
 TriangleObject::TriangleObject(const QString & name)
@@ -58,7 +57,7 @@ void TriangleObject::invalidateBoundingBox()
     return Node::invalidateBoundingBox();
 }
 
-void TriangleObject::draw(const Program & program, const glm::mat4 & transform)
+void TriangleObject::draw(globjects::Program & program, const glm::mat4 & transform)
 {
     // TriangleObject is only a helper class for the raytracer, no need to implement a draw function
 }

@@ -6,17 +6,19 @@
 
 #include <core/scenegraph/scenevisitorinterface.h>
 
-
-class Program;
 class Node;
+
+namespace globjects{
+    class Program;
+}
 
 class CORE_API DrawVisitor : public SceneVisitorInterface
 {
 public:
-    DrawVisitor(const Program * p, glm::mat4 t);
+    DrawVisitor(globjects::Program * p, glm::mat4 t);
     virtual bool operator() (Node & node) override;
 
 private:
-    const Program * m_program;
+    globjects::Program * m_program;
     glm::mat4 m_transform;
 };

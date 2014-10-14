@@ -3,6 +3,13 @@
 #include <core/core_api.h>
 #include <core/rendering/abstractrenderstage.h>
 
+class Program;
+class PipelinePainter;
+
+namespace glo {
+    class Program;
+}
+
 // under construction
 class CORE_API AbstractSceneRenderStage : public AbstractRenderStage
 {
@@ -13,6 +20,5 @@ public:
     virtual void render() override;
 
 protected:
-    Program * m_program;
-
+    globjects::Program * m_program;
 };

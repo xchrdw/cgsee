@@ -1,11 +1,11 @@
 
 #include <core/scenegraph/polygonaldrawable.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/enum.h>
+#include <globjects/Program.h>
 
 #include <core/aabb.h>
 #include <core/bufferobject.h>
-#include <core/program.h>
 
 #include <core/scenegraph/polygonalgeometry.h>
 #include <core/scenegraph/defaultdrawmethod.h>
@@ -21,7 +21,7 @@ namespace
 PolygonalDrawable::PolygonalDrawable(const QString & name)
 :   Node( name )
 ,   m_geometry( std::shared_ptr<PolygonalGeometry>())
-,   m_mode( GL_TRIANGLES )
+,   m_mode( gl::GL_TRIANGLES )
 ,   m_drawMethod( new DefaultDrawMethod )
 {
 }
@@ -87,7 +87,7 @@ void PolygonalDrawable::invalidateBoundingBox()
     return Node::invalidateBoundingBox();
 }
 
-void PolygonalDrawable::draw(const Program & program, const glm::mat4 & transform)
+void PolygonalDrawable::draw(globjects::Program & program, const glm::mat4 & transform)
 {
     if (m_geometry)
     {

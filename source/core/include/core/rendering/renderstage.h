@@ -2,8 +2,13 @@
 
 #include <core/core_api.h>
 #include <core/rendering/abstractscenerenderstage.h>
-#include <core/textureobject.h>
-#include <core/renderbufferobject.h>
+
+class RenderBufferObject;
+
+namespace globjects{
+    class Texture;
+    class Renderbuffer;
+}
 
 class CORE_API RenderStage : public AbstractSceneRenderStage
 {
@@ -17,7 +22,7 @@ public:
     virtual void resize(const int width, const int height) override;
 
 protected:
-    TextureObject * m_normalz;
-    TextureObject * m_colorId;
-    RenderBufferObject * m_depth;
+    globjects::Texture * m_normalz;
+    globjects::Texture * m_colorId;
+    globjects::Renderbuffer * m_depth;
 };

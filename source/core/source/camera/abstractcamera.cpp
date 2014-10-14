@@ -4,9 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
+#include <globjects/program.h>
+
 #include <core/camera/projection.h>
 #include <core/viewfrustum.h>
-#include <core/program.h>
 
 //takes ownership of projection
 AbstractCamera::AbstractCamera(const QString & name, Projection * projection)

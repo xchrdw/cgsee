@@ -45,6 +45,7 @@ class DataBlockRegistry;
 
 class CoordinateProvider;
 class AxisAlignedBoundingBox;
+class OpenGLContext;
 
 namespace propertyguizeug
 {
@@ -221,6 +222,7 @@ protected:
 
     // TODO should be an AbstractPainter -> refactor to allow 2DPainters
     AbstractScenePainter * m_painter;
+    OpenGLContext * m_context;
     Canvas * m_qtCanvas;
     AbstractNavigation * m_navigation;
     AbstractCamera * m_camera;
