@@ -10,6 +10,10 @@
 #include <QMap>
 #include <QList>
 
+#include <globjects/Program.h>
+#include <globjects/Texture.h>
+#include <globjects/base/ref_ptr.h>
+
 #include <reflectionzeug/PropertyGroup.h>
 
 #include <core/painter/abstractscenepainter.h>
@@ -25,10 +29,10 @@ class AbstractRenderStage;
 class PipelineBuilder;
 class AbstractCamera;
 
-namespace globjects{
-    class Program;
-    class Texture;
-}
+//namespace globjects{
+//    class Program;
+//    class Texture;
+//}
 
 class CORE_API PipelinePainter : public AbstractScenePainter, public CoordinateProvider, public reflectionzeug::PropertyGroup
 {
@@ -85,10 +89,10 @@ public:
     virtual bool isSceneInvalid();
     virtual bool isViewInvalid();
 
-	virtual globjects::Texture * getTexture(QString name);
+	virtual globjects::Texture* getTexture(QString name);
     virtual bool textureExists(QString name);
-    virtual void setTexture(QString name, globjects::Texture *texture);
-	virtual bool addTexture(QString name, globjects::Texture *texture);
+    virtual void setTexture(QString name, globjects::Texture * texture);
+    virtual bool addTexture(QString name, globjects::Texture * texture);
     virtual void removeTexture(QString name);
 
     //camera matrices
@@ -117,10 +121,10 @@ protected:
     QList<AbstractRenderStage *> m_stages;
 
     QString m_samplerToDisplay;
-    QMap<QString, globjects::Texture*> m_textures;
+    QMap<QString, globjects::ref_ptr<globjects::Texture>> m_textures;
 
     ScreenQuad * m_quad;
-    globjects::Program * m_flush;
+    globjects::ref_ptr<globjects::Program> m_flush;
 	
 	//for CoordinateProvider
     //globjects::FrameBufferObject m_coordFBO;

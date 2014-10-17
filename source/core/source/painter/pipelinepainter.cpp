@@ -19,6 +19,8 @@
 
 #include <core/gpuquery.h>
 
+#include <qdebug.h>
+
 const std::string PipelinePainter::VIEWPORT_UNIFORM("viewport");
 const std::string PipelinePainter::VIEW_UNIFORM("view");
 const std::string PipelinePainter::PROJECTION_UNIFORM("projection");
@@ -93,6 +95,7 @@ void PipelinePainter::onViewChanged()
 
 void PipelinePainter::paint()
 {
+    gl::glBindFramebuffer(gl::GL_FRAMEBUFFER, 0);
     AbstractPainter::paint();
     gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
     glError();
@@ -323,7 +326,7 @@ bool PipelinePainter::isViewInvalid()
     return true;//TODO
 }
 
-globjects::Texture * PipelinePainter::getTexture(QString name)
+globjects::Texture* PipelinePainter::getTexture(QString name)
 {
     return m_textures.value(name, nullptr);
 }

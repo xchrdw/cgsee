@@ -4,12 +4,11 @@
 
 #include <QString>
 
+#include <globjects/Texture.h>
+#include <globjects/base/ref_ptr.h>
+
 #include <core/rendering/abstractpostprocessingstage.h>
 
-
-namespace globjects{
-	class Texture;
-}
 
 // under construction
 class CORE_API AAAccumulateStage : public AbstractPostProcessingStage
@@ -24,8 +23,8 @@ public:
 
 protected:
     QString m_outputBufferName;
-	globjects::Texture *m_accumulateBuffer[2];
+	globjects::ref_ptr<globjects::Texture> m_accumulateBuffer[2];
     bool m_targetBuffer;
     // ownership lies somewhere else
-	globjects::Texture *m_inputBuffer;
+    globjects::ref_ptr<globjects::Texture> m_inputBuffer;
 };

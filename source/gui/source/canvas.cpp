@@ -39,10 +39,7 @@
 #include <gui/CanvasImplementation.h>
 
 
-Canvas::Canvas(
-    const GLFormat & format,
-    QWidget * parent)
-
+Canvas::Canvas(const GLFormat & format, QWidget * parent)
 :   QWidget(parent)
 ,   m_refreshTimeMSec(0)
 ,   m_painter(nullptr)
@@ -50,8 +47,8 @@ Canvas::Canvas(
 ,   m_eventHandler(nullptr)
 ,   m_timer(new QBasicTimer)
 ,   m_format(format)
-,   m_qtCanvas(new CanvasImplementation(format))
-,   m_qtCanvasWidget(QWidget::createWindowContainer(m_qtCanvas, this))
+,   m_canvasImplementation(new CanvasImplementation(format))
+,   m_canvasWidget(QWidget::createWindowContainer(m_canvasImplementation, this))
 ,   m_isInitialized(false)
 {
     setMinimumSize(1, 1);
@@ -59,9 +56,9 @@ Canvas::Canvas(
     setAutoFillBackground(false);
 
     m_navigationHistory = new NavigationHistory();
-    connect(m_qtCanvas, SIGNAL(renderingRequested()), this, SLOT(onRenderingRequested()));
-    m_qtCanvas->installEventFilter(this);
-    m_qtCanvasWidget->installEventFilter(this);
+    connect(m_canvasImplementation, SIGNAL(renderingRequested()), this, SLOT(onRenderingRequested()));
+    m_canvasImplementation->installEventFilter(this);
+    m_canvasWidget->installEventFilter(this);
 }
 
 Canvas::~Canvas()
@@ -72,7 +69,7 @@ Canvas::~Canvas()
 
 void Canvas::initializeGL()
 {
-	m_qtCanvas->makeCurrent();
+    m_canvasImplementation->makeCurrent();
     
     globjects::init();
     globjects::DebugMessage::enable();
@@ -107,7 +104,7 @@ void Canvas::resizeEvent(QResizeEvent *event)
     if (m_eventHandler)
         m_eventHandler->resize(event->size());
 
-    m_qtCanvasWidget->resize(event->size());
+    m_canvasWidget->resize(event->size());
 
     QWidget::resizeEvent(event);
 
@@ -120,12 +117,11 @@ void Canvas::paint()
     if (!m_isInitialized)
         initializeGL();
 	glError();
-    m_qtCanvas->paint();
+    m_canvasImplementation->paint();
 }
 
 void Canvas::paintGL()
 {
-    gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
     glError();
     if (m_painter)
         m_painter->paint();
@@ -316,7 +312,7 @@ void Canvas::mousePressEvent(QMouseEvent * event)
 {
     if (m_eventHandler)
         m_eventHandler->mousePressEvent(event);
-    repaint();
+    update();
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent * event)
@@ -325,7 +321,7 @@ void Canvas::mouseReleaseEvent(QMouseEvent * event)
         m_eventHandler->mouseReleaseEvent(event);
 
 	emit mouseReleaseEventSignal(event);
-    repaint();
+    update();
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent * event)
@@ -336,14 +332,14 @@ void Canvas::mouseMoveEvent(QMouseEvent * event)
         m_eventHandler->mouseMoveEvent(event);
 
 	emit mouseMoveEventTriggered(1);
-    repaint();
+    update();
 }
 
 void Canvas::wheelEvent(QWheelEvent * event)
 {
     if (m_eventHandler)
         m_eventHandler->wheelEvent(event);
-    repaint();
+    update();
 }
 
 void Canvas::onRenderingRequested()
@@ -389,18 +385,13 @@ bool Canvas::eventFilter(QObject *obj, QEvent *event)
         this->event(event);
         return true;
     default:
-        return !(obj == m_qtCanvas || obj == m_qtCanvasWidget);
+        return !(obj == m_canvasImplementation || obj == m_canvasWidget);
     }
-}
-
-void Canvas::repaint()
-{
-    update();
 }
 
 void Canvas::makeCurrent()
 {
     if (!m_isInitialized) initializeGL();
-    m_qtCanvas->makeCurrent();
+    m_canvasImplementation->makeCurrent();
     globjects::setCurrentContext();
 }

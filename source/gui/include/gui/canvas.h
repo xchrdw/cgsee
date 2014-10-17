@@ -63,8 +63,6 @@ public:
     virtual void setRefreshTimeMSec(int msec = 1);
     int refreshTimeMSec() const;
 
-    void repaint();
-
     void makeCurrent();
 
 signals:
@@ -92,8 +90,8 @@ protected:
     NavigationHistory * m_navigationHistory;
     AbstractPainter * m_painter;
     AbstractEventHandler * m_eventHandler;
-    CanvasImplementation * m_qtCanvas;
-    QWidget * m_qtCanvasWidget;
+    CanvasImplementation * m_canvasImplementation;
+    QWidget * m_canvasWidget;
 
     int m_refreshTimeMSec;
 
