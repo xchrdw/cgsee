@@ -69,7 +69,10 @@ void AbstractNavigation::mouseReleaseEvent(QMouseEvent * event) {}
 void AbstractNavigation::mouseDoubleClickEvent(QMouseEvent * event) {}
 
 void AbstractNavigation::resizeEvent(QResizeEvent * event) { }
-void AbstractNavigation::resize(const QSize & size) { }
+void AbstractNavigation::resize(const QSize & size)
+{
+    setViewPort(size.width(), size.height());
+}
 
 void AbstractNavigation::wheelEvent(QWheelEvent * event)
 {
