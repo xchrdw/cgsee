@@ -1,14 +1,13 @@
 #pragma once
 
 #include <core/core_api.h>
+
+#include <globjects/Program.h>
+#include <globjects/base/ref_ptr.h>
+
 #include <core/rendering/abstractrenderstage.h>
 
-class Program;
 class PipelinePainter;
-
-namespace glo {
-    class Program;
-}
 
 // under construction
 class CORE_API AbstractSceneRenderStage : public AbstractRenderStage
@@ -20,5 +19,5 @@ public:
     virtual void render() override;
 
 protected:
-    globjects::Program * m_program;
+    globjects::ref_ptr<globjects::Program> m_program;
 };

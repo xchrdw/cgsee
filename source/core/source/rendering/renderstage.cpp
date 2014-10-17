@@ -2,8 +2,6 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <QDebug>
-
 #include <glbinding/gl/bitfield.h>
 #include <glbinding/gl/enum.h>
 
@@ -42,7 +40,6 @@ RenderStage::RenderStage(PipelinePainter & painter, const QString & normalzBuffe
 
 RenderStage::~RenderStage(void)
 {
-
 }
 
 void RenderStage::render()

@@ -51,6 +51,7 @@ void CanvasImplementation::paint()
 
 void CanvasImplementation::resizeEvent(QResizeEvent * event)
 {
+    QWindow::resizeEvent(event);
     paint();
 }
 

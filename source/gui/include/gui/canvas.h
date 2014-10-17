@@ -64,6 +64,7 @@ public:
     int refreshTimeMSec() const;
 
     void makeCurrent();
+    void paint();
 
 signals:
 	void mouseReleaseEventSignal(QMouseEvent * event);
@@ -83,7 +84,6 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
     void initializeGL();
-    void paint();
     virtual void paintGL();
 
 protected:

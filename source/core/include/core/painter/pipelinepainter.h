@@ -29,10 +29,6 @@ class AbstractRenderStage;
 class PipelineBuilder;
 class AbstractCamera;
 
-//namespace globjects{
-//    class Program;
-//    class Texture;
-//}
 
 class CORE_API PipelinePainter : public AbstractScenePainter, public CoordinateProvider, public reflectionzeug::PropertyGroup
 {

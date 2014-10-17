@@ -19,7 +19,6 @@ AbstractPostProcessingStage::AbstractPostProcessingStage(PipelinePainter & paint
 
 AbstractPostProcessingStage::~AbstractPostProcessingStage(void)
 {
-	m_program->unref();
     delete m_screenquad;
 }
 

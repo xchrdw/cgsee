@@ -19,7 +19,6 @@
 
 #include <core/gpuquery.h>
 
-#include <qdebug.h>
 
 const std::string PipelinePainter::VIEWPORT_UNIFORM("viewport");
 const std::string PipelinePainter::VIEW_UNIFORM("view");

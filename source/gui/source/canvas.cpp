@@ -107,25 +107,20 @@ void Canvas::resizeEvent(QResizeEvent *event)
     m_canvasWidget->resize(event->size());
 
     QWidget::resizeEvent(event);
-
-    update();
 }
 
 void Canvas::paint()
 {
-	glError();
     if (!m_isInitialized)
         initializeGL();
-	glError();
     m_canvasImplementation->paint();
+    glError();
 }
 
 void Canvas::paintGL()
 {
-    glError();
     if (m_painter)
         m_painter->paint();
-    glError();
 }
 
 void Canvas::timerEvent(QTimerEvent * event)
@@ -354,8 +349,8 @@ const GLFormat& Canvas::format()
 
 void Canvas::update()
 {
-    QWidget::update();
     paint();
+    QWidget::update();
 }
 
 bool Canvas::event(QEvent *event)
