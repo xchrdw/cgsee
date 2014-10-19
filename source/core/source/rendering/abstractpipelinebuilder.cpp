@@ -1,20 +1,21 @@
-#include <core/rendering/pipelinebuilder.h>
+#include <core/rendering/abstractpipelinebuilder.h>
+
 #include <core/camera/monocamera.h>
 #include <core/camera/stereocamera.h>
 
-PipelineBuilder::PipelineBuilder(PipelinePainter & painter)
+AbstractPipelineBuilder::AbstractPipelineBuilder(PipelinePainter & painter)
     : m_painter(painter)
     , m_camera(painter.camera())
 {
 
 }
 
-PipelineBuilder::~PipelineBuilder()
+AbstractPipelineBuilder::~AbstractPipelineBuilder()
 {
 
 }
 
-bool PipelineBuilder::build()
+bool AbstractPipelineBuilder::build()
 {
     if (m_camera->isStereo())
     {
@@ -38,24 +39,13 @@ bool PipelineBuilder::build()
     return true;
 }
 
-bool PipelineBuilder::buildPipeline(const MonoCamera * camera)
-{
-    if (!addColorIdStage(camera))
-        return false;
-    if (!addRenderingStages(camera))
-        return false;
-    if (!addPostProcessingStages(camera))
-        return false;
-    return true;
-}
-
-bool PipelineBuilder::addJoinStage()
+bool AbstractPipelineBuilder::addJoinStage()
 {
     //TODO
     return true;
 }
 
-bool PipelineBuilder::addColorIdStage(const MonoCamera * camera)
+bool AbstractPipelineBuilder::addColorIdStage(const MonoCamera * camera)
 {
     //TODO
     return true;

@@ -2,8 +2,6 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <QDebug>
-
 #include <glbinding/gl/bitfield.h>
 #include <glbinding/gl/enum.h>
 
@@ -20,13 +18,13 @@
 #include <core/painter/pipelinepainter.h>
 
 
-RenderStage::RenderStage(PipelinePainter & painter)
+RenderStage::RenderStage(PipelinePainter & painter, const QString & normalzBufferName)
     : AbstractSceneRenderStage(painter)
     , m_normalz(globjects::Texture::createDefault())
     , m_colorId(nullptr)
     , m_depth(new globjects::Renderbuffer())
 {
-    m_painter.addTexture("normalz", m_normalz);
+    m_painter.addTexture(normalzBufferName, m_normalz);
 
     m_program->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/normalz.frag")));
     m_program->attach(new globjects::Shader(gl::GL_FRAGMENT_SHADER, new globjects::File("data/depth_util.frag")));
@@ -40,13 +38,11 @@ RenderStage::RenderStage(PipelinePainter & painter)
 
 RenderStage::~RenderStage(void)
 {
-
 }
 
 void RenderStage::render()
 {
-    m_painter.camera()->setUniformsIn(*m_program);
-
+    m_painter.setCameraUniforms(*m_program);
     m_fbo->clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
     bindFBO();
     drawScene(m_painter.camera()->viewProjection(), m_program);

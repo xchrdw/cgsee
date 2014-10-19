@@ -1,13 +1,14 @@
 #pragma once
 
 #include <core/core_api.h>
+
+#include <globjects/Program.h>
+#include <globjects/base/ref_ptr.h>
+
 #include <core/rendering/abstractrenderstage.h>
 
-class PipelinePainter;
+class Screenquad;
 
-namespace globjects{
-    class Program;
-}
 
 // under construction
 class CORE_API AbstractPostProcessingStage : public AbstractRenderStage
@@ -19,5 +20,6 @@ public:
     virtual void render() override;
 
 protected:
-	globjects::Program * m_program;
+    ScreenQuad * m_screenquad;
+	globjects::ref_ptr<globjects::Program> m_program;
 };

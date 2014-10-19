@@ -12,18 +12,19 @@
 
 AbstractPostProcessingStage::AbstractPostProcessingStage(PipelinePainter & painter)
     : AbstractRenderStage(painter)
+    , m_program(new globjects::Program())
+    , m_screenquad(new ScreenQuad())
 {
-	m_program = new globjects::Program();
 }
 
 AbstractPostProcessingStage::~AbstractPostProcessingStage(void)
 {
-
+    delete m_screenquad;
 }
 
 void AbstractPostProcessingStage::render()
 {
     bindFBO();
-    m_painter.screenQuad()->draw(*m_program);
+    m_screenquad->draw(*m_program);
     releaseFBO();
 }

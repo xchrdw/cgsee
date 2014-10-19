@@ -51,8 +51,7 @@ void DefaultDrawMethod::draw(globjects::Program & program, const glm::mat4 & tra
     gl::glBindVertexArray(geometry->vao());
     glError();
     
-    gl::glEnable(gl::GL_DEPTH_TEST);
-    glError();
+	globjects::enable(gl::GL_DEPTH_TEST);
     //     glEnable(GL_CULL_FACE);
     //     glCullFace(GL_BACK);
     

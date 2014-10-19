@@ -229,7 +229,7 @@ void ShadowingStage::render()
     m_lightViewProjections.shrink_to_fit();
     m_program->setUniform("lightTransforms", m_lightViewProjections);
 
-    m_painter.camera()->setUniformsIn(*m_program);
+    m_painter.setCameraUniforms(*m_program);
 
     gl::glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
     m_fbo->clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
@@ -240,23 +240,25 @@ void ShadowingStage::render()
     smoothShadowmaps();
     gl::glViewport(0, 0, m_painter.camera()->viewport().x, m_painter.camera()->viewport().y);
 
-    //visualization
+    //visualisation begin
     m_shadowmaps->bindActive(gl::GL_TEXTURE0);
     m_testProgram->setUniform("shadowmaps", 0);
     m_testProgram->setUniform("lightBiasedViewProjections", getBiasedViewProjections());
     m_testProgram->setUniform("farSplits", getFarSplits());
-    m_painter.camera()->setUniformsIn(*m_testProgram);
+    m_painter.setCameraUniforms(*m_testProgram);
     m_testFBO->clear(gl::GL_DEPTH_BUFFER_BIT | gl::GL_COLOR_BUFFER_BIT);
     m_testFBO->bind(gl::GL_FRAMEBUFFER);
     drawScene(m_painter.camera()->viewProjection(), m_testProgram);
     m_testFBO->unbind(gl::GL_FRAMEBUFFER);
+    //visualisation end
 }
 
 void ShadowingStage::resize(const int width, const int height)
 {
-    //only needed for visualisation
+    //visualisation begin
     m_testTexture->image2D(0, gl::GL_RGBA32F, width, height, 0, gl::GL_RGBA, gl::GL_FLOAT, nullptr);
     m_testTextureDepth->image2D(0, gl::GL_DEPTH_COMPONENT32, width, height, 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
+    //visualisation end
 }
 
 void ShadowingStage::reloadShaders()

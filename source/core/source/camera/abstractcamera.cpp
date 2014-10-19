@@ -9,16 +9,6 @@
 #include <core/camera/projection.h>
 #include <core/viewfrustum.h>
 
-const std::string AbstractCamera::VIEWPORT_UNIFORM("viewport");
-const std::string AbstractCamera::VIEW_UNIFORM("view");
-const std::string AbstractCamera::PROJECTION_UNIFORM("projection");
-const std::string AbstractCamera::TRANSFORM_UNIFORM("transform");
-const std::string AbstractCamera::TRANSFORMINVERSE_UNIFORM("transformInverse");
-const std::string AbstractCamera::ZNEAR_UNIFORM("znear");
-const std::string AbstractCamera::ZFAR_UNIFORM("zfar");
-const std::string AbstractCamera::CAMERAPOSITION_UNIFORM("cameraposition");
-const std::string AbstractCamera::VIEW_PROJECTION_UNIFORM("viewProjection");
-const std::string AbstractCamera::VIEW_PROJECTION_INVERSE_UNIFORM("viewProjectionInverse");
 
 //takes ownership of projection
 AbstractCamera::AbstractCamera(const QString & name, Projection * projection)
@@ -27,6 +17,7 @@ AbstractCamera::AbstractCamera(const QString & name, Projection * projection)
 ,   m_viewFrustum(new ViewFrustum(this))
 ,   m_projection(projection)
 ,   m_view(glm::mat4())
+,   m_viewChanged(signalzeug::Signal<>())
 {
     m_rf = RF_Absolute;
 //     m_rf = RF_Relative;
@@ -38,6 +29,7 @@ AbstractCamera::AbstractCamera(const AbstractCamera & camera)
 ,   m_viewFrustum(new ViewFrustum(this))
 ,   m_projection(new Projection(*(camera.m_projection))) //TODO find out what happens here
 ,   m_view(camera.m_view)
+,   m_viewChanged(signalzeug::Signal<>())
 {
     m_rf = camera.m_rf;
 }
@@ -139,9 +131,9 @@ void AbstractCamera::recalculate()
 
 void AbstractCamera::invalidate()
 {
-    if(m_invalid)
-        return;
     m_invalid = true;
+    // TODO filter for "significant" changes / provisionary
+    m_viewChanged.fire();
 }
 
 void AbstractCamera::invalidateChildren()
@@ -205,16 +197,7 @@ glm::vec3 AbstractCamera::up() const
     return glm::row(m_view, 1).xyz();
 }
 
-void AbstractCamera::setUniformsIn(globjects::Program & program)
+const signalzeug::Signal<> & AbstractCamera::viewChangedSignal()
 {
-    program.setUniform(PROJECTION_UNIFORM, projection());
-    program.setUniform(VIEWPORT_UNIFORM, m_projection->viewport());
-    program.setUniform(ZNEAR_UNIFORM, m_projection->zNear());
-    program.setUniform(ZFAR_UNIFORM, m_projection->zFar());
-
-    program.setUniform(VIEW_UNIFORM, view());
-    program.setUniform(CAMERAPOSITION_UNIFORM, eye());
-
-    program.setUniform(VIEW_PROJECTION_UNIFORM, viewProjection());
-    program.setUniform(VIEW_PROJECTION_INVERSE_UNIFORM, glm::inverse(viewProjection()));
+    return m_viewChanged;
 }

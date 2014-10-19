@@ -61,7 +61,7 @@ void BufferObject::bind()
     if(!isBuffer())
         generateBuffer();
 
-    glBindBuffer(m_target, m_buffer);
+    gl::glBindBuffer(m_target, m_buffer);
     glError();
 }
 
@@ -86,9 +86,11 @@ void BufferObject::draw(const gl::GLenum mode)
     {
     case gl::GL_ELEMENT_ARRAY_BUFFER:
         glDrawElements(mode, m_count, m_type, 0);
+		glError();
         break;
     case gl::GL_ARRAY_BUFFER:
         gl::glDrawArrays(mode, 0, m_count);
+		glError();
         break;
     };
     glError();

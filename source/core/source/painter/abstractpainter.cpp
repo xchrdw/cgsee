@@ -1,4 +1,3 @@
-
 #include <core/painter/abstractpainter.h>
 
 #include <QKeyEvent>

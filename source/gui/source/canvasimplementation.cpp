@@ -11,8 +11,8 @@ CanvasImplementation::CanvasImplementation(const GLFormat & format)
 :   QWindow()
 {
     setSurfaceType(QSurface::OpenGLSurface);
-    setFormat(format.asQSurfaceFormat());    
-    create();
+    setFormat(format.asQSurfaceFormat());
+	create();
 
     m_context = new QOpenGLContext(this);
     m_context->setFormat(format.asQSurfaceFormat());
@@ -51,6 +51,7 @@ void CanvasImplementation::paint()
 
 void CanvasImplementation::resizeEvent(QResizeEvent * event)
 {
+    QWindow::resizeEvent(event);
     paint();
 }
 

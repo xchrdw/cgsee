@@ -2,7 +2,6 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 
 #include <globjects/Framebuffer.h>
@@ -23,9 +22,14 @@ AbstractRenderStage::AbstractRenderStage(PipelinePainter & painter)
 
 }
 
-AbstractRenderStage::~AbstractRenderStage(void)
+AbstractRenderStage::~AbstractRenderStage()
 {
     m_fbo->unref();
+}
+
+PipelinePainter & AbstractRenderStage::painter()
+{
+    return m_painter;
 }
 
 void AbstractRenderStage::drawScene(const glm::mat4 & transform, globjects::Program * program)

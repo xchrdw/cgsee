@@ -316,6 +316,7 @@ void Viewer::assignScene(Group * rootNode)
     createSceneHierarchy(m_sceneHierarchy, rootNode);
     m_sceneHierarchyTree->expandAll();
     updateInfoBox();
+    m_qtCanvas->update();
 }
 
 /**
@@ -428,8 +429,8 @@ void Viewer::initialize(const GLFormat & format)
     // ToDo: revisit initialization sequence
     initializeExplorer();
     initializeSceneTree();
-    initializeMaterial();
 	initializeNavigationHistory();
+	initializeMaterial();
 	
     tabifyDockWidget(m_dockScene, m_dockMaterial);
     m_dockScene->raise();
@@ -606,79 +607,79 @@ void Viewer::on_renderingPathtracerAction_triggered()
 void Viewer::on_phongShadingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('p');
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_gouraudShadingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('g');
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_flatShadingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('f');
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_goochShadingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('o');
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_wireframeShadingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('w');
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_solidWireframeShadingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('s');
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_primitiveWireframeShadingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('r');
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_normalsAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setShading('n');
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_colorRenderingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(1, m_ui->colorRenderingAction->isChecked());
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_shadowMappingAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(2, m_ui->shadowMappingAction->isChecked());
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_shadowBlurAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(3, m_ui->shadowBlurAction->isChecked());
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_ssaoAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(4, m_ui->ssaoAction->isChecked());
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::on_ssaoBlurAction_triggered()
 {
     dynamic_cast<AbstractScenePainter*>(m_qtCanvas->painter())->setEffect(5, m_ui->ssaoBlurAction->isChecked());
-    m_qtCanvas->repaint();
+    m_qtCanvas->update();
 }
 
 void Viewer::uncheckFboActions()

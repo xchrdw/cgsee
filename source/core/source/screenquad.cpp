@@ -1,4 +1,3 @@
-
 #include <core/screenquad.h>
 
 #include <glbinding/gl/types.h>
@@ -75,7 +74,9 @@ void ScreenQuad::draw(
     if(target)
         target->bind(gl::GL_FRAMEBUFFER);
 
+	glError();
     gl::glClear(gl::GL_COLOR_BUFFER_BIT);
+	glError();
 
     program.use();
 
@@ -83,18 +84,23 @@ void ScreenQuad::draw(
     glError();
 
     gl::glDisable(gl::GL_DEPTH_TEST);
+	glError();
     gl::glEnable(gl::GL_CULL_FACE);
+	glError();
     gl::glDepthMask(gl::GL_FALSE);
+	glError();
 
     gl::glDrawArrays(gl::GL_TRIANGLE_STRIP, 0, 4);
     glError();
 
     gl::glDisable(gl::GL_CULL_FACE);
+	glError();
     gl::glDepthMask(gl::GL_TRUE);
+	glError();
 
     gl::glBindVertexArray(0);
     glError();
-
+	
     if(target)
         target->unbind(gl::GL_FRAMEBUFFER);
 }

@@ -1,19 +1,15 @@
 #pragma once
 
 #include <core/painter/pipelinepainter.h>
-#include <core/rendering/pipelinebuilder.h>
+#include <core/rendering/abstractpipelinebuilder.h>
 
 
-class RasterizationPipelineBuilder : public PipelineBuilder
+class RasterizationPipelineBuilder : public AbstractPipelineBuilder
 {
 public:
     RasterizationPipelineBuilder(PipelinePainter & painter);
     virtual ~RasterizationPipelineBuilder();
 
 protected:
-    virtual bool addRenderingStages(const MonoCamera * camera) override;
-    virtual bool addPostProcessingStages(const MonoCamera * camera) override;
-
-
-protected:
+    virtual bool buildPipeline(const MonoCamera * camera) override;
 };
